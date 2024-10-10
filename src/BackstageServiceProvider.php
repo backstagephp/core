@@ -101,8 +101,8 @@ class BackstageServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('backstage', __DIR__ . '/../resources/dist/components/backstage.js'),
-            Css::make('backstage-styles', __DIR__ . '/../resources/dist/backstage.css'),
-            Js::make('backstage-scripts', __DIR__ . '/../resources/dist/backstage.js'),
+            // Css::make('backstage-styles', __DIR__ . '/../resources/dist/backstage.css'),
+            // Js::make('backstage-scripts', __DIR__ . '/../resources/dist/backstage.js'),
         ];
     }
 
