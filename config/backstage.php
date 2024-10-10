@@ -1,6 +1,5 @@
 <?php
 
-// config for Vormkracht10/Backstage
 return [
-
+    'default_panel' => true,
 ];
