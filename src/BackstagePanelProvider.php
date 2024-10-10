@@ -2,10 +2,10 @@
 
 namespace Vormkracht10\Backstage;
 
+use Filament\Http\Middleware\Authenticate;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Vormkracht10\Backstage\Models\Site;
-use Filament\Http\Middleware\Authenticate;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -19,7 +19,7 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts(fn() => app()->isProduction())
+            ->unsavedChangesAlerts(fn () => app()->isProduction())
             ->resources([
                 // ...
             ])
