@@ -1,13 +1,17 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace Vormkracht10\Backstage\Resources;
 
-use App\Filament\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
 use App\Models\Content;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ContentResource extends Resource
 {
