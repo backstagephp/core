@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sites', function (Blueprint $table) {
+            $table->ulid()->primary();
+            $table->string('name');
+            $table->string('slug');
+            $table->string('title');
+            $table->string('title_separator');
+            $table->string('theme');
+            $table->string('path');
+            $table->string('email_from_name');
+            $table->string('email_from_domain');
+            $table->char('default_language_code', 2)->nullable();
+            $table->string('timezone');
+            $table->boolean('auth');
+            $table->boolean('default');
+            $table->boolean('trailing_slash')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('site_user', function (Blueprint $table) {
+            $table->foreignUlid('site_ulid');
+            $table->foreignId('user_id');
+
+            $table->index(['site_ulid', 'user_id']);
+        });
+    }
+};

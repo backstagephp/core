@@ -2,17 +2,25 @@
 
 namespace Vormkracht10\Backstage;
 
-use Vormkracht10\Backstage\Resources\ContentResource;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Vormkracht10\Backstage\Models\Site;
 use Filament\Http\Middleware\Authenticate;
 use Vormkracht10\Backstage\BackstagePlugin;
+use Vormkracht10\Backstage\Pages\Dashboard;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Vormkracht10\Backstage\Resources\TagResource;
+use Vormkracht10\Backstage\Resources\SiteResource;
+use Vormkracht10\Backstage\Resources\TypeResource;
+use Vormkracht10\Backstage\Resources\UserResource;
+use Vormkracht10\Backstage\Resources\MediaResource;
+use Vormkracht10\Backstage\Resources\DomainResource;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Vormkracht10\Backstage\Resources\ContentResource;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Resources\LanguageResource;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -26,19 +34,27 @@ class BackstagePanelProvider extends PanelProvider
             ->id('backstage')
             ->path('backstage')
             ->default(config('backstage.default_panel'))
-            ->tenant(Site::class)
+            // ->tenant(Site::class)
             ->spa()
             ->login()
             ->passwordReset()
             ->unsavedChangesAlerts(fn() => app()->isProduction())
+            ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 // BackstagePlugin::make(),
             ])
             ->resources([
                 ContentResource::class,
+                DomainResource::class,
+                LanguageResource::class,
+                MediaResource::class,
+                SiteResource::class,
+                TagResource::class,
+                TypeResource::class,
+                UserResource::class,
             ])
             ->pages([
-                // ...
+                Dashboard::class,
             ])
             ->widgets([
                 // ...

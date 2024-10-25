@@ -2,8 +2,6 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Builder\Block;
-use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -19,16 +17,16 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Media;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
-use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
+use Vormkracht10\Backstage\Resources\MediaResource\Pages;
+use Vormkracht10\Backstage\Resources\MediaResource\RelationManagers;
 
-class ContentResource extends Resource
+class MediaResource extends Resource
 {
-    protected static ?string $model = Content::class;
+    protected static ?string $model = Media::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static ?string $navigationIcon = 'heroicon-o-photo';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -39,12 +37,12 @@ class ContentResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Content');
+        return __('Media');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Content');
+        return __('Media');
     }
 
     public static function form(Form $form): Form
@@ -159,9 +157,9 @@ class ContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContent::route('/'),
-            'create' => Pages\CreateContent::route('/create'),
-            'edit' => Pages\EditContent::route('/{record}/edit'),
+            'index' => Pages\ListMedia::route('/'),
+            'create' => Pages\CreateMedia::route('/create'),
+            'edit' => Pages\EditMedia::route('/{record}/edit'),
         ];
     }
 }

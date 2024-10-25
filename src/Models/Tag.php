@@ -7,19 +7,10 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Site extends Model
+class Tag extends Model
 {
     use HasFactory,
         HasUlids;
 
     protected $primaryKey = 'ulid';
-
-    protected static function booted(): void
-    {
-        // static::addGlobalScope('site', function (Builder $query) {
-        //     if (auth()->hasUser()) {
-        //         // $query->where('site_id', auth()->user()->current_site_id);
-        //     }
-        // });
-    }
 }

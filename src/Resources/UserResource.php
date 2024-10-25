@@ -21,30 +21,27 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Vormkracht10\Backstage\Models\Content;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
-use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
+use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\User;
+use Vormkracht10\Backstage\Resources\UserResource\Pages;
+use Vormkracht10\Backstage\Resources\UserResource\RelationManagers;
 
-class ContentResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Content::class;
+    protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static ?string $recordTitleAttribute = 'name';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('Content');
-    }
-
     public static function getModelLabel(): string
     {
-        return __('Content');
+        return __('User');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Content');
+        return __('Users');
     }
 
     public static function form(Form $form): Form
@@ -159,9 +156,9 @@ class ContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContent::route('/'),
-            'create' => Pages\CreateContent::route('/create'),
-            'edit' => Pages\EditContent::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

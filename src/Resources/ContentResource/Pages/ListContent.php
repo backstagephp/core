@@ -6,7 +6,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Vormkracht10\Backstage\Resources\ContentResource;
 
-class ListContents extends ListRecords
+class ListContent extends ListRecords
 {
     protected static string $resource = ContentResource::class;
 

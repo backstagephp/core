@@ -1,0 +1,12 @@
+<?php
+
+namespace Vormkracht10\Backstage\Resources\UserResource\Pages;
+
+use Filament\Actions;
+use Filament\Resources\Pages\CreateRecord;
+use Vormkracht10\Backstage\Resources\UserResource;
+
+class CreateUser extends CreateRecord
+{
+    protected static string $resource = UserResource::class;
+}

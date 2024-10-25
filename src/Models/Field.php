@@ -2,29 +2,21 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Content extends Model
+class Field extends Model
 {
     use HasFactory,
         HasUlids;
 
     protected $primaryKey = 'ulid';
 
-    protected $table = 'content';
-
     protected $guarded = [];
 
     protected function casts(): array
     {
         return [];
-    }
-
-    public function language(): BelongsTo
-    {
-        return $this->belongsTo(Language::class, ['code', 'country_code']);
     }
 }
