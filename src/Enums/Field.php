@@ -21,7 +21,7 @@ enum Field: string
     case Textarea = 'textarea';
     case Toggle = 'toggle';
     case ToggleButtons = 'toggle-buttons';
-        // custom
+    // custom
     case Media = 'media';
     case Link = 'link';
 }

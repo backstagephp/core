@@ -2,15 +2,15 @@
 
 namespace Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
 
-use Filament\Tables;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager
 {
@@ -40,9 +40,9 @@ class FieldsRelationManager extends RelationManager
                     ->required()
                     ->placeholder(__('Name'))
                     ->live(debounce: 250)
-                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
-                    ->readonly()
+                    ->readonly(),
             ]);
     }
 
@@ -68,7 +68,7 @@ class FieldsRelationManager extends RelationManager
                         $data['position'] = Field::where('type_slug', $this->ownerRecord->id)->get()->max('position') + 1;
 
                         return $data;
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
