@@ -2,29 +2,28 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Panel;
-use Filament\PanelProvider;
-use Vormkracht10\Backstage\Models\Site;
 use Filament\Http\Middleware\Authenticate;
-use Vormkracht10\Backstage\BackstagePlugin;
-use Vormkracht10\Backstage\Pages\Dashboard;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Vormkracht10\Backstage\Resources\TagResource;
-use Vormkracht10\Backstage\Resources\SiteResource;
-use Vormkracht10\Backstage\Resources\TypeResource;
-use Vormkracht10\Backstage\Resources\UserResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
-use Vormkracht10\Backstage\Resources\DomainResource;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Vormkracht10\Backstage\Resources\LanguageResource;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Filament\Panel;
+use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Pages\Dashboard;
+use Vormkracht10\Backstage\Resources\ContentResource;
+use Vormkracht10\Backstage\Resources\DomainResource;
+use Vormkracht10\Backstage\Resources\LanguageResource;
+use Vormkracht10\Backstage\Resources\MediaResource;
+use Vormkracht10\Backstage\Resources\SiteResource;
+use Vormkracht10\Backstage\Resources\TagResource;
+use Vormkracht10\Backstage\Resources\TypeResource;
+use Vormkracht10\Backstage\Resources\UserResource;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -38,7 +37,7 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts(fn() => app()->isProduction())
+            ->unsavedChangesAlerts(fn () => app()->isProduction())
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 // BackstagePlugin::make(),

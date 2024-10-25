@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Resources\UserResource\Pages;
 
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Vormkracht10\Backstage\Resources\UserResource;
 

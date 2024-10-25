@@ -3,7 +3,6 @@
 namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Vormkracht10\Backstage\Database\Seeders\UserSeeder;
 
 class BackstageSeeder extends Seeder
 {

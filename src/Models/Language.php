@@ -2,14 +2,14 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class Language extends Model
 {
-    use HasFactory,
-        HasCompositeRelations;
+    use HasCompositeRelations;
+    use HasFactory;
 
     protected $primaryKey = 'slug';
 

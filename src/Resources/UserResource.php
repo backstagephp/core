@@ -2,29 +2,21 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Builder\Block;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Spatie\SchemaOrg\Schema;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Vormkracht10\Backstage\Models\Content;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Vormkracht10\Backstage\Models\Type;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Resources\UserResource\Pages;
-use Vormkracht10\Backstage\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
@@ -100,8 +92,8 @@ class UserResource extends Resource
                                             ->addActionLabel(__('Add a new block'))
                                             ->collapsible()
                                             ->collapsed()
-                                            ->reorderableWithButtons()
-                                    ])
+                                            ->reorderableWithButtons(),
+                                    ]),
                             ]),
                         Tab::make('SEO')
                             ->schema([]),
@@ -120,7 +112,7 @@ class UserResource extends Resource
                         Tab::make('Options')
                             ->schema([
                                 // ...
-                            ])
+                            ]),
                     ]),
             ]);
     }
