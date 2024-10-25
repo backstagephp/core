@@ -2,12 +2,12 @@
 
 namespace Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
 
-use Filament\Tables;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Field;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class FieldsRelationManager extends RelationManager
 {
@@ -61,7 +61,7 @@ class FieldsRelationManager extends RelationManager
                         $data['position'] = Field::where('type_slug', $this->ownerRecord->id)->get()->max('position') + 1;
 
                         return $data;
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

@@ -2,21 +2,20 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Support\Assets\Js;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Asset;
-use Illuminate\Filesystem\Filesystem;
-use Spatie\LaravelPackageTools\Package;
-use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\AlpineComponent;
-use Livewire\Features\SupportTesting\Testable;
-use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Vormkracht10\Backstage\Commands\BackstageCommand;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Filesystem\Filesystem;
+use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Testing\TestsBackstage;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {

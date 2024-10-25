@@ -2,27 +2,13 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Builder\Block;
-use Filament\Forms;
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Spatie\SchemaOrg\Schema;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Resources\DomainResource\Pages;
-use Vormkracht10\Backstage\Resources\DomainResource\RelationManagers;
 
 class FieldResource extends Resource
 {
