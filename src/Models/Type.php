@@ -25,6 +25,6 @@ class Type extends Model
 
     public function fields(): MorphMany
     {
-        return $this->morphMany(Field::class, 'model_type', 'model_slug', 'slug');
+        return $this->morphMany(Field::class, 'slug', 'model_type', 'model_slug');
     }
 }
