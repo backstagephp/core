@@ -2,8 +2,9 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Form extends Model
 {
@@ -20,5 +21,10 @@ class Form extends Model
     protected function casts(): array
     {
         return [];
+    }
+
+    public function fields(): MorphMany
+    {
+        return $this->morphMany(Field::class, 'model');
     }
 }

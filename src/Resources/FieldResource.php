@@ -16,21 +16,19 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Vormkracht10\Backstage\Models\Content;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Vormkracht10\Backstage\Resources\TypeResource\Pages;
-use Vormkracht10\Backstage\Resources\TypeResource\RelationManagers;
-use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Resources\DomainResource\Pages;
+use Vormkracht10\Backstage\Resources\DomainResource\RelationManagers;
 
-class TypeResource extends Resource
+class FieldResource extends Resource
 {
-    protected static ?string $model = Type::class;
+    protected static ?string $model = Field::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-table-cells';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -41,22 +39,18 @@ class TypeResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Type');
+        return __('Fields');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Types');
+        return __('Fields');
     }
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('name')
-                    ->columnSpanFull()
-                    ->required(),
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table
@@ -83,16 +77,16 @@ class TypeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            FieldsRelationManager::class,
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTypes::route('/'),
-            'create' => Pages\CreateType::route('/create'),
-            'edit' => Pages\EditType::route('/{record}/edit'),
+            'index' => Pages\ListDomains::route('/'),
+            'create' => Pages\CreateDomain::route('/create'),
+            'edit' => Pages\EditDomain::route('/{record}/edit'),
         ];
     }
 }

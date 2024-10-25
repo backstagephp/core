@@ -2,27 +2,35 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Builder\Block;
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Spatie\SchemaOrg\Schema;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Resources\SiteResource\Pages;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Setting;
+use Vormkracht10\Backstage\Models\Language;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Vormkracht10\Backstage\Resources\SettingResource\Pages;
+use Vormkracht10\Backstage\Resources\SettingResource\RelationManagers;
 
-class SiteResource extends Resource
+class SettingResource extends Resource
 {
-    protected static ?string $model = Site::class;
+    protected static ?string $model = Setting::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-window';
+    protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -33,12 +41,12 @@ class SiteResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Site');
+        return __('Setting');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Sites');
+        return __('Settings');
     }
 
     public static function form(Form $form): Form
@@ -97,8 +105,8 @@ class SiteResource extends Resource
                                             ->addActionLabel(__('Add a new block'))
                                             ->collapsible()
                                             ->collapsed()
-                                            ->reorderableWithButtons(),
-                                    ]),
+                                            ->reorderableWithButtons()
+                                    ])
                             ]),
                         Tab::make('SEO')
                             ->schema([]),
@@ -117,7 +125,7 @@ class SiteResource extends Resource
                         Tab::make('Options')
                             ->schema([
                                 // ...
-                            ]),
+                            ])
                     ]),
             ]);
     }
@@ -153,9 +161,9 @@ class SiteResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSites::route('/'),
-            'create' => Pages\CreateSite::route('/create'),
-            'edit' => Pages\EditSite::route('/{record}/edit'),
+            'index' => Pages\ListSettings::route('/'),
+            'create' => Pages\CreateSetting::route('/create'),
+            'edit' => Pages\EditSetting::route('/{record}/edit'),
         ];
     }
 }

@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('field_type');
             $table->json('config');
 
+            $table->unsignedInteger('position')->default(0);
+
             $table->timestamps();
 
             $table->unique(['model_type', 'model_slug', 'slug']);

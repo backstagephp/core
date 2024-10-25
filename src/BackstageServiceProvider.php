@@ -2,19 +2,21 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
+use Livewire\Features\SupportTesting\Testable;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Vormkracht10\Backstage\Commands\BackstageCommand;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -82,6 +84,12 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Testing
         Testable::mixin(new TestsBackstage);
+
+        Relation::enforceMorphMap([
+            'form' => 'Vormkracht10\Backstage\Models\Form',
+            'setting' => 'Vormkracht10\Backstage\Models\Setting',
+            'type' => 'Vormkracht10\Backstage\Models\Type',
+        ]);
     }
 
     protected function getAssetPackageName(): ?string
@@ -145,7 +153,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_languages_table',
             'create_types_table',
             'create_fields_table',
-            'create_globals_table',
+            'create_settings_table',
             'create_content_table',
             'create_meta_table',
             'create_domains_table',
