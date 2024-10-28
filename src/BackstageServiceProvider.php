@@ -3,23 +3,23 @@
 namespace Vormkracht10\Backstage;
 
 use Filament\Facades\Filament;
-use Filament\Support\Assets\Js;
-use Filament\Support\Assets\Css;
+use Filament\Navigation\NavigationGroup;
+use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Route;
-use Spatie\LaravelPackageTools\Package;
-use Vormkracht10\Backstage\Models\Type;
-use Filament\Navigation\NavigationGroup;
-use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Assets\AlpineComponent;
 use Livewire\Features\SupportTesting\Testable;
-use Vormkracht10\Backstage\Testing\TestsBackstage;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Testing\TestsBackstage;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
