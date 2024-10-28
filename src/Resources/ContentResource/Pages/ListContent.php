@@ -16,7 +16,7 @@ class ListContent extends ListRecords
         return [
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn($type) => Actions\Action::make(__($type->name))
+                    fn ($type) => Actions\Action::make(__($type->name))
                         ->slideOver()
                         ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
                         ->url(route('filament.backstage.resources.content.create', ['type' => $type->slug]))
