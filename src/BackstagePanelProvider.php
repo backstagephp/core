@@ -40,6 +40,7 @@ class BackstagePanelProvider extends PanelProvider
             ->path('backstage')
             ->default(config('backstage.default_panel'))
             // ->tenant(Site::class)
+            ->databaseNotifications()
             ->spa()
             ->login()
             ->passwordReset()
