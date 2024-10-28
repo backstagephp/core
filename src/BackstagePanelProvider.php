@@ -43,7 +43,7 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts(fn() => app()->isProduction())
+            ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 // BackstagePlugin::make(),

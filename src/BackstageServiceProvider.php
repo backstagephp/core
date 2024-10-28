@@ -105,6 +105,8 @@ class BackstageServiceProvider extends PackageServiceProvider
             NavigationGroup::make()
                 ->label('Structure'),
             NavigationGroup::make()
+                ->label('Users'),
+            NavigationGroup::make()
                 ->label('Setup'),
         ]);
     }
