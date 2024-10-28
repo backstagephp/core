@@ -4,11 +4,11 @@ namespace Vormkracht10\Backstage\Resources\TagResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\LanguageResource;
+use Vormkracht10\Backstage\Resources\TagResource;
 
 class ListTags extends ListRecords
 {
-    protected static string $resource = LanguageResource::class;
+    protected static string $resource = TagResource::class;
 
     protected function getHeaderActions(): array
     {

@@ -41,6 +41,11 @@ class ContentResource extends Resource
         return __('Content');
     }
 
+    public static function getSlug(): string
+    {
+        return 'content';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -100,6 +105,8 @@ class ContentResource extends Resource
                                             ->reorderableWithButtons(),
                                     ]),
                             ]),
+                        Tab::make('Microdata')
+                            ->schema([]),
                         Tab::make('SEO')
                             ->schema([]),
                         Tab::make('Revisions')
@@ -152,7 +159,7 @@ class ContentResource extends Resource
     {
         return [
             'index' => Pages\ListContent::route('/'),
-            'create' => Pages\CreateContent::route('/create'),
+            'create' => Pages\CreateContent::route('/create/{type}'),
             'edit' => Pages\EditContent::route('/{record}/edit'),
         ];
     }

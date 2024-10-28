@@ -4,11 +4,11 @@ namespace Vormkracht10\Backstage\Resources\SiteResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\LanguageResource;
+use Vormkracht10\Backstage\Resources\SiteResource;
 
 class ListSites extends ListRecords
 {
-    protected static string $resource = LanguageResource::class;
+    protected static string $resource = SiteResource::class;
 
     protected function getHeaderActions(): array
     {

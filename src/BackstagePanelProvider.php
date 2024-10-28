@@ -2,30 +2,31 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Vormkracht10\Backstage\Models\Site;
+use Filament\Http\Middleware\Authenticate;
 use Vormkracht10\Backstage\Pages\Dashboard;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Resources\DomainResource;
-use Vormkracht10\Backstage\Resources\FieldResource;
-use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
-use Vormkracht10\Backstage\Resources\SettingResource;
-use Vormkracht10\Backstage\Resources\SiteResource;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Vormkracht10\Backstage\Resources\TagResource;
+use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
+use Vormkracht10\Backstage\Resources\FieldResource;
+use Vormkracht10\Backstage\Resources\MediaResource;
+use Vormkracht10\Backstage\Resources\DomainResource;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Vormkracht10\Backstage\Resources\ContentResource;
+use Vormkracht10\Backstage\Resources\SettingResource;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Resources\LanguageResource;
+use Vormkracht10\Backstage\Resources\RedirectResource;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -39,7 +40,7 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts(fn () => app()->isProduction())
+            ->unsavedChangesAlerts(fn() => app()->isProduction())
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 // BackstagePlugin::make(),
@@ -50,6 +51,7 @@ class BackstagePanelProvider extends PanelProvider
                 FieldResource::class,
                 LanguageResource::class,
                 MediaResource::class,
+                RedirectResource::class,
                 SettingResource::class,
                 SiteResource::class,
                 TagResource::class,

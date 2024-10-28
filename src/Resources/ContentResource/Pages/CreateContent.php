@@ -8,4 +8,6 @@ use Vormkracht10\Backstage\Resources\ContentResource;
 class CreateContent extends CreateRecord
 {
     protected static string $resource = ContentResource::class;
+
+    protected static ?string $slug = 'content/create/{type}';
 }
