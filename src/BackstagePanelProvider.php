@@ -22,6 +22,7 @@ use Vormkracht10\Backstage\Resources\FieldResource;
 use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\LanguageResource;
 use Vormkracht10\Backstage\Resources\MediaResource;
+use Vormkracht10\Backstage\Resources\MenuResource;
 use Vormkracht10\Backstage\Resources\RedirectResource;
 use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
@@ -42,7 +43,7 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts(fn () => app()->isProduction())
+            ->unsavedChangesAlerts(fn() => app()->isProduction())
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 // BackstagePlugin::make(),
@@ -54,6 +55,7 @@ class BackstagePanelProvider extends PanelProvider
                 FormResource::class,
                 LanguageResource::class,
                 MediaResource::class,
+                MenuResource::class,
                 RedirectResource::class,
                 SettingResource::class,
                 SiteResource::class,

@@ -7,14 +7,14 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Resources\TagResource\Pages;
+use Vormkracht10\Backstage\Models\Menu;
+use Vormkracht10\Backstage\Resources\MenuResource\Pages;
 
-class TagResource extends Resource
+class MenuResource extends Resource
 {
-    protected static ?string $model = Tag::class;
+    protected static ?string $model = Menu::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -25,12 +25,12 @@ class TagResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Tag');
+        return __('Menu');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Tags');
+        return __('Menus');
     }
 
     public static function form(Form $form): Form
@@ -70,9 +70,9 @@ class TagResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTags::route('/'),
-            'create' => Pages\CreateTag::route('/create'),
-            'edit' => Pages\EditTag::route('/{record}/edit'),
+            'index' => Pages\ListMenus::route('/'),
+            'create' => Pages\CreateMenu::route('/create'),
+            'edit' => Pages\EditMenu::route('/{record}/edit'),
         ];
     }
 }
