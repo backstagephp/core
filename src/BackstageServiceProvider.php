@@ -104,7 +104,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             NavigationGroup::make()
                 ->label('Structure'),
             NavigationGroup::make()
-                ->label('Configure'),
+                ->label('Setup'),
         ]);
     }
 
@@ -177,6 +177,8 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_media_tables',
             'create_redirects_table',
             'create_tags_tables',
+
+            'create_notifications_table',
         ];
     }
 }

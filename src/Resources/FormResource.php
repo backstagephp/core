@@ -2,43 +2,35 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Resources\DomainResource\Pages;
+use Vormkracht10\Backstage\Models\Form as FormModel;
+use Vormkracht10\Backstage\Resources\FormResource\Pages;
 
-class DomainResource extends Resource
+class FormResource extends Resource
 {
-    protected static ?string $model = Domain::class;
+    protected static ?string $model = FormModel::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
     public static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Setup');
+        return __('Content');
     }
 
     public static function getModelLabel(): string
     {
-        return __('Domain');
+        return __('Form');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Domains');
+        return __('Forms');
     }
 
     public static function form(Form $form): Form
@@ -51,7 +43,7 @@ class DomainResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('path')
                     ->searchable()
                     ->sortable(),
             ])
@@ -78,9 +70,9 @@ class DomainResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDomains::route('/'),
-            'create' => Pages\CreateDomain::route('/create'),
-            'edit' => Pages\EditDomain::route('/{record}/edit'),
+            'index' => Pages\ListForms::route('/'),
+            'create' => Pages\CreateForm::route('/create'),
+            'edit' => Pages\EditForm::route('/{record}/edit'),
         ];
     }
 }

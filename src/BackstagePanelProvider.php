@@ -4,12 +4,15 @@ namespace Vormkracht10\Backstage;
 
 use Filament\Panel;
 use Filament\PanelProvider;
+use Composer\InstalledVersions;
 use Vormkracht10\Backstage\Models\Site;
 use Filament\Http\Middleware\Authenticate;
+use Laravel\Horizon\HorizonServiceProvider;
 use Vormkracht10\Backstage\Pages\Dashboard;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Vormkracht10\Backstage\Resources\TagResource;
+use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
@@ -49,6 +52,7 @@ class BackstagePanelProvider extends PanelProvider
                 ContentResource::class,
                 DomainResource::class,
                 FieldResource::class,
+                FormResource::class,
                 LanguageResource::class,
                 MediaResource::class,
                 RedirectResource::class,

@@ -66,6 +66,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->blocks([
                                                 Builder\Block::make('heading')
+                                                    ->icon('heroicon-o-h1')
                                                     ->schema([
                                                         TextInput::make('content')
                                                             ->label('Heading')
@@ -82,13 +83,55 @@ class ContentResource extends Resource
                                                             ->required(),
                                                     ])
                                                     ->columns(2),
-                                                Builder\Block::make('paragraph')
+                                                Builder\Block::make('columns')
+                                                    ->icon('heroicon-o-bars-4')
                                                     ->schema([
-                                                        RichEditor::make('content')
-                                                            ->label('Paragraph')
-                                                            ->required(),
+                                                        Builder::make('body')
+                                                            ->hiddenLabel()
+                                                            ->columnSpanFull()
+                                                            ->blocks([
+                                                                Builder\Block::make('heading')
+                                                                    ->schema([
+                                                                        TextInput::make('content')
+                                                                            ->label('Heading')
+                                                                            ->required(),
+                                                                        Select::make('level')
+                                                                            ->options([
+                                                                                'h1' => 'Heading 1',
+                                                                                'h2' => 'Heading 2',
+                                                                                'h3' => 'Heading 3',
+                                                                                'h4' => 'Heading 4',
+                                                                                'h5' => 'Heading 5',
+                                                                                'h6' => 'Heading 6',
+                                                                            ])
+                                                                            ->required(),
+                                                                    ])
+                                                                    ->columns(2),
+                                                                Builder\Block::make('paragraph')
+                                                                    ->schema([
+                                                                        RichEditor::make('content')
+                                                                            ->label('Paragraph')
+                                                                            ->required(),
+                                                                    ]),
+                                                                Builder\Block::make('image')
+                                                                    ->icon('heroicon-o-photo')
+                                                                    ->schema([
+                                                                        FileUpload::make('url')
+                                                                            ->label('Image')
+                                                                            ->image()
+                                                                            ->required(),
+                                                                        TextInput::make('alt')
+                                                                            ->label('Alt text')
+                                                                            ->required(),
+                                                                    ]),
+                                                            ])
+                                                            ->addActionLabel(__('Add a new block'))
+                                                            ->collapsible()
+                                                            ->collapsed()
+                                                            ->reorderableWithButtons(),
                                                     ]),
                                                 Builder\Block::make('image')
+                                                    ->icon('heroicon-o-photo')
                                                     ->schema([
                                                         FileUpload::make('url')
                                                             ->label('Image')

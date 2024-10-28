@@ -8,13 +8,13 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Resources\DomainResource\Pages;
+use Vormkracht10\Backstage\Resources\FieldResource\Pages;
 
 class FieldResource extends Resource
 {
     protected static ?string $model = Field::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
+    protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -70,9 +70,9 @@ class FieldResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDomains::route('/'),
-            'create' => Pages\CreateDomain::route('/create'),
-            'edit' => Pages\EditDomain::route('/{record}/edit'),
+            'index' => Pages\ListFields::route('/'),
+            'create' => Pages\CreateField::route('/create'),
+            'edit' => Pages\EditField::route('/{record}/edit'),
         ];
     }
 }

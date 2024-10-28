@@ -16,12 +16,13 @@ class ListContent extends ListRecords
         return [
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->icon($type->icon ?? 'heroicon-o-star')
-                        ->url('')
+                    fn($type) => Actions\Action::make(__($type->name))
+                        ->slideOver()
+                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
+                        ->url(route('filament.backstage.resources.content.create', ['type' => $type->slug]))
                 )->toArray()
             )
-                ->label(__('New content'))
+                ->label(__('New Content'))
                 ->dropdownPlacement('bottom-end')
                 ->icon('heroicon-o-chevron-down')
                 ->iconPosition('after')
