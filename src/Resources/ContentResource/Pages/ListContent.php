@@ -4,8 +4,8 @@ namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Resources\Pages\ListRecords;
+use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Resources\ContentResource;
 
 class ListContent extends ListRecords
@@ -17,8 +17,8 @@ class ListContent extends ListRecords
         return [
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn($type) => Actions\Action::make(__($type->name))
-                        ->form(fn(Form $form) => ContentResource::form($form)->getComponents())
+                    fn ($type) => Actions\Action::make(__($type->name))
+                        ->form(fn (Form $form) => ContentResource::form($form)->getComponents())
                         ->slideOver()
                         ->modalWidth('6xl')
                         ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
