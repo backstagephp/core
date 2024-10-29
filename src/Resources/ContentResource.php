@@ -79,7 +79,7 @@ class ContentResource extends Resource
                                                     ])
                                                     ->columns(2),
                                                 Builder\Block::make('columns')
-                                                    ->icon('heroicon-o-bars-4')
+                                                    ->icon('heroicon-o-view-columns')
                                                     ->schema([
                                                         Builder::make('body')
                                                             ->hiddenLabel()
@@ -102,6 +102,17 @@ class ContentResource extends Resource
                                                                             ->required(),
                                                                     ])
                                                                     ->columns(2),
+                                                                Builder\Block::make('form')
+                                                                    ->icon('heroicon-o-inbox-arrow-down')
+                                                                    ->schema([
+                                                                        Select::make('form')
+                                                                            ->label('Form')
+                                                                            ->options([
+                                                                                'contact' => 'Contact',
+                                                                                'newsletter' => 'Newsletter',
+                                                                            ])
+                                                                            ->required(),
+                                                                    ]),
                                                                 Builder\Block::make('paragraph')
                                                                     ->schema([
                                                                         RichEditor::make('content')
@@ -119,7 +130,7 @@ class ContentResource extends Resource
                                                                             ->label('Alt text')
                                                                             ->required(),
                                                                     ]),
-                                                            ])
+                                                            ])->cloneable()
                                                             ->addActionLabel(__('Add a new block'))
                                                             ->collapsible()
                                                             ->collapsed()
@@ -136,7 +147,69 @@ class ContentResource extends Resource
                                                             ->label('Alt text')
                                                             ->required(),
                                                     ]),
-                                            ])
+                                                Builder\Block::make('form')
+                                                    ->icon('heroicon-o-inbox-arrow-down')
+                                                    ->schema([
+                                                        Select::make('form')
+                                                            ->label('Form')
+                                                            ->options([
+                                                                'contact' => 'Contact',
+                                                                'newsletter' => 'Newsletter',
+                                                            ])
+                                                            ->required(),
+                                                    ]),
+                                                Builder\Block::make('video')
+                                                    ->icon('heroicon-o-video-camera')
+                                                    ->schema([]),
+                                                Builder\Block::make('slider')
+                                                    ->icon('heroicon-o-square-3-stack-3d')
+                                                    ->schema([]),
+                                                Builder\Block::make('overview')
+                                                    ->icon('heroicon-o-squares-2x2')
+                                                    ->schema([
+                                                        Select::make('type')
+                                                            ->label('Type')
+                                                            ->options([
+                                                                'Current' => [
+                                                                    'children' => 'Children',
+                                                                    'related' => 'Related',
+                                                                ],
+                                                                'Other' => [
+                                                                    'blog' => 'Blog',
+                                                                    'page' => 'Page',
+                                                                    'question' => 'Question',
+                                                                ]
+                                                            ])
+                                                            ->required(),
+                                                        TextInput::make('items')
+                                                            ->label('Items')
+                                                            ->numeric()
+                                                            ->default(3)
+                                                            ->required(),
+                                                    ]),
+                                                Builder\Block::make('content')
+                                                    ->icon('heroicon-o-squares-2x2')
+                                                    ->schema([
+                                                        Select::make('content')
+                                                            ->label('Content')
+                                                            ->native(false)
+                                                            ->searchable()
+                                                            ->options([
+                                                                'test' => 'Dit is een review'
+                                                            ])
+                                                            ->createOptionForm([
+                                                                TextInput::make('name')
+                                                                    ->required(),
+                                                                TextInput::make('email')
+                                                                    ->required()
+                                                                    ->email(),
+                                                            ])
+                                                            ->required(),
+                                                    ]),
+                                                Builder\Block::make('filter')
+                                                    ->icon('heroicon-o-funnel')
+                                                    ->schema([]),
+                                            ])->cloneable()->blockPickerColumns(3)
                                             ->addActionLabel(__('Add a new block'))
                                             ->collapsible()
                                             ->collapsed()
