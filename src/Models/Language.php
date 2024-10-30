@@ -11,7 +11,7 @@ class Language extends Model
     use HasCompositeRelations;
     use HasFactory;
 
-    protected $primaryKey = 'slug';
+    protected $primaryKey = 'code';
 
     public $incrementing = false;
 
