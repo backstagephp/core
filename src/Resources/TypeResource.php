@@ -42,6 +42,16 @@ class TypeResource extends Resource
                 TextInput::make('name')
                     ->columnSpanFull()
                     ->required(),
+                TextInput::make('slug')
+                    ->columnSpanFull()
+                    ->required(),
+                TextInput::make('name_plural')
+                    ->columnSpanFull()
+                    ->required(),
+                TextInput::make('icon')
+                    ->columnSpanFull()
+                    ->default('heroicon-o-circle-stack')
+                    ->required(),
             ]);
     }
 
