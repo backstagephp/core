@@ -44,7 +44,7 @@ class FieldsRelationManager extends RelationManager
                 TextInput::make('slug')
                     ->readonly(),
                 TextInput::make('field_type')
-                    ->required()
+                    ->required(),
             ]);
     }
 
