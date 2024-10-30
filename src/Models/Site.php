@@ -9,10 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Site extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory,
+        HasUlids;
 
     protected $primaryKey = 'ulid';
+
+    public  $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public function getRouteKeyName(): string
+    {
+        return 'ulid';
+    }
 
     protected static function booted(): void
     {
