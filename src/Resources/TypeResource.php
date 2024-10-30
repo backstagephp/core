@@ -68,7 +68,6 @@ class TypeResource extends Resource
                         'light-bulb' => 'heroicon-o-light-bulb',
                     ])
                     ->inline()
-                    ->allowHtml()
                     ->grouped()
                     ->required(),
             ]);
