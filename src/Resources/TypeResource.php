@@ -2,6 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -55,9 +56,14 @@ class TypeResource extends Resource
                 TextInput::make('name_plural')
                     ->columnSpanFull()
                     ->required(),
-                TextInput::make('icon')
+                Select::make('icon')
                     ->columnSpanFull()
-                    ->default('heroicon-o-circle-stack')
+                    ->default('circle-stack')
+                    ->options([
+                        'circle-stack' => 'Search stack',
+                        'light-bulb' => 'Light bulb'
+                    ])
+                    ->searchable()
                     ->required(),
             ]);
     }
