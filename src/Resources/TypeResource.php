@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Resources;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -56,14 +57,20 @@ class TypeResource extends Resource
                 TextInput::make('name_plural')
                     ->columnSpanFull()
                     ->required(),
-                Select::make('icon')
+                ToggleButtons::make('icon')
                     ->columnSpanFull()
                     ->default('circle-stack')
                     ->options([
-                        'circle-stack' => 'Search stack',
-                        'light-bulb' => 'Light bulb'
+                        'circle-stack' => '',
+                        'light-bulb' => ''
                     ])
-                    ->searchable()
+                    ->icons([
+                        'circle-stack' => 'heroicon-o-circle-stack',
+                        'light-bulb' => 'heroicon-o-light-bulb',
+                    ])
+                    ->inline()
+                    ->allowHtml()
+                    ->grouped()
                     ->required(),
             ]);
     }
