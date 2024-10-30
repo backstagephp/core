@@ -2,11 +2,11 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Resources\MenuResource\Pages;
 
