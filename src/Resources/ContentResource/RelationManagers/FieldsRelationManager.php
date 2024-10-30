@@ -43,6 +43,8 @@ class FieldsRelationManager extends RelationManager
                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->readonly(),
+                TextInput::make('field_type')
+                    ->required(),
             ]);
     }
 
@@ -65,7 +67,7 @@ class FieldsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->slideOver()
                     ->mutateFormDataUsing(function (array $data) {
-                        $data['position'] = Field::where('type_slug', $this->ownerRecord->id)->get()->max('position') + 1;
+                        $data['position'] = Field::where('model_slug', $this->ownerRecord->id)->get()->max('position') + 1;
 
                         return $data;
                     }),

@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->string('name');
             $table->string('field_type');
-            $table->json('config');
+            $table->json('config')->nullable();
 
             $table->unsignedInteger('position')->default(0);
 
