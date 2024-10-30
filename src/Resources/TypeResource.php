@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
@@ -62,7 +61,7 @@ class TypeResource extends Resource
                     ->default('circle-stack')
                     ->options([
                         'circle-stack' => '',
-                        'light-bulb' => ''
+                        'light-bulb' => '',
                     ])
                     ->icons([
                         'circle-stack' => 'heroicon-o-circle-stack',
