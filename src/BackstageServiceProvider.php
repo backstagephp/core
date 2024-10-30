@@ -3,23 +3,24 @@
 namespace Vormkracht10\Backstage;
 
 use Filament\Facades\Filament;
-use Filament\Navigation\NavigationGroup;
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
+use Filament\Forms\Components\Select;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Route;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 use Vormkracht10\Backstage\Models\Type;
+use Filament\Navigation\NavigationGroup;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
+use Livewire\Features\SupportTesting\Testable;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -97,6 +98,10 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Route::bind('type', function (string $slug) {
             return Type::where('slug', $slug)->firstOrFail();
+        });
+
+        Select::configureUsing(function (Select $select): void {
+            $select->native(false);
         });
 
         Filament::registerNavigationGroups([
@@ -178,7 +183,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_domains_table',
             'create_forms_table',
             'create_media_tables',
-            'create_redirects_table',
             'create_tags_tables',
 
             'create_notifications_table',
