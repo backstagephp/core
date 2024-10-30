@@ -178,7 +178,7 @@ class ContentResource extends Resource
                                                                     'blog' => 'Blog',
                                                                     'page' => 'Page',
                                                                     'question' => 'Question',
-                                                                ]
+                                                                ],
                                                             ])
                                                             ->required(),
                                                         TextInput::make('items')
@@ -195,7 +195,7 @@ class ContentResource extends Resource
                                                             ->native(false)
                                                             ->searchable()
                                                             ->options([
-                                                                'test' => 'Dit is een review'
+                                                                'test' => 'Dit is een review',
                                                             ])
                                                             ->createOptionForm([
                                                                 TextInput::make('name')
