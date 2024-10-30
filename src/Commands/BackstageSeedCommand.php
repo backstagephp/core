@@ -8,11 +8,13 @@ class BackstageSeedCommand extends Command
 {
     public $signature = 'backstage:seed';
 
-    public $description = 'Seed database with sample data';
+    public $description = 'Seed database with sample Backstage data';
 
     public function handle(): int
     {
-        $this->call('db:seed', ['--class' => 'Vormkracht10\Backstage\Database\Seeders\BackstageSeeder']);
+        if ($this->confirm('Do you really want to seed the database with sample Backstage data?')) {
+            $this->call('db:seed', ['--class' => 'Vormkracht10\Backstage\Database\Seeders\BackstageSeeder']);
+        }
 
         return self::SUCCESS;
     }
