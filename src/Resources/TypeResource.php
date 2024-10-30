@@ -4,6 +4,8 @@ namespace Vormkracht10\Backstage\Resources;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -41,7 +43,12 @@ class TypeResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->columnSpanFull()
-                    ->required(),
+                    ->required()
+                    ->live(debounce: 250)
+                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                        $set('slug', Str::slug($state));
+                        $set('name_plural', Str::plural($state));
+                    }),
                 TextInput::make('slug')
                     ->columnSpanFull()
                     ->required(),
