@@ -23,7 +23,6 @@ use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\LanguageResource;
 use Vormkracht10\Backstage\Resources\MediaResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
-use Vormkracht10\Backstage\Resources\RedirectResource;
 use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\TagResource;
