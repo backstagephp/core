@@ -38,7 +38,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn(): string => Blade::render(
+            fn (): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {

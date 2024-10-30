@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Site extends Model
 {
-    use HasFactory,
-        HasUlids;
+    use HasFactory;
+    use HasUlids;
 
     protected $primaryKey = 'ulid';
 
-    public  $incrementing = false;
+    public $incrementing = false;
 
     protected $keyType = 'string';
 
