@@ -61,7 +61,7 @@ class TypeResource extends Resource
                     ->default('circle-stack')
                     ->options([
                         'circle-stack' => 'Search stack',
-                        'light-bulb' => 'Light bulb'
+                        'light-bulb' => 'Light bulb',
                     ])
                     ->searchable()
                     ->required(),
