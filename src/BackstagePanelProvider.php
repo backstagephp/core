@@ -56,7 +56,6 @@ class BackstagePanelProvider extends PanelProvider
                 LanguageResource::class,
                 MediaResource::class,
                 MenuResource::class,
-                RedirectResource::class,
                 SettingResource::class,
                 SiteResource::class,
                 TagResource::class,
