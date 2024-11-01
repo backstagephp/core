@@ -12,7 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\DomainResource\Pages;
 
 class DomainResource extends Resource
@@ -58,14 +57,14 @@ class DomainResource extends Resource
                                         TextInput::make('country_code')
                                             ->required(),
                                         TextInput::make('name')
-                                            ->required()
+                                            ->required(),
                                     ])
                                     ->searchable(['code', 'name', 'native'])
                                     ->columnSpanFull(),
                                 TextInput::make('country_code')
                                     ->columnSpanFull(),
-                            ])
-                    ])
+                            ]),
+                    ]),
             ]);
     }
 

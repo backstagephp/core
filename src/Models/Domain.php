@@ -15,7 +15,8 @@ class Domain extends Model
 
     protected $guarded = [];
 
-    public function language() {
+    public function language()
+    {
         return $this->belongsTo(Language::class, 'language_code', 'code');
     }
 }
