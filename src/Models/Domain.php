@@ -12,4 +12,10 @@ class Domain extends Model
     use HasUlids;
 
     protected $primaryKey = 'ulid';
+
+    protected $guarded = [];
+
+    public function language() {
+        return $this->belongsTo(Language::class, 'language_code', 'code');
+    }
 }
