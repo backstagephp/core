@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('slug')->primary();
 
             $table->string('name');
-            $table->string('title_field');
+            $table->string('title_field')->nullable();
             $table->string('submit_button')->nullable();
 
             $table->timestamps();
