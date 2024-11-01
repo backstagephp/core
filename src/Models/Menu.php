@@ -9,11 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     use HasFactory;
-    use HasUlids;
 
-    protected $primaryKey = 'ulid';
+    protected $primaryKey = 'slug';
 
-    protected $table = 'media';
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    protected $table = 'menu';
 
     protected $guarded = [];
 
