@@ -52,7 +52,7 @@ class FormResource extends Resource
                                 TextInput::make('slug')
                                     ->columnSpanFull()
                                     ->required()
-                                    ->unique(),
+                                    ->unique(ignoreRecord: true),
                             ])
                     ])
             ]);
@@ -62,7 +62,7 @@ class FormResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('path')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
             ])
