@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('slug')->primary();
 
             $table->string('name');
-            
+
             $table->timestamps();
             $table->softDeletes();
         });
