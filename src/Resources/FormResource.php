@@ -53,8 +53,8 @@ class FormResource extends Resource
                                     ->columnSpanFull()
                                     ->required()
                                     ->unique(ignoreRecord: true),
-                            ])
-                    ])
+                            ]),
+                    ]),
             ]);
     }
 
