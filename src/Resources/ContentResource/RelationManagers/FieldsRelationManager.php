@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -43,7 +44,11 @@ class FieldsRelationManager extends RelationManager
                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->readonly(),
-                TextInput::make('field_type')
+                Select::make('field_type')
+                    ->options([
+                        'text' => __('Text'),
+                        'checkbox' => __('Checkbox'),
+                    ])
                     ->required(),
             ]);
     }

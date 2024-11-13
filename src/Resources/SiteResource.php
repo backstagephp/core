@@ -2,11 +2,15 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\SiteResource\Pages;
 
@@ -36,7 +40,36 @@ class SiteResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                TextInput::make('name')
+                    ->columnSpanFull()
+                    ->required()
+                    ->live(debounce: 250)
+                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                        $set('slug', Str::slug($state));
+                    }),
+                TextInput::make('slug')
+                    ->columnSpanFull()
+                    ->required(),
+                TextInput::make('title')
+                    ->columnSpanFull()
+                    ->required(),
+                TextInput::make('title_separator')
+                    ->columnSpanFull()
+                    ->default(',')
+                    ->required(),
+                TextInput::make('path')
+                    ->columnSpanFull()
+                    ->default('/')
+                    ->required(),
+                TextInput::make('timezone')
+                    ->columnSpanFull()
+                    ->default('UTC')
+                    ->required(),
+                Checkbox::make('auth'),
+                Checkbox::make('default'),
+                Checkbox::make('trailing_slash')
+            ]);
     }
 
     public static function table(Table $table): Table

@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
 use Vormkracht10\Backstage\Models\Type;

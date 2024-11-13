@@ -16,6 +16,8 @@ class Site extends Model
 
     public $incrementing = false;
 
+    protected $guarded = [];
+
     protected $keyType = 'string';
 
     public function getRouteKeyName(): string
