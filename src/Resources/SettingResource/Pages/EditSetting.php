@@ -4,13 +4,11 @@ namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Pages\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Resources\SettingResource;
@@ -61,7 +59,7 @@ class EditSetting extends EditRecord
 
                                             return $fields;
                                         }
-                                    )
+                                    ),
                             ]),
                         Tab::make('Configure')
                             ->label(__('Configure'))
