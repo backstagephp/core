@@ -47,5 +47,5 @@ class Setting extends Model
     public function fields(): MorphToMany
     {
         return $this->morphToMany(Field::class, 'fieldable', 'fieldables', 'fieldable_ulid', 'field_ulid');
-    }    
+    }
 }
