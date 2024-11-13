@@ -68,7 +68,7 @@ class SiteResource extends Resource
                     ->required(),
                 Checkbox::make('auth'),
                 Checkbox::make('default'),
-                Checkbox::make('trailing_slash')
+                Checkbox::make('trailing_slash'),
             ]);
     }
 
