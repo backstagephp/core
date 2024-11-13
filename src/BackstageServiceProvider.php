@@ -180,6 +180,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_settings_table',
             'create_content_table',
             'create_meta_table',
+            'create_menu_table',
             'create_domains_table',
             'create_forms_table',
             'create_media_tables',

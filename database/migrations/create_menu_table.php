@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('forms', function (Blueprint $table) {
+        Schema::create('menu', function (Blueprint $table) {
             $table->string('slug')->primary();
 
             $table->string('name');
-            $table->string('title_field')->nullable();
-            $table->string('submit_button')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

@@ -16,9 +16,9 @@ return new class extends Migration
             $table->char('country_code', 2);
             $table->string('hreflang')->nullable();
             $table->string('name');
-            $table->string('native');
-            $table->boolean('active');
-            $table->boolean('default');
+            $table->string('native')->nullable();
+            $table->boolean('active')->default(true);
+            $table->boolean('default')->default(true);
             $table->timestamps();
 
             $table->primary(['code', 'country_code']);
