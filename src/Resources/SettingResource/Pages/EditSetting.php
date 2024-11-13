@@ -111,16 +111,17 @@ class EditSetting extends EditRecord
         $inputs = [];
 
         foreach ($this->record->fields as $field) {
+
             $inputs[] = match ($field->field_type) {
                 'text' => TextInput::make('setting.' . $field->slug)
-                    ->label($field->name)
+                    ->label(__($field->name))
                     ->default($field->value),
                 'select' => Select::make('setting.' . $field->slug)
-                    ->label($field->name)
+                    ->label(__($field->name))
                     ->options($field->options)
                     ->default($field->value),
                 default => TextInput::make('setting.' . $field->slug)
-                    ->label($field->name)
+                    ->label(__($field->name))
                     ->default($field->value),
             };
         }
