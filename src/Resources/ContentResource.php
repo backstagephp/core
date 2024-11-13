@@ -53,6 +53,11 @@ class ContentResource extends Resource
                     ->tabs([
                         Tab::make('Content')
                             ->schema([
+
+                                Select::make('content_type')
+                                    ->options(
+                                        Type::all()->pluck('name', 'slug')->toArray()
+                                    ),
                                 Select::make('parent_ulid')
                                     ->name(__('Parent'))
                                     ->options(
@@ -253,11 +258,6 @@ class ContentResource extends Resource
                                 TextInput::make('slug')
                                     ->columnSpanFull()
                                     ->required(),
-                                Select::make('content_type')
-                                    ->options(
-                                        Type::all()->pluck('name', 'slug')->toArray()
-                                    ),
-                                    // ->default(self::$type->slug),
                                 Select::make('site_ulid')
                                     ->options(
                                         Site::all()->pluck('name', 'ulid')->toArray()
@@ -268,8 +268,11 @@ class ContentResource extends Resource
                                         Language::all()->pluck('name', 'code')->toArray()
                                     )
                                     ->default(Language::where('default', true)->first()->code),
-                                TextInput::make('country_code')
-                                    ->default('nl'),
+                                Select::make('country_code')
+                                    ->options(
+                                        Language::all()->pluck('name', 'code')->toArray()
+                                    )
+                                    ->default(Language::where('default', true)->first()->code),
                             ]),
                     ]),
             ]);
