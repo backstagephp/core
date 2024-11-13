@@ -119,11 +119,9 @@ class EditSetting extends EditRecord
                 default => TextInput::make('setting.' . $field->slug),
             };
 
-            $input->label(__($field->name))
+            $inputs[] = $input->label(__($field->name))
                 ->required($field->config['required'] ?? false)
                 ->default($field->value);
-
-            $inputs[] = $input;
         }
 
         return $inputs;
