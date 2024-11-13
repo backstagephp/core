@@ -4,7 +4,6 @@ namespace Vormkracht10\Backstage\Resources;
 
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -14,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
@@ -67,8 +67,8 @@ class ContentResource extends Resource
                                         $set('title', Str::title($state));
                                     }),
                                 TextInput::make('title')
-                                        ->columnSpanFull()
-                                        ->required()
+                                    ->columnSpanFull()
+                                    ->required(),
                                 // Section::make('body')
                                 //     ->heading(__('Body'))
                                 //     ->schema([
@@ -257,7 +257,7 @@ class ContentResource extends Resource
                                     ->options(
                                         Type::all()->pluck('name', 'slug')->toArray()
                                     ),
-                                    // ->default(self::$type->slug),
+                                // ->default(self::$type->slug),
                                 Select::make('site_ulid')
                                     ->options(
                                         Site::all()->pluck('name', 'ulid')->toArray()
