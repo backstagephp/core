@@ -3,14 +3,15 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Resources\SettingResource;
 
 class EditSetting extends EditRecord
@@ -22,6 +23,25 @@ class EditSetting extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        foreach ($this->record->values as $slug => $value) {
+            $data['setting'][$slug] = $value;
+        }
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $fields = $data['setting'];
+        unset($data['setting']);
+
+        $data['values'] = $fields;
+
+        return $data;
     }
 
     public function form(Form $form): Form
@@ -92,14 +112,14 @@ class EditSetting extends EditRecord
 
         foreach ($this->record->fields as $field) {
             $inputs[] = match ($field->field_type) {
-                'text' => TextInput::make($field->slug)
+                'text' => TextInput::make('setting.' . $field->slug)
                     ->label($field->name)
                     ->default($field->value),
-                'select' => Select::make($field->slug)
+                'select' => Select::make('setting.' . $field->slug)
                     ->label($field->name)
                     ->options($field->options)
                     ->default($field->value),
-                default => TextInput::make($field->slug)
+                default => TextInput::make('setting.' . $field->slug)
                     ->label($field->name)
                     ->default($field->value),
             };
