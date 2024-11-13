@@ -75,5 +75,4 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $this->sites()->whereKey($tenant)->exists();
     }
-    
 }
