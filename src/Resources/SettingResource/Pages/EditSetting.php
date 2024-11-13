@@ -3,7 +3,16 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Resources\SettingResource;
 
 class EditSetting extends EditRecord
@@ -15,5 +24,89 @@ class EditSetting extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Tabs::make('Tabs')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('Setting')
+                            ->label(__('Setting'))
+                            ->schema([
+                                Grid::make()
+                                    ->columns(1)
+                                    ->schema(
+                                        // TODOL For each field, we need to load the input based on field_type and load the value based on slug in the setting values column (json)
+
+                                        function () {
+                                            $fields = [];
+
+                                            foreach ($this->record->fields as $field) {
+                                                $fields[] = match ($field->field_type) {
+                                                    'text' => TextInput::make($field->slug)
+                                                        ->label($field->name)
+                                                        ->value($field->value),
+                                                    'select' => Select::make($field->slug)
+                                                        ->label($field->name)
+                                                        ->options($field->options)
+                                                        ->value($field->value),
+                                                    default => TextInput::make($field->slug)
+                                                        ->label($field->name)
+                                                        ->value($field->value),
+                                                };
+                                            }
+
+                                            return $fields;
+                                        }
+                                    )
+                            ]),
+                        Tab::make('Configure')
+                            ->label(__('Configure'))
+                            ->schema([
+                                Grid::make()
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label(__('Name'))
+                                            ->required()
+                                            ->live(debounce: 250)
+                                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                                $set('slug', Str::slug($state));
+                                            }),
+                                        TextInput::make('slug')
+                                            ->label(__('Slug'))
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
+                                        Select::make('site_ulid')
+                                            ->relationship('site', 'name')
+                                            ->native(false)
+                                            ->label(__('Site')),
+                                        Select::make('author_id')
+                                            ->relationship('author', 'name')
+                                            ->native(false)
+                                            ->default(auth()->id())
+                                            ->label(__('Author')),
+                                        Select::make('language_code')
+                                            //     ->relationship('language', 'code')
+                                            ->native(false)
+                                            ->label(__('Language')),
+                                        Select::make('country_code')
+                                            // ->relationship('language', 'country_code')
+                                            ->native(false)
+                                            ->label(__('Country')),
+                                        Select::make('fields')
+                                            ->relationship('fields', 'slug')
+                                            ->multiple()
+                                            // ->required()
+                                            ->columnSpanFull()
+                                            ->native(false)
+                                            ->label(__('Fields')),
+                                    ]),
+                            ]),
+                    ]),
+            ]);
     }
 }

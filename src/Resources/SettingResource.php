@@ -74,7 +74,7 @@ class SettingResource extends Resource
                                             ->default(auth()->id())
                                             ->label(__('Author')),
                                         Select::make('language_code')
-                                        //     ->relationship('language', 'code')
+                                            //     ->relationship('language', 'code')
                                             ->native(false)
                                             ->label(__('Language')),
                                         Select::make('country_code')
@@ -84,7 +84,7 @@ class SettingResource extends Resource
                                         Select::make('fields')
                                             ->relationship('fields', 'name')
                                             ->multiple()
-                                            // ->required()
+                                            ->required()
                                             ->columnSpanFull()
                                             ->native(false)
                                             ->label(__('Fields')),
@@ -99,6 +99,26 @@ class SettingResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('author.name')
+                    ->label(__('Author'))
+                    ->default('-')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('site.name')
+                    ->label(__('Site'))
+                    ->default('-')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('language_code')
+                    ->label(__('Language'))
+                    ->default('-')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('country_code')
+                    ->label(__('Country'))
+                    ->default('-')
                     ->searchable()
                     ->sortable(),
             ])

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->char('language_code', 2)->nullable();
             $table->char('country_code', 2)->nullable();
             $table->string('name');
+            $table->json('values')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

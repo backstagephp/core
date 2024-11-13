@@ -8,4 +8,9 @@ use Vormkracht10\Backstage\Resources\SettingResource;
 class CreateSetting extends CreateRecord
 {
     protected static string $resource = SettingResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return $data;
+    }
 }
