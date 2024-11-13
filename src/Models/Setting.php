@@ -44,6 +44,8 @@ class Setting extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Nog geen relatie met een field
-    
+    public function fields(): MorphToMany
+    {
+        return $this->morphToMany(Field::class, 'fieldable', 'fieldables', 'fieldable_ulid', 'field_ulid');
+    }    
 }

@@ -64,23 +64,30 @@ class SettingResource extends Resource
                                             ->label(__('Slug'))
                                             ->required()
                                             ->unique(ignoreRecord: true),
-                                    ]),
-                                Grid::make()
-                                    ->columns(2)
-                                    ->schema([
                                         Select::make('site_ulid')
                                             ->relationship('site', 'name')
+                                            ->native(false)
                                             ->label(__('Site')),
-                                        Select::make('author')
+                                        Select::make('author_id')
                                             ->relationship('author', 'name')
+                                            ->native(false)
                                             ->default(auth()->id())
                                             ->label(__('Author')),
                                         Select::make('language_code')
-                                            ->relationship('language', 'code')
+                                        //     ->relationship('language', 'code')
+                                            ->native(false)
                                             ->label(__('Language')),
                                         Select::make('country_code')
-                                            ->relationship('language', 'country_code')
+                                            // ->relationship('language', 'country_code')
+                                            ->native(false)
                                             ->label(__('Country')),
+                                        Select::make('fields')
+                                            ->relationship('fields', 'name')
+                                            ->multiple()
+                                            // ->required()
+                                            ->columnSpanFull()
+                                            ->native(false)
+                                            ->label(__('Fields')),
                                     ]),
                             ]),
                     ])
