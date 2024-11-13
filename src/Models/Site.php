@@ -2,10 +2,11 @@
 
 namespace Vormkracht10\Backstage\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Site extends Model
 {
@@ -30,5 +31,10 @@ class Site extends Model
         //         // $query->where('site_id', auth()->user()->current_site_id);
         //     }
         // });
+    }
+
+    public function settings(): HasMany
+    {
+        return $this->hasMany(Setting::class);
     }
 }

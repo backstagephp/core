@@ -2,11 +2,18 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Setting;
 use Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
@@ -36,7 +43,48 @@ class SettingResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                Tabs::make('Tabs')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('')
+                            ->label('')
+                            ->schema([
+                                Grid::make()
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label(__('Name'))
+                                            ->required()
+                                            ->live(debounce: 250)
+                                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                                $set('slug', Str::slug($state));
+                                            }),
+                                        TextInput::make('slug')
+                                            ->label(__('Slug'))
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
+                                    ]),
+                                Grid::make()
+                                    ->columns(2)
+                                    ->schema([
+                                        Select::make('site_ulid')
+                                            ->relationship('site', 'name')
+                                            ->label(__('Site')),
+                                        Select::make('author')
+                                            ->relationship('author', 'name')
+                                            ->default(auth()->id())
+                                            ->label(__('Author')),
+                                        Select::make('language_code')
+                                            ->relationship('language', 'code')
+                                            ->label(__('Language')),
+                                        Select::make('country_code')
+                                            ->relationship('language', 'country_code')
+                                            ->label(__('Country')),
+                                    ]),
+                            ]),
+                    ])
+            ]);
     }
 
     public static function table(Table $table): Table
