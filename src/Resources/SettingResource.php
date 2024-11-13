@@ -82,8 +82,9 @@ class SettingResource extends Resource
                                             ->native(false)
                                             ->label(__('Country')),
                                         Select::make('fields')
-                                            ->relationship('fields', 'name')
+                                            ->relationship('fields', 'slug')
                                             ->multiple()
+                                            ->preload()
                                             ->required()
                                             ->columnSpanFull()
                                             ->native(false)

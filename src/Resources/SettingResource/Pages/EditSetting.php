@@ -38,30 +38,7 @@ class EditSetting extends EditRecord
                             ->schema([
                                 Grid::make()
                                     ->columns(1)
-                                    ->schema(
-                                        // TODOL For each field, we need to load the input based on field_type and load the value based on slug in the setting values column (json)
-
-                                        function () {
-                                            $fields = [];
-
-                                            foreach ($this->record->fields as $field) {
-                                                $fields[] = match ($field->field_type) {
-                                                    'text' => TextInput::make($field->slug)
-                                                        ->label($field->name)
-                                                        ->value($field->value),
-                                                    'select' => Select::make($field->slug)
-                                                        ->label($field->name)
-                                                        ->options($field->options)
-                                                        ->value($field->value),
-                                                    default => TextInput::make($field->slug)
-                                                        ->label($field->name)
-                                                        ->value($field->value),
-                                                };
-                                            }
-
-                                            return $fields;
-                                        }
-                                    )
+                                    ->schema($this->getValueInputs()),
                             ]),
                         Tab::make('Configure')
                             ->label(__('Configure'))
@@ -100,7 +77,8 @@ class EditSetting extends EditRecord
                                         Select::make('fields')
                                             ->relationship('fields', 'slug')
                                             ->multiple()
-                                            // ->required()
+                                            ->preload()
+                                            ->required()
                                             ->columnSpanFull()
                                             ->native(false)
                                             ->label(__('Fields')),
@@ -108,5 +86,27 @@ class EditSetting extends EditRecord
                             ]),
                     ]),
             ]);
+    }
+
+    private function getValueInputs(): array
+    {
+        $inputs = [];
+
+        foreach ($this->record->fields as $field) {
+            $inputs[] = match ($field->field_type) {
+                'text' => TextInput::make($field->slug)
+                    ->label($field->name)
+                    ->default($field->value),
+                'select' => Select::make($field->slug)
+                    ->label($field->name)
+                    ->options($field->options)
+                    ->default($field->value),
+                default => TextInput::make($field->slug)
+                    ->label($field->name)
+                    ->default($field->value),
+            };
+        }
+
+        return $inputs;
     }
 }
