@@ -192,7 +192,6 @@ class ContentResource extends Resource
                                                     ->schema([
                                                         Select::make('content')
                                                             ->label('Content')
-                                                            ->native(false)
                                                             ->searchable()
                                                             ->options([
                                                                 'test' => 'Dit is een review',
