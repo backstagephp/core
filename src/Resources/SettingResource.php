@@ -47,8 +47,8 @@ class SettingResource extends Resource
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('')
-                            ->label('')
+                        Tab::make('Setting')
+                            ->label(__('Setting'))
                             ->schema([
                                 Grid::make()
                                     ->columns(2)
