@@ -3,16 +3,16 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Vormkracht10\Backstage\Fields\Text;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Str;
+use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Resources\SettingResource;
 
 class EditSetting extends EditRecord
