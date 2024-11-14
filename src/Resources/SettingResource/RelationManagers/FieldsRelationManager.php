@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
@@ -20,43 +21,64 @@ class FieldsRelationManager extends RelationManager
 {
     protected static string $relationship = 'fields';
 
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    protected function getFieldTypeFormSchema(?string $fieldType): array
     {
-        return __('Fields');
-    }
+        if (empty($fieldType)) {
+            return [];
+        }
 
-    public static function getModelLabel(): string
-    {
-        return __('Field');
-    }
+        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
 
-    public static function getPluralModelLabel(): string
-    {
-        return __('Fields');
+        if (!class_exists($className) || !method_exists($className, 'getForm')) {
+            return [];
+        }
+
+        return app($className)->getForm();
     }
 
     public function form(Form $form): Form
     {
+        $record = $form->getRecord();
+        $fieldType = $record?->field_type ?? $form->getState()['field_type'] ?? null;
+
         return $form
             ->schema([
                 Grid::make()
                     ->columns(3)
                     ->schema([
-                        TextInput::make('name')
-                            ->label(__('Name'))
-                            ->required()
-                            ->placeholder(__('Name'))
-                            ->live(debounce: 250)
-                            ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                        TextInput::make('slug')
-                            ->readonly(),
-                        Select::make('field_type')
-                            ->native(false)
-                            ->searchable()
-                            ->preload()
-                            ->label(__('Field Type'))
-                            ->options(EnumsField::array())
-                            ->required(),
+                        Section::make('Field')
+                            ->columns(3)
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label(__('Name'))
+                                    ->required()
+                                    ->placeholder(__('Name'))
+                                    ->live(debounce: 250)
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
+                                TextInput::make('slug')
+                                    ->readonly(),
+
+                                Select::make('field_type')
+                                    ->native(false)
+                                    ->searchable()
+                                    ->preload()
+                                    ->label(__('Field Type'))
+                                    ->live()
+                                    ->options(EnumsField::array())
+                                    ->afterStateUpdated(function ($state, Set $set, Form $form) {
+                                        if ($state !== $form->getRecord()?->field_type) {
+                                            $set('config', []);
+                                        }
+                                    })
+                                    ->required(),
+                            ]),
+                        Section::make('Rules')
+                            ->columns(3)
+                            ->schema([
+                                // Dynamic field type specific form
+                                ...($this->getFieldTypeFormSchema($fieldType)),
+                            ]),
                     ]),
             ]);
     }
@@ -72,24 +94,34 @@ class FieldsRelationManager extends RelationManager
                     ->label(__('Name'))
                     ->searchable()
                     ->limit(),
+
+                Tables\Columns\TextColumn::make('field_type')
+                    ->label(__('Type'))
+                    ->searchable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->slideOver()
                     ->mutateFormDataUsing(function (array $data) {
-                        $data['position'] = Field::where('model_slug', $this->ownerRecord->id)->get()->max('position') + 1;
-                        $data['model_type'] = get_class($this->ownerRecord);
-                        $data['model_slug'] = $this->ownerRecord->slug;
-
-                        return $data;
+                        return [
+                            ...$data,
+                            'position' => Field::where('model_slug', $this->ownerRecord->id)->get()->max('position') + 1,
+                            'model_type' => get_class($this->ownerRecord),
+                            'model_slug' => $this->ownerRecord->slug,
+                        ];
                     }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->slideOver(),
+                    ->slideOver()
+                    ->mutateFormDataUsing(function (array $data) {
+                        return [
+                            ...$data,
+                            'model_type' => get_class($this->ownerRecord),
+                            'model_slug' => $this->ownerRecord->slug,
+                        ];
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -97,5 +129,20 @@ class FieldsRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Fields');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Field');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Fields');
     }
 }
