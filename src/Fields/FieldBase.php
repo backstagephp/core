@@ -11,7 +11,7 @@ class FieldBase implements FieldInterface
         return [
             Forms\Components\Toggle::make('config.required')
                 ->label(__('Required'))
-                ->inline(false)
+                ->inline(false),
         ];
     }
 }
