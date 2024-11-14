@@ -4,7 +4,7 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 
-class FieldBase implements FieldInterface
+abstract class FieldBase implements FieldInterface
 {
     public function getForm(): array
     {
