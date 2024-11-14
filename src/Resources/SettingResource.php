@@ -68,15 +68,12 @@ class SettingResource extends Resource
                                         Select::make('site_ulid')
                                             ->relationship('site', 'name')
                                             ->columnSpanFull()
-                                            ->native(false)
                                             ->label(__('Site')),
                                         Select::make('language_code')
                                             //     ->relationship('language', 'code')
-                                            ->native(false)
                                             ->label(__('Language')),
                                         Select::make('country_code')
                                             // ->relationship('language', 'country_code')
-                                            ->native(false)
                                             ->label(__('Country')),
                                     ]),
                             ]),

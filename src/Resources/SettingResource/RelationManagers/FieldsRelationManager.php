@@ -59,7 +59,6 @@ class FieldsRelationManager extends RelationManager
                                     ->readonly(),
 
                                 Select::make('field_type')
-                                    ->native(false)
                                     ->searchable()
                                     ->preload()
                                     ->label(__('Field Type'))
