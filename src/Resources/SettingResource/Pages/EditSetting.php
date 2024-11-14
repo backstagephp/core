@@ -13,6 +13,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Vormkracht10\Backstage\Fields\Text;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Resources\SettingResource;
 
@@ -110,6 +111,7 @@ class EditSetting extends EditRecord
             $input = match ($field->field_type) {
                 'text' => Text::make(name: 'setting.' . $field->slug, field: $field),
                 'textarea' => Textarea::make(name: 'setting.' . $field->slug, field: $field),
+                'rich-editor' => RichEditor::make(name: 'setting.' . $field->slug, field: $field),
                 'select' => Select::make('setting.' . $field->slug)
                     ->options($field->options),
                 default => TextInput::make('setting.' . $field->slug),
