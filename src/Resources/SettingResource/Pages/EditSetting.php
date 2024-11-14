@@ -13,6 +13,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Resources\SettingResource;
 
 class EditSetting extends EditRecord
