@@ -74,7 +74,6 @@ class FieldsRelationManager extends RelationManager
                         Section::make('Configuration')
                             ->columns(3)
                             ->schema([
-                                // Dynamic field type specific form
                                 ...($this->getFieldTypeFormSchema($fieldType)),
                             ]),
                     ]),
