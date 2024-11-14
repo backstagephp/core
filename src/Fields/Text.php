@@ -43,7 +43,7 @@ class Text extends FieldBase implements FieldInterface
                                     Forms\Components\TextInput::make('config.suffixColor')
                                         ->type('color')
                                         ->label(__('Suffix color')),
-                                ])
+                                ]),
                         ]),
                     Forms\Components\TextInput::make('config.placeholder')
                         ->label(__('Placeholder')),
@@ -74,7 +74,7 @@ class Text extends FieldBase implements FieldInterface
                         ->numeric()
                         ->minValue(0)
                         ->label(__('Step'))
-                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'numeric'),
+                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'numeric'),
                     Forms\Components\Select::make('config.inputMode')
                         ->label(__('Input mode'))
                         ->options([
@@ -87,13 +87,13 @@ class Text extends FieldBase implements FieldInterface
                             'email' => __('Email'),
                             'url' => __('URL'),
                         ])
-                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'numeric'),
+                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'numeric'),
                     Forms\Components\TextInput::make('config.revealable')
                         ->label(__('Revealable'))
-                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'password'),
+                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'password'),
                     Forms\Components\TextInput::make('config.telRegex')
                         ->label(__('Telephone regex'))
-                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'tel'),
+                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'tel'),
                 ]),
         ];
     }
