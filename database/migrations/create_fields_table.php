@@ -29,15 +29,5 @@ return new class extends Migration
 
             $table->unique(['model_type', 'model_slug', 'slug']);
         });
-
-        Schema::create('fieldables', function (Blueprint $table) {
-            $table->foreignUlid('field_ulid')->constrained(table: 'fields', column: 'ulid')->cascadeOnDelete();
-
-            $table->string('fieldable_type');
-            $table->ulid('fieldable_ulid');
-
-            $table->index(['fieldable_type', 'fieldable_ulid']);
-            $table->unique(['field_ulid', 'fieldable_ulid', 'fieldable_type']);
-        });
     }
 };

@@ -2,8 +2,12 @@
 
 namespace Vormkracht10\Backstage\Enums;
 
+use Vormkracht10\Backstage\Concerns\EnumArraySerializableTrait;
+
 enum Field: string
 {
+    use EnumArraySerializableTrait;
+
     case Builder = 'builder';
     case Checkbox = 'checkbox';
     case Color = 'color';
@@ -21,7 +25,7 @@ enum Field: string
     case Textarea = 'textarea';
     case Toggle = 'toggle';
     case ToggleButtons = 'toggle-buttons';
-    // custom
+        // custom
     case Media = 'media';
     case Link = 'link';
 }

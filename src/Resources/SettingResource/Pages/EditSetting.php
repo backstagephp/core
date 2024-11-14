@@ -27,7 +27,11 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        foreach ($this->record->values as $slug => $value) {
+        if ($this->record->fields->count() === 0) {
+            return $data;
+        }
+
+        foreach ($this->record->fields as $slug => $value) {
             $data['setting'][$slug] = $value;
         }
 
@@ -78,12 +82,8 @@ class EditSetting extends EditRecord
                                         Select::make('site_ulid')
                                             ->relationship('site', 'name')
                                             ->native(false)
+                                            ->columnSpanFull()
                                             ->label(__('Site')),
-                                        Select::make('author_id')
-                                            ->relationship('author', 'name')
-                                            ->native(false)
-                                            ->default(auth()->id())
-                                            ->label(__('Author')),
                                         Select::make('language_code')
                                             //     ->relationship('language', 'code')
                                             ->native(false)
@@ -92,14 +92,6 @@ class EditSetting extends EditRecord
                                             // ->relationship('language', 'country_code')
                                             ->native(false)
                                             ->label(__('Country')),
-                                        Select::make('fields')
-                                            ->relationship('fields', 'slug')
-                                            ->multiple()
-                                            ->preload()
-                                            ->required()
-                                            ->columnSpanFull()
-                                            ->native(false)
-                                            ->label(__('Fields')),
                                     ]),
                             ]),
                     ]),

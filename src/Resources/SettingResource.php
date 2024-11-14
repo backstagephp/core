@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Setting;
 use Vormkracht10\Backstage\Resources\SettingResource\Pages;
+use Vormkracht10\Backstage\Resources\SettingResource\RelationManagers\FieldsRelationManager;
 
 class SettingResource extends Resource
 {
@@ -66,13 +67,9 @@ class SettingResource extends Resource
                                             ->unique(ignoreRecord: true),
                                         Select::make('site_ulid')
                                             ->relationship('site', 'name')
+                                            ->columnSpanFull()
                                             ->native(false)
                                             ->label(__('Site')),
-                                        Select::make('author_id')
-                                            ->relationship('author', 'name')
-                                            ->native(false)
-                                            ->default(auth()->id())
-                                            ->label(__('Author')),
                                         Select::make('language_code')
                                             //     ->relationship('language', 'code')
                                             ->native(false)
@@ -81,14 +78,6 @@ class SettingResource extends Resource
                                             // ->relationship('language', 'country_code')
                                             ->native(false)
                                             ->label(__('Country')),
-                                        Select::make('fields')
-                                            ->relationship('fields', 'slug')
-                                            ->multiple()
-                                            ->preload()
-                                            ->required()
-                                            ->columnSpanFull()
-                                            ->native(false)
-                                            ->label(__('Fields')),
                                     ]),
                             ]),
                     ]),
@@ -139,7 +128,7 @@ class SettingResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            FieldsRelationManager::class,
         ];
     }
 
