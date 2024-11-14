@@ -12,6 +12,8 @@ class Textarea extends FieldBase implements FieldInterface
     {
         return Input::make($name)
             ->label($field->name)
+            ->required($field->config['required'] ?? false)
+            ->readOnly($field->config['readOnly'] ?? false)
             ->placeholder($field->config['placeholder'] ?? null)
             ->autosize($field->config['autosize'] ?? false)
             ->rows($field->config['rows'] ?? null)
@@ -25,6 +27,9 @@ class Textarea extends FieldBase implements FieldInterface
     {
         return [
             ...parent::getForm(),
+            Forms\Components\Toggle::make('config.readOnly')
+            ->label(__('Read only'))
+            ->inline(false),
             Forms\Components\Grid::make(2)
                 ->schema([
                     Forms\Components\TextInput::make('config.autosize')

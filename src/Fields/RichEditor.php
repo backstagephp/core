@@ -13,6 +13,7 @@ class RichEditor extends FieldBase implements FieldInterface
     {
         return Input::make($name)
             ->label($field->name)
+            ->required($field->config['required'] ?? false)
             ->toolbarButtons($field->config['toolbarButtons'] ?? [])
             ->disableGrammarly($field->config['disableGrammarly'] ?? false)
             ->disableToolbarButtons($field->config['disableToolbarButtons'] ?? []);

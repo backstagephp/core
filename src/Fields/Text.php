@@ -12,6 +12,8 @@ class Text extends FieldBase implements FieldInterface
     {
         return Forms\Components\TextInput::make($name)
             ->label($field->name)
+            ->required($field->config['required'] ?? false)
+            ->readOnly($field->config['readOnly'] ?? false)
             ->placeholder($field->config['placeholder'] ?? null)
             ->prefix($field->config['prefix'] ?? null)
             ->prefixIcon($field->config['prefixIcon'] ?? null)
@@ -33,6 +35,9 @@ class Text extends FieldBase implements FieldInterface
     {
         return [
             ...parent::getForm(),
+            Forms\Components\Toggle::make('config.readOnly')
+            ->label(__('Read only'))
+            ->inline(false),
             Forms\Components\Grid::make(2)
                 ->schema([
                     Forms\Components\Select::make('config.autocapitalize')
