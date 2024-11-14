@@ -53,7 +53,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -71,7 +71,7 @@ class FieldsRelationManager extends RelationManager
                                     })
                                     ->required(),
                             ]),
-                        Section::make('Rules')
+                        Section::make('Configuration')
                             ->columns(3)
                             ->schema([
                                 // Dynamic field type specific form
