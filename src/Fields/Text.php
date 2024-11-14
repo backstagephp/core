@@ -4,13 +4,12 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 
-class Text
+class Text extends FieldBase implements FieldInterface
 {
     public function getForm(): array
     {
         return [
-            Forms\Components\Toggle::make('config.required')
-                ->label(__('Required')),
+            ...parent::getForm(),
         ];
     }
 }
