@@ -106,7 +106,7 @@ class FieldsRelationManager extends RelationManager
                         return [
                             ...$data,
                             'position' => Field::where('model_slug', $this->ownerRecord->id)->get()->max('position') + 1,
-                            'model_type' => get_class($this->ownerRecord),
+                            'model_type' => 'setting',
                             'model_slug' => $this->ownerRecord->slug,
                         ];
                     }),
@@ -117,7 +117,7 @@ class FieldsRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data) {
                         return [
                             ...$data,
-                            'model_type' => get_class($this->ownerRecord),
+                            'model_type' => 'setting',
                             'model_slug' => $this->ownerRecord->slug,
                         ];
                     }),
