@@ -34,7 +34,7 @@ class Textarea extends FieldBase implements FieldInterface
                         ->numeric()
                         ->minValue(0)
                         ->label(__('Rows')),
-                        
+
                     Forms\Components\TextInput::make('config.cols')
                         ->numeric()
                         ->minValue(0)
