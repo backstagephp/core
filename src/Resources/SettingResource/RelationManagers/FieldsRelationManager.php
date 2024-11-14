@@ -53,7 +53,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -103,6 +103,7 @@ class FieldsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->slideOver()
                     ->mutateFormDataUsing(function (array $data) {
+                        dd('abc');
                         return [
                             ...$data,
                             'position' => Field::where('model_slug', $this->ownerRecord->id)->get()->max('position') + 1,
@@ -114,7 +115,7 @@ class FieldsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->slideOver()
-                    ->mutateFormDataUsing(function (array $data) {
+                    ->mutateRecordDataUsing(function (array $data) {
                         return [
                             ...$data,
                             'model_type' => 'setting',

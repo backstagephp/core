@@ -18,7 +18,9 @@ class Field extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'config' => 'array',
+        ];
     }
 
     public function model(): MorphTo
