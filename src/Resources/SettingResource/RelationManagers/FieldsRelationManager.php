@@ -28,7 +28,7 @@ class FieldsRelationManager extends RelationManager
 
         $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
 
-        if (! class_exists($className) || ! method_exists($className, 'getForm')) {
+        if (!class_exists($className) || !method_exists($className, 'getForm')) {
             return [];
         }
 
@@ -39,7 +39,7 @@ class FieldsRelationManager extends RelationManager
     {
         $record = $form->getRecord();
         $fieldType = $record?->field_type ?? $form->getState()['field_type'] ?? null;
-
+        
         return $form
             ->schema([
                 Grid::make()
@@ -62,22 +62,26 @@ class FieldsRelationManager extends RelationManager
                                     ->searchable()
                                     ->preload()
                                     ->label(__('Field Type'))
-                                    ->live()
+                                    ->live(debounce: 250)
                                     ->options(EnumsField::array())
-                                    ->afterStateUpdated(function ($state, Set $set, Form $form) {
-                                        if ($state !== $form->getRecord()?->field_type) {
-                                            $set('config', []);
-                                        }
-                                    })
-                                    ->required(),
+                                    ->required()
+                                    ->afterStateUpdated(function ($state, Set $set, callable $get) {
+                                        $set('config', []); // Reset configuration
+                                        $this->updateConfigurationSchema($set, $state); // Load new schema based on field type
+                                    }),
                             ]),
                         Section::make('Configuration')
                             ->columns(3)
-                            ->schema([
-                                ...($this->getFieldTypeFormSchema($fieldType)),
-                            ]),
+                            ->schema($this->getFieldTypeFormSchema($fieldType)), // Initially empty
                     ]),
             ]);
+    }
+
+    protected function updateConfigurationSchema(Set $set, ?string $fieldType): void
+    {
+        $schema = $this->getFieldTypeFormSchema($fieldType);
+        
+        $set('config', $schema); // Dynamically set the configuration schema
     }
 
     public function table(Table $table): Table

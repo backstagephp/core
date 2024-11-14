@@ -100,18 +100,24 @@ class EditSetting extends EditRecord
     {
         $inputs = [];
 
+        if ($this->record->fields->count() === 0) {
+            return $inputs;
+        }
+
         foreach ($this->record->fields as $field) {
 
             $input = match ($field->field_type) {
                 'text' => Text::make(name: 'setting.' . $field->slug, field: $field),
+                'textarea' => Textarea::make(name: 'setting.' . $field->slug, field: $field),
                 'select' => Select::make('setting.' . $field->slug)
                     ->options($field->options),
                 default => TextInput::make('setting.' . $field->slug),
             };
 
-            $inputs[] = $input->label(__($field->name))
-                ->required($field->config['required'] ?? false)
-                ->default($field->value);
+            $inputs[] = $input;
+            // $inputs[] = $input->label(__($field->name))
+            //     ->required($field->config['required'] ?? false)
+            //     ->default($field->value);
         }
 
         return $inputs;
