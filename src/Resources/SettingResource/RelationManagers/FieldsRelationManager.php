@@ -28,7 +28,7 @@ class FieldsRelationManager extends RelationManager
 
         $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
 
-        if (!class_exists($className) || !method_exists($className, 'getForm')) {
+        if (! class_exists($className) || ! method_exists($className, 'getForm')) {
             return [];
         }
 
@@ -39,7 +39,7 @@ class FieldsRelationManager extends RelationManager
     {
         $record = $form->getRecord();
         $fieldType = $record?->field_type ?? $form->getState()['field_type'] ?? null;
-        
+
         return $form
             ->schema([
                 Grid::make()
@@ -80,7 +80,7 @@ class FieldsRelationManager extends RelationManager
     protected function updateConfigurationSchema(Set $set, ?string $fieldType): void
     {
         $schema = $this->getFieldTypeFormSchema($fieldType);
-        
+
         $set('config', $schema); // Dynamically set the configuration schema
     }
 
