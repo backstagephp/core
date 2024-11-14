@@ -3,9 +3,32 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
+use Vormkracht10\Backstage\Models\Field;
 
 class Text extends FieldBase implements FieldInterface
 {
+    public static function make(string $name, Field $field): TextInput
+    {
+        return Forms\Components\TextInput::make($name)
+            ->label($field->name)
+            ->placeholder($field->config['placeholder'] ?? null)
+            ->prefix($field->config['prefix'] ?? null)
+            ->prefixIcon($field->config['prefixIcon'] ?? null)
+            ->prefixIconColor($field->config['prefixIconColor'] ?? null)
+            ->suffix($field->config['suffix'] ?? null)
+            ->suffixIcon($field->config['suffixIcon'] ?? null)
+            ->suffixIconColor($field->config['suffixIconColor'] ?? null)
+            ->mask($field->config['mask'] ?? null)
+            ->minLength($field->config['minLength'] ?? null)
+            ->maxLength($field->config['maxLength'] ?? null)
+            ->type($field->config['type'] ?? 'text')
+            ->step($field->config['step'] ?? null)
+            ->inputMode($field->config['inputMode'] ?? null)
+            ->telRegex($field->config['telRegex'] ?? null)
+            ->revealable($field->config['revealable'] ?? false);
+    }
+
     public function getForm(): array
     {
         return [
@@ -34,7 +57,7 @@ class Text extends FieldBase implements FieldInterface
                                     Forms\Components\TextInput::make('config.prefixIcon')
                                         ->placeholder('heroicon-m-')
                                         ->label(__('Prefix icon')),
-                                    Forms\Components\TextInput::make('config.prefixColor')
+                                    Forms\Components\TextInput::make('config.prefixIconColor')
                                         ->type('color')
                                         ->label(__('Prefix color')),
                                     Forms\Components\TextInput::make('config.suffix')
@@ -42,7 +65,7 @@ class Text extends FieldBase implements FieldInterface
                                     Forms\Components\TextInput::make('config.suffixIcon')
                                         ->placeholder('heroicon-m-')
                                         ->label(__('Suffix icon')),
-                                    Forms\Components\TextInput::make('config.suffixColor')
+                                    Forms\Components\TextInput::make('config.suffixIconColor')
                                         ->type('color')
                                         ->label(__('Suffix color')),
                                 ]),
