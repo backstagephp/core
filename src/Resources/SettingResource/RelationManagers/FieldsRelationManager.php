@@ -28,7 +28,7 @@ class FieldsRelationManager extends RelationManager
 
         $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
 
-        if (!class_exists($className) || !method_exists($className, 'getForm')) {
+        if (! class_exists($className) || ! method_exists($className, 'getForm')) {
             return [];
         }
 
@@ -53,7 +53,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
