@@ -10,6 +10,19 @@ class EditContent extends EditRecord
 {
     protected static string $resource = ContentResource::class;
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if ($this->record->type->fields->count() === 0) {
+            return $data;
+        }
+
+        foreach ($this->record->values as $value) {
+            $data['values'][] = $value;
+        }
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
