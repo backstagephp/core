@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
+namespace Vormkracht10\Backstage\Resources\TypeResource\RelationManagers;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

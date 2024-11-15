@@ -301,7 +301,9 @@ class ContentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            // FieldsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
