@@ -17,14 +17,14 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
 
@@ -61,7 +61,6 @@ class ContentResource extends Resource
         //     }
 
         //     $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($field->field_type);
-    
 
         //     if (! class_exists($className) || ! method_exists($className, 'getForm')) {
         //         return [];
@@ -84,7 +83,7 @@ class ContentResource extends Resource
 
             $inputs[] = $input;
         }
-        
+
         return $form
             ->schema([
                 Tabs::make('Tabs')
