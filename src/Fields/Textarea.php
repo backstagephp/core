@@ -8,19 +8,34 @@ use Vormkracht10\Backstage\Models\Field;
 
 class Textarea extends FieldBase implements FieldInterface
 {
+    public static function getDefaultConfig(): array
+    {
+        return [
+            ...parent::getDefaultConfig(),
+            'readOnly' => false,
+            'autosize' => false,
+            'rows' => null,
+            'cols' => null,
+            'minLength' => null,
+            'maxLength' => null,
+            'length' => null,
+            'placeholder' => null,
+        ];
+    }
+
     public static function make(string $name, Field $field): Input
     {
         return Input::make($name)
             ->label($field->name)
-            ->required($field->config['required'] ?? false)
-            ->readOnly($field->config['readOnly'] ?? false)
-            ->placeholder($field->config['placeholder'] ?? null)
-            ->autosize($field->config['autosize'] ?? false)
-            ->rows($field->config['rows'] ?? null)
-            ->cols($field->config['cols'] ?? null)
-            ->minLength($field->config['minLength'] ?? null)
-            ->maxLength($field->config['maxLength'] ?? null)
-            ->length($field->config['length'] ?? null);
+            ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
+            ->readOnly($field->config['readOnly'] ?? self::getDefaultConfig()['readOnly'])
+            ->placeholder($field->config['placeholder'] ?? self::getDefaultConfig()['placeholder'])
+            ->autosize($field->config['autosize'] ?? self::getDefaultConfig()['autosize'])
+            ->rows($field->config['rows'] ?? self::getDefaultConfig()['rows'])
+            ->cols($field->config['cols'] ?? self::getDefaultConfig()['cols'])
+            ->minLength($field->config['minLength'] ?? self::getDefaultConfig()['minLength'])
+            ->maxLength($field->config['maxLength'] ?? self::getDefaultConfig()['maxLength'])
+            ->length($field->config['length'] ?? self::getDefaultConfig()['length']);
     }
 
     public function getForm(): array

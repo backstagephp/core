@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Livewire\Component;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
 use Vormkracht10\Backstage\Models\Field;
 
@@ -71,7 +72,7 @@ class FieldsRelationManager extends RelationManager
                                         if (class_exists($className)) {
                                             // Initialize default config structure for this field type
                                             $fieldInstance = app($className);
-                                            $defaultConfig = $fieldInstance->getDefaultConfig();
+                                            $defaultConfig = $fieldInstance::getDefaultConfig();
                                             $set('config', $defaultConfig);
                                         }
                                     }),
@@ -109,10 +110,13 @@ class FieldsRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data) {
                         return [
                             ...$data,
-                            'position' => Field::where('model_slug', $this->ownerRecord->id)->get()->max('position') + 1,
+                            'position' => Field::where('model_key', $this->ownerRecord->id)->get()->max('position') + 1,
                             'model_type' => 'setting',
-                            'model_slug' => $this->ownerRecord->slug,
+                            'model_key' => $this->ownerRecord->slug,
                         ];
+                    })
+                    ->after(function (Component $livewire) {
+                        $livewire->dispatch('refreshFields');
                     }),
             ])
             ->actions([
@@ -122,8 +126,11 @@ class FieldsRelationManager extends RelationManager
                         return [
                             ...$data,
                             'model_type' => 'setting',
-                            'model_slug' => $this->ownerRecord->slug,
+                            'model_key' => $this->ownerRecord->slug,
                         ];
+                    })
+                    ->after(function (Component $livewire) {
+                        $livewire->dispatch('refreshFields');
                     }),
                 Tables\Actions\DeleteAction::make(),
             ])
