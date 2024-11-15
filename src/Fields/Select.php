@@ -87,7 +87,7 @@ class Select extends FieldBase implements FieldInterface
             foreach ($field->config['relations'] as $relation) {
                 $type = Type::where('slug', $relation['contentType'])->first();
 
-                if (!$type || !$type->slug) {
+                if (! $type || ! $type->slug) {
                     continue;
                 }
 
@@ -157,20 +157,20 @@ class Select extends FieldBase implements FieldInterface
                                                 ->searchable()
                                                 ->preload()
                                                 ->live(debounce: 250)
-                                                ->options(fn() => Type::all()->pluck('name', 'slug'))
+                                                ->options(fn () => Type::all()->pluck('name', 'slug'))
                                                 ->noSearchResultsMessage(__('No types found'))
-                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                             Forms\Components\Hidden::make('relationKey')
                                                 ->default('ulid')
                                                 ->label(__('Key'))
-                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                             Forms\Components\Select::make('relationValue')
                                                 ->searchable()
                                                 ->preload()
                                                 ->options(function (Forms\Get $get) {
                                                     $type = Type::where('slug', $get('contentType'))->first();
 
-                                                    if (!$type || !$type->slug) {
+                                                    if (! $type || ! $type->slug) {
                                                         return [];
                                                     }
 
@@ -180,13 +180,13 @@ class Select extends FieldBase implements FieldInterface
 
                                                     return $options->pluck('name', 'slug')->toArray();
                                                 })
-                                                ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
+                                                ->disabled(fn (Forms\Get $get): bool => ! $get('contentType'))
                                                 ->label(__('Label'))
-                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                        ])
+                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                        ]),
                                 ])
-                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship')
-                                ->columnSpanFull()
+                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
+                                ->columnSpanFull(),
                         ]),
                 ]),
             Forms\Components\Fieldset::make('Affixes')
