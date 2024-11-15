@@ -5,10 +5,9 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
-use Vormkracht10\Backstage\Models\Field;
 use Filament\Forms\Components\Select as Input;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Type;
 
 class Select extends FieldBase implements FieldInterface
 {
@@ -82,13 +81,25 @@ class Select extends FieldBase implements FieldInterface
             $input->maxItemsForSearch($field->config['maxItemsForSearch']);
         }
 
-        // if ($field->config['optionType'] === 'relationship') {
-        //     $input->options(fn() => $field->config['relation']::all()->pluck($field->config['relationValue'], $field->config['relationKey']));
-        // }
+        if ($field->config['optionType'] === 'relationship') {
+            $options = [];
 
-        // if ($field->config['optionType'] === 'array') {
-        //     $input->options($field->config['options']);
-        // }
+            foreach ($field->config['relations'] as $relation) {
+                $type = Type::where('slug', $relation['contentType'])->first();
+
+                if (!$type || !$type->slug) {
+                    continue;
+                }
+
+                $options[$type->slug] = $type->fields->pluck('name', 'slug')->toArray();
+            }
+
+            $input->options($options);
+        }
+
+        if ($field->config['optionType'] === 'array') {
+            $input->options($field->config['options']);
+        }
 
         return $input;
     }
@@ -132,8 +143,8 @@ class Select extends FieldBase implements FieldInterface
                             Forms\Components\KeyValue::make('config.options')
                                 ->label(__('Options'))
                                 ->columnSpanFull()
-                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'array')
-                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'array'),
+                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'array')
+                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'array'),
                             // Relationship options
                             Repeater::make('config.relations')
                                 ->label(__('Relations'))
@@ -165,7 +176,7 @@ class Select extends FieldBase implements FieldInterface
 
                                                     $options = Field::where('model_type', 'type')->where('model_key', $type->slug)->get();
 
-                                                    // TODO: The default option should be the title_field field
+                                                    // TODO: The default option should be the title_field field (if present)
 
                                                     return $options->pluck('name', 'slug')->toArray();
                                                 })
