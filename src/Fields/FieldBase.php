@@ -14,4 +14,11 @@ abstract class FieldBase implements FieldInterface
                 ->inline(false),
         ];
     }
+
+    public function getDefaultConfig(): array
+    {
+        return [
+            'required' => false,
+        ];
+    }
 }

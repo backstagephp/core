@@ -51,7 +51,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -65,16 +65,23 @@ class FieldsRelationManager extends RelationManager
                                     ->options(EnumsField::array())
                                     ->required()
                                     ->afterStateUpdated(function ($state, Set $set) {
-                                        if ($state !== $this->getOwnerRecord()?->field_type) {
-                                            $set('config', []);
+                                        $set('config', []);
+
+                                        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($state);
+                                        if (class_exists($className)) {
+                                            // Initialize default config structure for this field type
+                                            $fieldInstance = app($className);
+                                            $defaultConfig = $fieldInstance->getDefaultConfig();
+                                            $set('config', $defaultConfig);
                                         }
                                     }),
                             ]),
                         Section::make('Configuration')
                             ->columns(3)
-                            ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
+                            ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
                                 $get('field_type')
-                            )),
+                            ))
+                            ->visible(fn (Get $get) => filled($get('field_type'))),
                     ]),
             ]);
     }

@@ -9,4 +9,6 @@ interface FieldInterface
     public function getForm(): array;
 
     public static function make(string $name, Field $field);
+
+    public function getDefaultConfig(): array;
 }

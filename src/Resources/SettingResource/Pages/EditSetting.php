@@ -3,18 +3,20 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Set;
-use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Fields\RichEditor;
+use Filament\Forms\Form;
+use Illuminate\Support\Str;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs\Tab;
 use Vormkracht10\Backstage\Fields\Text;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
 use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Resources\SettingResource;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect; // rename
 
 class EditSetting extends EditRecord
 {
@@ -111,15 +113,11 @@ class EditSetting extends EditRecord
                 'text' => Text::make(name: 'setting.' . $field->slug, field: $field),
                 'textarea' => Textarea::make(name: 'setting.' . $field->slug, field: $field),
                 'rich-editor' => RichEditor::make(name: 'setting.' . $field->slug, field: $field),
-                'select' => Select::make('setting.' . $field->slug)
-                    ->options($field->options),
+                'select' => FieldsSelect::make('setting.' . $field->slug, $field),
                 default => TextInput::make('setting.' . $field->slug),
             };
 
             $inputs[] = $input;
-            // $inputs[] = $input->label(__($field->name))
-            //     ->required($field->config['required'] ?? false)
-            //     ->default($field->value);
         }
 
         return $inputs;
