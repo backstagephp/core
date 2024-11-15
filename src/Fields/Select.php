@@ -3,16 +3,11 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Forms\Components\Select as Input;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Media;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Tag;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
 use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
+use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Components\Select as Input;
 
 class Select extends FieldBase implements FieldInterface
 {
@@ -33,7 +28,8 @@ class Select extends FieldBase implements FieldInterface
             'suffixIconColor' => null,
             'optionType' => null,
             'options' => [],
-            'relation' => null,
+            'relations' => [],
+            'contentType' => null,
             'relationKey' => null,
             'relationValue' => null,
             'loadingMessage' => null,
@@ -135,34 +131,35 @@ class Select extends FieldBase implements FieldInterface
                             Forms\Components\KeyValue::make('config.options')
                                 ->label(__('Options'))
                                 ->columnSpanFull()
-                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'array')
-                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'array'),
+                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'array')
+                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'array'),
                             // Relationship options
-                            Forms\Components\Select::make('config.relation')
-                                ->label(__('Relation'))
-                                ->options([
-                                    Content::class => __('Content'),
-                                    Domain::class => __('Domain'),
-                                    Field::class => __('Field'),
-                                    Language::class => __('Language'),
-                                    Media::class => __('Media'),
-                                    Site::class => __('Site'),
-                                    Tag::class => __('Tag'),
-                                    Type::class => __('Type'),
-                                    User::class => __('User'),
-                                ])
-                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
-                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                            // TODO: Could be a select based on the chosen class, but for now we'll just use text inputs
-                            Forms\Components\TextInput::make('config.relationKey')
-                                ->label(__('Relation key'))
-                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
-                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                            Forms\Components\TextInput::make('config.relationValue')
-                                ->label(__('Relation value'))
-                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
-                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-
+                            Repeater::make('config.relations')
+                            ->label(__('Relations'))
+                            ->schema([
+                                Grid::make()
+                                    ->columns(2)
+                                    ->schema([
+                                        Forms\Components\Select::make('contentType')
+                                            ->label(__('Type'))
+                                            ->searchable()
+                                            ->preload()
+                                            ->live(debounce: 250)
+                                            ->options(fn() => Type::all()->pluck('name', 'slug'))
+                                            ->noSearchResultsMessage(__('No types found'))
+                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                        // TODO: Deze hidden maken, moet altijd 'ulid' zijn.
+                                        Forms\Components\Hidden::make('relationKey')
+                                            ->default('ulid')
+                                            ->label(__('Key'))
+                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                        Forms\Components\Select::make('relationValue')
+                                            ->label(__('Label'))
+                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                    ])
+                            ])
+                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship')
+                                ->columnSpanFull()
                         ]),
                 ]),
             Forms\Components\Fieldset::make('Affixes')
