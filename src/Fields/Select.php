@@ -65,21 +65,21 @@ class Select extends FieldBase implements FieldInterface
             ->searchPrompt($field->config['searchPrompt'] ?? self::getDefaultConfig()['searchPrompt'])
             ->searchingMessage($field->config['searchingMessage'] ?? self::getDefaultConfig()['searchingMessage']);
 
-        if ($field->config['searchDebounce']) {
-            $input->searchDebounce($field->config['searchDebounce']);
-        }
-
-        if ($field->config['optionsLimit']) {
-            $input->optionsLimit($field->config['optionsLimit']);
-        }
-
-        if ($field->config['minItemsForSearch']) {
-            $input->minItemsForSearch($field->config['minItemsForSearch']);
-        }
-
-        if ($field->config['maxItemsForSearch']) {
-            $input->maxItemsForSearch($field->config['maxItemsForSearch']);
-        }
+            if (isset($field->config['searchDebounce'])) {
+                $input->searchDebounce($field->config['searchDebounce']);
+            }
+            
+            if (isset($field->config['optionsLimit'])) {
+                $input->optionsLimit($field->config['optionsLimit']);
+            }
+            
+            if (isset($field->config['minItemsForSearch'])) {
+                $input->minItemsForSearch($field->config['minItemsForSearch']);
+            }
+            
+            if (isset($field->config['maxItemsForSearch'])) {
+                $input->maxItemsForSearch($field->config['maxItemsForSearch']);
+            }
 
         if ($field->config['optionType'] === 'relationship') {
             $options = [];
@@ -91,7 +91,7 @@ class Select extends FieldBase implements FieldInterface
                     continue;
                 }
 
-                $options[$type->slug] = $type->fields->pluck('name', 'slug')->toArray();
+                $options[$type->slug] = $type->fields->pluck($relation['relationValue'], 'slug')->toArray();
             }
 
             $input->options($options);
@@ -168,21 +168,24 @@ class Select extends FieldBase implements FieldInterface
                                                 ->label(__('Key'))
                                                 ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                             Forms\Components\Select::make('relationValue')
-                                                ->searchable()
-                                                ->preload()
-                                                ->options(function (Forms\Get $get) {
-                                                    $type = Type::where('slug', $get('contentType'))->first();
+                                                ->options([
+                                                    'slug' => __('Slug'),
+                                                    'name' => __('Name'),
+                                                ])
+                                                // ->options(function (Forms\Get $get) {
+                                                    
+                                                    // $type = Type::where('slug', $get('contentType'))->first();
 
-                                                    if (! $type || ! $type->slug) {
-                                                        return [];
-                                                    }
+                                                    // if (! $type || ! $type->slug) {
+                                                    //     return [];
+                                                    // }
 
-                                                    $options = Field::where('model_type', 'type')->where('model_key', $type->slug)->get();
+                                                    // $options = Field::where('model_type', 'type')->where('model_key', $type->slug)->get();
 
-                                                    return $options->pluck('name', 'slug')->toArray();
-                                                })
+                                                    // return $options->pluck('name', 'slug')->toArray();
+                                                // })
                                                 // TODO: Dit werkt nog niet
-                                                // ->default(fn(Forms\Get $get) => Type::where('slug', $get('contentType'))->first()?->title_field)
+                                                ->default(fn(Forms\Get $get) => Type::where('slug', $get('contentType'))->first()?->title_field)
                                                 ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
                                                 ->label(__('Label'))
                                                 ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
