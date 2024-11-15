@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
 use Vormkracht10\Backstage\Models\Type;
@@ -17,11 +18,11 @@ class ListContent extends ListRecords
         return [
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->form(fn (Form $form) => ContentResource::form($form)->getComponents())
+                    fn ($type) => CreateAction::make()
+                        ->label(__($type->name))
+                        ->url(fn () : string => route('filament.backstage.resources.content.create', ['type' => $type]))
                         ->slideOver()
                         ->modalWidth('6xl')
-                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
                 )->toArray()
             )
                 ->label(__('New Content'))

@@ -16,7 +16,6 @@ return new class extends Migration
 
             $table->string('name');
             $table->string('name_plural');
-            $table->string('icon');
             $table->string('title_field')->nullable();
             $table->string('body_field')->nullable();
             $table->boolean('public')->default(false);

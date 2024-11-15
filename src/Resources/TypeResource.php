@@ -55,21 +55,7 @@ class TypeResource extends Resource
                     ->required(),
                 TextInput::make('name_plural')
                     ->columnSpanFull()
-                    ->required(),
-                ToggleButtons::make('icon')
-                    ->columnSpanFull()
-                    ->default('circle-stack')
-                    ->options([
-                        'circle-stack' => '',
-                        'light-bulb' => '',
-                    ])
-                    ->icons([
-                        'circle-stack' => 'heroicon-o-circle-stack',
-                        'light-bulb' => 'heroicon-o-light-bulb',
-                    ])
-                    ->inline()
-                    ->grouped()
-                    ->required(),
+                    ->required()
             ]);
     }
 

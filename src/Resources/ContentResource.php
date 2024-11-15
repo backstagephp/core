@@ -45,7 +45,6 @@ class ContentResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // dd(self::$type, self::$model);
         return $form
             ->schema([
                 Tabs::make('Tabs')
@@ -53,11 +52,8 @@ class ContentResource extends Resource
                     ->tabs([
                         Tab::make('Content')
                             ->schema([
-
-                                Select::make('content_type')
-                                    ->options(
-                                        Type::all()->pluck('name', 'slug')->toArray()
-                                    ),
+                                Hidden::make('content_type')
+                                    ->default(request()->route()->parameter('type.slug')),
                                 Select::make('parent_ulid')
                                     ->name(__('Parent'))
                                     ->options(
@@ -69,6 +65,7 @@ class ContentResource extends Resource
                                     ->live(debounce: 250)
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
                                         $set('slug', Str::slug($state));
+                                        $set('path', '/'. Str::slug($state));
                                         $set('title', Str::title($state));
                                     }),
                                 TextInput::make('title')
@@ -256,6 +253,9 @@ class ContentResource extends Resource
                             ->schema([
                                 Hidden::make('author_id')->default(auth()->id()),
                                 TextInput::make('slug')
+                                    ->columnSpanFull()
+                                    ->required(),
+                                TextInput::make('path')
                                     ->columnSpanFull()
                                     ->required(),
                                 Select::make('site_ulid')
