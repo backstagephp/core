@@ -8,27 +8,52 @@ use Vormkracht10\Backstage\Models\Field;
 
 class Text extends FieldBase implements FieldInterface
 {
+    public static function getDefaultConfig(): array
+    {
+        return [
+            ...parent::getDefaultConfig(),
+            'readOnly' => false,
+            'autocapitalize' => 'none',
+            'autocomplete' => false,
+            'prefix' => null,
+            'prefixIcon' => null,
+            'prefixIconColor' => null,
+            'suffix' => null,
+            'suffixIcon' => null,
+            'suffixIconColor' => null,
+            'placeholder' => null,
+            'mask' => null,
+            'minLength' => null,
+            'maxLength' => null,
+            'type' => 'text',
+            'step' => null,
+            'inputMode' => null,
+            'telRegex' => null,
+            'revealable' => false,
+        ];
+    }
+
     public static function make(string $name, Field $field): TextInput
     {
         return Forms\Components\TextInput::make($name)
             ->label($field->name)
-            ->required($field->config['required'] ?? false)
-            ->readOnly($field->config['readOnly'] ?? false)
-            ->placeholder($field->config['placeholder'] ?? null)
-            ->prefix($field->config['prefix'] ?? null)
-            ->prefixIcon($field->config['prefixIcon'] ?? null)
-            ->prefixIconColor($field->config['prefixIconColor'] ?? null)
-            ->suffix($field->config['suffix'] ?? null)
-            ->suffixIcon($field->config['suffixIcon'] ?? null)
-            ->suffixIconColor($field->config['suffixIconColor'] ?? null)
-            ->mask($field->config['mask'] ?? null)
-            ->minLength($field->config['minLength'] ?? null)
-            ->maxLength($field->config['maxLength'] ?? null)
-            ->type($field->config['type'] ?? 'text')
-            ->step($field->config['step'] ?? null)
-            ->inputMode($field->config['inputMode'] ?? null)
-            ->telRegex($field->config['telRegex'] ?? null)
-            ->revealable($field->config['revealable'] ?? false);
+            ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
+            ->readOnly($field->config['readOnly'] ?? self::getDefaultConfig()['readOnly'])
+            ->placeholder($field->config['placeholder'] ?? self::getDefaultConfig()['placeholder'])
+            ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
+            ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
+            ->prefixIconColor($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor'])
+            ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
+            ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
+            ->suffixIconColor($field->config['suffixIconColor'] ?? self::getDefaultConfig()['suffixIconColor'])
+            ->mask($field->config['mask'] ?? self::getDefaultConfig()['mask'])
+            ->minLength($field->config['minLength'] ?? self::getDefaultConfig()['minLength'])
+            ->maxLength($field->config['maxLength'] ?? self::getDefaultConfig()['maxLength'])
+            ->type($field->config['type'] ?? self::getDefaultConfig()['type'])
+            ->step($field->config['step'] ?? self::getDefaultConfig()['step'])
+            ->inputMode($field->config['inputMode'] ?? self::getDefaultConfig()['inputMode'])
+            ->telRegex($field->config['telRegex'] ?? self::getDefaultConfig()['telRegex'])
+            ->revealable($field->config['revealable'] ?? self::getDefaultConfig()['revealable']);
     }
 
     public function getForm(): array
@@ -116,7 +141,7 @@ class Text extends FieldBase implements FieldInterface
                             'url' => __('URL'),
                         ])
                         ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'numeric'),
-                    Forms\Components\TextInput::make('config.revealable')
+                    Forms\Components\Toggle::make('config.revealable')
                         ->label(__('Revealable'))
                         ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'password'),
                     Forms\Components\TextInput::make('config.telRegex')

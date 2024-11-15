@@ -3,8 +3,6 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Vormkracht10\Backstage\Models\Tag;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
@@ -18,7 +16,7 @@ use Filament\Forms\Components\Select as Input;
 
 class Select extends FieldBase implements FieldInterface
 {
-    public function getDefaultConfig(): array
+    public static function getDefaultConfig(): array
     {
         return [
             ...parent::getDefaultConfig(),
@@ -53,23 +51,23 @@ class Select extends FieldBase implements FieldInterface
     {
         $input = Input::make($name)
             ->label($field->name)
-            ->required($field->config['required'] ?? false)
-            ->options($field->config['options'] ?? [])
-            ->searchable($field->config['searchable'] ?? false)
-            ->multiple($field->config['multiple'] ?? false)
-            ->preload($field->config['preload'] ?? false)
-            ->allowHtml($field->config['allowHtml'] ?? false)
-            ->selectablePlaceholder($field->config['selectablePlaceholder'] ?? false)
-            ->prefix($field->config['prefix'] ?? null)
-            ->prefixIcon($field->config['prefixIcon'] ?? null)
-            ->prefixIconColor($field->config['prefixIconColor'] ?? null)
-            ->suffix($field->config['suffix'] ?? null)
-            ->suffixIcon($field->config['suffixIcon'] ?? null)
-            ->suffixIconColor($field->config['suffixIconColor'] ?? null)
-            ->loadingMessage($field->config['loadingMessage'] ?? null)
-            ->noSearchResultsMessage($field->config['noSearchResultsMessage'] ?? null)
-            ->searchPrompt($field->config['searchPrompt'] ?? null)
-            ->searchingMessage($field->config['searchingMessage'] ?? null);
+            ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
+            ->options($field->config['options'] ?? self::getDefaultConfig()['options'])
+            ->searchable($field->config['searchable'] ?? self::getDefaultConfig()['searchable'])
+            ->multiple($field->config['multiple'] ?? self::getDefaultConfig()['multiple'])
+            ->preload($field->config['preload'] ?? self::getDefaultConfig()['preload'])
+            ->allowHtml($field->config['allowHtml'] ?? self::getDefaultConfig()['allowHtml'])
+            ->selectablePlaceholder($field->config['selectablePlaceholder'] ?? self::getDefaultConfig()['selectablePlaceholder'])
+            ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
+            ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
+            ->prefixIconColor($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor'])
+            ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
+            ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
+            ->suffixIconColor($field->config['suffixIconColor'] ?? self::getDefaultConfig()['suffixIconColor'])
+            ->loadingMessage($field->config['loadingMessage'] ?? self::getDefaultConfig()['loadingMessage'])
+            ->noSearchResultsMessage($field->config['noSearchResultsMessage'] ?? self::getDefaultConfig()['noSearchResultsMessage'])
+            ->searchPrompt($field->config['searchPrompt'] ?? self::getDefaultConfig()['searchPrompt'])
+            ->searchingMessage($field->config['searchingMessage'] ?? self::getDefaultConfig()['searchingMessage']);
 
         if ($field->config['searchDebounce']) {
             $input->searchDebounce($field->config['searchDebounce']);

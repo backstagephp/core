@@ -15,7 +15,7 @@ abstract class FieldBase implements FieldInterface
         ];
     }
 
-    public function getDefaultConfig(): array
+    public static function getDefaultConfig(): array
     {
         return [
             'required' => false,

@@ -71,7 +71,7 @@ class FieldsRelationManager extends RelationManager
                                         if (class_exists($className)) {
                                             // Initialize default config structure for this field type
                                             $fieldInstance = app($className);
-                                            $defaultConfig = $fieldInstance->getDefaultConfig();
+                                            $defaultConfig = $fieldInstance::getDefaultConfig();
                                             $set('config', $defaultConfig);
                                         }
                                     }),
