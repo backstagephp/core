@@ -18,6 +18,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Vormkracht10\Backstage\Pages\Dashboard;
+use Vormkracht10\Backstage\Resources\BlockResource;
 use Vormkracht10\Backstage\Resources\ContentResource;
 use Vormkracht10\Backstage\Resources\DomainResource;
 use Vormkracht10\Backstage\Resources\FieldResource;
@@ -28,6 +29,7 @@ use Vormkracht10\Backstage\Resources\MenuResource;
 use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\TagResource;
+use Vormkracht10\Backstage\Resources\TemplateResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
 use Vormkracht10\FilamentRedirects\RedirectsPlugin;
@@ -89,6 +91,7 @@ class BackstagePanelProvider extends PanelProvider
                 RedirectsPlugin::make(),
             ])
             ->resources([
+                BlockResource::class,
                 ContentResource::class,
                 DomainResource::class,
                 FieldResource::class,
@@ -99,6 +102,7 @@ class BackstagePanelProvider extends PanelProvider
                 SettingResource::class,
                 SiteResource::class,
                 TagResource::class,
+                TemplateResource::class,
                 TypeResource::class,
                 UserResource::class,
             ])
