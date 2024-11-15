@@ -54,11 +54,6 @@ class ContentResource extends Resource
                             ->schema([
                                 Hidden::make('content_type')
                                     ->default(request()->route()->parameter('type.slug')),
-                                Select::make('parent_ulid')
-                                    ->name(__('Parent'))
-                                    ->options(
-                                        Content::all()->pluck('name', 'ulid')->toArray()
-                                    ),
                                 TextInput::make('name')
                                     ->columnSpanFull()
                                     ->required()
@@ -233,25 +228,60 @@ class ContentResource extends Resource
                                 //             ->reorderableWithButtons(),
                                 //     ]),
                             ]),
-                        Tab::make('Microdata')
-                            ->schema([]),
-                        Tab::make('SEO')
-                            ->schema([]),
-                        Tab::make('Revisions')
-                            ->schema([
-                                // ...
-                            ]),
-                        Tab::make('Redirects')
-                            ->schema([
-                                // ...
-                            ]),
-                        Tab::make('Statistics')
-                            ->schema([
-                                // ...
-                            ]),
-                        Tab::make('Options')
+                        // Tab::make('Microdata')
+                        //     ->schema([]),
+                        // Tab::make('SEO')
+                        //     ->schema([]),
+                        // Tab::make('Revisions')
+                        //     ->schema([
+                        //         // ...
+                        //     ]),
+                        // Tab::make('Redirects')
+                        //     ->schema([
+                        //         // ...
+                        //     ]),
+                        // Tab::make('Statistics')
+                        //     ->schema([
+                        //         // ...
+                        //     ]),
+                        Tab::make('Advanced')
                             ->schema([
                                 Hidden::make('author_id')->default(auth()->id()),
+                                Select::make('parent_ulid')
+                                    ->name(__('Parent'))
+                                    ->options(
+                                        Content::all()->pluck('name', 'ulid')->toArray()
+                                    ),
+                                TextInput::make('slug')
+                                    ->columnSpanFull()
+                                    ->required(),
+                                TextInput::make('path')
+                                    ->columnSpanFull()
+                                    ->required(),
+                                Select::make('site_ulid')
+                                    ->options(
+                                        Site::all()->pluck('name', 'ulid')->toArray()
+                                    )
+                                    ->default(Site::where('default', true)->firstOrFail()->ulid),
+                                Select::make('language_code')
+                                    ->options(
+                                        Language::all()->pluck('name', 'code')->toArray()
+                                    )
+                                    ->default(Language::where('default', true)->first()->code),
+                                Select::make('country_code')
+                                    ->options(
+                                        Language::all()->pluck('name', 'code')->toArray()
+                                    )
+                                    ->default(Language::where('default', true)->first()->code),
+                            ]),
+                        Tab::make('Advanced')
+                            ->schema([
+                                Hidden::make('author_id')->default(auth()->id()),
+                                Select::make('parent_ulid')
+                                    ->name(__('Parent'))
+                                    ->options(
+                                        Content::all()->pluck('name', 'ulid')->toArray()
+                                    ),
                                 TextInput::make('slug')
                                     ->columnSpanFull()
                                     ->required(),
