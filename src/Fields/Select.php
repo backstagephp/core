@@ -181,7 +181,7 @@ class Select extends FieldBase implements FieldInterface
                                                     'slug' => __('Slug'),
                                                     'name' => __('Name'),
                                                 ])
-                                                ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
+                                                ->disabled(fn (Forms\Get $get): bool => ! $get('contentType'))
                                                 ->label(__('Label'))
                                                 ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                         ]),
