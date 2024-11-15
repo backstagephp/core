@@ -30,6 +30,7 @@ class Text extends FieldBase implements FieldInterface
             'inputMode' => null,
             'telRegex' => null,
             'revealable' => false,
+
         ];
     }
 
