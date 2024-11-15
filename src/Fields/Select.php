@@ -65,21 +65,21 @@ class Select extends FieldBase implements FieldInterface
             ->searchPrompt($field->config['searchPrompt'] ?? self::getDefaultConfig()['searchPrompt'])
             ->searchingMessage($field->config['searchingMessage'] ?? self::getDefaultConfig()['searchingMessage']);
 
-            if (isset($field->config['searchDebounce'])) {
-                $input->searchDebounce($field->config['searchDebounce']);
-            }
-            
-            if (isset($field->config['optionsLimit'])) {
-                $input->optionsLimit($field->config['optionsLimit']);
-            }
-            
-            if (isset($field->config['minItemsForSearch'])) {
-                $input->minItemsForSearch($field->config['minItemsForSearch']);
-            }
-            
-            if (isset($field->config['maxItemsForSearch'])) {
-                $input->maxItemsForSearch($field->config['maxItemsForSearch']);
-            }
+        if (isset($field->config['searchDebounce'])) {
+            $input->searchDebounce($field->config['searchDebounce']);
+        }
+
+        if (isset($field->config['optionsLimit'])) {
+            $input->optionsLimit($field->config['optionsLimit']);
+        }
+
+        if (isset($field->config['minItemsForSearch'])) {
+            $input->minItemsForSearch($field->config['minItemsForSearch']);
+        }
+
+        if (isset($field->config['maxItemsForSearch'])) {
+            $input->maxItemsForSearch($field->config['maxItemsForSearch']);
+        }
 
         if ($field->config['optionType'] === 'relationship') {
             $options = [];
