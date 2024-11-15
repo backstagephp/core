@@ -36,8 +36,8 @@ class Text extends FieldBase implements FieldInterface
         return [
             ...parent::getForm(),
             Forms\Components\Toggle::make('config.readOnly')
-            ->label(__('Read only'))
-            ->inline(false),
+                ->label(__('Read only'))
+                ->inline(false),
             Forms\Components\Grid::make(2)
                 ->schema([
                     Forms\Components\Select::make('config.autocapitalize')
