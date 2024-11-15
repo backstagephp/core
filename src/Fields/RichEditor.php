@@ -14,8 +14,7 @@ class RichEditor extends FieldBase implements FieldInterface
         return [
             ...parent::getDefaultConfig(),
             'disableGrammarly' => false,
-            'toolbarButtons' => ['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo'],
-            'disableToolbarButtons' => [],
+            'toolbarButtons' => ['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo']
         ];
     }
 
@@ -25,8 +24,7 @@ class RichEditor extends FieldBase implements FieldInterface
             ->label($field->name)
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
             ->toolbarButtons($field->config['toolbarButtons'] ?? self::getDefaultConfig()['toolbarButtons'])
-            ->disableGrammarly($field->config['disableGrammarly'] ?? self::getDefaultConfig()['disableGrammarly'])
-            ->disableToolbarButtons($field->config['disableToolbarButtons'] ?? self::getDefaultConfig()['disableToolbarButtons']);
+            ->disableGrammarly($field->config['disableGrammarly'] ?? self::getDefaultConfig()['disableGrammarly']);
     }
 
     public function getForm(): array
@@ -44,11 +42,6 @@ class RichEditor extends FieldBase implements FieldInterface
                         ->default(ToolbarButton::array()) // Not working in Filament yet.
                         ->multiple()
                         ->native(false)
-                        ->options(ToolbarButton::array())
-                        ->columnSpanFull(),
-                    Forms\Components\Select::make('config.disableToolbarButtons')
-                        ->label(__('Disabled toolbar buttons'))
-                        ->multiple()
                         ->options(ToolbarButton::array())
                         ->columnSpanFull(),
                 ]),
