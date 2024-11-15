@@ -110,12 +110,10 @@ class Select extends FieldBase implements FieldInterface
             ...parent::getForm(),
             Forms\Components\Toggle::make('config.searchable')
                 ->label(__('Searchable'))
+                ->live(debounce: 250)
                 ->inline(false),
             Forms\Components\Toggle::make('config.multiple')
                 ->label(__('Multiple'))
-                ->inline(false),
-            Forms\Components\Toggle::make('config.preload')
-                ->label(__('Preload'))
                 ->inline(false),
             Forms\Components\Toggle::make('config.allowHtml')
                 ->label(__('Allow HTML'))
@@ -123,6 +121,11 @@ class Select extends FieldBase implements FieldInterface
             Forms\Components\Toggle::make('config.selectablePlaceholder')
                 ->label(__('Selectable placeholder'))
                 ->inline(false),
+            Forms\Components\Toggle::make('config.preload')
+                ->label(__('Preload'))
+                ->live()
+                ->inline(false)
+                ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
             Forms\Components\Fieldset::make('Options')
                 ->columnSpanFull()
                 ->label(__('Options'))
@@ -143,8 +146,8 @@ class Select extends FieldBase implements FieldInterface
                             Forms\Components\KeyValue::make('config.options')
                                 ->label(__('Options'))
                                 ->columnSpanFull()
-                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'array')
-                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'array'),
+                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'array')
+                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'array'),
                             // Relationship options
                             Repeater::make('config.relations')
                                 ->label(__('Relations'))
@@ -176,10 +179,10 @@ class Select extends FieldBase implements FieldInterface
 
                                                     $options = Field::where('model_type', 'type')->where('model_key', $type->slug)->get();
 
-                                                    // TODO: The default option should be the title_field field (if present)
-
                                                     return $options->pluck('name', 'slug')->toArray();
                                                 })
+                                                // TODO: Dit werkt nog niet
+                                                // ->default(fn(Forms\Get $get) => Type::where('slug', $get('contentType'))->first()?->title_field)
                                                 ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
                                                 ->label(__('Label'))
                                                 ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
@@ -214,30 +217,38 @@ class Select extends FieldBase implements FieldInterface
             Forms\Components\Grid::make(2)
                 ->schema([
                     Forms\Components\TextInput::make('config.loadingMessage')
-                        ->label(__('Loading message')),
+                        ->label(__('Loading message'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
-                        ->label(__('No search results message')),
+                        ->label(__('No search results message'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.searchPrompt')
-                        ->label(__('Search prompt')),
+                        ->label(__('Search prompt'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.searchingMessage')
-                        ->label(__('Searching message')),
+                        ->label(__('Searching message'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.searchDebounce')
                         ->numeric()
                         ->minValue(0)
                         ->step(100)
-                        ->label(__('Search debounce')),
+                        ->label(__('Search debounce'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.optionsLimit')
                         ->numeric()
                         ->minValue(0)
-                        ->label(__('Options limit')),
+                        ->label(__('Options limit'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.minItemsForSearch')
                         ->numeric()
                         ->minValue(0)
-                        ->label(__('Min items for search')),
+                        ->label(__('Min items for search'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                     Forms\Components\TextInput::make('config.maxItemsForSearch')
                         ->numeric()
                         ->minValue(0)
-                        ->label(__('Max items for search')),
+                        ->label(__('Max items for search'))
+                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                 ]),
         ];
     }
