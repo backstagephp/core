@@ -160,6 +160,15 @@ class Select extends FieldBase implements FieldInterface
                                                 ->searchable()
                                                 ->preload()
                                                 ->live(debounce: 250)
+                                                ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                                    $type = Type::where('slug', $state)->first();
+
+                                                    if (! $type || ! $type->slug) {
+                                                        return;
+                                                    }
+
+                                                    $set('relationValue', $type->title_field ?? null);
+                                                })
                                                 ->options(fn () => Type::all()->pluck('name', 'slug'))
                                                 ->noSearchResultsMessage(__('No types found'))
                                                 ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
@@ -172,20 +181,6 @@ class Select extends FieldBase implements FieldInterface
                                                     'slug' => __('Slug'),
                                                     'name' => __('Name'),
                                                 ])
-                                                // ->options(function (Forms\Get $get) {
-                                                    
-                                                    // $type = Type::where('slug', $get('contentType'))->first();
-
-                                                    // if (! $type || ! $type->slug) {
-                                                    //     return [];
-                                                    // }
-
-                                                    // $options = Field::where('model_type', 'type')->where('model_key', $type->slug)->get();
-
-                                                    // return $options->pluck('name', 'slug')->toArray();
-                                                // })
-                                                // TODO: Dit werkt nog niet
-                                                ->default(fn(Forms\Get $get) => Type::where('slug', $get('contentType'))->first()?->title_field ?? null)
                                                 ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
                                                 ->label(__('Label'))
                                                 ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
