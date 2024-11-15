@@ -16,12 +16,9 @@ class FieldResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
-    public static ?string $recordTitleAttribute = 'name';
+    protected static bool $shouldRegisterNavigation = false;
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('Structure');
-    }
+    public static ?string $recordTitleAttribute = 'name';
 
     public static function getModelLabel(): string
     {
