@@ -11,8 +11,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\TypeResource\RelationManagers\FieldsRelationManager;
 use Vormkracht10\Backstage\Resources\TypeResource\Pages;
+use Vormkracht10\Backstage\Resources\TypeResource\RelationManagers\FieldsRelationManager;
 
 class TypeResource extends Resource
 {
