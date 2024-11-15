@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Models\Field;
 use Filament\Forms\Components\Select as Input;
 
@@ -135,29 +136,44 @@ class Select extends FieldBase implements FieldInterface
                                 ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'array'),
                             // Relationship options
                             Repeater::make('config.relations')
-                            ->label(__('Relations'))
-                            ->schema([
-                                Grid::make()
-                                    ->columns(2)
-                                    ->schema([
-                                        Forms\Components\Select::make('contentType')
-                                            ->label(__('Type'))
-                                            ->searchable()
-                                            ->preload()
-                                            ->live(debounce: 250)
-                                            ->options(fn() => Type::all()->pluck('name', 'slug'))
-                                            ->noSearchResultsMessage(__('No types found'))
-                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                        // TODO: Deze hidden maken, moet altijd 'ulid' zijn.
-                                        Forms\Components\Hidden::make('relationKey')
-                                            ->default('ulid')
-                                            ->label(__('Key'))
-                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                        Forms\Components\Select::make('relationValue')
-                                            ->label(__('Label'))
-                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                    ])
-                            ])
+                                ->label(__('Relations'))
+                                ->schema([
+                                    Grid::make()
+                                        ->columns(2)
+                                        ->schema([
+                                            Forms\Components\Select::make('contentType')
+                                                ->label(__('Type'))
+                                                ->searchable()
+                                                ->preload()
+                                                ->live(debounce: 250)
+                                                ->options(fn() => Type::all()->pluck('name', 'slug'))
+                                                ->noSearchResultsMessage(__('No types found'))
+                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                            Forms\Components\Hidden::make('relationKey')
+                                                ->default('ulid')
+                                                ->label(__('Key'))
+                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                            Forms\Components\Select::make('relationValue')
+                                                ->searchable()
+                                                ->preload()
+                                                ->options(function (Forms\Get $get) {
+                                                    $type = Type::where('slug', $get('contentType'))->first();
+
+                                                    if (!$type || !$type->slug) {
+                                                        return [];
+                                                    }
+
+                                                    $options = Field::where('model_type', 'type')->where('model_key', $type->slug)->get();
+
+                                                    // TODO: The default option should be the title_field field
+
+                                                    return $options->pluck('name', 'slug')->toArray();
+                                                })
+                                                ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
+                                                ->label(__('Label'))
+                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                        ])
+                                ])
                                 ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship')
                                 ->columnSpanFull()
                         ]),

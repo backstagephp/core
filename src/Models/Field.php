@@ -25,6 +25,6 @@ class Field extends Model
 
     public function model(): MorphTo
     {
-        return $this->morphTo('model', 'model_type', 'model_ulid', 'slug');
+        return $this->morphTo('model', 'model_type', 'model_key', 'slug');
     }
 }

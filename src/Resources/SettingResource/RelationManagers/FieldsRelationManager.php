@@ -110,9 +110,9 @@ class FieldsRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data) {
                         return [
                             ...$data,
-                            'position' => Field::where('model_ulid', $this->ownerRecord->id)->get()->max('position') + 1,
+                            'position' => Field::where('model_key', $this->ownerRecord->id)->get()->max('position') + 1,
                             'model_type' => 'setting',
-                            'model_ulid' => $this->ownerRecord->slug,
+                            'model_key' => $this->ownerRecord->slug,
                         ];
                     })
                     ->after(function (Component $livewire) {
@@ -126,7 +126,7 @@ class FieldsRelationManager extends RelationManager
                         return [
                             ...$data,
                             'model_type' => 'setting',
-                            'model_ulid' => $this->ownerRecord->slug,
+                            'model_key' => $this->ownerRecord->slug,
                         ];
                     })
                     ->after(function (Component $livewire) {

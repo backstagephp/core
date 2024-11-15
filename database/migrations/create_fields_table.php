@@ -15,7 +15,7 @@ return new class extends Migration
             $table->ulid('ulid')->primary();
 
             $table->string('model_type');
-            $table->string('model_ulid');
+            $table->string('model_key');
 
             $table->string('slug');
 
@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['model_type', 'model_ulid', 'slug']);
+            $table->unique(['model_type', 'model_key', 'slug']);
         });
     }
 };
