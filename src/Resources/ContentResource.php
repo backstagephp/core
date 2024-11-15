@@ -65,7 +65,7 @@ class ContentResource extends Resource
                                     ->live(debounce: 250)
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
                                         $set('slug', Str::slug($state));
-                                        $set('path', '/'. Str::slug($state));
+                                        $set('path', '/' . Str::slug($state));
                                         $set('title', Str::title($state));
                                     }),
                                 TextInput::make('title')

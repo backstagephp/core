@@ -3,7 +3,6 @@
 namespace Vormkracht10\Backstage\Resources;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -55,7 +54,7 @@ class TypeResource extends Resource
                     ->required(),
                 TextInput::make('name_plural')
                     ->columnSpanFull()
-                    ->required()
+                    ->required(),
             ]);
     }
 
