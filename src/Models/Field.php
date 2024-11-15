@@ -18,11 +18,13 @@ class Field extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'config' => 'array',
+        ];
     }
 
     public function model(): MorphTo
     {
-        return $this->morphTo('model');
+        return $this->morphTo('model', 'model_type', 'model_slug', 'slug');
     }
 }

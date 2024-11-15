@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Setting extends Model
 {
@@ -20,7 +22,9 @@ class Setting extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'values' => 'array',
+        ];
     }
 
     public function language(): BelongsTo
@@ -31,5 +35,20 @@ class Setting extends Model
     public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class);
+    }
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function fields(): MorphMany
+    {
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_slug', 'slug');
     }
 }

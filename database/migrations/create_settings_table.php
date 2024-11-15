@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->string('slug')->primary();
+            $table->ulid()->primary();
+            $table->string('slug')->unique();
             $table->foreignUlid('site_ulid')->nullable()->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
             $table->char('language_code', 2)->nullable();
             $table->char('country_code', 2)->nullable();
             $table->string('name');
+            $table->json('values')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
