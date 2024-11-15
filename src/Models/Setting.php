@@ -49,6 +49,6 @@ class Setting extends Model
 
     public function fields(): MorphMany
     {
-        return $this->morphMany(Field::class, 'model', 'model_type', 'model_slug', 'slug');
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_ulid', 'slug');
     }
 }

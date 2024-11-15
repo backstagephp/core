@@ -14,7 +14,7 @@ class Text extends FieldBase implements FieldInterface
             ...parent::getDefaultConfig(),
             'readOnly' => false,
             'autocapitalize' => 'none',
-            'autocomplete' => false,
+            'autocomplete' => null,
             'prefix' => null,
             'prefixIcon' => null,
             'prefixIconColor' => null,
