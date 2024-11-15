@@ -8,15 +8,20 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\Resources\BlockResource\Pages;
 
 class BlockResource extends Resource
 {
     protected static ?string $model = Block::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2-x-2';
+    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
     public static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Structure');
+    }
 
     public static function getModelLabel(): string
     {

@@ -8,7 +8,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Template;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\Resources\TemplateResource\Pages;
 
 class TemplateResource extends Resource
 {
@@ -17,6 +17,11 @@ class TemplateResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-square-2-stack';
 
     public static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Structure');
+    }
 
     public static function getModelLabel(): string
     {
