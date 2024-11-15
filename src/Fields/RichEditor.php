@@ -14,7 +14,7 @@ class RichEditor extends FieldBase implements FieldInterface
         return [
             ...parent::getDefaultConfig(),
             'disableGrammarly' => false,
-            'toolbarButtons' => ['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo']
+            'toolbarButtons' => ['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo'],
         ];
     }
 
