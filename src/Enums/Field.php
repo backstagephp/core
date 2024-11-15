@@ -2,8 +2,12 @@
 
 namespace Vormkracht10\Backstage\Enums;
 
+use Vormkracht10\Backstage\Concerns\EnumArraySerializableTrait;
+
 enum Field: string
 {
+    use EnumArraySerializableTrait;
+
     case Builder = 'builder';
     case Checkbox = 'checkbox';
     case Color = 'color';
