@@ -65,21 +65,21 @@ class Select extends FieldBase implements FieldInterface
             ->searchPrompt($field->config['searchPrompt'] ?? self::getDefaultConfig()['searchPrompt'])
             ->searchingMessage($field->config['searchingMessage'] ?? self::getDefaultConfig()['searchingMessage']);
 
-            if (isset($field->config['searchDebounce'])) {
-                $input->searchDebounce($field->config['searchDebounce']);
-            }
-            
-            if (isset($field->config['optionsLimit'])) {
-                $input->optionsLimit($field->config['optionsLimit']);
-            }
-            
-            if (isset($field->config['minItemsForSearch'])) {
-                $input->minItemsForSearch($field->config['minItemsForSearch']);
-            }
-            
-            if (isset($field->config['maxItemsForSearch'])) {
-                $input->maxItemsForSearch($field->config['maxItemsForSearch']);
-            }
+        if (isset($field->config['searchDebounce'])) {
+            $input->searchDebounce($field->config['searchDebounce']);
+        }
+
+        if (isset($field->config['optionsLimit'])) {
+            $input->optionsLimit($field->config['optionsLimit']);
+        }
+
+        if (isset($field->config['minItemsForSearch'])) {
+            $input->minItemsForSearch($field->config['minItemsForSearch']);
+        }
+
+        if (isset($field->config['maxItemsForSearch'])) {
+            $input->maxItemsForSearch($field->config['maxItemsForSearch']);
+        }
 
         if ($field->config['optionType'] === 'relationship') {
             $options = [];
@@ -173,7 +173,7 @@ class Select extends FieldBase implements FieldInterface
                                                     'name' => __('Name'),
                                                 ])
                                                 // ->options(function (Forms\Get $get) {
-                                                    
+
                                                     // $type = Type::where('slug', $get('contentType'))->first();
 
                                                     // if (! $type || ! $type->slug) {
@@ -185,8 +185,8 @@ class Select extends FieldBase implements FieldInterface
                                                     // return $options->pluck('name', 'slug')->toArray();
                                                 // })
                                                 // TODO: Dit werkt nog niet
-                                                ->default(fn(Forms\Get $get) => Type::where('slug', $get('contentType'))->first()?->title_field ?? null)
-                                                ->disabled(fn(Forms\Get $get): bool => !$get('contentType'))
+                                                ->default(fn (Forms\Get $get) => Type::where('slug', $get('contentType'))->first()?->title_field ?? null)
+                                                ->disabled(fn (Forms\Get $get): bool => ! $get('contentType'))
                                                 ->label(__('Label'))
                                                 ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                         ]),
