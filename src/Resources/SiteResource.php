@@ -2,25 +2,27 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Locale;
 use DateTimeZone;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Support\Colors\Color;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Locale;
-use Vormkracht10\Backstage\Models\Language;
+use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Vormkracht10\Backstage\Models\Site;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\FileUpload;
+use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\SiteResource\Pages;
 
 class SiteResource extends Resource
@@ -216,6 +218,24 @@ class SiteResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                ImageColumn::make('default_language_code')
+                    ->label('Default language')
+                    ->width(20)
+                    ->height(15)
+                    ->getStateUsing(fn (Site $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->default_language_code . '.svg'))))
+                    ->verticallyAlignCenter()
+                    ->searchable(),
+                // ImageColumn::make('default_country_code')
+                //     ->label('Default country')
+                //     ->width(20)
+                //     ->height(15)
+                //     ->getStateUsing(fn ($record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->default_country_code . '.svg'))))
+                //     ->verticallyAlignCenter()
+                //     ->searchable(),
+                IconColumn::make('default')
+                    ->label('Default')
+                    ->width(0)
+                    ->boolean(),
             ])
             ->filters([
                 //

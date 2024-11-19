@@ -20,6 +20,8 @@ class LanguageResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationParentItem = 'Sites';
+
     public static function getNavigationGroup(): ?string
     {
         return __('Setup');

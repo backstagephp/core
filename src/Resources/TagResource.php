@@ -18,9 +18,11 @@ class TagResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationParentItem = 'Content';
+
     public static function getNavigationGroup(): ?string
     {
-        return __('Structure');
+        return __('Content');
     }
 
     public static function getModelLabel(): string

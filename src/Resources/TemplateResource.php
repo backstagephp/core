@@ -18,6 +18,11 @@ class TemplateResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationParentItem(): ?string
+    {
+        return __('Types');
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return __('Structure');
