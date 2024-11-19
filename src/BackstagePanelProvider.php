@@ -2,37 +2,39 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Facades\FilamentView;
+use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Models\Site;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Support\Facades\FilamentView;
 use Vormkracht10\Backstage\Pages\Dashboard;
-use Vormkracht10\Backstage\Resources\BlockResource;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Resources\DomainResource;
-use Vormkracht10\Backstage\Resources\FieldResource;
-use Vormkracht10\Backstage\Resources\FormResource;
-use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
-use Vormkracht10\Backstage\Resources\MenuResource;
-use Vormkracht10\Backstage\Resources\SettingResource;
-use Vormkracht10\Backstage\Resources\SiteResource;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Vormkracht10\Backstage\Resources\TagResource;
-use Vormkracht10\Backstage\Resources\TemplateResource;
+use Vormkracht10\Backstage\Resources\FormResource;
+use Vormkracht10\Backstage\Resources\MenuResource;
+use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
+use Vormkracht10\Backstage\Resources\BlockResource;
+use Vormkracht10\Backstage\Resources\FieldResource;
+use Vormkracht10\Backstage\Resources\MediaResource;
 use Vormkracht10\FilamentRedirects\RedirectsPlugin;
+use Vormkracht10\Backstage\Resources\DomainResource;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Vormkracht10\Backstage\Resources\ContentResource;
+use Vormkracht10\Backstage\Resources\SettingResource;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Resources\LanguageResource;
+use Vormkracht10\Backstage\Resources\TemplateResource;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -40,7 +42,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -87,6 +89,9 @@ class BackstagePanelProvider extends PanelProvider
             ->passwordReset()
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
+            ->colors([
+                'primary' => Site::default()->primary_color ?? '#000000',
+            ])
             ->plugins([
                 RedirectsPlugin::make(),
             ])

@@ -5,6 +5,8 @@ namespace Vormkracht10\Backstage\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Language;
@@ -43,9 +45,28 @@ class LanguageResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
+                ImageColumn::make('code')
+                    ->label('')
+                    ->width(20)
+                    ->height(15)
+                    ->getStateUsing(fn (Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->code . '.svg'))))
+                    ->verticallyAlignCenter()
+                    ->searchable(),
+                    TextColumn::make('name')
+                        ->searchable()
+                        ->sortable(),
+                    TextColumn::make('country_code')
+                        ->label('Country')
+                        ->searchable()
+                        ->sortable(),
+                    IconColumn::make('default')
+                        ->label('Default')
+                        ->width(0)
+                        ->boolean(),
+                    IconColumn::make('active')
+                        ->label('Active')
+                        ->width(0)
+                        ->boolean(),
             ])
             ->filters([
                 //

@@ -2,11 +2,11 @@
 
 namespace Vormkracht10\Backstage\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Site extends Model
 {
@@ -19,9 +19,16 @@ class Site extends Model
 
     protected $keyType = 'string';
 
+    protected $guarded = [];
+
     public function getRouteKeyName(): string
     {
         return 'ulid';
+    }
+
+    public static function default(): Site
+    {
+        return Site::firstWhere('default', 1);
     }
 
     protected static function booted(): void

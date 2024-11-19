@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Resources;
 
 use Locale;
+use DateTimeZone;
 use Filament\Tables;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
@@ -80,21 +81,19 @@ class SiteResource extends Resource
                                         ->label('Title separator')
                                         ->columnSpan(6)
                                         ->default('|')
-                                        ->helperText('Separator symbol in the page title. E.g. "Page Title | Name of site"')
+                                        ->hint('E.g. "Page Title | Name of site"')
+                                        ->helperText('Symbol between page title and site name.')
                                         ->required(),
                                     Select::make('theme')
                                         ->label('Theme')
                                         ->columnSpanFull()
-                                        ->helperText('Select default theme.')
-                                        ->required(),
+                                        ->helperText('Select default theme.'),
                                     Toggle::make('default')
                                         ->label('Use this site as default.')
-                                        ->columnSpanFull()
-                                        ->required(),
+                                        ->columnSpanFull(),
                                     Toggle::make('auth')
                                         ->label('Protect site behind authentication.')
-                                        ->columnSpanFull()
-                                        ->required(),
+                                        ->columnSpanFull(),
                                 ]),
                             ]),
                         Tab::make('Branding')
@@ -105,20 +104,23 @@ class SiteResource extends Resource
                                     Select::make('primary_color')
                                         ->label('Primary color')
                                         ->columnSpanFull()
+                                        ->preload()
                                         ->options([
-                                            Color::Blue[500] => 'Blue',
-                                            Color::Emerald[500] => 'Emerald',
-                                            Color::Gray[500] => 'Gray',
-                                            Color::Orange[500] => 'Orange',
-                                            Color::Rose[500] => 'Rose',
+                                            collect(Color::all())
+                                                ->mapWithKeys(fn($color, $name) => [
+                                                    sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
+                                                ])
+                                                ->put('#000000', 'Black')
+                                                ->sort()
+                                                ->unique()
+                                                ->toArray()
                                         ])
                                         ->helperText('Select primary color.')
                                         ->required(),
                                     FileUpload::make('logo')
                                         ->label('Logo')
                                         ->columnSpanFull()
-                                        ->helperText('Upload a logo for the site.')
-                                        ->required(),
+                                        ->helperText('Upload a logo for the site.'),
                                 ])
                             ]),
                         Tab::make('Path')
@@ -130,12 +132,10 @@ class SiteResource extends Resource
                                         ->label('Path')
                                         ->prefix('/')
                                         ->columnSpanFull()
-                                        ->helperText('Set starting path for the site, e.g. "/department"')
-                                        ->required(),
+                                        ->helperText('Set starting path for the site, e.g. "/department"'),
                                     Toggle::make('trailing_slash')
                                         ->label('Always generate and redirect URLs using a trailing slash.')
-                                        ->columnSpanFull()
-                                        ->required(),
+                                        ->columnSpanFull(),
                                 ])
                             ]),
                         Tab::make('Language & timezone')
@@ -165,11 +165,26 @@ class SiteResource extends Resource
                                             ])->sort()
                                         )
                                         ->allowHtml()
-                                        ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code),
+                                        ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code)
+                                        ->required(),
                                     Select::make('timezone')
                                         ->label('Timezone')
                                         ->columnSpanFull()
+                                        ->searchable()
+                                        ->preload()
                                         ->helperText('Default timezone used for displaying date and time.')
+                                        ->options(
+                                            collect([
+                                                'Africa' => DateTimeZone::AFRICA,
+                                                'America' => DateTimeZone::AMERICA,
+                                                'Asia' => DateTimeZone::ASIA,
+                                                'Europe' => DateTimeZone::EUROPE,
+                                                'Oceania' => DateTimeZone::AUSTRALIA
+                                            ])->map(function ($code) {
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
+                                            })
+                                        )
+                                        ->default(config('app.timezone'))
                                         ->required(),
                                 ])
                             ]),

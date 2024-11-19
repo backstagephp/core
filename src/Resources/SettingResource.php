@@ -88,11 +88,6 @@ class SettingResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('author.name')
-                    ->label(__('Author'))
-                    ->default('-')
-                    ->searchable()
-                    ->sortable(),
                 TextColumn::make('site.name')
                     ->label(__('Site'))
                     ->default('-')

@@ -43,7 +43,6 @@ class RichEditor extends FieldBase implements FieldInterface
                         ->default(['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo'])
                         ->default(ToolbarButton::array()) // Not working in Filament yet.
                         ->multiple()
-                        ->native(false)
                         ->options(ToolbarButton::array())
                         ->columnSpanFull(),
                     Forms\Components\Select::make('config.disableToolbarButtons')
