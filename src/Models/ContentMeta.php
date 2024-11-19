@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Meta extends Model
+class ContentMeta extends Model
 {
     use HasFactory;
     use HasUlids;
 
     protected $primaryKey = 'ulid';
 
-    protected $table = 'meta';
+    protected $table = 'content_meta';
 
     protected $guarded = [];
 

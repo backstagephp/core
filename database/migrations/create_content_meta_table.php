@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('meta', function (Blueprint $table) {
+        Schema::create('content_meta', function (Blueprint $table) {
             $table->ulid()->primary();
-            $table->ulid('content_ulid');
-            $table->ulid('field_ulid');
+
+            $table->foreignUlid('content_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('field_ulid')->nullable()->constrained(table: 'fields', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
+
             $table->longText('value');
+
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('content_ulid')->references('ulid')->on('content')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreign('field_ulid')->references('ulid')->on('fields')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 };
