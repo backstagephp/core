@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MenuItem extends Model
 {
-    use HasFactory,
-        HasUlids;
+    use HasFactory;
+    use HasUlids;
 
     protected $guarded = [];
 
