@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Template extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory,
+        HasUlids;
 
     protected $primaryKey = 'ulid';
 

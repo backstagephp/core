@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContentMeta extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory,
+        HasUlids;
 
     protected $primaryKey = 'ulid';
 

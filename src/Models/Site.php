@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Site extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory,
+        HasUlids;
 
     protected $primaryKey = 'ulid';
 

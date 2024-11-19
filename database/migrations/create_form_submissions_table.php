@@ -30,11 +30,6 @@ return new class extends Migration
 
             $table->string('ip_address')->nullable();
             $table->string('hostname')->nullable();
-            $table->string('isp')->nullable();
-            $table->string('organization')->nullable();
-            $table->string('city')->nullable();
-            $table->string('region')->nullable();
-            $table->string('country_code', 2)->nullable();
             $table->string('user_agent')->nullable();
 
             $table->timestamp('submitted_at')->nullable();
