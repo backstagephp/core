@@ -92,8 +92,8 @@ class DomainResource extends Resource
                                         ->allowHtml()
                                         ->disabled(fn () => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0)
                                         ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
-                                    ]),
-                            ]), 
+                                ]),
+                            ]),
                     ]),
             ]);
     }
