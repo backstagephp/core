@@ -2,23 +2,22 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Section;
-use Illuminate\Support\Facades\Schema;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Vormkracht10\Backstage\Models\Site;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 class ContentResource extends Resource
@@ -59,40 +58,40 @@ class ContentResource extends Resource
                         Tab::make('Content')
                             ->schema([
                                 Select::make('site_ulid')
-                                ->label(__('Site'))
-                                ->columnSpan(4)
-                                ->placeholder(__('Select Site'))
-                                ->prefixIcon('heroicon-o-link')
-                                ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
-                                ->default(Site::where('default', true)->first()?->ulid)
-                                ->visible(fn() => Site::count() > 0)
-                                ->hidden(fn() => Site::count() === 1),
-                            Select::make('country_code')
-                                ->label(__('Country'))
-                                ->columnSpan(4)
-                                ->placeholder(__('Select Country'))
-                                ->prefixIcon('heroicon-o-globe-europe-africa')
-                                ->options(Language::whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn($language) => [
-                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale())
-                                ])->sort())
-                                ->allowHtml()
-                                ->default(Language::whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereNotNull('country_code')->first()->country_code : null)
-                                ->visible(fn() => Language::whereNotNull('country_code')->distinct('country_code')->count() > 0)
-                                ->hidden(fn() => Language::whereNotNull('country_code')->distinct('country_code')->count() === 1),
-                            Select::make('language_code')
-                                ->label(__('Language'))
-                                ->columnSpan(4)
-                                ->placeholder(__('Select Language'))
-                                ->prefixIcon('heroicon-o-language')
-                                ->options(
-                                    Language::get()->mapWithKeys(fn($language) => [
-                                        $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale())
-                                    ])->sort()
-                                )
-                                ->allowHtml()
-                                ->default(Language::count() === 1 ? Language::first()->code : Language::where('default', true)->first()?->code)
-                                ->visible(fn() => Language::count() > 0)
-                                ->hidden(fn() => Language::count() === 1),
+                                    ->label(__('Site'))
+                                    ->columnSpan(4)
+                                    ->placeholder(__('Select Site'))
+                                    ->prefixIcon('heroicon-o-link')
+                                    ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
+                                    ->default(Site::where('default', true)->first()?->ulid)
+                                    ->visible(fn () => Site::count() > 0)
+                                    ->hidden(fn () => Site::count() === 1),
+                                Select::make('country_code')
+                                    ->label(__('Country'))
+                                    ->columnSpan(4)
+                                    ->placeholder(__('Select Country'))
+                                    ->prefixIcon('heroicon-o-globe-europe-africa')
+                                    ->options(Language::whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
+                                        $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
+                                    ])->sort())
+                                    ->allowHtml()
+                                    ->default(Language::whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereNotNull('country_code')->first()->country_code : null)
+                                    ->visible(fn () => Language::whereNotNull('country_code')->distinct('country_code')->count() > 0)
+                                    ->hidden(fn () => Language::whereNotNull('country_code')->distinct('country_code')->count() === 1),
+                                Select::make('language_code')
+                                    ->label(__('Language'))
+                                    ->columnSpan(4)
+                                    ->placeholder(__('Select Language'))
+                                    ->prefixIcon('heroicon-o-language')
+                                    ->options(
+                                        Language::get()->mapWithKeys(fn ($language) => [
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
+                                        ])->sort()
+                                    )
+                                    ->allowHtml()
+                                    ->default(Language::count() === 1 ? Language::first()->code : Language::where('default', true)->first()?->code)
+                                    ->visible(fn () => Language::count() > 0)
+                                    ->hidden(fn () => Language::count() === 1),
                                 TextInput::make('name')
                                     ->columnSpanFull()
                                     ->required(),
