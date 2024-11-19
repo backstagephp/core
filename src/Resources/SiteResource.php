@@ -2,25 +2,25 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Locale;
 use DateTimeZone;
-use Filament\Tables;
-use Filament\Forms\Set;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Vormkracht10\Backstage\Models\Site;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Locale;
 use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\SiteResource\Pages;
 
 class SiteResource extends Resource
@@ -107,13 +107,13 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn($color, $name) => [
+                                                ->mapWithKeys(fn ($color, $name) => [
                                                     sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
                                                 ])
                                                 ->put('#000000', 'Black')
                                                 ->sort()
                                                 ->unique()
-                                                ->toArray()
+                                                ->toArray(),
                                         ])
                                         ->helperText('Select primary color.')
                                         ->required(),
@@ -121,7 +121,7 @@ class SiteResource extends Resource
                                         ->label('Logo')
                                         ->columnSpanFull()
                                         ->helperText('Upload a logo for the site.'),
-                                ])
+                                ]),
                             ]),
                         Tab::make('Path')
                             ->schema([
@@ -136,7 +136,7 @@ class SiteResource extends Resource
                                     Toggle::make('trailing_slash')
                                         ->label('Always generate and redirect URLs using a trailing slash.')
                                         ->columnSpanFull(),
-                                ])
+                                ]),
                             ]),
                         Tab::make('Language & timezone')
                             ->schema([
@@ -146,13 +146,13 @@ class SiteResource extends Resource
                                     Select::make('default_country_code')
                                         ->label(__('Default country'))
                                         ->columnSpan(6)
-                                        ->placeholder(fn() => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0 ? __('No countries available') : __('Select Country'))
+                                        ->placeholder(fn () => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0 ? __('No countries available') : __('Select Country'))
                                         ->prefixIcon('heroicon-o-globe-europe-africa')
-                                        ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale())
+                                        ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
                                         ])->sort())
                                         ->allowHtml()
-                                        ->disabled(fn() => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0)
+                                        ->disabled(fn () => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0)
                                         ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
                                     Select::make('default_language_code')
                                         ->label(__('Default language'))
@@ -160,8 +160,8 @@ class SiteResource extends Resource
                                         ->placeholder(__('Select Language'))
                                         ->prefixIcon('heroicon-o-language')
                                         ->options(
-                                            Language::whereActive(1)->get()->mapWithKeys(fn($language) => [
-                                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale())
+                                            Language::whereActive(1)->get()->mapWithKeys(fn ($language) => [
+                                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
                                             ])->sort()
                                         )
                                         ->allowHtml()
@@ -179,14 +179,14 @@ class SiteResource extends Resource
                                                 'America' => DateTimeZone::AMERICA,
                                                 'Asia' => DateTimeZone::ASIA,
                                                 'Europe' => DateTimeZone::EUROPE,
-                                                'Oceania' => DateTimeZone::AUSTRALIA
+                                                'Oceania' => DateTimeZone::AUSTRALIA,
                                             ])->map(function ($code) {
-                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
                                             })
                                         )
                                         ->default(config('app.timezone'))
                                         ->required(),
-                                ])
+                                ]),
                             ]),
                         Tab::make('Email')
                             ->schema([
@@ -203,7 +203,7 @@ class SiteResource extends Resource
                                         ->columnSpan(6)
                                         ->helperText('Default domain to use for sending email.')
                                         ->required(),
-                                ])
+                                ]),
                             ]),
                     ]),
             ]);
