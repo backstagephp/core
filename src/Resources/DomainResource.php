@@ -47,7 +47,9 @@ class DomainResource extends Resource
                         Tab::make('Domain')
                             ->schema([
                                 TextInput::make('name')
+                                    ->label('Domain name')
                                     ->columnSpanFull()
+                                    ->afterStateUpdated(fn(string $state): string => preg_replace('/^(http)(s)?:\/\//i', '', $state))
                                     ->required(),
                                 Select::make('language_code')
                                     ->relationship(name: 'language', titleAttribute: 'name')
