@@ -20,11 +20,6 @@ class TagResource extends Resource
 
     protected static ?string $navigationParentItem = 'Content';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('Content');
-    }
-
     public static function getModelLabel(): string
     {
         return __('Tag');

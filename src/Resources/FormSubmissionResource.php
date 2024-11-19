@@ -23,11 +23,6 @@ class FormSubmissionResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('Content');
-    }
-
     public static function getModelLabel(): string
     {
         return __('Form');
