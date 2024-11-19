@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Block extends Model
 {
-    use HasFactory,
-        HasUlids;
+    use HasFactory;
+    use HasUlids;
 
     protected $primaryKey = 'ulid';
 
