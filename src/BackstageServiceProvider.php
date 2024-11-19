@@ -101,8 +101,8 @@ class BackstageServiceProvider extends PackageServiceProvider
         });
 
         Select::configureUsing(function (Select $select): void {
-            $select->native(false)
-                ->searchable();
+            $select->native(false);
+            // $select->searchable();
         });
 
         Filament::registerNavigationGroups([

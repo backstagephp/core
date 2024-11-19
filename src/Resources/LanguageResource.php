@@ -52,21 +52,21 @@ class LanguageResource extends Resource
                     ->getStateUsing(fn (Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->code . '.svg'))))
                     ->verticallyAlignCenter()
                     ->searchable(),
-                    TextColumn::make('name')
-                        ->searchable()
-                        ->sortable(),
-                    TextColumn::make('country_code')
-                        ->label('Country')
-                        ->searchable()
-                        ->sortable(),
-                    IconColumn::make('default')
-                        ->label('Default')
-                        ->width(0)
-                        ->boolean(),
-                    IconColumn::make('active')
-                        ->label('Active')
-                        ->width(0)
-                        ->boolean(),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('country_code')
+                    ->label('Country')
+                    ->searchable()
+                    ->sortable(),
+                IconColumn::make('default')
+                    ->label('Default')
+                    ->width(0)
+                    ->boolean(),
+                IconColumn::make('active')
+                    ->label('Active')
+                    ->width(0)
+                    ->boolean(),
             ])
             ->filters([
                 //
