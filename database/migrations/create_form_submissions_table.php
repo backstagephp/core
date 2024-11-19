@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('form_submissions', function (Blueprint $table) {
             $table->ulid()->primary();
 
-
             $table->timestamps();
         });
     }
