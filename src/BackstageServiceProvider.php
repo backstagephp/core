@@ -174,8 +174,8 @@ class BackstageServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_sites_table',
             'create_languages_table',
+            'create_sites_table',
             'create_types_table',
             'create_fields_table',
             'create_settings_table',

@@ -21,6 +21,10 @@ class SiteFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'name' => $name = fake()->name(),
+            'slug' => Str::slug($name),
+            'timezone' => config('app.locale'),
+        ];
     }
 }
