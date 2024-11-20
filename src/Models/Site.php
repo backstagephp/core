@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Site extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory,
+        HasUlids;
 
     protected $primaryKey = 'ulid';
 
@@ -26,7 +26,7 @@ class Site extends Model
         return 'ulid';
     }
 
-    public static function default(): Site
+    public static function default(): ?Site
     {
         return Site::firstWhere('default', 1);
     }

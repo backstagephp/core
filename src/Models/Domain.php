@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Domain extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory,
+        HasUlids;
 
     protected $primaryKey = 'ulid';
 
