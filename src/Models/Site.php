@@ -11,8 +11,8 @@ use Vormkracht10\Backstage\Factories\SiteFactory;
 
 class Site extends Model
 {
-    use HasFactory,
-        HasUlids;
+    use HasFactory;
+    use HasUlids;
 
     protected $primaryKey = 'ulid';
 
