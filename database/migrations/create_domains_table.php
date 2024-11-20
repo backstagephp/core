@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('domains', function (Blueprint $table) {
             $table->ulid()->primary();
-            $table->ulid('alias_of')->nullable()->index();
             $table->string('name');
+            $table->ulid('alias_of')->nullable()->index();
             $table->char('language_code', 2)->nullable();
             $table->char('country_code', 2)->nullable();
             $table->string('environment')->nullable();

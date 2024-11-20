@@ -5,6 +5,7 @@ namespace Vormkracht10\Backstage\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Vormkracht10\Backstage\Factories\DomainFactory;
 
 class Domain extends Model
 {
@@ -14,6 +15,11 @@ class Domain extends Model
     protected $primaryKey = 'ulid';
 
     protected $guarded = [];
+
+    protected static function newFactory()
+    {
+        return DomainFactory::new();
+    }
 
     public function language()
     {

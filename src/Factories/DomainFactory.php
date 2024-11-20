@@ -2,16 +2,15 @@
 
 namespace Vormkracht10\Backstage\Factories;
 
-use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Site;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Vormkracht10\Backstage\Models\Domain;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Site>
  */
-class SiteFactory extends Factory
+class DomainFactory extends Factory
 {
-    protected $model = Site::class;
+    protected $model = Domain::class;
 
     /**
      * Define the model's default state.
@@ -21,9 +20,8 @@ class SiteFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $name = fake()->name(),
-            'slug' => Str::slug($name),
-            'timezone' => config('app.locale'),
+            'name' => 'localhost',
+            'environment' => 'local',
         ];
     }
 }
