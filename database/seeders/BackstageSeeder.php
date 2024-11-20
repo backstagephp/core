@@ -13,10 +13,10 @@ class BackstageSeeder extends Seeder
     {
         $this->call([
             ContentSeeder::class,
-            DomainSeeder::class,
             FieldSeeder::class,
             LanguageSeeder::class,
             SiteSeeder::class,
+            DomainSeeder::class,
             TypeSeeder::class,
             UserSeeder::class,
         ]);

@@ -29,5 +29,12 @@ return new class extends Migration
 
             $table->unique(['model_type', 'model_key', 'slug']);
         });
+
+        Schema::create('field_site', function (Blueprint $table) {
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('field_ulid')->constrained(table: 'fields', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->index(['site_ulid', 'field_ulid']);
+        });
     }
 };

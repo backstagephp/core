@@ -2,17 +2,22 @@
 
 namespace Vormkracht10\Backstage\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Block extends Model
 {
     use HasFactory;
     use HasUlids;
 
-    protected $primaryKey = 'ulid';
+    protected $primaryKey = 'slug';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $guarded = [];
 
@@ -24,5 +29,10 @@ class Block extends Model
     public function fields(): MorphToMany
     {
         return $this->morphToMany(Field::class, 'fieldable');
+    }
+
+    public function site(): BelongsToMany
+    {
+        return $this->belongsToMany(Site::class);
     }
 }

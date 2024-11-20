@@ -19,5 +19,15 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('menu_site', function (Blueprint $table) {
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->string('menu_slug');
+
+            $table->foreign('menu_slug')->references('slug')->on('menus')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->index(['site_ulid', 'menu_slug']);
+        });
     }
 };

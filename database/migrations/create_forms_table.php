@@ -20,5 +20,15 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
+        Schema::create('form_site', function (Blueprint $table) {
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->string('form_slug');
+
+            $table->foreign('form_slug')->references('slug')->on('forms')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->index(['site_ulid', 'form_slug']);
+        });
     }
 };

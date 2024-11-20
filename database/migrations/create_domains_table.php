@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('domains', function (Blueprint $table) {
             $table->ulid()->primary();
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
             $table->ulid('alias_of')->nullable()->index();
             $table->char('language_code', 2)->nullable();

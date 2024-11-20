@@ -2,10 +2,13 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Factories\TypeFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Type extends Model
 {
@@ -32,5 +35,10 @@ class Type extends Model
     public function fields(): MorphMany
     {
         return $this->morphMany(Field::class, 'slug', 'model_type', 'model_key');
+    }
+
+    public function site(): BelongsToMany
+    {
+        return $this->belongsToMany(Site::class);
     }
 }
