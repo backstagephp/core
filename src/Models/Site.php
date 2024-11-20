@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Vormkracht10\Backstage\Factories\SiteFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Site extends Model
 {
@@ -37,11 +38,16 @@ class Site extends Model
         return Site::firstWhere('default', 1);
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     protected static function booted(): void
     {
         // static::addGlobalScope('site', function (Builder $query) {
         //     if (auth()->hasUser()) {
-        //         // $query->where('site_id', auth()->user()->current_site_id);
+        //         $query->whereKey(auth()->user()->current_site_id);
         //     }
         // });
     }

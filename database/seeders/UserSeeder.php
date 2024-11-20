@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\User;
 
 class UserSeeder extends Seeder
@@ -29,5 +30,7 @@ class UserSeeder extends Seeder
             'email' => 'bas@vk10.nl',
             'password' => 'bas@vk10.nl',
         ])->create();
+
+        Site::default()->users()->attach(User::all());
     }
 }
