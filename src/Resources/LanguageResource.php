@@ -8,6 +8,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\LanguageResource\Pages;
@@ -57,10 +58,10 @@ class LanguageResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('country_code')
-                    ->label('Country')
-                    ->searchable()
-                    ->sortable(),
+                ViewColumn::make('country_code')
+                    ->label('Default country')
+                    ->getStateUsing(fn (Language $record) => $record->country_code)
+                    ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')
                     ->width(0)

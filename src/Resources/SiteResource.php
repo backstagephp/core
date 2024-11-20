@@ -78,15 +78,13 @@ class SiteResource extends Resource
                                     TextInput::make('title')
                                         ->label('Title')
                                         ->columnSpan(6)
-                                        ->helperText('The title of the site, used in the front-end for SEO.')
-                                        ->required(),
+                                        ->helperText('The title of the site, used in the front-end for SEO.'),
                                     TextInput::make('title_separator')
                                         ->label('Title separator')
                                         ->columnSpan(6)
                                         ->default('|')
                                         ->hint('E.g. "Page Title | Name of site"')
-                                        ->helperText('Symbol between page title and site name.')
-                                        ->required(),
+                                        ->helperText('Symbol between page title and site name.'),
                                     Select::make('theme')
                                         ->label('Theme')
                                         ->columnSpanFull()
@@ -200,12 +198,12 @@ class SiteResource extends Resource
                                         ->label('Email From Name')
                                         ->columnSpan(6)
                                         ->helperText('Default name to use in email.')
-                                        ->required(),
+                                        ->required(false),
                                     TextInput::make('email_from_domain')
                                         ->label('Email From Domain')
                                         ->columnSpan(6)
                                         ->helperText('Default domain to use for sending email.')
-                                        ->required(),
+                                        ->required(false),
                                 ]),
                             ]),
                     ]),

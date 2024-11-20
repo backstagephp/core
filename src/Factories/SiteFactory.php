@@ -24,6 +24,7 @@ class SiteFactory extends Factory
             'name' => $name = fake()->name(),
             'slug' => Str::slug($name),
             'timezone' => config('app.locale'),
+            'primary_color' => '#ef4444',
         ];
     }
 }
