@@ -2,19 +2,14 @@
 
 namespace Vormkracht10\Backstage\Resources\ContentResource\RelationManagers;
 
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Enums\Field as EnumsField;
 use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager

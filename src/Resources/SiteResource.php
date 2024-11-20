@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Checkbox;
 use DateTimeZone;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
