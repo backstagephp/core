@@ -2,8 +2,8 @@
 
 namespace Vormkracht10\Backstage\Database\Seeders;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Type;
 
 class TypeSeeder extends Seeder
