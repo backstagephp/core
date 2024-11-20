@@ -34,6 +34,11 @@ class Content extends Model
         return $this->belongsTo(Language::class, ['code', 'country_code']);
     }
 
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class);
+    }
+
     public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable');

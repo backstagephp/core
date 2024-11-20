@@ -16,7 +16,6 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Vormkracht10\Backstage\Resources\TagResource;
 use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
-use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
 use Vormkracht10\Backstage\Resources\BlockResource;
@@ -36,6 +35,8 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Vormkracht10\Backstage\Resources\SiteResource;
+use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
 use Vormkracht10\Backstage\Widgets\LatestFormSubmissionsWidget;
 
 class BackstagePanelProvider extends PanelProvider
@@ -85,6 +86,7 @@ class BackstagePanelProvider extends PanelProvider
             ->path('backstage')
             ->default(config('backstage.default_panel'))
             ->tenant(Site::class)
+            ->tenantRegistration(RegisterSite::class)
             ->databaseNotifications()
             ->spa()
             ->login()

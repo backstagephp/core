@@ -49,7 +49,7 @@ class SiteResource extends Resource
         return __('Sites');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form $form, bool $fullWidth = false): Form
     {
         return $form
             ->schema([
@@ -63,7 +63,7 @@ class SiteResource extends Resource
                                 ])->schema([
                                     TextInput::make('name')
                                         ->label('Name')
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->helperText('The name of the site, used internally in the back-end only.')
                                         ->live(debounce: 250)
                                         ->afterStateUpdated(function (Set $set, ?string $state) {
@@ -72,16 +72,16 @@ class SiteResource extends Resource
                                         })
                                         ->required(),
                                     TextInput::make('slug')
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->helperText('The slug for this site, used in code.')
                                         ->required(),
                                     TextInput::make('title')
                                         ->label('Title')
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->helperText('The title of the site, used in the front-end for SEO.'),
                                     TextInput::make('title_separator')
                                         ->label('Title separator')
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->default('|')
                                         ->hint('E.g. "Page Title | Name of site"')
                                         ->helperText('Symbol between page title and site name.'),
@@ -139,14 +139,14 @@ class SiteResource extends Resource
                                         ->columnSpanFull(),
                                 ]),
                             ]),
-                        Tab::make('Language & timezone')
+                        Tab::make('Locale')
                             ->schema([
                                 Grid::make([
                                     'default' => 12,
                                 ])->schema([
                                     Select::make('default_country_code')
                                         ->label(__('Default country'))
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->placeholder(fn () => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0 ? __('No countries available') : __('Select Country'))
                                         ->prefixIcon('heroicon-o-globe-europe-africa')
                                         ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
@@ -157,7 +157,7 @@ class SiteResource extends Resource
                                         ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
                                     Select::make('default_language_code')
                                         ->label(__('Default language'))
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->placeholder(__('Select Language'))
                                         ->prefixIcon('heroicon-o-language')
                                         ->options(
@@ -196,12 +196,12 @@ class SiteResource extends Resource
                                 ])->schema([
                                     TextInput::make('email_from_name')
                                         ->label('Email From Name')
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->helperText('Default name to use in email.')
                                         ->required(false),
                                     TextInput::make('email_from_domain')
                                         ->label('Email From Domain')
-                                        ->columnSpan(6)
+                                        ->columnSpan($fullWidth ? 12 : 6)
                                         ->helperText('Default domain to use for sending email.')
                                         ->required(false),
                                 ]),
