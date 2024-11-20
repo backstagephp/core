@@ -15,8 +15,8 @@ use Vormkracht10\Backstage\Factories\UserFactory;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
-    use HasFactory,
-        Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
