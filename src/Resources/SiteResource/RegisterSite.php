@@ -3,9 +3,8 @@
 namespace Vormkracht10\Backstage\Resources\SiteResource;
 
 use Filament\Forms\Form;
-use Filament\Forms\Components\Grid;
-use Vormkracht10\Backstage\Models\Site;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\SiteResource;
 
 class RegisterSite extends RegisterTenant
