@@ -16,6 +16,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Pages\Dashboard;
@@ -89,7 +90,7 @@ class BackstagePanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
-                'primary' => Site::default()->primary_color ?? '#000000',
+                'primary' => Schema::hasColumn('sites', 'default') ? Site::default()?->primary_color : '#ff9900',
             ])
             ->plugins([
                 RedirectsPlugin::make(),
