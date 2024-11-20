@@ -15,8 +15,6 @@ class Menu extends Model
 
     protected $keyType = 'string';
 
-    protected $table = 'menu';
-
     protected $guarded = [];
 
     protected function casts(): array

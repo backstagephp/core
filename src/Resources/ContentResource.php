@@ -4,8 +4,11 @@ namespace Vormkracht10\Backstage\Resources;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -21,10 +24,11 @@ use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Type;
+use Locale;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
 
@@ -53,7 +57,7 @@ class ContentResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $type = $form->getRecord() ? $form->getRecord()->type : request()->route()->parameter('type');
+        $type = $form->getRecord()?->type ?? request()->route()->parameter('type') ?? request()->get('content_type');
 
         // $fields = $type->fields->map(function ($field) {
         //     if (empty($field->field_type)) {
@@ -71,14 +75,17 @@ class ContentResource extends Resource
 
         $inputs = [];
 
-        foreach ($type->fields as $field) {
+        foreach ($type->fields as $index => $field) {
 
+            $inputs[] = Hidden::make('meta.' . $index . '.field_ulid')
+                ->default($field->ulid);
             $input = match ($field->field_type) {
-                'text' => Text::make(name: 'meta.' . $field->slug, field: $field),
-                'textarea' => Textarea::make(name: 'meta.' . $field->slug, field: $field),
-                'rich-editor' => RichEditor::make(name: 'meta.' . $field->slug, field: $field),
-                'select' => FieldsSelect::make('meta.' . $field->slug, $field),
-                default => TextInput::make('meta.' . $field->slug),
+                'text' => Text::make(name: 'meta.' . $index . '.value', field: $field),
+                'checkbox' => Checkbox::make(name: 'meta.' . $index . '.value'),
+                'textarea' => Textarea::make(name: 'meta.' . $index . '.value', field: $field),
+                'rich-editor' => RichEditor::make(name: 'meta.' . $index . '.value', field: $field),
+                'select' => FieldsSelect::make(name: 'meta.' . $index . '.value', field: $field),
+                default => TextInput::make(name: 'meta.' . $index . '.value'),
             };
 
             $inputs[] = $input;

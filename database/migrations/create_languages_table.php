@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('languages', function (Blueprint $table) {
             $table->char('code', 2);
-            $table->char('country_code', 2);
+            $table->char('country_code', 2)->nullable();
             $table->string('hreflang')->nullable();
             $table->string('name');
             $table->string('native')->nullable();
@@ -21,7 +21,6 @@ return new class extends Migration
             $table->boolean('default')->default(true);
             $table->timestamps();
 
-            $table->primary(['code', 'country_code']);
             $table->unique(['code', 'country_code']);
         });
     }

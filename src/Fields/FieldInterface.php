@@ -10,5 +10,5 @@ interface FieldInterface
 
     public static function make(string $name, Field $field);
 
-    public function getDefaultConfig(): array;
+    public static function getDefaultConfig(): array;
 }

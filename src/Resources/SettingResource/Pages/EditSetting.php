@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
@@ -21,6 +22,9 @@ use Vormkracht10\Backstage\Resources\SettingResource; // rename
 class EditSetting extends EditRecord
 {
     protected static string $resource = SettingResource::class;
+
+    #[On('refreshFields')]
+    public function refresh(): void {}
 
     protected function getHeaderActions(): array
     {

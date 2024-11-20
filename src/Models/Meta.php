@@ -23,8 +23,8 @@ class Meta extends Model
         return [];
     }
 
-    public function content(): BelongsTo
+    public function fields(): belongsTo
     {
-        return $this->belongsTo(Content::class);
+        return $this->belongsTo(Field::class, 'field_ulid');
     }
 }

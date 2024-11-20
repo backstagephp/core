@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('email_from_name')->nullable();
             $table->string('email_from_domain')->nullable();
             $table->char('default_language_code', 2)->nullable();
+            $table->char('default_country_code', 2)->nullable();
+            $table->string('primary_color')->nullable()->default('#ff9900');
+            $table->string('logo')->nullable();
             $table->string('timezone')->default('UTC');
             $table->boolean('auth')->default(false);
             $table->boolean('default')->default(false);

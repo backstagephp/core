@@ -12,7 +12,7 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if ($this->record->type->fields->count() === 0) {
+        if ($this->record->type?->fields->count() === 0) {
             return $data;
         }
 

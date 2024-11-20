@@ -26,6 +26,11 @@ class Site extends Model
         return 'ulid';
     }
 
+    public static function default(): Site|null
+    {
+        return Site::firstWhere('default', 1);
+    }
+
     protected static function booted(): void
     {
         // static::addGlobalScope('site', function (Builder $query) {

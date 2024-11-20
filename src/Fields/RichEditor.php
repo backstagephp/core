@@ -9,14 +9,24 @@ use Vormkracht10\Backstage\Models\Field;
 
 class RichEditor extends FieldBase implements FieldInterface
 {
+    public static function getDefaultConfig(): array
+    {
+        return [
+            ...parent::getDefaultConfig(),
+            'disableGrammarly' => false,
+            'toolbarButtons' => ['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo'],
+            'disableToolbarButtons' => [],
+        ];
+    }
+
     public static function make(string $name, Field $field): Input
     {
         return Input::make($name)
             ->label($field->name)
-            ->required($field->config['required'] ?? false)
-            ->toolbarButtons($field->config['toolbarButtons'] ?? [])
-            ->disableGrammarly($field->config['disableGrammarly'] ?? false)
-            ->disableToolbarButtons($field->config['disableToolbarButtons'] ?? []);
+            ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
+            ->toolbarButtons($field->config['toolbarButtons'] ?? self::getDefaultConfig()['toolbarButtons'])
+            ->disableGrammarly($field->config['disableGrammarly'] ?? self::getDefaultConfig()['disableGrammarly'])
+            ->disableToolbarButtons($field->config['disableToolbarButtons'] ?? self::getDefaultConfig()['disableToolbarButtons']);
     }
 
     public function getForm(): array
@@ -33,7 +43,6 @@ class RichEditor extends FieldBase implements FieldInterface
                         ->default(['attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 'strike', 'underline', 'undo'])
                         ->default(ToolbarButton::array()) // Not working in Filament yet.
                         ->multiple()
-                        ->native(false)
                         ->options(ToolbarButton::array())
                         ->columnSpanFull(),
                     Forms\Components\Select::make('config.disableToolbarButtons')

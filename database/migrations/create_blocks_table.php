@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menu', function (Blueprint $table) {
+        Schema::create('blocks', function (Blueprint $table) {
             $table->string('slug')->primary();
 
             $table->string('name');
+            $table->string('icon');
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 };
