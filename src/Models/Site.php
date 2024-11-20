@@ -26,7 +26,7 @@ class Site extends Model
         return 'ulid';
     }
 
-    public static function default(): Site|null
+    public static function default(): ?Site
     {
         return Site::firstWhere('default', 1);
     }
