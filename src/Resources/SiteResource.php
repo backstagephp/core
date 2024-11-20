@@ -78,15 +78,13 @@ class SiteResource extends Resource
                                     TextInput::make('title')
                                         ->label('Title')
                                         ->columnSpan(6)
-                                        ->helperText('The title of the site, used in the front-end for SEO.')
-                                        ->required(),
+                                        ->helperText('The title of the site, used in the front-end for SEO.'),
                                     TextInput::make('title_separator')
                                         ->label('Title separator')
                                         ->columnSpan(6)
                                         ->default('|')
                                         ->hint('E.g. "Page Title | Name of site"')
-                                        ->helperText('Symbol between page title and site name.')
-                                        ->required(),
+                                        ->helperText('Symbol between page title and site name.'),
                                     Select::make('theme')
                                         ->label('Theme')
                                         ->columnSpanFull()
@@ -110,7 +108,7 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn ($color, $name) => [
+                                                ->mapWithKeys(fn($color, $name) => [
                                                     sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
                                                 ])
                                                 ->put('#000000', 'Black')
@@ -149,13 +147,13 @@ class SiteResource extends Resource
                                     Select::make('default_country_code')
                                         ->label(__('Default country'))
                                         ->columnSpan(6)
-                                        ->placeholder(fn () => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0 ? __('No countries available') : __('Select Country'))
+                                        ->placeholder(fn() => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0 ? __('No countries available') : __('Select Country'))
                                         ->prefixIcon('heroicon-o-globe-europe-africa')
-                                        ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
+                                        ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn($language) => [
                                             $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
                                         ])->sort())
                                         ->allowHtml()
-                                        ->disabled(fn () => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0)
+                                        ->disabled(fn() => Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 0)
                                         ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
                                     Select::make('default_language_code')
                                         ->label(__('Default language'))
@@ -163,7 +161,7 @@ class SiteResource extends Resource
                                         ->placeholder(__('Select Language'))
                                         ->prefixIcon('heroicon-o-language')
                                         ->options(
-                                            Language::whereActive(1)->get()->mapWithKeys(fn ($language) => [
+                                            Language::whereActive(1)->get()->mapWithKeys(fn($language) => [
                                                 $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
                                             ])->sort()
                                         )
@@ -184,7 +182,7 @@ class SiteResource extends Resource
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
                                             ])->map(function ($code) {
-                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
                                             })
                                         )
                                         ->default(config('app.timezone'))
@@ -200,12 +198,12 @@ class SiteResource extends Resource
                                         ->label('Email From Name')
                                         ->columnSpan(6)
                                         ->helperText('Default name to use in email.')
-                                        ->required(),
+                                        ->required(false),
                                     TextInput::make('email_from_domain')
                                         ->label('Email From Domain')
                                         ->columnSpan(6)
                                         ->helperText('Default domain to use for sending email.')
-                                        ->required(),
+                                        ->required(false),
                                 ]),
                             ]),
                     ]),
@@ -221,11 +219,11 @@ class SiteResource extends Resource
                     ->sortable(),
                 ImageColumn::make('default_language_code')
                     ->label('Default language')
-                    ->getStateUsing(fn (Site $record) => $record->default_language_code)
+                    ->getStateUsing(fn(Site $record) => $record->default_language_code)
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('default_country_code')
                     ->label('Default country')
-                    ->getStateUsing(fn (Site $record) => $record->default_country_code)
+                    ->getStateUsing(fn(Site $record) => $record->default_country_code)
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')

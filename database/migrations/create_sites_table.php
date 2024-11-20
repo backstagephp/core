@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('title_separator')->nullable();
             $table->string('theme')->nullable();
+            $table->string('primary_color')->nullable();
+            $table->string('logo')->nullable();
             $table->string('path')->nullable();
             $table->string('email_from_name')->nullable();
             $table->string('email_from_domain')->nullable();
