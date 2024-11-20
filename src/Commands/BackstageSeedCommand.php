@@ -6,13 +6,16 @@ use Illuminate\Console\Command;
 
 class BackstageSeedCommand extends Command
 {
-    public $signature = 'backstage:seed';
+    public $signature = 'backstage:seed {--force}';
 
     public $description = 'Seed database with sample Backstage data';
 
     public function handle(): int
     {
-        if ($this->confirm('Do you really want to seed the database with sample Backstage data?')) {
+        if (
+            $this->option('force') ||
+            $this->confirm('Do you really want to seed the database with sample Backstage data?')
+        ) {
             $this->call('db:seed', ['--class' => 'Vormkracht10\Backstage\Database\Seeders\BackstageSeeder']);
         }
 

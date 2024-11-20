@@ -15,7 +15,7 @@ return new class extends Migration
             $table->ulid()->primary();
             $table->string('name');
             $table->string('slug');
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->string('title_separator')->nullable();
             $table->string('theme')->nullable();
             $table->string('path')->nullable();
@@ -30,6 +30,8 @@ return new class extends Migration
             $table->boolean('default')->default(false);
             $table->boolean('trailing_slash')->default(false);
             $table->timestamps();
+
+            $table->foreign(['default_language_code', 'default_country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::create('site_user', function (Blueprint $table) {

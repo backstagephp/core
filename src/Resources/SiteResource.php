@@ -19,6 +19,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Locale;
@@ -221,18 +222,12 @@ class SiteResource extends Resource
                     ->sortable(),
                 ImageColumn::make('default_language_code')
                     ->label('Default language')
-                    ->width(20)
-                    ->height(15)
-                    ->getStateUsing(fn (Site $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->default_language_code . '.svg'))))
-                    ->verticallyAlignCenter()
-                    ->searchable(),
-                // ImageColumn::make('default_country_code')
-                //     ->label('Default country')
-                //     ->width(20)
-                //     ->height(15)
-                //     ->getStateUsing(fn ($record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->default_country_code . '.svg'))))
-                //     ->verticallyAlignCenter()
-                //     ->searchable(),
+                    ->getStateUsing(fn (Site $record) => $record->default_language_code)
+                    ->view('backstage::filament.tables.columns.language-flag-column'),
+                ViewColumn::make('default_country_code')
+                    ->label('Default country')
+                    ->getStateUsing(fn (Site $record) => $record->default_country_code)
+                    ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')
                     ->width(0)

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Vormkracht10\Backstage\Factories\SiteFactory;
 
 class Site extends Model
 {
@@ -19,14 +20,17 @@ class Site extends Model
 
     protected $guarded = [];
 
-    protected $keyType = 'string';
+    protected static function newFactory()
+    {
+        return SiteFactory::new();
+    }
 
     public function getRouteKeyName(): string
     {
         return 'ulid';
     }
 
-    public static function default(): Site|null
+    public static function default(): ?Site
     {
         return Site::firstWhere('default', 1);
     }

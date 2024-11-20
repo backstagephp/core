@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Vormkracht10\Backstage\Factories\UserFactory;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
@@ -49,6 +50,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 
     public function sites(): BelongsToMany
