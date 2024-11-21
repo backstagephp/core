@@ -45,7 +45,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -94,7 +94,7 @@ class BackstagePanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
-                'primary' => Schema::hasColumn('sites', 'default') ? Site::default()?->primary_color : '#ff9900',
+                'primary' => fn() => Site::default()?->primary_color ?? '#ff9900',
             ])
             ->plugins([
                 RedirectsPlugin::make(),
