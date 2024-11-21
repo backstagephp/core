@@ -34,6 +34,8 @@ class SiteResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static bool $isScopedToTenant = false;
+
     public static function getNavigationGroup(): ?string
     {
         return __('Setup');
