@@ -94,7 +94,7 @@ class BackstagePanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
-                'primary' => fn() => Site::default()?->primary_color ?? '#ff9900',
+                'primary' => Schema::hasColumn('sites', 'default') ? Site::default()?->primary_color : '#ff9900',
             ])
             ->plugins([
                 RedirectsPlugin::make(),
