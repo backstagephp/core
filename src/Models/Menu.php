@@ -10,7 +10,6 @@ use Vormkracht10\Backstage\Scopes\ScopedBySite;
 class Menu extends Model
 {
     use HasFactory;
-    use ScopedBySite;
 
     protected $primaryKey = 'slug';
 
@@ -25,7 +24,7 @@ class Menu extends Model
         return [];
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

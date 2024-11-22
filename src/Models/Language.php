@@ -13,7 +13,6 @@ class Language extends Model
 {
     use HasCompositeRelations;
     use HasFactory;
-    use ScopedBySite;
 
     protected $primaryKey = 'code';
 

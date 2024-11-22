@@ -12,7 +12,6 @@ class Tag extends Model
 {
     use HasFactory;
     use HasUlids;
-    use ScopedBySite;
 
     protected $primaryKey = 'ulid';
 

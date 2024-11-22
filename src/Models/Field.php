@@ -28,9 +28,4 @@ class Field extends Model
     {
         return $this->morphTo('model', 'model_type', 'model_key', 'slug');
     }
-
-    public function site(): BelongsToMany
-    {
-        return $this->belongsToMany(Site::class);
-    }
 }

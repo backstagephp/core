@@ -11,7 +11,6 @@ use Vormkracht10\Backstage\Scopes\ScopedBySite;
 class Form extends Model
 {
     use HasFactory;
-    use ScopedBySite;
 
     protected $primaryKey = 'slug';
 
@@ -31,7 +30,7 @@ class Form extends Model
         return $this->morphMany(Field::class, 'model');
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

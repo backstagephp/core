@@ -20,7 +20,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 {
     use HasFactory;
     use Notifiable;
-    use ScopedBySite;
 
     /**
      * The attributes that are mass assignable.
@@ -74,15 +73,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     public function settings(): BelongsToMany
     {
         return $this->belongsToMany(Setting::class);
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('site', function (Builder $query) {
-            if (auth()->hasUser()) {
-                $query->where('current_site_ulid', auth()->user()->current_site_ulid);
-            }
-        });
     }
 
     public function getTenants(Panel $panel): Collection

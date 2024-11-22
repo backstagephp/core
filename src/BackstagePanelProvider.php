@@ -18,6 +18,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Middleware\ScopedBySite;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Pages\Dashboard;
 use Vormkracht10\Backstage\Resources\BlockResource;
@@ -45,7 +46,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -135,6 +136,8 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])->tenantMiddleware([
+                ScopedBySite::class,
+            ], isPersistent: true);
     }
 }

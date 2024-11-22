@@ -18,6 +18,8 @@ class TemplateResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+
     public static function getNavigationParentItem(): ?string
     {
         return __('Types');

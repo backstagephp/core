@@ -13,7 +13,6 @@ class Template extends Model
 {
     use HasFactory;
     use HasUlids;
-    use ScopedBySite;
 
     protected $primaryKey = 'slug';
 
@@ -33,7 +32,7 @@ class Template extends Model
         return $this->morphToMany(Field::class, 'fieldable');
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

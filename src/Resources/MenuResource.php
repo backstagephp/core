@@ -23,6 +23,8 @@ class MenuResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+
     public static function getNavigationGroup(): ?string
     {
         return __('Structure');

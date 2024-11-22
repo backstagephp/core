@@ -42,13 +42,4 @@ class Type extends Model
     {
         return $this->belongsToMany(Site::class);
     }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('site', function (Builder $query) {
-            if (auth()->hasUser()) {
-                $query->whereHas('sites', auth()->user()->current_site_ulid);
-            }
-        });
-    }
 }

@@ -13,7 +13,6 @@ class Domain extends Model
 {
     use HasFactory;
     use HasUlids;
-    use ScopedBySite;
 
     protected $primaryKey = 'ulid';
 
