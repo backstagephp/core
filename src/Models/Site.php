@@ -56,4 +56,14 @@ class Site extends Model
     {
         return $this->hasMany(Setting::class);
     }
+
+    public function types(): BelongsToMany
+    {
+        return $this->belongsToMany(Type::class);
+    }
+
+    public function contents(): HasMany
+    {
+        return $this->hasMany(Content::class);
+    }
 }

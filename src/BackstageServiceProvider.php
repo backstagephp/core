@@ -94,6 +94,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
             'type' => 'Vormkracht10\Backstage\Models\Type',
             'user' => 'Vormkracht10\Backstage\Models\User',
+            'content' => 'Vormkracht10\Backstage\Models\Content',
         ]);
 
         Route::bind('type', function (string $slug) {
