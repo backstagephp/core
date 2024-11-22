@@ -13,7 +13,11 @@ class Template extends Model
     use HasFactory;
     use HasUlids;
 
-    protected $primaryKey = 'ulid';
+    protected $primaryKey = 'slug';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $guarded = [];
 
