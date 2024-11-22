@@ -90,11 +90,11 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
+            'content' => 'Vormkracht10\Backstage\Models\Content',
             'form' => 'Vormkracht10\Backstage\Models\Form',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
             'type' => 'Vormkracht10\Backstage\Models\Type',
             'user' => 'Vormkracht10\Backstage\Models\User',
-            'content' => 'Vormkracht10\Backstage\Models\Content',
         ]);
 
         Route::bind('type', function (string $slug) {
