@@ -195,6 +195,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_templates_table',
 
             'create_notifications_table',
+            'add_columns_to_users_table',
         ];
     }
 }

@@ -2,13 +2,15 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Vormkracht10\Backstage\Scopes\ScopedBySite;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Menu extends Model
 {
     use HasFactory;
+    use ScopedBySite;
 
     protected $primaryKey = 'slug';
 

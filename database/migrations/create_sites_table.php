@@ -41,7 +41,7 @@ return new class extends Migration
             $table->index(['site_ulid', 'user_id']);
         });
 
-        Schema::create('site_language', function (Blueprint $table) {
+        Schema::create('language_site', function (Blueprint $table) {
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->char('code', 2);

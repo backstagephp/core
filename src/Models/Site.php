@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,15 +40,6 @@ class Site extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
-    }
-
-    protected static function booted(): void
-    {
-        // static::addGlobalScope('site', function (Builder $query) {
-        //     if (auth()->hasUser()) {
-        //         $query->whereKey(auth()->user()->current_site_id);
-        //     }
-        // });
     }
 
     public function content(): HasMany
