@@ -32,7 +32,8 @@ class Type extends Model
 
     public function fields(): MorphMany
     {
-        return $this->morphMany(Field::class, 'slug', 'model_type', 'model_key');
+        return $this->morphMany(Field::class, 'slug', 'model_type', 'model_key')
+            ->orderBy('position');
     }
 
     public function site(): BelongsToMany

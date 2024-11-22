@@ -5,11 +5,13 @@ namespace Vormkracht10\Backstage\Resources;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Textarea;
 use Filament\Forms\Form;
 use Illuminate\Support\Str;
 use Filament\Forms\Set;
@@ -304,22 +306,17 @@ class ContentResource extends Resource
             $fieldName = 'fields.'. $field->ulid .'.value';
 
             return match ($field->field_type) {
-                'text' => TextInput::make($fieldName)
+                'text' => Text::make($fieldName, $field)
+                    ->label($field->name),
+                'checkbox' => Checkbox::make($fieldName, $field)
+                    ->label($field->name),
+                'textarea' => RichEditor::make($fieldName, $field)
+                    ->label($field->name),
+                'select' => Select::make($fieldName, $field)
                     ->label($field->name)
-                    ->required(),
-                'checkbox' => Checkbox::make($fieldName)
-                    ->label($field->name)
-                    ->required(),
-                'textarea' => RichEditor::make($fieldName)
-                    ->label($field->name)
-                    ->required(),
-                'select' => Select::make($fieldName)
-                    ->label($field->name)
-                    ->options($field->options)
-                    ->required(),
-                default => TextInput::make($fieldName)
-                    ->label($field->name)
-                    ->required(),
+                    ->options($field->options),
+                default => Text::make($fieldName, $field)
+                    ->label($field->name),
             };
             
         })->toArray();

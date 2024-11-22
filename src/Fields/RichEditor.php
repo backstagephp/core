@@ -19,10 +19,10 @@ class RichEditor extends FieldBase implements FieldInterface
         ];
     }
 
-    public static function make(string $name, Field $field): Input
+    public static function make(string $name, ?Field $field = null): Input
     {
         return Input::make($name)
-            ->label($field->name)
+            ->label($field->name ?? null)
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
             ->toolbarButtons($field->config['toolbarButtons'] ?? self::getDefaultConfig()['toolbarButtons'])
             ->disableGrammarly($field->config['disableGrammarly'] ?? self::getDefaultConfig()['disableGrammarly'])

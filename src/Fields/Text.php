@@ -34,10 +34,10 @@ class Text extends FieldBase implements FieldInterface
         ];
     }
 
-    public static function make(string $name, Field $field): TextInput
+    public static function make(string $name, ?Field $field = null): TextInput
     {
         return Forms\Components\TextInput::make($name)
-            ->label($field->name)
+            ->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
             ->readOnly($field->config['readOnly'] ?? self::getDefaultConfig()['readOnly'])
             ->placeholder($field->config['placeholder'] ?? self::getDefaultConfig()['placeholder'])
