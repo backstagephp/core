@@ -2,9 +2,8 @@
 
 namespace Vormkracht10\Backstage\Scopes;
 
-use Filament\Facades\Filament;
-use Vormkracht10\Backstage\Models\Site;
 use Illuminate\Database\Eloquent\Builder;
+use Vormkracht10\Backstage\Models\Site;
 
 trait ScopedBySite
 {
