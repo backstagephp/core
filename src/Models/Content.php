@@ -33,7 +33,7 @@ class Content extends Model
             ->withPivot('value');
     }
 
-    public function content_meta(): HasMany
+    public function meta(): HasMany
     {
         return $this->hasMany(ContentMeta::class, 'content_ulid', 'ulid');
     }
