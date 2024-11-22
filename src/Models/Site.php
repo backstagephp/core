@@ -52,6 +52,11 @@ class Site extends Model
         // });
     }
 
+    public function content(): HasMany
+    {
+        return $this->hasMany(Content::class);
+    }
+
     public function settings(): HasMany
     {
         return $this->hasMany(Setting::class);
@@ -60,10 +65,5 @@ class Site extends Model
     public function types(): BelongsToMany
     {
         return $this->belongsToMany(Type::class);
-    }
-
-    public function contents(): HasMany
-    {
-        return $this->hasMany(Content::class);
     }
 }
