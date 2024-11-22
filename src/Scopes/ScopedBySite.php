@@ -13,7 +13,7 @@ trait ScopedBySite
         static::addGlobalScope('site', function (Builder $query) {
             if (auth()->hasUser()) {
                 $query->whereHas('site', function (Builder $query) {
-                    $query->where('ulid', auth()->current_site_id ?? Site::default()->ulid);
+                    $query->where('ulid', auth()->current_site_ulid ?? Site::default()->ulid);
                 });
             }
         });
