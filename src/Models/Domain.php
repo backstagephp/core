@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Vormkracht10\Backstage\Factories\DomainFactory;
-use Vormkracht10\Backstage\Scopes\ScopedBySite;
 
 class Domain extends Model
 {

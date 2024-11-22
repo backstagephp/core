@@ -3,10 +3,10 @@
 namespace Vormkracht10\Backstage\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Filament\Facades\Filament;
-use Vormkracht10\Backstage\Models\Block;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Domain;
 use Vormkracht10\Backstage\Models\Form;
@@ -24,51 +24,51 @@ class ScopedBySite
     public function handle(Request $request, Closure $next)
     {
         Block::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Content::addGlobalScope(
-            fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
 
         Domain::addGlobalScope(
-            fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
 
         Form::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Language::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Media::addGlobalScope(
-            fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
 
         Menu::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Setting::addGlobalScope(
-            fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
 
         Tag::addGlobalScope(
-            fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
 
         Template::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Type::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         User::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         return $next($request);
