@@ -33,7 +33,7 @@ class Language extends Model
         return LanguageFactory::new();
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class, 'language_site', 'code');
     }

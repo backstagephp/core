@@ -15,8 +15,8 @@ return new class extends Migration
             $table->ulid()->primary();
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->char('language_code', 2);
-            $table->char('country_code', 2);
-            $table->string('content_type');
+            $table->char('country_code', 2)->nullable();
+            $table->string('type_slug');
             $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUlid('parent_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
             $table->string('title');
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->timestamp('searchable_at')->nullable();
             $table->softDeletes();
 
-            $table->foreign('content_type')->references('slug')->on('types')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('type_slug')->references('slug')->on('types')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }

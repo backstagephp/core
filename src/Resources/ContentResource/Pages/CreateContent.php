@@ -13,7 +13,7 @@ class CreateContent extends CreateRecord
 
     public function mount(): void
     {
-        $this->data['content_type'] = request()->route()->parameter('type')->slug;
+        $this->data['type_slug'] = request()->route()->parameter('type')->slug;
 
         $this->authorizeAccess();
 

@@ -37,14 +37,14 @@ class Site extends Model
         return Site::firstWhere('default', 1);
     }
 
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
-    }
-
     public function content(): HasMany
     {
         return $this->hasMany(Content::class);
+    }
+
+    public function languages(): BelongsToMany
+    {
+        return $this->belongsToMany(Language::class);
     }
 
     public function settings(): HasMany
@@ -55,5 +55,10 @@ class Site extends Model
     public function types(): BelongsToMany
     {
         return $this->belongsToMany(Type::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }

@@ -38,7 +38,7 @@ class Type extends Model
             ->orderBy('position');
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

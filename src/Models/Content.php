@@ -2,14 +2,15 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Vormkracht10\Backstage\Scopes\ScopedBySite;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Vormkracht10\Backstage\Factories\ContentFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Content extends Model
 {
@@ -26,6 +27,11 @@ class Content extends Model
     protected function casts(): array
     {
         return [];
+    }
+
+    protected static function newFactory()
+    {
+        return ContentFactory::new();
     }
 
     public function fields(): BelongsToMany
