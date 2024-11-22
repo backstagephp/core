@@ -15,7 +15,9 @@ enum Field: string
     case File = 'file-upload';
     case Hidden = 'hidden';
     case KeyValue = 'key-value';
+    case Link = 'link';
     case MarkdownEditor = 'markdown-editor';
+    case Media = 'media';
     case Radio = 'radio';
     case Repeater = 'repeater';
     case RichEditor = 'rich-editor';
@@ -25,7 +27,4 @@ enum Field: string
     case Textarea = 'textarea';
     case Toggle = 'toggle';
     case ToggleButtons = 'toggle-buttons';
-    // custom
-    case Media = 'media';
-    case Link = 'link';
 }

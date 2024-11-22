@@ -37,7 +37,7 @@ class Site extends Model
         return Site::firstWhere('default', 1);
     }
 
-    public function content(): HasMany
+    public function contents(): HasMany
     {
         return $this->hasMany(Content::class);
     }
