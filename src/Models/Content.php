@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Vormkracht10\Backstage\Factories\ContentFactory;
-use Vormkracht10\Backstage\Scopes\ScopedBySite;
 
 class Content extends Model
 {
