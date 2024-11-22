@@ -2,20 +2,19 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Filament\Panel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\HasTenants;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Models\Contracts\FilamentUser;
-use Vormkracht10\Backstage\Scopes\ScopedBySite;
-use Vormkracht10\Backstage\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Vormkracht10\Backstage\Factories\UserFactory;
+use Vormkracht10\Backstage\Scopes\ScopedBySite;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
