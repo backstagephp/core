@@ -34,6 +34,7 @@ class EditContent extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         unset($data['fields']);
+
         return $data;
     }
 }

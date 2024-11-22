@@ -2,9 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
-use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
-use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Resources\ContentResource;
 
 class CreateContent extends CreateRecord

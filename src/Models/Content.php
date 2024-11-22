@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Content extends Model
@@ -38,7 +37,6 @@ class Content extends Model
     {
         return $this->hasMany(ContentMeta::class, 'content_ulid', 'ulid');
     }
-
 
     public function language(): BelongsTo
     {
