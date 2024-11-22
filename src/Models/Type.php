@@ -2,13 +2,12 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Vormkracht10\Backstage\Scopes\ScopedBySite;
-use Vormkracht10\Backstage\Factories\TypeFactory;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Vormkracht10\Backstage\Factories\TypeFactory;
 
 class Type extends Model
 {
