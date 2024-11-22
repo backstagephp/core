@@ -2,10 +2,10 @@
 
 namespace Vormkracht10\Backstage\Factories;
 
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Language;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Site;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Site>
