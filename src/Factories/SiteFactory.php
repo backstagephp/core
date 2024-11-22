@@ -2,10 +2,9 @@
 
 namespace Vormkracht10\Backstage\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Language;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Site>
