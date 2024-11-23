@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Colors\Color;
 use Vormkracht10\Backstage\Models\Field;
 
 class Text extends FieldBase implements FieldInterface
@@ -43,7 +44,7 @@ class Text extends FieldBase implements FieldInterface
             ->placeholder($field->config['placeholder'] ?? self::getDefaultConfig()['placeholder'])
             ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
             ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
-            ->prefixIconColor($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor'])
+            ->prefixIconColor(Color::hex($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor']))
             ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
             ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
             ->suffixIconColor($field->config['suffixIconColor'] ?? self::getDefaultConfig()['suffixIconColor'])
