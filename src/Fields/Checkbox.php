@@ -52,7 +52,7 @@ class Checkbox extends FieldBase implements FieldInterface
                     ->label(__('Declined'))
                     ->helperText(__('Requires the checkbox to be unchecked'))
                     ->inline(false),
-            ])
+            ]),
         ];
     }
 }
