@@ -31,7 +31,7 @@ class Block extends Model
         return $this->morphToMany(Field::class, 'fieldable');
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

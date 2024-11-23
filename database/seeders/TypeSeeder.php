@@ -13,7 +13,7 @@ class TypeSeeder extends Seeder
      */
     public function run(): void
     {
-        Type::factory()->state([
+        $type = Type::factory()->state([
             'name' => $name = 'Page',
             'name_plural' => Str::plural($name),
             'slug' => Str::slug($name),

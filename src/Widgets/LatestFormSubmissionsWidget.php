@@ -6,7 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\FormSubmission;
 
 class LatestFormSubmissionsWidget extends BaseWidget
 {
@@ -16,7 +16,7 @@ class LatestFormSubmissionsWidget extends BaseWidget
     {
         return $table
             ->query(
-                Content::query()
+                FormSubmission::query()
                     ->where('site_ulid', Filament::getTenant()->getKey())
                     ->latest()
             )

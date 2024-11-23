@@ -23,6 +23,8 @@ class LanguageResource extends Resource
 
     protected static ?string $navigationParentItem = 'Sites';
 
+    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+
     public static function getNavigationGroup(): ?string
     {
         return __('Setup');

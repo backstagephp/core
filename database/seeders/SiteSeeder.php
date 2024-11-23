@@ -17,8 +17,6 @@ class SiteSeeder extends Seeder
             'name' => $name = 'Vormkracht10',
             'slug' => Str::slug($name),
             'timezone' => 'Europe/Amsterdam',
-            'default_language_code' => 'nl',
-            'default_country_code' => 'nl',
             'default' => true,
         ])->create();
     }

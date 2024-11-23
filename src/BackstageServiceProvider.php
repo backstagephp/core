@@ -90,6 +90,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
+            'content' => 'Vormkracht10\Backstage\Models\Content',
             'form' => 'Vormkracht10\Backstage\Models\Form',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
             'type' => 'Vormkracht10\Backstage\Models\Type',
@@ -194,6 +195,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_templates_table',
 
             'create_notifications_table',
+            'add_columns_to_users_table',
         ];
     }
 }

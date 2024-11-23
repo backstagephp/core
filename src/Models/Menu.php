@@ -23,7 +23,7 @@ class Menu extends Model
         return [];
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

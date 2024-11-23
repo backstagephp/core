@@ -29,7 +29,7 @@ class Form extends Model
         return $this->morphMany(Field::class, 'model');
     }
 
-    public function site(): BelongsToMany
+    public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
     }

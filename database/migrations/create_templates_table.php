@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('template_site', function (Blueprint $table) {
+        Schema::create('site_template', function (Blueprint $table) {
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('template_slug');

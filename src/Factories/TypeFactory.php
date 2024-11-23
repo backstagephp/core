@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 
 /**
@@ -20,5 +21,12 @@ class TypeFactory extends Factory
     public function definition(): array
     {
         return [];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Type $type) {
+            $type->sites()->attach(Site::default());
+        });
     }
 }

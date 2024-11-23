@@ -44,10 +44,10 @@ class Select extends FieldBase implements FieldInterface
         ];
     }
 
-    public static function make(string $name, Field $field): Input
+    public static function make(string $name, ?Field $field = null): Input
     {
         $input = Input::make($name)
-            ->label($field->name)
+            ->label($field->name ?? null)
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
             ->options($field->config['options'] ?? self::getDefaultConfig()['options'])
             ->searchable($field->config['searchable'] ?? self::getDefaultConfig()['searchable'])
@@ -82,7 +82,7 @@ class Select extends FieldBase implements FieldInterface
             $input->maxItemsForSearch($field->config['maxItemsForSearch']);
         }
 
-        if ($field->config['optionType'] === 'relationship') {
+        if ($field->config['optionType'] ?? '' === 'relationship') {
             $options = [];
 
             foreach ($field->config['relations'] as $relation) {
@@ -98,7 +98,7 @@ class Select extends FieldBase implements FieldInterface
             $input->options($options);
         }
 
-        if ($field->config['optionType'] === 'array') {
+        if ($field->config['optionType'] ?? '' === 'array') {
             $input->options($field->config['options']);
         }
 
