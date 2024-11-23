@@ -13,6 +13,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
@@ -79,7 +80,7 @@ class EditSetting extends EditRecord
                                         TextInput::make('name')
                                             ->label(__('Name'))
                                             ->required()
-                                            ->live(debounce: 250)
+                                            ->live(debounce: 500)
                                             ->afterStateUpdated(function (Set $set, ?string $state) {
                                                 $set('slug', Str::slug($state));
                                             }),
@@ -118,6 +119,7 @@ class EditSetting extends EditRecord
                 'textarea' => Textarea::make(name: 'setting.' . $field->slug, field: $field),
                 'rich-editor' => RichEditor::make(name: 'setting.' . $field->slug, field: $field),
                 'select' => FieldsSelect::make('setting.' . $field->slug, $field),
+                'checkbox' => Checkbox::make('setting.' . $field->slug, $field),
                 default => TextInput::make('setting.' . $field->slug),
             };
 
