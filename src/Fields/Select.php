@@ -3,11 +3,12 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
+use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select as Input;
-use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Components\Select as Input;
 
 class Select extends FieldBase implements FieldInterface
 {
@@ -56,7 +57,7 @@ class Select extends FieldBase implements FieldInterface
             ->selectablePlaceholder($field->config['selectablePlaceholder'] ?? self::getDefaultConfig()['selectablePlaceholder'])
             ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
             ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
-            ->prefixIconColor($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor'])
+            ->prefixIconColor(Color::hex($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor']))
             ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
             ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
             ->suffixIconColor($field->config['suffixIconColor'] ?? self::getDefaultConfig()['suffixIconColor'])
