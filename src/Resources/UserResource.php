@@ -18,6 +18,10 @@ class UserResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static bool $isScopedToTenant = true;
+
+    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+
     public static function getNavigationGroup(): ?string
     {
         return __('Setup');

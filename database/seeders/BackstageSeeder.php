@@ -12,12 +12,12 @@ class BackstageSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            FieldSeeder::class,
+            SiteSeeder::class,
+            LanguageSeeder::class,
+            TypeSeeder::class,
             ContentSeeder::class,
             DomainSeeder::class,
-            FieldSeeder::class,
-            LanguageSeeder::class,
-            SiteSeeder::class,
-            TypeSeeder::class,
             UserSeeder::class,
         ]);
     }

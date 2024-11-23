@@ -4,7 +4,9 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
+use Vormkracht10\Backstage\Factories\LanguageFactory;
 
 class Language extends Model
 {
@@ -22,5 +24,15 @@ class Language extends Model
     protected function casts(): array
     {
         return [];
+    }
+
+    protected static function newFactory()
+    {
+        return LanguageFactory::new();
+    }
+
+    public function sites(): BelongsToMany
+    {
+        return $this->belongsToMany(Site::class, 'language_site', 'code');
     }
 }

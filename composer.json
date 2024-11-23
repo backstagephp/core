@@ -21,6 +21,7 @@
     ],
     "require": {
         "php": "^8.1",
+        "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^3.2",
         "reedware/laravel-composite-relations": "^4.0",
         "spatie/laravel-package-tools": "^1.15.0",

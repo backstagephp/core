@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Menu extends Model
 {
@@ -15,12 +16,15 @@ class Menu extends Model
 
     protected $keyType = 'string';
 
-    protected $table = 'menu';
-
     protected $guarded = [];
 
     protected function casts(): array
     {
         return [];
+    }
+
+    public function sites(): BelongsToMany
+    {
+        return $this->belongsToMany(Site::class);
     }
 }

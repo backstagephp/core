@@ -16,4 +16,25 @@ class EditContent extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['fields'] = $this->getRecord()->fields()->get()->mapWithKeys(function ($field) {
+            return [$field->ulid => $field->pivot];
+        })->toArray();
+
+        return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        $this->getRecord()->fields()->sync($this->data['fields'] ?? []);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        unset($data['fields']);
+
+        return $data;
+    }
 }

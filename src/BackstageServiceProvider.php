@@ -90,6 +90,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
+            'content' => 'Vormkracht10\Backstage\Models\Content',
             'form' => 'Vormkracht10\Backstage\Models\Form',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
             'type' => 'Vormkracht10\Backstage\Models\Type',
@@ -102,6 +103,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Select::configureUsing(function (Select $select): void {
             $select->native(false);
+            // $select->searchable();
         });
 
         Filament::registerNavigationGroups([
@@ -173,20 +175,27 @@ class BackstageServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_sites_table',
             'create_languages_table',
+            'create_sites_table',
             'create_types_table',
             'create_fields_table',
             'create_settings_table',
             'create_content_table',
-            'create_meta_table',
-            'create_menu_table',
+            'create_content_meta_table',
+            'create_blocks_table',
+            'create_menus_table',
+            'create_menu_items_table',
             'create_domains_table',
             'create_forms_table',
+            'create_form_actions_table',
+            'create_form_submissions_table',
+            'create_form_submission_values_table',
             'create_media_tables',
             'create_tags_tables',
+            'create_templates_table',
 
             'create_notifications_table',
+            'add_columns_to_users_table',
         ];
     }
 }

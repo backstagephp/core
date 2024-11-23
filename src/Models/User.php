@@ -7,10 +7,12 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Vormkracht10\Backstage\Factories\UserFactory;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
@@ -49,6 +51,16 @@ class User extends Authenticatable implements FilamentUser, HasTenants
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
+    }
+
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class, 'current_site_id');
     }
 
     public function sites(): BelongsToMany

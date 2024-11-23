@@ -69,6 +69,7 @@ class FieldsRelationManager extends RelationManager
                                         $set('config', []);
 
                                         $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($state);
+
                                         if (class_exists($className)) {
                                             // Initialize default config structure for this field type
                                             $fieldInstance = app($className);

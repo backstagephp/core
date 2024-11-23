@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Vormkracht10\Backstage\Models\Content;
 
 class ContentSeeder extends Seeder
 {
@@ -11,6 +12,6 @@ class ContentSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Content::factory()->create();
     }
 }

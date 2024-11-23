@@ -2,11 +2,12 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Vormkracht10\Backstage\Factories\SiteFactory;
 
 class Site extends Model
 {
@@ -19,22 +20,50 @@ class Site extends Model
 
     protected $keyType = 'string';
 
+    protected $guarded = [];
+
+    protected static function newFactory()
+    {
+        return SiteFactory::new();
+    }
+
     public function getRouteKeyName(): string
     {
         return 'ulid';
     }
 
-    protected static function booted(): void
+    public static function default(): ?Site
     {
-        // static::addGlobalScope('site', function (Builder $query) {
-        //     if (auth()->hasUser()) {
-        //         // $query->where('site_id', auth()->user()->current_site_id);
-        //     }
-        // });
+        return Site::firstWhere('default', 1);
+    }
+
+    public function contents(): HasMany
+    {
+        return $this->hasMany(Content::class);
+    }
+
+    public function languages(): BelongsToMany
+    {
+        return $this->belongsToMany(Language::class);
+    }
+
+    public function menus(): BelongsToMany
+    {
+        return $this->belongsToMany(Menu::class);
     }
 
     public function settings(): HasMany
     {
         return $this->hasMany(Setting::class);
+    }
+
+    public function types(): BelongsToMany
+    {
+        return $this->belongsToMany(Type::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }

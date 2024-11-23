@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->ulid()->primary();
+
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->char('language_code', 2);
+            $table->char('country_code', 2);
+
             $table->string('disk')->index();
             $table->unsignedBigInteger('uploaded_by')->nullable()->index();
             $table->ulidMorphs('model');
@@ -28,6 +33,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('uploaded_by')->references('id')->on('users')->cascadeOnUpdate()->nullOnDelete();
         });
     }

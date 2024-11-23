@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Form extends Model
@@ -26,5 +27,10 @@ class Form extends Model
     public function fields(): MorphMany
     {
         return $this->morphMany(Field::class, 'model');
+    }
+
+    public function sites(): BelongsToMany
+    {
+        return $this->belongsToMany(Site::class);
     }
 }

@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select as Input;
+use Filament\Support\Colors\Color;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Type;
 
@@ -43,10 +44,10 @@ class Select extends FieldBase implements FieldInterface
         ];
     }
 
-    public static function make(string $name, Field $field): Input
+    public static function make(string $name, ?Field $field = null): Input
     {
         $input = Input::make($name)
-            ->label($field->name)
+            ->label($field->name ?? null)
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
             ->options($field->config['options'] ?? self::getDefaultConfig()['options'])
             ->searchable($field->config['searchable'] ?? self::getDefaultConfig()['searchable'])
@@ -56,7 +57,7 @@ class Select extends FieldBase implements FieldInterface
             ->selectablePlaceholder($field->config['selectablePlaceholder'] ?? self::getDefaultConfig()['selectablePlaceholder'])
             ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
             ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
-            ->prefixIconColor($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor'])
+            ->prefixIconColor(Color::hex($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor']))
             ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
             ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
             ->suffixIconColor($field->config['suffixIconColor'] ?? self::getDefaultConfig()['suffixIconColor'])
@@ -81,7 +82,7 @@ class Select extends FieldBase implements FieldInterface
             $input->maxItemsForSearch($field->config['maxItemsForSearch']);
         }
 
-        if ($field->config['optionType'] === 'relationship') {
+        if ($field->config['optionType'] ?? '' === 'relationship') {
             $options = [];
 
             foreach ($field->config['relations'] as $relation) {
@@ -97,7 +98,7 @@ class Select extends FieldBase implements FieldInterface
             $input->options($options);
         }
 
-        if ($field->config['optionType'] === 'array') {
+        if ($field->config['optionType'] ?? '' === 'array') {
             $input->options($field->config['options']);
         }
 
@@ -138,7 +139,6 @@ class Select extends FieldBase implements FieldInterface
                                     'relationship' => __('Relationship'),
                                 ])
                                 ->searchable()
-                                ->native(false)
                                 ->live(onBlur: true)
                                 ->reactive()
                                 ->label(__('Type')),
