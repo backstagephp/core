@@ -3,12 +3,12 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\Field;
 use Filament\Forms\Components\Select as Input;
+use Filament\Support\Colors\Color;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Type;
 
 class Select extends FieldBase implements FieldInterface
 {
