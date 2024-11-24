@@ -36,17 +36,15 @@ class Text extends FieldBase implements FieldInterface
 
     public static function make(string $name, ?Field $field = null): TextInput
     {
-        return Forms\Components\TextInput::make($name)
+        $input = Forms\Components\TextInput::make($name)
             ->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])
             ->readOnly($field->config['readOnly'] ?? self::getDefaultConfig()['readOnly'])
             ->placeholder($field->config['placeholder'] ?? self::getDefaultConfig()['placeholder'])
             ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
             ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
-            ->prefixIconColor(Color::hex($field->config['prefixIconColor'] ?? self::getDefaultConfig()['prefixIconColor']))
             ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
             ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
-            ->suffixIconColor($field->config['suffixIconColor'] ?? self::getDefaultConfig()['suffixIconColor'])
             ->mask($field->config['mask'] ?? self::getDefaultConfig()['mask'])
             ->minLength($field->config['minLength'] ?? self::getDefaultConfig()['minLength'])
             ->maxLength($field->config['maxLength'] ?? self::getDefaultConfig()['maxLength'])
@@ -55,6 +53,17 @@ class Text extends FieldBase implements FieldInterface
             ->inputMode($field->config['inputMode'] ?? self::getDefaultConfig()['inputMode'])
             ->telRegex($field->config['telRegex'] ?? self::getDefaultConfig()['telRegex'])
             ->revealable($field->config['revealable'] ?? self::getDefaultConfig()['revealable']);
+
+            if (isset($field->config['prefixIconColor']) && $field->config['prefixIconColor']) {
+                $input->prefixIconColor(Color::hex($field->config['prefixIconColor']));
+            }
+    
+            if (isset($field->config['suffixIconColor']) && $field->config['suffixIconColor']) {
+                $input->suffixIconColor(Color::hex($field->config['suffixIconColor']));
+            }
+
+        return $input;
+
     }
 
     public function getForm(): array

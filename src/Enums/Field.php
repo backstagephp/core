@@ -10,6 +10,7 @@ enum Field: string
 
     case Builder = 'builder';
     case Checkbox = 'checkbox';
+    case CheckboxList = 'checkbox-list';
     case Color = 'color';
     case DateTime = 'datetime';
     case File = 'file-upload';
