@@ -54,13 +54,13 @@ class Text extends FieldBase implements FieldInterface
             ->telRegex($field->config['telRegex'] ?? self::getDefaultConfig()['telRegex'])
             ->revealable($field->config['revealable'] ?? self::getDefaultConfig()['revealable']);
 
-            if (isset($field->config['prefixIconColor']) && $field->config['prefixIconColor']) {
-                $input->prefixIconColor(Color::hex($field->config['prefixIconColor']));
-            }
-    
-            if (isset($field->config['suffixIconColor']) && $field->config['suffixIconColor']) {
-                $input->suffixIconColor(Color::hex($field->config['suffixIconColor']));
-            }
+        if (isset($field->config['prefixIconColor']) && $field->config['prefixIconColor']) {
+            $input->prefixIconColor(Color::hex($field->config['prefixIconColor']));
+        }
+
+        if (isset($field->config['suffixIconColor']) && $field->config['suffixIconColor']) {
+            $input->suffixIconColor(Color::hex($field->config['suffixIconColor']));
+        }
 
         return $input;
 

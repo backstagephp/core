@@ -98,7 +98,6 @@ class Select extends FieldBase implements FieldInterface
                     continue;
                 }
 
-
                 $opts = $type->fields->pluck($relation['relationValue'], 'slug')->toArray();
 
                 if (count($opts) === 0) {

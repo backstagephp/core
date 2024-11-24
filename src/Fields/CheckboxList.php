@@ -3,12 +3,12 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
+use Filament\Forms\Components\CheckboxList as Input;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Content;
-use Filament\Forms\Components\CheckboxList as Input;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Type;
 
 class CheckboxList extends FieldBase implements FieldInterface
 {
@@ -74,7 +74,7 @@ class CheckboxList extends FieldBase implements FieldInterface
             }
 
             $options = array_merge(...$options);
- 
+
             $input->options($options);
         }
 
@@ -162,7 +162,7 @@ class CheckboxList extends FieldBase implements FieldInterface
                                 ->columnSpanFull(),
                         ]),
                 ]),
-        
+
             Forms\Components\Grid::make(2)
                 ->schema([
                     Forms\Components\TextInput::make('config.columns')
@@ -175,7 +175,7 @@ class CheckboxList extends FieldBase implements FieldInterface
                             'column' => __('Column'),
                         ])
                         ->label(__('Grid direction')),
-                    // 
+                    //
                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
                         ->label(__('No search results message'))
                         ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
