@@ -47,9 +47,9 @@ class Site extends Model
         return $this->belongsToMany(Language::class);
     }
 
-    public function menus(): BelongsToMany
+    public function menus(): HasMany
     {
-        return $this->belongsToMany(Menu::class);
+        return $this->hasMany(Menu::class);
     }
 
     public function settings(): HasMany

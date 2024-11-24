@@ -56,7 +56,6 @@ class MenuResource extends Resource
                                     ->schema([
                                         Select::make('country_code')
                                             ->label(__('Country'))
-                                            ->columnSpan(1)
                                             ->placeholder(__('Select Country'))
                                             ->prefixIcon('heroicon-o-globe-europe-africa')
                                             ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
@@ -67,7 +66,6 @@ class MenuResource extends Resource
 
                                         Select::make('language_code')
                                             ->label(__('Language'))
-                                            ->columnSpan(1)
                                             ->placeholder(__('Select Language'))
                                             ->prefixIcon('heroicon-o-language')
                                             ->options(
@@ -79,14 +77,12 @@ class MenuResource extends Resource
                                             ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code),
 
                                         TextInput::make('name')
-                                            ->columnSpanFull()
                                             ->required()
                                             ->live(debounce: 250)
                                             ->afterStateUpdated(function (Set $set, ?string $state) {
                                                 $set('slug', Str::slug($state));
                                             }),
                                         TextInput::make('slug')
-                                            ->columnSpanFull()
                                             ->required()
                                             ->unique(ignoreRecord: true),
                                 ]),
