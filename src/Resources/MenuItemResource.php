@@ -2,21 +2,29 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
+use Locale;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Vormkracht10\Backstage\Models\Site;
+use Filament\Forms\Components\TextInput;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\MenuItem;
 use Vormkracht10\Backstage\Resources\MenuItemResource\Pages;
 
 class MenuItemResource extends Resource
 {
-    protected static ?string $model = MenuItemsRelationManager::class;
+    protected static ?string $model = MenuItem::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
@@ -46,17 +54,57 @@ class MenuItemResource extends Resource
                     ->tabs([
                         Tab::make('Menu')
                             ->schema([
-                                TextInput::make('name')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->live(debounce: 250)
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('slug', Str::slug($state));
-                                    }),
-                                TextInput::make('slug')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->unique(ignoreRecord: true),
+                            Grid::make(2)
+                                ->schema([
+                                    Select::make('country_code')
+                                        ->label(__('Country'))
+                                        ->columnSpan(1)
+                                        ->placeholder(__('Select Country'))
+                                        ->prefixIcon('heroicon-o-globe-europe-africa')
+                                        ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayregion('-'.$language->code, app()->getLocale()),
+                                        ])->sort())
+                                        ->allowHtml()
+                                        ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
+
+                                    Select::make('language_code')
+                                        ->label(__('Language'))
+                                        ->columnSpan(1)
+                                        ->placeholder(__('Select Language'))
+                                        ->prefixIcon('heroicon-o-language')
+                                        ->options(
+                                            Language::whereActive(1)->get()->mapWithKeys(fn ($language) => [
+                                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
+                                            ])->sort()
+                                        )
+                                        ->allowHtml()
+                                        ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code),
+                                        
+                                    TextInput::make('name')
+                                        ->columnSpan(1)
+                                        ->required()
+                                        ->live(debounce: 250)
+                                        ->afterStateUpdated(function (Set $set, ?string $state) {
+                                            $set('slug', Str::slug($state));
+                                        }),
+
+                                        TextInput::make('slug')
+                                            ->columnSpan(1)
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
+
+                                        TextInput::make('url')
+                                            ->label('URL')
+                                            ->suffixAction(
+                                                Action::make('content')
+                                                    ->icon('heroicon-o-link')
+                                                    ->modal()
+                                                    ->modalHeading('Select Content')
+                                            )
+                                            ->url()
+                                            ->columnSpan(2)
+                                            ->required(),
+                                ]),
                             ]),
                     ]),
             ]);
