@@ -48,7 +48,7 @@ class ScopedBySite
         );
 
         Menu::addGlobalScope(
-            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
 
         Setting::addGlobalScope(
