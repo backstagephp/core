@@ -18,6 +18,7 @@ return new class extends Migration
             $table->char('language_code', 2);
             $table->char('country_code', 2);
 
+            $table->string('menu_slug')->references('slug')->on('menu')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUlid('parent_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
 
             $table->string('name');

@@ -11,6 +11,12 @@ class MenuItem extends Model
     use HasFactory;
     use HasUlids;
 
+    protected $primaryKey = 'ulid';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $guarded = [];
 
     protected function casts(): array

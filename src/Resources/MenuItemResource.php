@@ -17,7 +17,7 @@ use Vormkracht10\Backstage\Resources\MenuItemResource\Pages;
 
 class MenuItemResource extends Resource
 {
-    protected static ?string $model = MenuItem::class;
+    protected static ?string $model = MenuItemsRelationManager::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
