@@ -2,21 +2,21 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Vormkracht10\Backstage\Models\Menu;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Locale;
 use Vormkracht10\Backstage\Fields\Select;
 use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Resources\MenuResource\Pages;
 use Vormkracht10\Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 
@@ -85,7 +85,7 @@ class MenuResource extends Resource
                                         TextInput::make('slug')
                                             ->required()
                                             ->unique(ignoreRecord: true),
-                                ]),
+                                    ]),
                             ]),
                     ]),
             ]);
