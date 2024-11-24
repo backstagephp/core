@@ -3,7 +3,7 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextInput as Input;
 use Filament\Support\Colors\Color;
 use Vormkracht10\Backstage\Models\Field;
 
@@ -34,9 +34,9 @@ class Text extends FieldBase implements FieldInterface
         ];
     }
 
-    public static function make(string $name, ?Field $field = null): TextInput
+    public static function make(string $name, ?Field $field = null): Input
     {
-        $input = self::applyDefaultSettings(TextInput::make($name), $field);
+        $input = self::applyDefaultSettings(Input::make($name), $field);
 
         $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
             ->readOnly($field->config['readOnly'] ?? self::getDefaultConfig()['readOnly'])
