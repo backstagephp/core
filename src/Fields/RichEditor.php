@@ -3,10 +3,9 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Support\Colors\Color;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Enums\ToolbarButton;
 use Filament\Forms\Components\RichEditor as Input;
+use Vormkracht10\Backstage\Enums\ToolbarButton;
+use Vormkracht10\Backstage\Models\Field;
 
 class RichEditor extends FieldBase implements FieldInterface
 {
@@ -58,8 +57,8 @@ class RichEditor extends FieldBase implements FieldInterface
                                         ->options(ToolbarButton::array())
                                         ->columnSpanFull(),
                                 ]),
-                        ])
-                ])->columnSpanFull()
+                        ]),
+                ])->columnSpanFull(),
         ];
     }
 }

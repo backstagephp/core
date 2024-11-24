@@ -3,7 +3,6 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Vormkracht10\Backstage\Models\Content;
@@ -130,8 +129,8 @@ class CheckboxList extends FieldBase implements FieldInterface
                                             Forms\Components\KeyValue::make('config.options')
                                                 ->label(__('Options'))
                                                 ->columnSpanFull()
-                                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'array')
-                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'array'),
+                                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'array')
+                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'array'),
                                             // Relationship options
                                             Repeater::make('config.relations')
                                                 ->label(__('Relations'))
@@ -153,24 +152,24 @@ class CheckboxList extends FieldBase implements FieldInterface
 
                                                                     $set('relationValue', $type->title_field ?? null);
                                                                 })
-                                                                ->options(fn() => Type::all()->pluck('name', 'slug'))
+                                                                ->options(fn () => Type::all()->pluck('name', 'slug'))
                                                                 ->noSearchResultsMessage(__('No types found'))
-                                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                                             Forms\Components\Hidden::make('relationKey')
                                                                 ->default('ulid')
                                                                 ->label(__('Key'))
-                                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                                             Forms\Components\Select::make('relationValue')
                                                                 ->options([
                                                                     'slug' => __('Slug'),
                                                                     'name' => __('Name'),
                                                                 ])
-                                                                ->disabled(fn(Forms\Get $get): bool => ! $get('contentType'))
+                                                                ->disabled(fn (Forms\Get $get): bool => ! $get('contentType'))
                                                                 ->label(__('Label'))
-                                                                ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                                         ]),
                                                 ])
-                                                ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship')
+                                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
                                                 ->columnSpanFull(),
                                         ]),
                                 ]),
@@ -186,21 +185,21 @@ class CheckboxList extends FieldBase implements FieldInterface
                                             'column' => __('Column'),
                                         ])
                                         ->label(__('Grid direction')),
-                                    // 
+                                    //
                                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
                                         ->label(__('No search results message'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchPrompt')
                                         ->label(__('Search prompt'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchDebounce')
                                         ->numeric()
                                         ->minValue(0)
                                         ->step(100)
                                         ->label(__('Search debounce'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                 ]),
-                        ])
+                        ]),
                 ])->columnSpanFull(),
         ];
     }
