@@ -75,7 +75,7 @@ class DomainResource extends Resource
                                         ->prefixIcon('heroicon-o-language')
                                         ->options(
                                             Language::whereActive(1)->get()->mapWithKeys(fn ($language) => [
-                                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayRegion('-'.$language->code, app()->getLocale()),
+                                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayRegion('-' . $language->code, app()->getLocale()),
                                             ])->sort()
                                         )
                                         ->allowHtml()
