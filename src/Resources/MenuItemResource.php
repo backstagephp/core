@@ -12,7 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\MenuItem;
 use Vormkracht10\Backstage\Resources\MenuItemResource\Pages;
 
 class MenuItemResource extends Resource
