@@ -6,9 +6,10 @@ use Filament\Forms;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Content;
+use Filament\Forms\Components\CheckboxList as Input;
 
 class CheckboxList extends FieldBase implements FieldInterface
 {
