@@ -3,9 +3,8 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Support\Colors\Color;
-use Vormkracht10\Backstage\Models\Field;
 use Filament\Forms\Components\Checkbox as Input;
+use Vormkracht10\Backstage\Models\Field;
 
 class Checkbox extends FieldBase implements FieldInterface
 {
@@ -64,8 +63,8 @@ class Checkbox extends FieldBase implements FieldInterface
                                     ->helperText(__('Requires the checkbox to be unchecked'))
                                     ->inline(false),
                             ]),
-                        ])
-                ])->columnSpanFull()
+                        ]),
+                ])->columnSpanFull(),
         ];
     }
 }

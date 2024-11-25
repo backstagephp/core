@@ -3,9 +3,8 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Support\Colors\Color;
-use Vormkracht10\Backstage\Models\Field;
 use Filament\Forms\Components\Textarea as Input;
+use Vormkracht10\Backstage\Models\Field;
 
 class Textarea extends FieldBase implements FieldInterface
 {

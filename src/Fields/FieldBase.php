@@ -35,16 +35,18 @@ abstract class FieldBase implements FieldInterface
                         ->label(__('Hint color'))
                         ->visible(function (Forms\Get $get): bool {
                             $hint = $get('config.hint');
-                            return !empty(trim($hint));
+
+                            return ! empty(trim($hint));
                         }),
                     Forms\Components\TextInput::make('config.hintIcon')
                         ->label(__('Hint icon'))
                         ->placeholder('heroicon-m-')
                         ->visible(function (Forms\Get $get): bool {
                             $hint = $get('config.hint');
-                            return !empty(trim($hint));
+
+                            return ! empty(trim($hint));
                         }),
-                ])
+                ]),
         ];
     }
 
