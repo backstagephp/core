@@ -77,29 +77,9 @@ class EditSetting extends EditRecord
                             ->schema([
                                 Grid::make()
                                     ->columns(2)
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label(__('Name'))
-                                            ->required()
-                                            ->live(debounce: 500)
-                                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                                $set('slug', Str::slug($state));
-                                            }),
-                                        TextInput::make('slug')
-                                            ->label(__('Slug'))
-                                            ->required()
-                                            ->unique(ignoreRecord: true),
-                                        Select::make('site_ulid')
-                                            ->relationship('site', 'name')
-                                            ->columnSpanFull()
-                                            ->label(__('Site')),
-                                        Select::make('language_code')
-                                            //     ->relationship('language', 'code')
-                                            ->label(__('Language')),
-                                        Select::make('country_code')
-                                            // ->relationship('language', 'country_code')
-                                            ->label(__('Country')),
-                                    ]),
+                                    ->schema(
+                                        SettingResource::fields($form),
+                                    ),
                             ]),
                     ]),
             ]);
