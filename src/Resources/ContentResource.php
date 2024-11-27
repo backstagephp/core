@@ -60,15 +60,12 @@ class ContentResource extends Resource
                     ->tabs([
                         Tab::make('Content')
                             ->schema([
-                                Grid::make([
-                                    'default' => 12,
-                                ])->schema([
-                                    Hidden::make('type_slug')
-                                        ->default($type->slug),
-                                ]),
+                                Hidden::make('type_slug')
+                                    ->default($type->slug),
                                 TextInput::make('name')
                                     ->columnSpanFull()
                                     ->required()
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
                                         $set('title', Str::title($state));
                                         $set('slug', Str::slug($state));
@@ -242,23 +239,7 @@ class ContentResource extends Resource
                                     ->columns(1)
                                     ->schema(self::getTypeInputs($type)),
                             ]),
-                        Tab::make('Microdata')
-                            ->schema([]),
-                        Tab::make('SEO')
-                            ->schema([]),
-                        Tab::make('Revisions')
-                            ->schema([
-                                // ...
-                            ]),
-                        Tab::make('Redirects')
-                            ->schema([
-                                // ...
-                            ]),
-                        Tab::make('Statistics')
-                            ->schema([
-                                // ...
-                            ]),
-                        Tab::make('Options')
+                        Tab::make('Advanced')
                             ->schema([
                                 TextInput::make('title')
                                     ->columnSpanFull()

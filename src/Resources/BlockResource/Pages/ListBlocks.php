@@ -15,20 +15,7 @@ class ListBlocks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ActionGroup::make(
-                Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->form(fn (Form $form) => BlockResource::form($form)->getComponents())
-                        ->slideOver()
-                        ->modalWidth('6xl')
-                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                )->toArray()
-            )
-                ->label(__('New Block'))
-                ->dropdownPlacement('bottom-end')
-                ->icon('heroicon-o-chevron-down')
-                ->iconPosition('after')
-                ->button(),
+            Actions\CreateAction::make(),
         ];
     }
 }

@@ -66,6 +66,7 @@ class BackstageServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // Asset Registration
+        Backstage::registerComponent('backstage-example', \Vormkracht10\Backstage\View\Components\BackstageExample::class);
         FilamentAsset::register(
             $this->getAssets(),
             $this->getAssetPackageName()

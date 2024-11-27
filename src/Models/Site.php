@@ -66,4 +66,9 @@ class Site extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function blocks(): BelongsToMany
+    {
+        return $this->belongsToMany(Block::class);
+    }
 }
