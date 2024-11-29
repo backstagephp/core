@@ -15,8 +15,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Facades\Backstage;
+use Vormkracht10\Backstage\Forms\Components\Uploadcare;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Resources\BlockResource\Pages;
+use Vormkracht10\Backstage\Resources\BlockResource\RelationManagers\FieldsRelationManager;
 
 class BlockResource extends Resource
 {
@@ -82,11 +84,14 @@ class BlockResource extends Resource
                                 ->columnSpanFull()
                                 ->required()
                                 ->unique(ignoreRecord: true),
+                        ]),
+                    Tab::make('Component')
+                        ->schema([
                             // Select::make('component')
                             //     ->columnSpanFull()
-                            //     ->options(Backstage::getComponents())
-                        ])
-                ]),
+                            //     ->options(Backstage::getComponents()),
+                            ])
+                    ]),
             ]);
     }
 
@@ -113,7 +118,9 @@ class BlockResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            FieldsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

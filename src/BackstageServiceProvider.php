@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Models\Block;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -93,6 +94,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
+            'block' => 'Vormkracht10\Backstage\Models\Block',
             'content' => 'Vormkracht10\Backstage\Models\Content',
             'form' => 'Vormkracht10\Backstage\Models\Form',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
@@ -103,6 +105,11 @@ class BackstageServiceProvider extends PackageServiceProvider
         Route::bind('type', function (string $slug) {
             return Type::where('slug', $slug)->firstOrFail();
         });
+
+        Route::bind('block', function (string $slug) {
+            return Block::where('slug', $slug)->firstOrFail();
+        });
+
 
         Select::configureUsing(function (Select $select): void {
             $select->native(false);

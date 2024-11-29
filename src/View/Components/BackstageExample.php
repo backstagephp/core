@@ -13,9 +13,9 @@ class BackstageExample extends Component
      */
     public function __construct(
         public string $name = 'John Doe',
-        public string $function = 'Developer',
-        public array $skills = [],
-        public bool $active = true
+        public ?string $function = 'Developer',
+        public ?array $skills = [],
+        public ?bool $active = true
     ) {
     }
     
