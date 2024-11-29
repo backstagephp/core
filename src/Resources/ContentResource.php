@@ -161,9 +161,9 @@ class ContentResource extends Resource
                         $set('title', Str::title($state));
                         $set('slug', Str::slug($state));
                     });
-
-                return $field;
             }
+
+            return $field;
         })->toArray();
     }
 
