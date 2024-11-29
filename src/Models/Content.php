@@ -24,7 +24,9 @@ class Content extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'meta_tags' => 'array',
+        ];
     }
 
     protected static function newFactory()

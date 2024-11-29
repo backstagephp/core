@@ -77,6 +77,17 @@ class ContentResource extends Resource
                                         ->label('SEO')
                                         ->schema([
                                             TextInput::make('title')
+                                                ->label('Page Title')
+                                                ->columnSpanFull()
+                                                ->required(),
+                                            TextInput::make('meta_tags.description')
+                                                ->label('Description')
+                                                ->helperText('Meta description for search engines.')
+                                                ->columnSpanFull()
+                                                ->required(),
+                                            TextInput::make('meta_tags.keywords')
+                                                ->label('Keywords')
+                                                ->helperText('Meta keywords, altough not respected in search engines anymore, we also use it as focus keywords.')
                                                 ->columnSpanFull()
                                                 ->required(),
                                         ]),

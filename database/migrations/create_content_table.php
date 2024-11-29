@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('path')->nullable();
-            $table->json('meta')->nullable();
+            $table->json('meta_tags')->nullable();
             $table->json('microdata')->nullable();
             $table->string('template')->nullable();
             $table->string('password')->nullable();
