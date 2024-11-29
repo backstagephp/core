@@ -103,7 +103,7 @@ class ContentResource extends Resource
                                     ->label(__('Site'))
                                     ->columnSpanFull()
                                     ->placeholder(__('Select Site'))
-                                    ->prefixIcon('heroicon-o-link')
+                                    ->prefixIcon('heroicon-o-window')
                                     ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
                                     ->default(Site::where('default', true)->first()?->ulid),
                                 Select::make('country_code')
