@@ -71,17 +71,22 @@ class ContentResource extends Resource
                                             ->default(self::$type->slug),
                                         Grid::make()
                                             ->columns(1)
-                                            ->schema(self::getTypeInputs(self::$type)),
+                                            ->schema(self::getTypeInputs()),
                                     ]),
+                                    Tab::make('seo')
+                                        ->label('SEO')
+                                        ->schema([
+                                            TextInput::make('title')
+                                                ->columnSpanFull()
+                                                ->required(),
+                                        ]),
                             ]),
                         Section::make()
                             ->columnSpan(4)
                             ->schema([
-                                TextInput::make('title')
-                                    ->columnSpanFull()
-                                    ->required(),
                                 TextInput::make('slug')
                                     ->columnSpanFull()
+                                    ->helperText('This is used to generate the URL of this content.')
                                     ->required(),
                                 Select::make('site_ulid')
                                     ->label(__('Site'))
@@ -117,7 +122,7 @@ class ContentResource extends Resource
             ]);
     }
 
-    public static function getTypeInputs(Type $type)
+    public static function getTypeInputs()
     {
         return self::$type->fields->map(function (Field $field) {
             $fieldName = 'fields.' . $field->ulid . '.value';
