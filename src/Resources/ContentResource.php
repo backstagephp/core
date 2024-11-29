@@ -5,6 +5,7 @@ namespace Vormkracht10\Backstage\Resources;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -35,6 +36,8 @@ class ContentResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static ?Type $type = null;
+
     public static function getModelLabel(): string
     {
         return __('Content');
@@ -52,34 +55,27 @@ class ContentResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $type = Type::firstWhere('slug', ($form->getLivewire()->data['type_slug'] ?? $form->getRecord()->type_slug));
+        self::$type = Type::firstWhere('slug', ($form->getLivewire()->data['type_slug'] ?? $form->getRecord()->type_slug));
 
         return $form
             ->schema([
-                Tabs::make('Tabs')
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tab::make('Content')
-                            ->schema([
-                                Hidden::make('type_slug')
-                                    ->default($type->slug),
-                                TextInput::make('name')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('title', Str::title($state));
-                                        $set('slug', Str::slug($state));
-                                    }),
+                Grid::make(12)
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->columnSpan(8)
+                            ->tabs([
+                                Tab::make(self::$type->slug)
+                                    ->label(__(self::$type->name))
+                                    ->schema([
+                                        Hidden::make('type_slug')
+                                            ->default(self::$type->slug),
+                                        Grid::make()
+                                            ->columns(1)
+                                            ->schema(self::getTypeInputs(self::$type)),
+                                    ]),
                             ]),
-                        Tab::make($type->slug)
-                            ->label(__($type->name))
-                            ->schema([
-                                Grid::make()
-                                    ->columns(1)
-                                    ->schema(self::getTypeInputs($type)),
-                            ]),
-                        Tab::make('Advanced')
+                        Section::make()
+                            ->columnSpan(4)
                             ->schema([
                                 TextInput::make('title')
                                     ->columnSpanFull()
@@ -123,7 +119,7 @@ class ContentResource extends Resource
 
     public static function getTypeInputs(Type $type)
     {
-        return $type->fields->map(function (Field $field) {
+        return self::$type->fields->map(function (Field $field) {
             $fieldName = 'fields.' . $field->ulid . '.value';
 
             return match ($field->field_type) {
@@ -141,6 +137,17 @@ class ContentResource extends Resource
                 default => Text::make($fieldName, $field)
                     ->label($field->name),
             };
+        })
+        ->map(function($field) {
+            if(self::$type->title_field == $field->slug) {
+                $field->live(onBlur: true)
+                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                        $set('title', Str::title($state));
+                        $set('slug', Str::slug($state));
+                    });
+
+                return $field;
+            }
         })->toArray();
     }
 
