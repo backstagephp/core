@@ -61,7 +61,7 @@ class TypeResource extends Resource
                             if (in_array(strtolower($value), ['content', 'advanced'])) {
                                 $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                             }
-                        }
+                        },
                     ]),
                 TextInput::make('name_plural')
                     ->columnSpanFull()

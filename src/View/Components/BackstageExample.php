@@ -16,13 +16,12 @@ class BackstageExample extends Component
         public ?string $function = 'Developer',
         public ?array $skills = [],
         public ?bool $active = true
-    ) {
-    }
-    
+    ) {}
+
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): View|Closure|string
+    public function render(): View | Closure | string
     {
         return view('backstage::components.backstage-example');
     }

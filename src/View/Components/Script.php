@@ -6,10 +6,10 @@ use Illuminate\View\Component;
 
 class Script extends Component
 {
-    public function __construct(public ?string $title = null)
-    {
-        $this->title = $title;
-    }
+    public function __construct(
+        public string $src,
+        bool $defer = true
+    ) {}
 
     public function render()
     {

@@ -4,14 +4,11 @@ namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;

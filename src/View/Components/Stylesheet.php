@@ -6,13 +6,13 @@ use Illuminate\View\Component;
 
 class Stylesheet extends Component
 {
-    public function __construct(public ?string $title = null)
-    {
-        $this->title = $title;
-    }
+    public function __construct(
+        public string $src,
+        bool $defer = true
+    ) {}
 
     public function render()
     {
-        return view('backstage::components.page');
+        return view('backstage::components.stylesheet');
     }
 }

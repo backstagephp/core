@@ -20,10 +20,11 @@ class EditContent extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['fields'] = $this->getRecord()->fields()->get()->mapWithKeys(function ($field) {
-            $pivot =  $field->pivot;
+            $pivot = $field->pivot;
             if ($field->field_type == 'builder') {
                 $pivot->value = json_decode($pivot->value, true);
             }
+
             return [$field->ulid => $pivot];
         })->toArray();
 

@@ -5,7 +5,6 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
-use Filament\Support\Colors\Color;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Field;
 
@@ -22,8 +21,11 @@ class Builder extends FieldBase implements FieldInterface
     {
         $input = self::applyDefaultSettings(
             Input::make($name)
-                ->blocks(self::getBlockOptions()
-            ), $field);
+                ->blocks(
+                    self::getBlockOptions()
+                ),
+            $field
+        );
 
         return $input;
     }
@@ -31,9 +33,10 @@ class Builder extends FieldBase implements FieldInterface
     /**
      * Get the blocks
      */
-    private static function getBlockOptions() {
+    private static function getBlockOptions()
+    {
         $blocks = Block::with('fields')->get();
-        
+
         $options = [];
         foreach ($blocks as $block) {
             $options[] = BuilderBlock::make($block->name)

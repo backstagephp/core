@@ -2,12 +2,9 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -128,6 +125,7 @@ class ContentResource extends Resource
     {
         return $type->fields->map(function (Field $field) {
             $fieldName = 'fields.' . $field->ulid . '.value';
+
             return match ($field->field_type) {
                 'text' => Text::make($fieldName, $field)
                     ->label($field->name),
