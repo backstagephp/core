@@ -59,4 +59,9 @@ class Content extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    public function response()
+    {
+        return response('X', 200);
+    }
 }

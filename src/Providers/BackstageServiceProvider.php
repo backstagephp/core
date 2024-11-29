@@ -83,7 +83,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Handle Stubs
         if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/backstage/{$file->getFilename()}"),
                 ], 'backstage-stubs');
@@ -127,6 +127,9 @@ class BackstageServiceProvider extends PackageServiceProvider
             NavigationGroup::make()
                 ->label('Setup'),
         ]);
+
+        $this->app->register(RequestServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
     }
 
     protected function getAssetPackageName(): ?string
