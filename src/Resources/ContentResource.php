@@ -21,6 +21,7 @@ use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select;
 use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Language;
@@ -69,6 +70,7 @@ class ContentResource extends Resource
                                     ->schema([
                                         Hidden::make('type_slug')
                                             ->default(self::$type->slug),
+                                        Hidden::make('name'),
                                         Grid::make()
                                             ->columns(1)
                                             ->schema(self::getTypeInputs()),
@@ -76,20 +78,17 @@ class ContentResource extends Resource
                                     Tab::make('seo')
                                         ->label('SEO')
                                         ->schema([
-                                            TextInput::make('title')
+                                            TextInput::make('meta_tags.title')
                                                 ->label('Page Title')
-                                                ->columnSpanFull()
-                                                ->required(),
+                                                ->columnSpanFull(),
                                             TextInput::make('meta_tags.description')
                                                 ->label('Description')
                                                 ->helperText('Meta description for search engines.')
-                                                ->columnSpanFull()
-                                                ->required(),
+                                                ->columnSpanFull(),
                                             TextInput::make('meta_tags.keywords')
                                                 ->label('Keywords')
                                                 ->helperText('Meta keywords, altough not respected in search engines anymore, we also use it as focus keywords.')
-                                                ->columnSpanFull()
-                                                ->required(),
+                                                ->columnSpanFull(),
                                         ]),
                             ]),
                         Section::make()
@@ -97,7 +96,11 @@ class ContentResource extends Resource
                             ->schema([
                                 TextInput::make('slug')
                                     ->columnSpanFull()
-                                    ->helperText('This is used to generate the URL of this content.')
+                                    ->helperText('Unique string identifier for this content.')
+                                    ->required(),
+                                TextInput::make('path')
+                                    ->columnSpanFull()
+                                    ->helperText('Path to generate URL for this content.')
                                     ->required(),
                                 Select::make('site_ulid')
                                     ->label(__('Site'))
@@ -138,12 +141,14 @@ class ContentResource extends Resource
         return self::$type->fields->map(function (Field $field) {
             $fieldName = 'fields.' . $field->ulid . '.value';
 
-            return match ($field->field_type) {
+            $field->input = match ($field->field_type) {
                 'text' => Text::make($fieldName, $field)
                     ->label($field->name),
                 'checkbox' => Checkbox::make($fieldName, $field)
                     ->label($field->name),
-                'textarea' => RichEditor::make($fieldName, $field)
+                'rich-editor' => RichEditor::make($fieldName, $field)
+                    ->label($field->name),
+                'textarea' => Textarea::make($fieldName, $field)
                     ->label($field->name),
                 'select' => Select::make($fieldName, $field)
                     ->label($field->name)
@@ -153,18 +158,24 @@ class ContentResource extends Resource
                 default => Text::make($fieldName, $field)
                     ->label($field->name),
             };
+
+            return $field;
         })
         ->map(function($field) {
-            if(self::$type->title_field == $field->slug) {
-                $field->live(onBlur: true)
+            if(self::$type->name_field == $field->slug) {
+                $field->input->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, ?string $state) {
-                        $set('title', Str::title($state));
+                        $set('name', $state);
+                        $set('meta_tags.title', $state);
                         $set('slug', Str::slug($state));
+                        $set('path', Str::slug($state));
                     });
             }
 
             return $field;
-        })->toArray();
+        })
+        ->map(fn($field) => $field->input)
+        ->toArray();
     }
 
     public static function table(Table $table): Table

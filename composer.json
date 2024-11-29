@@ -69,8 +69,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Vormkracht10\\Backstage\\BackstageServiceProvider",
-                "Vormkracht10\\Backstage\\BackstagePanelProvider"
+                "Vormkracht10\\Backstage\\Providers\\BackstageServiceProvider",
+                "Vormkracht10\\Backstage\\Providers\\BackstagePanelProvider"
             ],
             "aliases": {
                 "Backstage": "Vormkracht10\\Backstage\\Facades\\Backstage"

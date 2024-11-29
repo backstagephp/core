@@ -16,13 +16,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use Vormkracht10\Backstage\BackstageServiceProvider;
+use Vormkracht10\Backstage\Providers\BackstageServiceProvider;
 
 class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->withFactories(realpath(dirname(__DIR__).'/database/factories'));
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Vormkracht10\\Backstage\\Database\\Factories\\' . class_basename($modelName) . 'Factory'

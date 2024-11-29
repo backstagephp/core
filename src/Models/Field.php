@@ -2,15 +2,15 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Field extends Model
 {
-    use HasFactory;
+    use HasPackageFactory;
     use HasUlids;
 
     protected $primaryKey = 'ulid';

@@ -151,7 +151,7 @@ class CheckboxList extends FieldBase implements FieldInterface
                                                                         return;
                                                                     }
 
-                                                                    $set('relationValue', $type->title_field ?? null);
+                                                                    $set('relationValue', $type->name_field ?? null);
                                                                 })
                                                                 ->options(fn () => Type::all()->pluck('name', 'slug'))
                                                                 ->noSearchResultsMessage(__('No types found'))

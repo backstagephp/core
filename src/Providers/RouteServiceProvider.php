@@ -1,31 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Vormkracht10\Backstage\Providers;
 
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
-use Filament\Navigation\NavigationGroup;
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Route;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Menu;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Observers\MenuObserver;
-use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Illuminate\Support\ServiceProvider;
 
-class BackstageServiceProvider extends PackageServiceProvider
+class RouteServiceProvider extends ServiceProvider
 {
     public static string $name = 'backstage';
 
@@ -67,7 +46,6 @@ class BackstageServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // Asset Registration
-        Backstage::registerComponent('backstage-example', \Vormkracht10\Backstage\View\Components\BackstageExample::class);
         FilamentAsset::register(
             $this->getAssets(),
             $this->getAssetPackageName()

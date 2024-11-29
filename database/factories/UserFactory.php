@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Factories;
+namespace Vormkracht10\Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -8,9 +8,6 @@ use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\User;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
     protected $model = User::class;
