@@ -33,7 +33,6 @@ class EditContent extends EditRecord
     protected function afterSave(): void
     {
         $fields = collect($this->data['fields'] ?? []);
-        // convert array values to json
         $fields = $fields->map(function ($field) {
             return isset($field['value']) && is_array($field['value']) ? ['value' => json_encode($field['value'])] : $field;
         });
