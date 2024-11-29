@@ -7,6 +7,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -95,7 +96,7 @@ class BackstagePanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
-                'primary' => Schema::hasColumn('sites', 'default') ? Site::default()?->primary_color : '#ff9900',
+                'primary' => Color::hex(Schema::hasColumn('sites', 'default') ? (Site::default()?->primary_color ?? '#ff9900') : '#ff9900'),
             ])
             ->plugins([
                 RedirectsPlugin::make(),
