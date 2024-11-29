@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Facades\Backstage;
+use Vormkracht10\Backstage\Forms\Components\Uploadcare;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Resources\BlockResource\Pages;
 use Vormkracht10\Backstage\Resources\BlockResource\RelationManagers\FieldsRelationManager;
@@ -52,44 +53,44 @@ class BlockResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Tabs::make('Tabs')
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tab::make('Block')
-                            ->schema([
-                                TextInput::make('name')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('slug', Str::slug($state));
-                                    }),
-                                ToggleButtons::make('icon')
-                                    ->columnSpanFull()
-                                    ->default('circle-stack')
-                                    ->options([
-                                        'circle-stack' => '',
-                                        'light-bulb' => '',
-                                    ])
-                                    ->icons([
-                                        'circle-stack' => 'heroicon-o-circle-stack',
-                                        'light-bulb' => 'heroicon-o-light-bulb',
-                                    ])
-                                    ->inline()
-                                    ->grouped()
-                                    ->required(),
-                                TextInput::make('slug')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->unique(ignoreRecord: true),
-                            ]),
-                        Tab::make('Component')
-                            ->schema([
-                                // Select::make('component')
-                                //     ->columnSpanFull()
-                                //     ->options(Backstage::getComponents()),
-                            ]),
+        ->schema([
+            Tabs::make('Tabs')
+                ->columnSpanFull()
+                ->tabs([
+                    Tab::make('Block')
+                        ->schema([
+                            TextInput::make('name')
+                                ->columnSpanFull()
+                                ->required()
+                                ->live(onBlur: true)
+                                ->afterStateUpdated(function (Set $set, ?string $state) {
+                                    $set('slug', Str::slug($state));
+                                }),
+                            ToggleButtons::make('icon')
+                                ->columnSpanFull()
+                                ->default('circle-stack')
+                                ->options([
+                                    'circle-stack' => '',
+                                    'light-bulb' => '',
+                                ])
+                                ->icons([
+                                    'circle-stack' => 'heroicon-o-circle-stack',
+                                    'light-bulb' => 'heroicon-o-light-bulb',
+                                ])
+                                ->inline()
+                                ->grouped()
+                                ->required(),
+                            TextInput::make('slug')
+                                ->columnSpanFull()
+                                ->required()
+                                ->unique(ignoreRecord: true),
+                        ]),
+                    Tab::make('Component')
+                        ->schema([
+                            // Select::make('component')
+                            //     ->columnSpanFull()
+                            //     ->options(Backstage::getComponents()),
+                            ])
                     ]),
             ]);
     }

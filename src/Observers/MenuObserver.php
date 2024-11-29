@@ -2,4 +2,8 @@
 
 namespace Vormkracht10\Backstage\Observers;
 
-class MenuObserver {}
+use Vormkracht10\Backstage\Models\Menu;
+
+class MenuObserver
+{
+}

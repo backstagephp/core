@@ -2,16 +2,16 @@
 
 namespace Vormkracht10\Backstage;
 
-class Backstage
-{
-    private static array $components = [];
+class Backstage {
 
-    public static function registerComponent(string $name, string $component): void
+    static private array $components = [];
+
+    static public function registerComponent(string $name, string $component): void
     {
         static::$components[$name] = $component;
     }
 
-    public static function getComponents(): array
+    static public function getComponents(): array
     {
         return static::$components;
     }
