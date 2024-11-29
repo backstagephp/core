@@ -20,7 +20,11 @@ class EditContent extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['fields'] = $this->getRecord()->fields()->get()->mapWithKeys(function ($field) {
-            return [$field->ulid => $field->pivot];
+            $pivot =  $field->pivot;
+            if ($field->field_type == 'builder') {
+                $pivot->value = json_decode($pivot->value, true);
+            }
+            return [$field->ulid => $pivot];
         })->toArray();
 
         return $data;
@@ -28,7 +32,12 @@ class EditContent extends EditRecord
 
     protected function afterSave(): void
     {
-        $this->getRecord()->fields()->sync($this->data['fields'] ?? []);
+        $fields = collect($this->data['fields'] ?? []);
+        $fields = $fields->map(function ($field) {
+            return isset($field['value']) && is_array($field['value']) ? ['value' => json_encode($field['value'])] : $field;
+        });
+
+        $this->getRecord()->fields()->sync($fields);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array

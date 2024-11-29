@@ -1,0 +1,76 @@
+<?php
+
+namespace Vormkracht10\Backstage\Fields;
+
+use Filament\Forms;
+use Filament\Forms\Components\Builder as Input;
+use Filament\Forms\Components\Builder\Block as BuilderBlock;
+use Filament\Support\Colors\Color;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Field;
+
+class Builder extends FieldBase implements FieldInterface
+{
+    public static function getDefaultConfig(): array
+    {
+        return [
+            ...parent::getDefaultConfig(),
+        ];
+    }
+
+    public static function make(string $name, ?Field $field = null): Input
+    {
+        $input = self::applyDefaultSettings(
+            Input::make($name)
+                ->blocks(self::getBlockOptions()
+            ), $field);
+
+        return $input;
+    }
+
+    /**
+     * Get the blocks
+     */
+    private static function getBlockOptions() {
+        $blocks = Block::with('fields')->get();
+        
+        $options = [];
+        foreach ($blocks as $block) {
+            $options[] = BuilderBlock::make($block->name)
+                ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
+                ->schema(
+                    $block->fields->map(function ($field) {
+                        return match ($field->field_type) {
+                            'text' => Text::make($field->name, $field)
+                                ->label($field->name),
+                            'checkbox' => Checkbox::make($field->name, $field)
+                                ->label($field->name),
+                            'textarea' => RichEditor::make($field->name, $field)
+                                ->label($field->name),
+                            'select' => Select::make($field->name, $field)
+                                ->label($field->name)
+                                ->options($field->options),
+                            default => Text::make($field->name, $field)
+                                ->label($field->name),
+                        };
+                    })->toArray()
+                );
+        }
+
+        return $options;
+    }
+
+    public function getForm(): array
+    {
+        return [
+            Forms\Components\Tabs::make()
+                ->schema([
+                    Forms\Components\Tabs\Tab::make('General')
+                        ->label(__('General'))
+                        ->schema([
+                            ...parent::getForm(),
+                        ]),
+                ])->columnSpanFull(),
+        ];
+    }
+}
