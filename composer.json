@@ -26,7 +26,8 @@
         "reedware/laravel-composite-relations": "^4.0",
         "spatie/laravel-package-tools": "^1.15.0",
         "spatie/schema-org": "^3.23",
-        "vormkracht10/filament-redirects": "dev-main"
+        "vormkracht10/filament-redirects": "dev-main",
+        "vormkracht10/filament-media-picker": "dev-main"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
@@ -88,6 +89,13 @@
         "laravel-redirects": {
             "type": "path",
             "url": "/var/www/laravel-redirects",
+            "options": {
+                "symlink": true
+            }
+        },
+        "filament-media-picker": {
+            "type": "path",
+            "url": "/var/www/filament-media-picker",
             "options": {
                 "symlink": true
             }

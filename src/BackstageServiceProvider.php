@@ -190,7 +190,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_form_actions_table',
             'create_form_submissions_table',
             'create_form_submission_values_table',
-            'create_media_tables',
             'create_tags_tables',
             'create_templates_table',
 

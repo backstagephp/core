@@ -27,7 +27,6 @@ use Vormkracht10\Backstage\Resources\DomainResource;
 use Vormkracht10\Backstage\Resources\FieldResource;
 use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
 use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
@@ -39,6 +38,8 @@ use Vormkracht10\Backstage\Resources\UserResource;
 use Vormkracht10\Backstage\Widgets\LatestContentWidget;
 use Vormkracht10\Backstage\Widgets\LatestFormSubmissionsWidget;
 use Vormkracht10\FilamentRedirects\RedirectsPlugin;
+use Vormkracht10\MediaPicker\MediaPickerPlugin;
+use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -46,7 +47,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -99,6 +100,8 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->plugins([
                 RedirectsPlugin::make(),
+                MediaPickerPlugin::make()
+                    ->configureTenant('site', Site::class),
             ])
             ->resources([
                 BlockResource::class,

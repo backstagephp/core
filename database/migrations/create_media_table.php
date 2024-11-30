@@ -6,21 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('media', function (Blueprint $table) {
-            $table->ulid()->primary();
-
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->char('language_code', 2);
-            $table->char('country_code', 2);
-
+        Schema::create(app(config('media-picker.model'))->getTable(), function (Blueprint $table) {
+            $table->ulid('ulid')->primary();
+            $table->ulidMorphs('model');
             $table->string('disk')->index();
             $table->unsignedBigInteger('uploaded_by')->nullable()->index();
-            $table->ulidMorphs('model');
             $table->string('filename');
             $table->string('extension');
             $table->string('mime_type');
@@ -33,8 +25,12 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('uploaded_by')->references('id')->on('users')->cascadeOnUpdate()->nullOnDelete();
         });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists(app(config('media-picker.model'))->getTable());
     }
 };
