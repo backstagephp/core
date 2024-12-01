@@ -1,5 +1,7 @@
 <?php
 
+use Vormkracht10\Backstage\Models\Site;
+
 return [
     'accepted_file_types' => [
         'image/jpeg',
