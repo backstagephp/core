@@ -111,8 +111,10 @@ class ContentResource extends Resource
                                     ->prefixIcon('heroicon-o-window')
                                     ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
                                     ->default(Site::where('default', true)->first()?->ulid),
-                                Hidden::make('language_code'),
-                                Hidden::make('country_code'),
+                                Hidden::make('language_code')
+                                    ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                                Hidden::make('country_code')
+                                    ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->country_code),
                                 Select::make('language')
                                     ->label(__('Language'))
                                     ->columnSpanFull()
@@ -134,8 +136,7 @@ class ContentResource extends Resource
                                     })
                                     ->dehydrated(false)
                                     ->allowHtml()
-                                    // ->visible(fn () => Language::where('active', 1)->count() > 1)
-                                    ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code . Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->code . Language::where('default', true)->first()->country_code),
+                                // ->visible(fn () => Language::where('active', 1)->count() > 1),
                             ]),
                     ]),
             ]);
