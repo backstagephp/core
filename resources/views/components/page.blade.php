@@ -7,9 +7,9 @@
     <meta charset="utf-8">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="apple-mobile-web-app-title" content="Rocketeers">
+    <meta name="apple-mobile-web-app-title" content="Backstage">
     <meta name="content-type" content="text/html; charset=utf-8">
-    <meta name="generator" content="Rocketeers">
+    <meta name="generator" content="Backstage">
     <meta name="robots" content="index,follow">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta property="author" content="Mark van Eijk">

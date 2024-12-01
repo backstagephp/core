@@ -69,12 +69,21 @@ class Content extends Model
 
     public function view($data = [])
     {
-        return view($this->templateFile ?? 'backstage::types.page')
-            ->with(['content' => $this, ...$data]);
+        $view = view($this->templateFile ?? 'backstage::types.page');
+
+        if (filled($data)) {
+            $view->with($data);
+        }
+
+        return $view;
     }
 
-    public function response($code = 200)
+    public function response(int $code = 200)
     {
+        view()->share([
+            'content' => $this,
+        ]);
+
         return response($this->view(), $code);
     }
 }

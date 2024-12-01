@@ -31,7 +31,6 @@ class CreateContent extends CreateRecord
 
     protected function afterCreate(): void
     {
-        dd($this->data['values']);
         $this->getRecord()->values()->create($this->data['values'] ?? []);
     }
 }

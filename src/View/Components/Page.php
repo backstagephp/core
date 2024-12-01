@@ -7,10 +7,7 @@ use Vormkracht10\Backstage\Models\Content;
 
 class Page extends Component
 {
-    public function __construct(public ?Content $content = null)
-    {
-        $this->content = $content;
-    }
+    public function __construct() {}
 
     public function render()
     {

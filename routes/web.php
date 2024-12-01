@@ -9,6 +9,6 @@ Route::fallback(function (Request $request) {
     if (! $request->isMethod('GET')) {
         return abort(405, 'Method Not Allowed');
     }
-    
+
     return $request->content()->response();
 });
