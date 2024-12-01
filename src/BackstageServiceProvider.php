@@ -128,8 +128,8 @@ class BackstageServiceProvider extends PackageServiceProvider
                 ->label('Setup'),
         ]);
 
-        $this->app->register(RequestServiceProvider::class);
-        $this->app->register(RouteServiceProvider::class);
+        $this->app->register(Providers\RequestServiceProvider::class);
+        $this->app->register(Providers\RouteServiceProvider::class);
     }
 
     protected function getAssetPackageName(): ?string
