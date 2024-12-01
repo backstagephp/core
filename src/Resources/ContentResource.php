@@ -185,6 +185,9 @@ class ContentResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                    TextColumn::make('edited_at')
+                        ->since()
+                        ->sortable(),
             ])
             ->filters([
                 //

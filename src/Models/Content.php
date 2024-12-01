@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Content extends Model
 {
@@ -60,8 +61,21 @@ class Content extends Model
         return $this->belongsTo(Type::class);
     }
 
-    public function response()
+    protected function templateFile(): Attribute
     {
-        return response('X', 200);
+        return Attribute::make(
+            get: fn (string $value, array $attributes) => $attributes['template'],
+        );
+    }
+
+    public function view($data = [])
+    {
+        return view($this->templateFile)
+            ->with(['content' => $this, ...$data]);
+    }
+
+    public function response($code = 200)
+    {
+        return response($this->view(), $code);
     }
 }

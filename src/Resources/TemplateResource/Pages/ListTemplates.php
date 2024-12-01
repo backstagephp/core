@@ -11,24 +11,4 @@ use Vormkracht10\Backstage\Resources\TemplateResource;
 class ListTemplates extends ListRecords
 {
     protected static string $resource = TemplateResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\ActionGroup::make(
-                Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->form(fn (Form $form) => TemplateResource::form($form)->getComponents())
-                        ->slideOver()
-                        ->modalWidth('6xl')
-                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                )->toArray()
-            )
-                ->label(__('New Content'))
-                ->dropdownPlacement('bottom-end')
-                ->icon('heroicon-o-chevron-down')
-                ->iconPosition('after')
-                ->button(),
-        ];
-    }
 }

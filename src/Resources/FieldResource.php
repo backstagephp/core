@@ -20,15 +20,7 @@ class FieldResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'sites';
 
-    public static function getNavigationParentItem(): ?string
-    {
-        return __('Types');
-    }
-
-    public static function getNavigationGroup(): ?string
-    {
-        return __('Structure');
-    }
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getModelLabel(): string
     {

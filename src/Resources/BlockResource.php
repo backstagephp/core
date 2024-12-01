@@ -86,9 +86,9 @@ class BlockResource extends Resource
                             ]),
                         Tab::make('Component')
                             ->schema([
-                                // Select::make('component')
-                                //     ->columnSpanFull()
-                                //     ->options(Backstage::getComponents()),
+                                Select::make('component')
+                                    ->columnSpanFull()
+                                    ->options(Backstage::getComponents()),
                             ]),
                     ]),
             ]);
