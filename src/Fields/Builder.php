@@ -38,22 +38,23 @@ class Builder extends FieldBase implements FieldInterface
         $blocks = Block::with('fields')->get();
 
         $options = [];
+
         foreach ($blocks as $block) {
             $options[] = BuilderBlock::make($block->slug)
                 ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
                 ->schema(
                     $block->fields->map(function ($field) {
                         return match ($field->field_type) {
-                            'text' => Text::make($field->name, $field)
+                            'text' => Text::make($field->slug, $field)
                                 ->label($field->name),
-                            'checkbox' => Checkbox::make($field->name, $field)
+                            'checkbox' => Checkbox::make($field->slug, $field)
                                 ->label($field->name),
-                            'textarea' => RichEditor::make($field->name, $field)
+                            'textarea' => RichEditor::make($field->slug, $field)
                                 ->label($field->name),
-                            'select' => Select::make($field->name, $field)
+                            'select' => Select::make($field->slug, $field)
                                 ->label($field->name)
                                 ->options($field->options),
-                            default => Text::make($field->name, $field)
+                            default => Text::make($field->slug, $field)
                                 ->label($field->name),
                         };
                     })->toArray()

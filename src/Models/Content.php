@@ -2,15 +2,16 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Content extends Model
 {
@@ -37,7 +38,8 @@ class Content extends Model
 
     public function values(): HasMany
     {
-        return $this->hasMany(ContentFieldValue::class);
+        return $this->hasMany(ContentFieldValue::class)
+            ->with('field');
     }
 
     public function language(): BelongsTo
@@ -70,9 +72,19 @@ class Content extends Model
     public function blocks(string $field): array
     {
         return json_decode(
-            json: $this->values()->whereHas('field', fn($query) => $query->where('slug', $field))->first()?->value,
+            json: $this->values->where('field.slug', $field)->first()?->value,
             associative: true
         );
+    }
+
+    public function field(string $field): HtmlString
+    {
+        return new HtmlString($this->values->where('field.slug', $field)->first()?->value);
+    }
+
+    public function rawField(string $field): mixed
+    {
+        return $this->values->where('field.slug', $field)->first()?->value;
     }
 
     public function view($data = [])

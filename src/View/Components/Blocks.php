@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\View;
 use Vormkracht10\Backstage\Models\Content;
 
 class Blocks extends Component
@@ -10,7 +11,9 @@ class Blocks extends Component
     public function __construct(
         public Content $content,
         public string $field,
-    ) {}
+    ) {
+        $this->content = View::shared('content');
+    }
 
     public function render()
     {

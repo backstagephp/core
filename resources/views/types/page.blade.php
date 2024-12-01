@@ -1,3 +1,4 @@
 <x-page>
-    <x-blocks :content="$content" field="blocks" />
+    {{ $content->field('body') }}
+    <x-blocks field="blocks" />
 </x-page>
