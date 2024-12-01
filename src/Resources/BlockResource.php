@@ -88,7 +88,7 @@ class BlockResource extends Resource
                             ->schema([
                                 Select::make('component')
                                     ->columnSpanFull()
-                                    ->options(Backstage::getComponents()),
+                                    ->options(Backstage::getComponentOptions()),
                             ]),
                     ]),
             ]);

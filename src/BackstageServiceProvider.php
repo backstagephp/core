@@ -2,29 +2,30 @@
 
 namespace Vormkracht10\Backstage;
 
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
-use Filament\Navigation\NavigationGroup;
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
+use Filament\Forms\Components\Select;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Route;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Http\Middleware\MatchContentByPath;
-use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Models\Type;
+use Filament\Navigation\NavigationGroup;
+use Vormkracht10\Backstage\Models\Block;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
+use Livewire\Features\SupportTesting\Testable;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Http\Middleware\MatchContentByPath;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -130,6 +131,9 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
+
+        collect($this->app['config']['backstage']['components']['blocks'] ?? [])
+            ->each(fn($component) => Backstage::registerComponent(Str::slug(last(explode('\\', $component))), $component));
     }
 
     protected function getAssetPackageName(): ?string

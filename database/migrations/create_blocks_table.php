@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_field')->nullable();
             $table->string('icon');
+            $table->string('component')->nullable();
 
             $table->timestamps();
         });
