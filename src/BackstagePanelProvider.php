@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Providers;
+namespace Vormkracht10\Backstage;
 
 use Filament\Panel;
 use Filament\PanelProvider;
