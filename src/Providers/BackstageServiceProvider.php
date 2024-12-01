@@ -46,19 +46,19 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         $configFileName = $package->shortName();
 
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
+        if (file_exists($package->basePath("/../../config/{$configFileName}.php"))) {
             $package->hasConfigFile();
         }
 
-        if (file_exists($package->basePath('/../database/migrations'))) {
+        if (file_exists($package->basePath('/../../database/migrations'))) {
             $package->hasMigrations($this->getMigrations());
         }
 
-        if (file_exists($package->basePath('/../resources/lang'))) {
+        if (file_exists($package->basePath('/../../resources/lang'))) {
             $package->hasTranslations();
         }
 
-        if (file_exists($package->basePath('/../resources/views'))) {
+        if (file_exists($package->basePath('/../../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
     }
@@ -83,7 +83,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Handle Stubs
         if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../../stubs/') as $file) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../../../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/backstage/{$file->getFilename()}"),
                 ], 'backstage-stubs');
@@ -143,9 +143,9 @@ class BackstageServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            // AlpineComponent::make('backstage', __DIR__ . '/../resources/dist/components/backstage.js'),
-            // Css::make('backstage-styles', __DIR__ . '/../resources/dist/backstage.css'),
-            // Js::make('backstage-scripts', __DIR__ . '/../resources/dist/backstage.js'),
+            // AlpineComponent::make('backstage', __DIR__ . '/../../resources/dist/components/backstage.js'),
+            // Css::make('backstage-styles', __DIR__ . '/../../resources/dist/backstage.css'),
+            // Js::make('backstage-scripts', __DIR__ . '/../../resources/dist/backstage.js'),
         ];
     }
 
