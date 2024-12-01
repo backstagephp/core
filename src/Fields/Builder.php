@@ -39,7 +39,7 @@ class Builder extends FieldBase implements FieldInterface
 
         $options = [];
         foreach ($blocks as $block) {
-            $options[] = BuilderBlock::make($block->name)
+            $options[] = BuilderBlock::make($block->slug)
                 ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
                 ->schema(
                     $block->fields->map(function ($field) {

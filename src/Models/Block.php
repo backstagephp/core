@@ -2,10 +2,12 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\HtmlString;
 
 class Block extends Model
 {
@@ -32,5 +34,12 @@ class Block extends Model
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
+    }
+
+    public function render(): HtmlString
+    {
+        return new Htmlstring(
+            Blade::render("<x-{$this->slug} :attributes='' />")
+        );
     }
 }

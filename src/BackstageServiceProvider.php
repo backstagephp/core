@@ -20,14 +20,16 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\AlpineComponent;
 use Livewire\Features\SupportTesting\Testable;
+use Vormkracht10\Backstage\View\Components\Page;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Vormkracht10\Backstage\View\Components\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 use Vormkracht10\Backstage\Http\Middleware\MatchContentByPath;
-use Vormkracht10\Backstage\View\Components\Page;
+use Vormkracht10\Backstage\View\Components\Blocks;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -137,6 +139,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         collect($this->app['config']['backstage']['components']['blocks'] ?? [])
             ->each(fn($component) => Backstage::registerComponent(Str::slug(last(explode('\\', $component))), $component));
 
+        Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
     }
 

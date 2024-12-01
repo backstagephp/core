@@ -67,6 +67,14 @@ class Content extends Model
         );
     }
 
+    public function blocks(string $field): array
+    {
+        return json_decode(
+            json: $this->values()->whereHas('field', fn($query) => $query->where('slug', $field))->first()?->value,
+            associative: true
+        );
+    }
+
     public function view($data = [])
     {
         $view = view($this->templateFile ?? 'backstage::types.page');
