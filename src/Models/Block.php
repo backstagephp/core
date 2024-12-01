@@ -2,12 +2,12 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class Block extends Model
 {

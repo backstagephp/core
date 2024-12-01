@@ -2,32 +2,33 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select as SelectInput;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Locale;
+use Vormkracht10\Backstage\Fields\Builder;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\Select;
 use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
-use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Fields\Select;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 class ContentResource extends Resource
@@ -110,20 +111,31 @@ class ContentResource extends Resource
                                     ->prefixIcon('heroicon-o-window')
                                     ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
                                     ->default(Site::where('default', true)->first()?->ulid),
-                                Select::make('language_code')
+                                Hidden::make('language_code'),
+                                Hidden::make('country_code'),
+                                Select::make('language')
                                     ->label(__('Language'))
                                     ->columnSpanFull()
                                     ->placeholder(__('Select Language'))
                                     ->prefixIcon('heroicon-o-language')
                                     ->options(
-                                        Language::whereActive(1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
+                                        Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
                                             Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
-                                                $countryCode . '-' . $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
+                                                $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
                                             ])->toArray(),
                                         ])
                                     )
+                                    ->afterStateHydrated(function (Get $get, SelectInput $component) {
+                                        $component->state($get('language_code') . '-' . $get('country_code'));
+                                    })
+                                    ->afterStateUpdated(function (Set $set, SelectInput $component) {
+                                        $set('language_code', Str::before($component->getState(), '-'));
+                                        $set('country_code', Str::after($component->getState(), '-'));
+                                    })
+                                    ->dehydrated(false)
                                     ->allowHtml()
-                                    ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code),
+                                    // ->visible(fn () => Language::where('active', 1)->count() > 1)
+                                    ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code . Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->code . Language::where('default', true)->first()->country_code),
                             ]),
                     ]),
             ]);

@@ -58,23 +58,23 @@ class MenuResource extends Resource
                                             ->label(__('Country'))
                                             ->placeholder(__('Select Country'))
                                             ->prefixIcon('heroicon-o-globe-europe-africa')
-                                            ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
+                                            ->options(Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
                                                 $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayRegion('-' . $language->code, app()->getLocale()),
                                             ])->sort())
                                             ->allowHtml()
-                                            ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
+                                            ->default(Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::where('active', 1)->whereNotNull('country_code')->first()->country_code : null),
 
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->placeholder(__('Select Language'))
                                             ->prefixIcon('heroicon-o-language')
                                             ->options(
-                                                Language::whereActive(1)->get()->mapWithKeys(fn ($language) => [
+                                                Language::where('active', 1)->get()->mapWithKeys(fn ($language) => [
                                                     $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
                                                 ])->sort()
                                             )
                                             ->allowHtml()
-                                            ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code),
+                                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
 
                                         TextInput::make('name')
                                             ->required()

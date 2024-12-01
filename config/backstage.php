@@ -7,6 +7,6 @@ return [
         'blocks' => [
             Vormkracht10\Backstage\View\Components\Heading::class,
             Vormkracht10\Backstage\View\Components\Paragraph::class,
-        ]
+        ],
     ],
 ];

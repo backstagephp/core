@@ -3,8 +3,8 @@
 namespace Vormkracht10\Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Site;
 
 class BlockFactory extends Factory
 {

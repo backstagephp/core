@@ -23,7 +23,7 @@ class LatestContentWidget extends BaseWidget
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->url(fn(Content $content) => route('filament.backstage.resources.content.edit', ['tenant' => Filament::getTenant(), 'record' => $content])),
+                    ->url(fn (Content $content) => route('filament.backstage.resources.content.edit', ['tenant' => Filament::getTenant(), 'record' => $content])),
             ])
             ->defaultPaginationPageOption(5);
     }
