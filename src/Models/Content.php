@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Content extends Model
 {
@@ -29,16 +30,14 @@ class Content extends Model
         ];
     }
 
-    public function fields(): BelongsToMany
+    public function fields(): MorphMany
     {
-        return $this->belongsToMany(Field::class, 'content_meta', 'content_ulid', 'field_ulid')
-            ->using(ContentMeta::class)
-            ->withPivot('value');
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug');
     }
 
-    public function meta(): HasMany
+    public function values(): HasMany
     {
-        return $this->hasMany(ContentMeta::class, 'content_ulid', 'ulid');
+        return $this->hasMany(ContentFieldValue::class);
     }
 
     public function language(): BelongsTo

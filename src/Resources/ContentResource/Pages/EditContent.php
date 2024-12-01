@@ -19,13 +19,12 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['fields'] = $this->getRecord()->fields()->get()->mapWithKeys(function ($field) {
-            $pivot = $field->pivot;
-            if ($field->field_type == 'builder') {
-                $pivot->value = json_decode($pivot->value, true);
+        $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
+            if ($value->field->field_type == 'builder') {
+                $value->value = json_decode($value->value, true);
             }
 
-            return [$field->ulid => $pivot];
+            return [$value->field->ulid => $value->value];
         })->toArray();
 
         return $data;
@@ -33,17 +32,30 @@ class EditContent extends EditRecord
 
     protected function afterSave(): void
     {
-        $fields = collect($this->data['fields'] ?? []);
-        $fields = $fields->map(function ($field) {
-            return isset($field['value']) && is_array($field['value']) ? ['value' => json_encode($field['value'])] : $field;
-        });
+        collect($this->data['values'] ?? [])->each(function ($value, $field) {
+            $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
 
-        $this->getRecord()->fields()->sync($fields);
+            if (blank($value)) {
+                $this->getRecord()->values()->where([
+                    'content_ulid' => $this->getRecord()->getKey(),
+                    'field_ulid' => $field,
+                ])->delete();
+
+                return;
+            }
+
+            $this->getRecord()->values()->updateOrCreate([
+                'content_ulid' => $this->getRecord()->getKey(),
+                'field_ulid' => $field,
+            ], [
+                'value' => is_array($value) ? json_encode($value) : $value,
+            ]);
+        });
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        unset($data['fields']);
+        unset($data['values']);
 
         return $data;
     }

@@ -35,6 +35,12 @@ class TypeSeeder extends Seeder
             'field_type' => 'rich-editor',
             'position' => 2,
         ]))
+        ->has(Field::factory(1, [
+            'name' => 'Blocks',
+            'slug' => 'blocks',
+            'field_type' => 'builder',
+            'position' => 3,
+        ]))
         ->create();
     }
 }

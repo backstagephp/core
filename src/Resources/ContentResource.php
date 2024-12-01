@@ -75,21 +75,21 @@ class ContentResource extends Resource
                                             ->columns(1)
                                             ->schema(self::getTypeInputs()),
                                     ]),
-                                    Tab::make('seo')
-                                        ->label('SEO')
-                                        ->schema([
-                                            TextInput::make('meta_tags.title')
-                                                ->label('Page Title')
-                                                ->columnSpanFull(),
-                                            TextInput::make('meta_tags.description')
-                                                ->label('Description')
-                                                ->helperText('Meta description for search engines.')
-                                                ->columnSpanFull(),
-                                            TextInput::make('meta_tags.keywords')
-                                                ->label('Keywords')
-                                                ->helperText('Meta keywords, altough not respected in search engines anymore, we also use it as focus keywords.')
-                                                ->columnSpanFull(),
-                                        ]),
+                                Tab::make('seo')
+                                    ->label('SEO')
+                                    ->schema([
+                                        TextInput::make('meta_tags.title')
+                                            ->label('Page Title')
+                                            ->columnSpanFull(),
+                                        TextInput::make('meta_tags.description')
+                                            ->label('Description')
+                                            ->helperText('Meta description for search engines.')
+                                            ->columnSpanFull(),
+                                        TextInput::make('meta_tags.keywords')
+                                            ->label('Keywords')
+                                            ->helperText('Meta keywords, altough not respected in search engines anymore, we also use it as focus keywords.')
+                                            ->columnSpanFull(),
+                                    ]),
                             ]),
                         Section::make()
                             ->columnSpan(4)
@@ -109,25 +109,17 @@ class ContentResource extends Resource
                                     ->prefixIcon('heroicon-o-window')
                                     ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
                                     ->default(Site::where('default', true)->first()?->ulid),
-                                Select::make('country_code')
-                                    ->label(__('Country'))
-                                    ->columnSpanFull()
-                                    ->placeholder(__('Select Country'))
-                                    ->prefixIcon('heroicon-o-globe-europe-africa')
-                                    ->options(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
-                                        $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayRegion('-' . $language->code, app()->getLocale()),
-                                    ])->sort())
-                                    ->allowHtml()
-                                    ->default(Language::whereActive(1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::whereActive(1)->whereNotNull('country_code')->first()->country_code : null),
                                 Select::make('language_code')
                                     ->label(__('Language'))
                                     ->columnSpanFull()
                                     ->placeholder(__('Select Language'))
                                     ->prefixIcon('heroicon-o-language')
                                     ->options(
-                                        Language::whereActive(1)->get()->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
-                                        ])->sort()
+                                        Language::whereActive(1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
+                                            Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
+                                                $countryCode . '-' . $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
+                                            ])->toArray(),
+                                        ])
                                     )
                                     ->allowHtml()
                                     ->default(Language::whereActive(1)->count() === 1 ? Language::whereActive(1)->first()->code : Language::whereActive(1)->where('default', true)->first()?->code),
@@ -139,7 +131,7 @@ class ContentResource extends Resource
     public static function getTypeInputs()
     {
         return self::$type->fields->map(function (Field $field) {
-            $fieldName = 'fields.' . $field->ulid . '.value';
+            $fieldName = 'values.' . $field->ulid;
 
             $field->input = match ($field->field_type) {
                 'text' => Text::make($fieldName, $field)
@@ -161,21 +153,21 @@ class ContentResource extends Resource
 
             return $field;
         })
-        ->map(function($field) {
-            if(self::$type->name_field == $field->slug) {
-                $field->input->live(onBlur: true)
-                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                        $set('name', $state);
-                        $set('meta_tags.title', $state);
-                        $set('slug', Str::slug($state));
-                        $set('path', Str::slug($state));
-                    });
-            }
+            ->map(function ($field) {
+                if (self::$type->name_field == $field->slug) {
+                    $field->input->live(onBlur: true)
+                        ->afterStateUpdated(function (Set $set, ?string $state) {
+                            $set('name', $state);
+                            $set('meta_tags.title', $state);
+                            $set('slug', Str::slug($state));
+                            $set('path', Str::slug($state));
+                        });
+                }
 
-            return $field;
-        })
-        ->map(fn($field) => $field->input)
-        ->toArray();
+                return $field;
+            })
+            ->map(fn($field) => $field->input)
+            ->toArray();
     }
 
     public static function table(Table $table): Table
@@ -185,9 +177,9 @@ class ContentResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                    TextColumn::make('edited_at')
-                        ->since()
-                        ->sortable(),
+                TextColumn::make('edited_at')
+                    ->since()
+                    ->sortable(),
             ])
             ->filters([
                 //

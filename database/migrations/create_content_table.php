@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('type_slug');
             $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUlid('parent_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
-            $table->string('title');
             $table->string('name');
             $table->string('slug');
             $table->string('path')->nullable();

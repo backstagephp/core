@@ -195,7 +195,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_fields_table',
             'create_settings_table',
             'create_content_table',
-            'create_content_meta_table',
+            'create_content_field_values_table',
             'create_blocks_table',
             'create_menus_table',
             'create_menu_items_table',
