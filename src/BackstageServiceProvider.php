@@ -19,7 +19,11 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Http\Middleware\MatchContentByPath;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 
 class BackstageServiceProvider extends PackageServiceProvider
@@ -90,6 +94,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
+            'block' => 'Vormkracht10\Backstage\Models\Block',
             'content' => 'Vormkracht10\Backstage\Models\Content',
             'form' => 'Vormkracht10\Backstage\Models\Form',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
@@ -101,10 +106,16 @@ class BackstageServiceProvider extends PackageServiceProvider
             return Type::where('slug', $slug)->firstOrFail();
         });
 
+        Route::bind('block', function (string $slug) {
+            return Block::where('slug', $slug)->firstOrFail();
+        });
+
         Select::configureUsing(function (Select $select): void {
             $select->native(false);
             // $select->searchable();
         });
+
+        Menu::observe(MenuObserver::class);
 
         Filament::registerNavigationGroups([
             NavigationGroup::make()
@@ -116,6 +127,9 @@ class BackstageServiceProvider extends PackageServiceProvider
             NavigationGroup::make()
                 ->label('Setup'),
         ]);
+
+        $this->app->register(Providers\RequestServiceProvider::class);
+        $this->app->register(Providers\RouteServiceProvider::class);
     }
 
     protected function getAssetPackageName(): ?string
@@ -181,7 +195,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_fields_table',
             'create_settings_table',
             'create_content_table',
-            'create_content_meta_table',
+            'create_content_field_values_table',
             'create_blocks_table',
             'create_menus_table',
             'create_menu_items_table',

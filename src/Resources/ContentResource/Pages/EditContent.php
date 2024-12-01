@@ -19,8 +19,12 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['fields'] = $this->getRecord()->fields()->get()->mapWithKeys(function ($field) {
-            return [$field->ulid => $field->pivot];
+        $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
+            if ($value->field->field_type == 'builder') {
+                $value->value = json_decode($value->value, true);
+            }
+
+            return [$value->field->ulid => $value->value];
         })->toArray();
 
         return $data;
@@ -28,12 +32,30 @@ class EditContent extends EditRecord
 
     protected function afterSave(): void
     {
-        $this->getRecord()->fields()->sync($this->data['fields'] ?? []);
+        collect($this->data['values'] ?? [])->each(function ($value, $field) {
+            $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+
+            if (blank($value)) {
+                $this->getRecord()->values()->where([
+                    'content_ulid' => $this->getRecord()->getKey(),
+                    'field_ulid' => $field,
+                ])->delete();
+
+                return;
+            }
+
+            $this->getRecord()->values()->updateOrCreate([
+                'content_ulid' => $this->getRecord()->getKey(),
+                'field_ulid' => $field,
+            ], [
+                'value' => is_array($value) ? json_encode($value) : $value,
+            ]);
+        });
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        unset($data['fields']);
+        unset($data['values']);
 
         return $data;
     }

@@ -2,13 +2,14 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Menu extends Model
 {
-    use HasFactory;
+    use HasPackageFactory;
 
     protected $primaryKey = 'slug';
 
@@ -23,8 +24,13 @@ class Menu extends Model
         return [];
     }
 
-    public function sites(): BelongsToMany
+    public function items(): HasMany
     {
-        return $this->belongsToMany(Site::class);
+        return $this->hasMany(MenuItem::class);
+    }
+
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class);
     }
 }

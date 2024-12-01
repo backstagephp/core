@@ -5,7 +5,7 @@ namespace Vormkracht10\Backstage\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +16,7 @@ use Vormkracht10\Backstage\Factories\UserFactory;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
-    use HasFactory;
+    use HasPackageFactory;
     use Notifiable;
 
     /**
@@ -51,11 +51,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    protected static function newFactory()
-    {
-        return UserFactory::new();
     }
 
     public function site(): BelongsTo

@@ -54,7 +54,15 @@ class TypeResource extends Resource
                     }),
                 TextInput::make('slug')
                     ->columnSpanFull()
-                    ->required(),
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->rules([
+                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                            if (in_array(strtolower($value), ['content', 'advanced'])) {
+                                $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
+                            }
+                        },
+                    ]),
                 TextInput::make('name_plural')
                     ->columnSpanFull()
                     ->required(),

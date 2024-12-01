@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('menu_items', function (Blueprint $table) {
             $table->ulid()->primary();
 
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->char('language_code', 2);
-            $table->char('country_code', 2);
-
+            $table->string('menu_slug')->references('slug')->on('menu')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUlid('parent_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
 
             $table->string('name');
@@ -32,8 +29,6 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 };

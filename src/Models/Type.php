@@ -2,15 +2,14 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Vormkracht10\Backstage\Factories\TypeFactory;
 
 class Type extends Model
 {
-    use HasFactory;
+    use HasPackageFactory;
 
     protected $primaryKey = 'slug';
 
@@ -23,11 +22,6 @@ class Type extends Model
     protected function casts(): array
     {
         return [];
-    }
-
-    protected static function newFactory()
-    {
-        return TypeFactory::new();
     }
 
     public function fields(): MorphMany

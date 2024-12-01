@@ -3,7 +3,7 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +11,7 @@ use Vormkracht10\Backstage\Factories\SiteFactory;
 
 class Site extends Model
 {
-    use HasFactory;
+    use HasPackageFactory;
     use HasUlids;
 
     protected $primaryKey = 'ulid';
@@ -21,11 +21,6 @@ class Site extends Model
     protected $keyType = 'string';
 
     protected $guarded = [];
-
-    protected static function newFactory()
-    {
-        return SiteFactory::new();
-    }
 
     public function getRouteKeyName(): string
     {
@@ -47,9 +42,9 @@ class Site extends Model
         return $this->belongsToMany(Language::class);
     }
 
-    public function menus(): BelongsToMany
+    public function menus(): HasMany
     {
-        return $this->belongsToMany(Menu::class);
+        return $this->hasMany(Menu::class);
     }
 
     public function settings(): HasMany
@@ -65,5 +60,10 @@ class Site extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function blocks(): BelongsToMany
+    {
+        return $this->belongsToMany(Block::class);
     }
 }

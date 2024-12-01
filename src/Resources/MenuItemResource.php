@@ -2,6 +2,8 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -47,17 +49,33 @@ class MenuItemResource extends Resource
                     ->tabs([
                         Tab::make('Menu')
                             ->schema([
-                                TextInput::make('name')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->live(debounce: 250)
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('slug', Str::slug($state));
-                                    }),
-                                TextInput::make('slug')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->unique(ignoreRecord: true),
+                                Grid::make(2)
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->columnSpan(1)
+                                            ->required()
+                                            ->live(debounce: 250)
+                                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                                $set('slug', Str::slug($state));
+                                            }),
+
+                                        TextInput::make('slug')
+                                            ->columnSpan(1)
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
+
+                                        TextInput::make('url')
+                                            ->label('URL')
+                                            ->suffixAction(
+                                                Action::make('content')
+                                                    ->icon('heroicon-o-link')
+                                                    ->modal()
+                                                    ->modalHeading('Select Content')
+                                            )
+                                            ->url()
+                                            ->columnSpan(2)
+                                            ->required(),
+                                    ]),
                             ]),
                     ]),
             ]);

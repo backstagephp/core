@@ -3,17 +3,18 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Vormkracht10\Backstage\Factories\ContentFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Content extends Model
 {
-    use HasFactory;
+    use HasPackageFactory;
     use HasUlids;
 
     protected $primaryKey = 'ulid';
@@ -24,24 +25,19 @@ class Content extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'meta_tags' => 'array',
+        ];
     }
 
-    protected static function newFactory()
+    public function fields(): MorphMany
     {
-        return ContentFactory::new();
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug');
     }
 
-    public function fields(): BelongsToMany
+    public function values(): HasMany
     {
-        return $this->belongsToMany(Field::class, 'content_meta', 'content_ulid', 'field_ulid')
-            ->using(ContentMeta::class)
-            ->withPivot('value');
-    }
-
-    public function meta(): HasMany
-    {
-        return $this->hasMany(ContentMeta::class, 'content_ulid', 'ulid');
+        return $this->hasMany(ContentFieldValue::class);
     }
 
     public function language(): BelongsTo
@@ -62,5 +58,23 @@ class Content extends Model
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
+    }
+
+    protected function templateFile(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value, array $attributes) => $attributes['template'],
+        );
+    }
+
+    public function view($data = [])
+    {
+        return view($this->templateFile)
+            ->with(['content' => $this, ...$data]);
+    }
+
+    public function response($code = 200)
+    {
+        return response($this->view(), $code);
     }
 }

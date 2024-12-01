@@ -24,13 +24,14 @@ class CreateContent extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        unset($data['fields']);
+        unset($data['values']);
 
         return $data;
     }
 
     protected function afterCreate(): void
     {
-        $this->getRecord()->fields()->attach($this->data['fields'] ?? []);
+        dd($this->data['values']);
+        $this->getRecord()->values()->create($this->data['values'] ?? []);
     }
 }

@@ -63,7 +63,7 @@ abstract class FieldBase implements FieldInterface
         ];
     }
 
-    public static function applyDefaultSettings($input, Field $field)
+    public static function applyDefaultSettings($input, ?Field $field = null)
     {
         $input
             ->required($field->config['required'] ?? self::getDefaultConfig()['required'])

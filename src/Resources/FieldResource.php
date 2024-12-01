@@ -18,15 +18,9 @@ class FieldResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
-    public static function getNavigationParentItem(): ?string
-    {
-        return __('Types');
-    }
+    protected static ?string $tenantOwnershipRelationshipName = 'sites';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('Structure');
-    }
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getModelLabel(): string
     {

@@ -4,14 +4,11 @@ namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;
@@ -77,29 +74,9 @@ class EditSetting extends EditRecord
                             ->schema([
                                 Grid::make()
                                     ->columns(2)
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label(__('Name'))
-                                            ->required()
-                                            ->live(debounce: 500)
-                                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                                $set('slug', Str::slug($state));
-                                            }),
-                                        TextInput::make('slug')
-                                            ->label(__('Slug'))
-                                            ->required()
-                                            ->unique(ignoreRecord: true),
-                                        Select::make('site_ulid')
-                                            ->relationship('site', 'name')
-                                            ->columnSpanFull()
-                                            ->label(__('Site')),
-                                        Select::make('language_code')
-                                            //     ->relationship('language', 'code')
-                                            ->label(__('Language')),
-                                        Select::make('country_code')
-                                            // ->relationship('language', 'country_code')
-                                            ->label(__('Country')),
-                                    ]),
+                                    ->schema(
+                                        SettingResource::fields($form),
+                                    ),
                             ]),
                     ]),
             ]);
