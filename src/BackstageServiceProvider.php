@@ -194,6 +194,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_types_table',
             'create_fields_table',
             'create_settings_table',
+            'create_templates_table',
             'create_content_table',
             'create_content_field_values_table',
             'create_blocks_table',
@@ -206,7 +207,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_form_submission_values_table',
             'create_media_tables',
             'create_tags_tables',
-            'create_templates_table',
 
             'create_notifications_table',
             'add_columns_to_users_table',
