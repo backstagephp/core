@@ -2,31 +2,32 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
+use Locale;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Locale;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
 use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
+use Filament\Forms\Components\TextInput;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Fields\Builder;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 class ContentResource extends Resource
@@ -156,11 +157,14 @@ class ContentResource extends Resource
             ->map(function ($field) {
                 if (self::$type->name_field == $field->slug) {
                     $field->input->live(onBlur: true)
-                        ->afterStateUpdated(function (Set $set, ?string $state) {
+                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
                             $set('name', $state);
                             $set('meta_tags.title', $state);
                             $set('slug', Str::slug($state));
-                            $set('path', Str::slug($state));
+
+                            if (blank($get('path'))) {
+                                $set('path', Str::slug($state));
+                            }
                         });
                 }
 

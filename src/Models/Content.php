@@ -26,7 +26,7 @@ class Content extends Model
     protected function casts(): array
     {
         return [
-            'meta_tags' => 'array',
+            'meta_tags' => 'object',
         ];
     }
 
@@ -63,13 +63,13 @@ class Content extends Model
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value, array $attributes) => $attributes['template'],
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
     public function view($data = [])
     {
-        return view($this->templateFile)
+        return view($this->templateFile ?? 'backstage::types.page')
             ->with(['content' => $this, ...$data]);
     }
 

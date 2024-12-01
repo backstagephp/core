@@ -9,6 +9,7 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Asset;
 use Filament\Forms\Components\Select;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 use Vormkracht10\Backstage\Models\Menu;
@@ -26,6 +27,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 use Vormkracht10\Backstage\Http\Middleware\MatchContentByPath;
+use Vormkracht10\Backstage\View\Components\Page;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -134,6 +136,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         collect($this->app['config']['backstage']['components']['blocks'] ?? [])
             ->each(fn($component) => Backstage::registerComponent(Str::slug(last(explode('\\', $component))), $component));
+
+        Blade::component('page', Page::class);
     }
 
     protected function getAssetPackageName(): ?string
