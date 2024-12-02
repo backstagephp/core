@@ -2,33 +2,34 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select as SelectInput;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Locale;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Locale;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
 use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
+use Filament\Forms\Components\TextInput;
+use Vormkracht10\Backstage\Models\Field;
+use Filament\Tables\Filters\SelectFilter;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Fields\Builder;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 class ContentResource extends Resource
@@ -135,7 +136,7 @@ class ContentResource extends Resource
                                         $set('country_code', Str::after($component->getState(), '-'));
                                     })
                                     ->dehydrated(false)
-                                    ->allowHtml()
+                                    ->allowHtml(),
                                 // ->visible(fn () => Language::where('active', 1)->count() > 1),
                             ]),
                     ]),
@@ -199,7 +200,14 @@ class ContentResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('type_slug')
+                    ->label('Type')
+                    ->native(false)
+                    ->searchable()
+                    ->multiple()
+                    ->options(
+                        Type::pluck('name', 'slug')
+                    )
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

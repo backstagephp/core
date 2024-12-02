@@ -31,7 +31,7 @@ class CreateContent extends CreateRecord
 
     protected function afterCreate(): void
     {
-        collect($this->data['values'] ?? [])->filter(fn($value) => $value)->each(fn($value, $field) => $this->record->values()->create([
+        collect($this->data['values'] ?? [])->filter(fn ($value) => $value)->each(fn ($value, $field) => $this->record->values()->create([
             'field_ulid' => $field,
             'value' => is_array($value) ? json_encode($value) : $value,
         ]));

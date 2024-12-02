@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Http\Middleware;
+namespace Vormkracht10\Backstage\Http\Middleware\Filament;
 
 use Closure;
 use Filament\Facades\Filament;
