@@ -21,6 +21,7 @@ use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Enums\FiltersLayout;
 use Vormkracht10\Backstage\Models\Field;
 use Filament\Tables\Filters\SelectFilter;
 use Vormkracht10\Backstage\Fields\Select;
@@ -31,6 +32,7 @@ use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Filament\Tables\Actions\Action;
 
 class ContentResource extends Resource
 {
@@ -205,13 +207,23 @@ class ContentResource extends Resource
                     ->native(false)
                     ->searchable()
                     ->multiple()
-                    ->options(
-                        Type::pluck('name', 'slug')
-                    )
-            ])
+                    ->preload()
+                    ->relationship('type', 'name'),
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->native(false)
+                    ->options([])
+                    ->multiple()
+                    ->preload()
+            ], layout: FiltersLayout::Modal)
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ])
+            ])->filtersTriggerAction(
+                fn(Action $action) => $action
+                    ->button()
+                    ->label('Filter')
+                    ->slideOver(),
+            )
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

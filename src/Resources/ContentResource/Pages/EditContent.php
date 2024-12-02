@@ -13,6 +13,10 @@ class EditContent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Preview')
+                ->color('gray')
+                ->url(fn() => $this->getRecord()->path)
+                ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];
     }
