@@ -36,6 +36,10 @@ class TagResource extends Resource
                 TextInput::make('name')
                     ->label('Name')
                     ->required(),
+
+                TextInput::make('slug')
+                    ->label('Slug')
+                    ->required(),
             ]);
     }
 
