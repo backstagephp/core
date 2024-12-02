@@ -61,10 +61,17 @@ class Content extends Model
         return $this->belongsTo(Type::class);
     }
 
+    protected function url(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
+        );
+    }
+
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -73,7 +80,7 @@ class Content extends Model
         return json_decode(
             json: $this->values->where('field.slug', $field)->first()?->value,
             associative: true
-        );
+        ) ?? [];
     }
 
     public function field(string $field): HtmlString
