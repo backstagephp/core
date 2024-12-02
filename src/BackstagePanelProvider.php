@@ -38,8 +38,8 @@ use Vormkracht10\Backstage\Resources\TagResource;
 use Vormkracht10\Backstage\Resources\TemplateResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
-use Vormkracht10\Backstage\Widgets\LatestContentWidget;
-use Vormkracht10\Backstage\Widgets\LatestFormSubmissionsWidget;
+use Vormkracht10\Backstage\Widgets\ContentUpdatesWidget;
+use Vormkracht10\Backstage\Widgets\FormSubmissionsWidget;
 use Vormkracht10\FilamentRedirects\RedirectsPlugin;
 
 class BackstagePanelProvider extends PanelProvider
@@ -122,8 +122,8 @@ class BackstagePanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->widgets([
-                LatestContentWidget::class,
-                LatestFormSubmissionsWidget::class,
+                ContentUpdatesWidget::class,
+                FormSubmissionsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

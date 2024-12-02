@@ -8,13 +8,14 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Vormkracht10\Backstage\Models\FormSubmission;
 
-class LatestFormSubmissionsWidget extends BaseWidget
+class FormSubmissionsWidget extends BaseWidget
 {
     protected int | string | array $columnSpan = 1;
 
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Newest Form Submissions')
             ->query(
                 FormSubmission::query()
                     ->where('site_ulid', Filament::getTenant()->getKey())
