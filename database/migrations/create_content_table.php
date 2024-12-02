@@ -34,6 +34,7 @@ return new class extends Migration
             $table->timestamps();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('disapproved_at')->nullable();
+            $table->timestamp('edited_at')->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('locked_at')->nullable();
             $table->timestamp('pinned_at')->nullable();

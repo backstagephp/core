@@ -99,21 +99,6 @@ class ContentResource extends Resource
                         Section::make()
                             ->columnSpan(4)
                             ->schema([
-                                TextInput::make('slug')
-                                    ->columnSpanFull()
-                                    ->helperText('Unique string identifier for this content.')
-                                    ->required(),
-                                TextInput::make('path')
-                                    ->columnSpanFull()
-                                    ->helperText('Path to generate URL for this content.')
-                                    ->required(),
-                                Select::make('site_ulid')
-                                    ->label(__('Site'))
-                                    ->columnSpanFull()
-                                    ->placeholder(__('Select Site'))
-                                    ->prefixIcon('heroicon-o-window')
-                                    ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
-                                    ->default(Site::where('default', true)->first()?->ulid),
                                 Hidden::make('language_code')
                                     ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
                                 Hidden::make('country_code')
@@ -138,8 +123,16 @@ class ContentResource extends Resource
                                         $set('country_code', Str::after($component->getState(), '-'));
                                     })
                                     ->dehydrated(false)
-                                    ->allowHtml(),
-                                // ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                    ->allowHtml()
+                                    ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                TextInput::make('slug')
+                                    ->columnSpanFull()
+                                    ->helperText('Unique string identifier for this content.')
+                                    ->required(),
+                                TextInput::make('path')
+                                    ->columnSpanFull()
+                                    ->helperText('Path to generate URL for this content.')
+                                    ->required(),
                             ]),
                     ]),
             ]);

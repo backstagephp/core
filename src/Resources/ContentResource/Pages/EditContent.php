@@ -93,6 +93,10 @@ class EditContent extends EditRecord
                 'value' => is_array($value) ? json_encode($value) : $value,
             ]);
         });
+
+        $this->getRecord()->update([
+            'edited_at' => now(),
+        ]);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
