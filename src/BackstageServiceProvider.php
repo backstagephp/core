@@ -99,8 +99,14 @@ class BackstageServiceProvider extends PackageServiceProvider
         Relation::enforceMorphMap([
             'block' => 'Vormkracht10\Backstage\Models\Block',
             'content' => 'Vormkracht10\Backstage\Models\Content',
+            'domain' => 'Vormkracht10\Backstage\Models\Domain',
+            'field' => 'Vormkracht10\Backstage\Models\Field',
             'form' => 'Vormkracht10\Backstage\Models\Form',
+            'language' => 'Vormkracht10\Backstage\Models\Language',
+            'menu' => 'Vormkracht10\Backstage\Models\Menu',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
+            'site' => 'Vormkracht10\Backstage\Models\Site',
+            'tag' => 'Vormkracht10\Backstage\Models\Tag',
             'type' => 'Vormkracht10\Backstage\Models\Type',
             'user' => 'Vormkracht10\Backstage\Models\User',
         ]);
@@ -135,7 +141,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RouteServiceProvider::class);
 
         collect($this->app['config']['backstage']['components']['blocks'] ?? [])
-            ->each(fn ($component) => Backstage::registerComponent(Str::slug(last(explode('\\', $component))), $component));
+            ->each(fn($component) => Backstage::registerComponent(Str::slug(last(explode('\\', $component))), $component));
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);

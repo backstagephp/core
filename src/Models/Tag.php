@@ -14,6 +14,8 @@ class Tag extends Model
 
     protected $primaryKey = 'ulid';
 
+    protected $guarded = [];
+
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);

@@ -12,17 +12,18 @@ use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Enums\FiltersLayout;
 use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Vormkracht10\Backstage\Fields\Select;
 use Vormkracht10\Backstage\Fields\Builder;
@@ -32,7 +33,6 @@ use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
-use Filament\Tables\Actions\Action;
 
 class ContentResource extends Resource
 {
@@ -125,14 +125,35 @@ class ContentResource extends Resource
                                     ->dehydrated(false)
                                     ->allowHtml()
                                     ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                DatePicker::make('published_at')
+                                    ->date()
+                                    ->prefixIcon('heroicon-o-calendar-days')
+                                    ->default(now()->format('dd/mm/YYYY'))
+                                    ->native(false)
+                                    ->columnSpanFull()
+                                    // ->helperText('Set date in future to schedule publication.')
+                                    ->required(),
                                 TextInput::make('slug')
                                     ->columnSpanFull()
                                     ->helperText('Unique string identifier for this content.')
                                     ->required(),
                                 TextInput::make('path')
+                                    ->prefix('/')
                                     ->columnSpanFull()
                                     ->helperText('Path to generate URL for this content.')
+                                    ->formatStateUsing(fn(string $state) => ltrim($state, '/'))
                                     ->required(),
+                                SelectInput::make('tags')
+                                    ->columnSpanFull()
+                                    ->multiple()
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->label('Name')
+                                            ->required(),
+                                    ])
+                                    ->relationship('tags', 'name')
+                                    ->prefixIcon('heroicon-o-tag')
+                                    ->helperText('Add tags to group content.'),
                             ]),
                     ]),
             ]);

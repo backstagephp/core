@@ -2,6 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -31,7 +32,11 @@ class TagResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required(),
+            ]);
     }
 
     public static function table(Table $table): Table

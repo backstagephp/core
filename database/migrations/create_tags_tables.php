@@ -15,8 +15,8 @@ return new class extends Migration
             $table->ulid()->primary();
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->json('name');
-            $table->json('slug');
+            $table->string('name');
+            $table->string('slug');
             $table->string('type')->nullable();
             $table->integer('position')->nullable();
 
