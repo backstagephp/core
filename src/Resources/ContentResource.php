@@ -9,12 +9,14 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
+use Vormkracht10\Backstage\Models\Tag;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
@@ -31,6 +33,7 @@ use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Resources\TagResource;
 use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
@@ -144,14 +147,10 @@ class ContentResource extends Resource
                                     ->formatStateUsing(fn(string $state) => ltrim($state, '/'))
                                     ->required(),
                                 SelectInput::make('tags')
-                                    ->columnSpanFull()
+                                    ->columnSpan(1)
                                     ->multiple()
-                                    ->createOptionForm([
-                                        TextInput::make('name')
-                                            ->label('Name')
-                                            ->required(),
-                                    ])
                                     ->relationship('tags', 'name')
+                                    ->createOptionForm(TagResource::form($form)->getComponents())
                                     ->prefixIcon('heroicon-o-tag')
                                     ->helperText('Add tags to group content.'),
                             ]),

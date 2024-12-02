@@ -2,13 +2,15 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
 use Vormkracht10\Backstage\Models\Tag;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Resources\TagResource\Pages;
 
 class TagResource extends Resource
@@ -35,8 +37,11 @@ class TagResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->required(),
-
+                    ->required()
+                    ->live(debounce: 250)
+                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                        $set('slug', Str::slug($state));
+                    }),
                 TextInput::make('slug')
                     ->label('Slug')
                     ->required(),
