@@ -218,7 +218,7 @@ class ContentResource extends Resource
                     ->label($field->name),
                 'select' => Select::make($fieldName, $field)
                     ->label($field->name)
-                    ->options($field->options),
+                    ->options($field->config['options']),
                 'builder' => Builder::make($fieldName, $field)
                     ->label($field->name),
                 default => Text::make($fieldName, $field)
