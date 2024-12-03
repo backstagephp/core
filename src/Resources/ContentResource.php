@@ -104,16 +104,16 @@ class ContentResource extends Resource
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
+                        Hidden::make('language_code')
+                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                        Hidden::make('country_code')
+                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->country_code),
                         Tabs::make()
                             ->columnSpan(4)
                             ->tabs([
                                 Tab::make('locale')
                                     ->label('Locale')
                                     ->schema([
-                                        Hidden::make('language_code')
-                                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
-                                        Hidden::make('country_code')
-                                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->country_code),
                                         Select::make('language')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
@@ -167,19 +167,15 @@ class ContentResource extends Resource
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->default(now()->format('dd/mm/YYYY'))
                                             ->native(false)
-                                            ->formatStateUsing(fn(?Content $record) => $record->published_at ?? now())
+                                            ->formatStateUsing(fn(?Content $record) => $record ? $record->published_at : now())
                                             ->columnSpanFull()
-                                            ->helperText('Set a date in past or future to schedule publication.')
-                                            ->required(),
+                                            ->helperText('Set a date in past or future to schedule publication.'),
                                         DatePicker::make('expired_at')
                                             ->date()
-                                            ->prefixIcon('heroicon-o-calendar-days')
-                                            ->default(now()->format('dd/mm/YYYY'))
+                                            ->prefixIcon('heroicon-o-calendar')
                                             ->native(false)
-                                            ->formatStateUsing(fn(?Content $record) => $record->published_at ?? now())
                                             ->columnSpanFull()
-                                            ->helperText('Set date in future to auto-expire publication.')
-                                            ->required(),
+                                            ->helperText('Set date in future to auto-expire publication.'),
                                     ]),
                             ]),
                     ]),
