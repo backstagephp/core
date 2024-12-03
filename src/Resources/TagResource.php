@@ -21,6 +21,8 @@ class TagResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+
     public static function getModelLabel(): string
     {
         return __('Tag');
@@ -55,6 +57,9 @@ class TagResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('content_count')
+                    ->label('Times used')
+                    ->counts('content')
             ])
             ->filters([
                 //

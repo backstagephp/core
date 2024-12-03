@@ -20,8 +20,10 @@ use Vormkracht10\Backstage\Models\Tag;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Models\Type;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Enums\FiltersLayout;
 use Vormkracht10\Backstage\Models\Field;
@@ -35,7 +37,9 @@ use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Resources\TagResource;
 use Filament\Forms\Components\Select as SelectInput;
+use Vormkracht10\Backstage\View\Components\Filament\Badge;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 
 class ContentResource extends Resource
 {
@@ -133,6 +137,7 @@ class ContentResource extends Resource
                                     ->prefixIcon('heroicon-o-calendar-days')
                                     ->default(now()->format('dd/mm/YYYY'))
                                     ->native(false)
+                                    ->formatStateUsing(fn(?Content $record) => $record->published_at ?? now())
                                     ->columnSpanFull()
                                     // ->helperText('Set date in future to schedule publication.')
                                     ->required(),
@@ -141,18 +146,17 @@ class ContentResource extends Resource
                                     ->helperText('Unique string identifier for this content.')
                                     ->required(),
                                 TextInput::make('path')
-                                    ->prefix('/')
                                     ->columnSpanFull()
                                     ->helperText('Path to generate URL for this content.')
-                                    ->formatStateUsing(fn(string $state) => ltrim($state, '/'))
                                     ->required(),
-                                SelectInput::make('tags')
-                                    ->columnSpan(1)
-                                    ->multiple()
-                                    ->relationship('tags', 'name')
-                                    ->createOptionForm(TagResource::form($form)->getComponents())
-                                    ->prefixIcon('heroicon-o-tag')
-                                    ->helperText('Add tags to group content.'),
+                                TagsInput::make('tags')
+                                    ->columnSpanFull()
+                                    ->helperText('Add tags to group content.')
+                                    ->tagPrefix('#')
+                                    ->reorderable()
+                                    ->formatStateUsing(fn($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
+                                    ->splitKeys(['Tab', ' ', ','])
+                                    ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                             ]),
                     ]),
             ]);
@@ -185,7 +189,7 @@ class ContentResource extends Resource
         })
             ->map(function ($field) {
                 if (self::$type->name_field == $field->slug) {
-                    $field->input->live(onBlur: true)
+                    $field->input->live(debounce: 250)
                         ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
                             $set('name', $state);
                             $set('meta_tags.title', $state);
@@ -207,11 +211,18 @@ class ContentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                BadgeableColumn::make('name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->separator('')
+                    ->suffixBadges([
+                        Badge::make('type')
+                            ->label(fn(Content $record) => $record->type->name)
+                            ->color('gray'),
+                    ]),
                 TextColumn::make('edited_at')
                     ->since()
+                    ->alignEnd()
                     ->sortable(),
             ])
             ->filters([

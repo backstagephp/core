@@ -4,9 +4,12 @@ namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 use Locale;
 use Filament\Actions;
+use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
+use Vormkracht10\Backstage\Models\Tag;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
+use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\ContentResource;
 
@@ -74,25 +77,36 @@ class EditContent extends EditRecord
 
     protected function afterSave(): void
     {
-        collect($this->data['values'] ?? [])->each(function ($value, $field) {
-            $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+        $tags = collect($this->data['tags'] ?? [])
+            ->filter(fn($tag) => filled($tag))
+            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
+                'name' => $tag,
+                'slug' => Str::slug($tag),
+            ]))
+            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
-            if (blank($value)) {
-                $this->getRecord()->values()->where([
+        $this->record->tags()->sync($tags->pluck('ulid')->toArray());
+
+        collect($this->data['values'] ?? [])
+            ->each(function ($value, $field) {
+                $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+
+                if (blank($value)) {
+                    $this->getRecord()->values()->where([
+                        'content_ulid' => $this->getRecord()->getKey(),
+                        'field_ulid' => $field,
+                    ])->delete();
+
+                    return;
+                }
+
+                $this->getRecord()->values()->updateOrCreate([
                     'content_ulid' => $this->getRecord()->getKey(),
                     'field_ulid' => $field,
-                ])->delete();
-
-                return;
-            }
-
-            $this->getRecord()->values()->updateOrCreate([
-                'content_ulid' => $this->getRecord()->getKey(),
-                'field_ulid' => $field,
-            ], [
-                'value' => is_array($value) ? json_encode($value) : $value,
-            ]);
-        });
+                ], [
+                    'value' => is_array($value) ? json_encode($value) : $value,
+                ]);
+            });
 
         $this->getRecord()->update([
             'edited_at' => now(),
@@ -101,6 +115,7 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        unset($data['tags']);
         unset($data['values']);
 
         return $data;

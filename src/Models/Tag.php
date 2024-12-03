@@ -19,11 +19,11 @@ class Tag extends Model
 
     public function content(): MorphToMany
     {
-        return $this->morphedByMany(Content::class, 'taggable', 'taggables', 'taggable_ulid', 'tag_ulid');
+        return $this->morphedByMany(Content::class, 'taggable', 'taggables', 'tag_ulid', 'taggable_ulid');
     }
 
-    public function site(): MorphToMany
+    public function sites(): MorphToMany
     {
-        return $this->morphedByMany(Site::class, 'taggable', 'taggables', 'taggable_ulid', 'tag_ulid');
+        return $this->morphedByMany(Site::class, 'taggable', 'taggables', 'tag_ulid', 'taggable_ulid');
     }
 }

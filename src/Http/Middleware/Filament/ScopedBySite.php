@@ -56,7 +56,7 @@ class ScopedBySite
         );
 
         Tag::addGlobalScope(
-            fn(Builder $query) => $query->whereHas('site', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn(Builder $query) => $query->whereHas('sites', fn($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Template::addGlobalScope(
