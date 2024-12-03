@@ -2,32 +2,33 @@
 
 namespace Vormkracht10\Backstage;
 
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
-use Filament\Navigation\NavigationGroup;
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
+use Filament\Forms\Components\Select;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Filament\Navigation\NavigationItem;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Models\Type;
+use Filament\Navigation\NavigationGroup;
+use Vormkracht10\Backstage\Models\Block;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
+use Livewire\Features\SupportTesting\Testable;
+use Vormkracht10\Backstage\View\Components\Page;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
-use Vormkracht10\Backstage\View\Components\Page;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {

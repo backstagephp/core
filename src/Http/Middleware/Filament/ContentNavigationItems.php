@@ -22,7 +22,14 @@ class ContentNavigationItems
                 ]));
         })->toArray();
 
-        Filament::registerNavigationItems($items);
+        Filament::registerNavigationItems([
+            NavigationItem::make('meta_tags')
+                ->label('Meta Tags')
+                ->icon('heroicon-o-code-bracket-square')
+                ->group('SEO')
+                ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
+            ...$items
+        ]);
 
         return $next($request);
     }

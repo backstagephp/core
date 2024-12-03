@@ -255,6 +255,7 @@ class ContentResource extends Resource
             'index' => Pages\ListContent::route('/'),
             'create' => Pages\CreateContent::route('/create/{type}'),
             'edit' => Pages\EditContent::route('/{record}/edit'),
+            'meta_tags' => Pages\ListContentMetaTags::route('/meta-tags'),
         ];
     }
 }
