@@ -22,7 +22,7 @@ class DuplicateContentAction extends ReplicateAction
             ->after(function (Model $replica): void {
                 $replica->tags()->sync($this->getRecord()->tags->pluck('ulid')->toArray());
 
-                $this->getRecord()->values->each(fn($value) => $replica->values()->updateOrCreate([
+                $this->getRecord()->values->each(fn ($value) => $replica->values()->updateOrCreate([
                     'content_ulid' => $replica->getKey(),
                     'field_ulid' => $value->field_ulid,
                 ], [
@@ -35,9 +35,9 @@ class DuplicateContentAction extends ReplicateAction
                 Notification::make()
                     ->success()
                     ->title('Content duplicated')
-                    ->body(fn() => "The content '" . $this->getRecord()->name . "' has been duplicated."),
+                    ->body(fn () => "The content '" . $this->getRecord()->name . "' has been duplicated."),
             )
-            ->successRedirectUrl(fn(Model $replica): string => route('filament.backstage.resources.content.edit', [
+            ->successRedirectUrl(fn (Model $replica): string => route('filament.backstage.resources.content.edit', [
                 'tenant' => Filament::getTenant(),
                 'record' => $replica,
             ]));

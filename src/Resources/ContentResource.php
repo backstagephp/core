@@ -2,40 +2,43 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select as SelectInput;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Locale;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Locale;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Language;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 use Vormkracht10\Backstage\Models\Tag;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Enums\FiltersLayout;
+use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Fields\Builder;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\Backstage\View\Components\Filament\Badge;
+use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 
 class ContentResource extends Resource
@@ -247,6 +250,29 @@ class ContentResource extends Resource
             ])
             ->defaultSort('edited_at', 'desc')
             ->filters([
+                Filter::make('locale')
+                    ->form([
+                        Select::make('locale')
+                            ->label(__('Language'))
+                            ->columnSpanFull()
+                            ->placeholder(__('Select Language'))
+                            ->prefixIcon('heroicon-o-language')
+                            ->options(
+                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
+                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
+                                        $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
+                                    ])->toArray(),
+                                ])
+                            )
+                            ->allowHtml(),
+                    ])
+                    ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
+                        $locale = explode('-', $data['locale']);
+
+                        return $query->where('language_code', $locale[0])
+                            ->where('country_code', $locale[1] ?? null);
+                    })
+                    ->visible(fn() => Language::where('active', 1)->count() > 1),
                 SelectFilter::make('type_slug')
                     ->label('Type')
                     ->native(false)
@@ -260,7 +286,45 @@ class ContentResource extends Resource
                     ->options([])
                     ->multiple()
                     ->preload(),
+                SelectFilter::make('tags')
+                    ->relationship('tags', 'name')
+                    ->label('Tags')
+                    ->native(false)
+                    ->preload()
+                    ->multiple(),
+                Filter::make('date')
+                    ->form([
+                        Fieldset::make('Date')
+                            ->schema([
+                                Select::make('date_column')
+                                    ->columnSpanFull()
+                                    ->options([
+                                        'created_at' => 'Created',
+                                        'edited_at' => 'Edited',
+                                        'expired_at' => 'Expired',
+                                        'published_at' => 'Published',
+                                    ])
+                                    ->default('created_at')
+                                    ->native(false),
+                                DatePicker::make('date_from')
+                                    ->native(false),
+                                DatePicker::make('date_until')
+                                    ->native(false),
+                            ]),
+                    ])
+                    ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
+                        return $query
+                            ->when(
+                                $data['date_from'],
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
+                            )
+                            ->when(
+                                $data['date_until'],
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
+                            );
+                    }),
             ], layout: FiltersLayout::Modal)
+            ->filtersFormWidth('md')
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])->filtersTriggerAction(
