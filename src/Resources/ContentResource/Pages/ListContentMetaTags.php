@@ -57,6 +57,12 @@ class ListContentMetaTags extends ListRecords
                     ->sortable(),
                 TextInputColumn::make('meta_tags.keywords')
                     ->label('Meta keywords')
+                    ->state(function (Content $record): string {
+                        return implode(', ', $record->meta_tags['keywords'] ?? []);
+                    })
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update(['meta_tags->keywords' => array_filter(array_map('trim', explode(',', $state)))]);
+                    })
                     ->searchable()
                     ->sortable(),
             ]);
