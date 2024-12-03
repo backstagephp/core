@@ -47,5 +47,12 @@ return new class extends Migration
             $table->foreign('template_slug')->references('slug')->on('templates')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
+
+        Schema::create('content_user', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained(table: 'users', column: 'id')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('content_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->index(['user_id', 'content_ulid']);
+        });
     }
 };
