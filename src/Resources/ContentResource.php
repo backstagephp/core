@@ -225,6 +225,7 @@ class ContentResource extends Resource
                     ->alignEnd()
                     ->sortable(),
             ])
+            ->defaultSort('edited_at', 'desc')
             ->filters([
                 SelectFilter::make('type_slug')
                     ->label('Type')

@@ -5,8 +5,12 @@ namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 use Locale;
 use Filament\Actions;
 use Illuminate\Support\Str;
+use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
+use Filament\Actions\ReplicateAction;
 use Vormkracht10\Backstage\Models\Tag;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
 use Vormkracht10\Backstage\Models\Content;
@@ -20,6 +24,25 @@ class EditContent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ReplicateAction::make()
+                ->label('Duplicate')
+                ->icon('heroicon-o-document-duplicate')
+                ->color('gray')
+                ->beforeReplicaSaved(function (Model $replica): void {
+                    $replica->edited_at = now();
+                })
+                ->modalHeading("Duplicate {$this->getRecord()->name} {$this->getRecord()->type->name}")
+                ->requiresConfirmation()
+                ->successNotification(
+                    Notification::make()
+                        ->success()
+                        ->title('Content duplicated')
+                        ->body(fn() => "The content '" . $this->getRecord()->name . "' has been duplicated."),
+                )
+                ->successRedirectUrl(fn(Model $replica): string => route('filament.backstage.resources.content.edit', [
+                    'tenant' => Filament::getTenant(),
+                    'record' => $replica,
+                ])),
             Actions\ActionGroup::make(
                 Language::distinct('country_code')->count() > 1 ?
                     // multiple countries
@@ -56,6 +79,7 @@ class EditContent extends EditRecord
                 ->visible(fn() => Language::where('active', 1)->count() > 1),
             Actions\Action::make('Preview')
                 ->color('gray')
+                ->icon('heroicon-o-eye')
                 ->url(fn() => $this->getRecord()->url)
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make(),

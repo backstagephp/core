@@ -43,7 +43,7 @@ class ListContentMetaTags extends ListRecords
                 TextColumn::make('title')
                     ->label('Title')
                     ->state(function (Content $record): string {
-                        return $record->rawField($record->type->name_field);
+                        return $record->name;
                     })
                     ->searchable()
                     ->sortable(),
