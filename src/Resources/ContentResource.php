@@ -26,6 +26,7 @@ use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Vormkracht10\Backstage\Models\Field;
 use Filament\Forms\Components\DatePicker;
@@ -260,6 +261,12 @@ class ContentResource extends Resource
                             ->label(fn(Content $record) => $record->type->name)
                             ->color('gray'),
                     ]),
+                ImageColumn::make('authors')
+                    ->circular()
+                    ->stacked()
+                    ->ring(2)
+                    ->getStateUsing(fn(Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
+                    ->limit(3),
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()

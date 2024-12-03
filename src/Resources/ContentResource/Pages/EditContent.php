@@ -47,18 +47,18 @@ class EditContent extends EditRecord
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg')))))
                             ->url('#');
                     })
-                        ->toArray()
+                    ->toArray()
             )
                 ->label('Translate')
                 ->icon('heroicon-o-language')
                 ->iconPosition(IconPosition::Before)
                 ->color('gray')
                 ->button()
-                ->visible(fn () => Language::where('active', 1)->count() > 1),
+                ->visible(fn() => Language::where('active', 1)->count() > 1),
             Actions\Action::make('Preview')
                 ->color('gray')
                 ->icon('heroicon-o-eye')
-                ->url(fn () => $this->getRecord()->url)
+                ->url(fn() => $this->getRecord()->url)
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];
@@ -80,12 +80,12 @@ class EditContent extends EditRecord
     protected function afterSave(): void
     {
         $tags = collect($this->data['tags'] ?? [])
-            ->filter(fn ($tag) => filled($tag))
-            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
+            ->filter(fn($tag) => filled($tag))
+            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
                 'name' => $tag,
                 'slug' => Str::slug($tag),
             ]))
-            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
+            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
 
@@ -113,6 +113,8 @@ class EditContent extends EditRecord
         $this->getRecord()->update([
             'edited_at' => now(),
         ]);
+
+        $this->getRecord()->authors()->syncWithoutDetaching(auth()->id());
     }
 
     protected function mutateFormDataBeforeSave(array $data): array

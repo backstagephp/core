@@ -2,15 +2,16 @@
 
 namespace Vormkracht10\Backstage\Models;
 
+use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
+use Vormkracht10\Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\HtmlString;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Backstage\Shared\HasTags;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Content extends Model
 {
@@ -31,15 +32,19 @@ class Content extends Model
         ];
     }
 
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'content_user', 'content_ulid', 'user_id');
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function fields(): MorphMany
     {
         return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug');
-    }
-
-    public function values(): HasMany
-    {
-        return $this->hasMany(ContentFieldValue::class)
-            ->with('field');
     }
 
     public function language(): BelongsTo
@@ -57,17 +62,23 @@ class Content extends Model
         return $this->belongsTo(Type::class);
     }
 
+    public function values(): HasMany
+    {
+        return $this->hasMany(ContentFieldValue::class)
+            ->with('field');
+    }
+
     protected function url(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
+            get: fn(?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
         );
     }
 
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
