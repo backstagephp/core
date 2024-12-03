@@ -5,8 +5,8 @@ return [
 
     'components' => [
         'blocks' => [
-            Vormkracht10\Backstage\View\Components\Heading::class,
-            Vormkracht10\Backstage\View\Components\Paragraph::class,
+            Vormkracht10\Backstage\View\Components\Blocks\Heading::class,
+            Vormkracht10\Backstage\View\Components\Blocks\Paragraph::class,
         ],
     ],
 ];
