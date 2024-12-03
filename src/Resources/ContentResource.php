@@ -101,64 +101,86 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->reorderable()
                                             ->splitKeys(['Tab', ' ', ','])
-                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
+                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
-                        Section::make()
+                        Tabs::make()
                             ->columnSpan(4)
-                            ->schema([
-                                Hidden::make('language_code')
-                                    ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
-                                Hidden::make('country_code')
-                                    ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->country_code),
-                                Select::make('language')
-                                    ->label(__('Language'))
-                                    ->columnSpanFull()
-                                    ->placeholder(__('Select Language'))
-                                    ->prefixIcon('heroicon-o-language')
-                                    ->options(
-                                        Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn ($languages, $countryCode) => [
-                                            Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn ($language) => [
-                                                $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
-                                            ])->toArray(),
-                                        ])
-                                    )
-                                    ->afterStateHydrated(function (Get $get, SelectInput $component) {
-                                        $component->state($get('language_code') . '-' . $get('country_code'));
-                                    })
-                                    ->afterStateUpdated(function (Set $set, SelectInput $component) {
-                                        $set('language_code', Str::before($component->getState(), '-'));
-                                        $set('country_code', Str::after($component->getState(), '-'));
-                                    })
-                                    ->dehydrated(false)
-                                    ->allowHtml()
-                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
-                                DatePicker::make('published_at')
-                                    ->date()
-                                    ->prefixIcon('heroicon-o-calendar-days')
-                                    ->default(now()->format('dd/mm/YYYY'))
-                                    ->native(false)
-                                    ->formatStateUsing(fn (?Content $record) => $record->published_at ?? now())
-                                    ->columnSpanFull()
-                                    // ->helperText('Set date in future to schedule publication.')
-                                    ->required(),
-                                TextInput::make('slug')
-                                    ->columnSpanFull()
-                                    ->helperText('Unique string identifier for this content.')
-                                    ->required(),
-                                TextInput::make('path')
-                                    ->columnSpanFull()
-                                    ->helperText('Path to generate URL for this content.')
-                                    ->required(),
-                                TagsInput::make('tags')
-                                    ->color('gray')
-                                    ->columnSpanFull()
-                                    ->helperText('Add tags to group content.')
-                                    ->tagPrefix('#')
-                                    ->reorderable()
-                                    ->formatStateUsing(fn ($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
-                                    ->splitKeys(['Tab', ' ', ','])
-                                    ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
+                            ->tabs([
+                                Tab::make('locale')
+                                    ->label('Locale')
+                                    ->schema([
+                                        Hidden::make('language_code')
+                                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                                        Hidden::make('country_code')
+                                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->country_code),
+                                        Select::make('language')
+                                            ->label(__('Language'))
+                                            ->columnSpanFull()
+                                            ->placeholder(__('Select Language'))
+                                            ->prefixIcon('heroicon-o-language')
+                                            ->options(
+                                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
+                                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
+                                                        $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
+                                                    ])->toArray(),
+                                                ])
+                                            )
+                                            ->afterStateHydrated(function (Get $get, SelectInput $component) {
+                                                $component->state($get('language_code') . '-' . $get('country_code'));
+                                            })
+                                            ->afterStateUpdated(function (Set $set, SelectInput $component) {
+                                                $set('language_code', Str::before($component->getState(), '-'));
+                                                $set('country_code', Str::after($component->getState(), '-'));
+                                            })
+                                            ->dehydrated(false)
+                                            ->allowHtml()
+                                            ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                    ])
+                                    ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                Tab::make('slug-path')
+                                    ->label('Slug & Path')
+                                    ->schema([
+                                        TextInput::make('slug')
+                                            ->columnSpanFull()
+                                            ->helperText('Unique string identifier for this content.')
+                                            ->required(),
+                                        TextInput::make('path')
+                                            ->columnSpanFull()
+                                            ->helperText('Path to generate URL for this content.')
+                                            ->required(),
+                                        TagsInput::make('tags')
+                                            ->color('gray')
+                                            ->columnSpanFull()
+                                            ->helperText('Add tags to group content.')
+                                            ->tagPrefix('#')
+                                            ->reorderable()
+                                            ->formatStateUsing(fn($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
+                                            ->splitKeys(['Tab', ' ', ','])
+                                            ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
+                                    ]),
+                                Tab::make('publication')
+                                    ->label('Publication')
+                                    ->schema([
+                                        DatePicker::make('published_at')
+                                            ->date()
+                                            ->prefixIcon('heroicon-o-calendar-days')
+                                            ->default(now()->format('dd/mm/YYYY'))
+                                            ->native(false)
+                                            ->formatStateUsing(fn(?Content $record) => $record->published_at ?? now())
+                                            ->columnSpanFull()
+                                            ->helperText('Set a date in past or future to schedule publication.')
+                                            ->required(),
+                                        DatePicker::make('expired_at')
+                                            ->date()
+                                            ->prefixIcon('heroicon-o-calendar-days')
+                                            ->default(now()->format('dd/mm/YYYY'))
+                                            ->native(false)
+                                            ->formatStateUsing(fn(?Content $record) => $record->published_at ?? now())
+                                            ->columnSpanFull()
+                                            ->helperText('Set date in future to auto-expire publication.')
+                                            ->required(),
+                                    ]),
                             ]),
                     ]),
             ]);
@@ -205,7 +227,7 @@ class ContentResource extends Resource
 
                 return $field;
             })
-            ->map(fn ($field) => $field->input)
+            ->map(fn($field) => $field->input)
             ->toArray();
     }
 
@@ -219,7 +241,7 @@ class ContentResource extends Resource
                     ->separator('')
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn (Content $record) => $record->type->name)
+                            ->label(fn(Content $record) => $record->type->name)
                             ->color('gray'),
                     ]),
                 TextColumn::make('edited_at')
@@ -246,7 +268,7 @@ class ContentResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])->filtersTriggerAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->button()
                     ->label('Filter')
                     ->slideOver(),
