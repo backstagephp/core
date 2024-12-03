@@ -15,7 +15,7 @@ class ContentUpdatesWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Recent Content Updates')
+            ->heading('Recently updated content')
             ->query(
                 Content::query()
                     ->where('site_ulid', Filament::getTenant()->getKey())

@@ -15,7 +15,7 @@ class FormSubmissionsWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Newest Form Submissions')
+            ->heading('Newly submitted forms')
             ->query(
                 FormSubmission::query()
                     ->where('site_ulid', Filament::getTenant()->getKey())
