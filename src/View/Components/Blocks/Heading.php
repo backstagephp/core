@@ -6,10 +6,10 @@ use Illuminate\View\Component;
 
 class Heading extends Component
 {
-    public function __construct(public ?string $title = null)
-    {
-        $this->title = $title;
-    }
+    public function __construct(
+        public ?string $heading = null,
+        public ?int $level = null,
+    ) {}
 
     public function render()
     {

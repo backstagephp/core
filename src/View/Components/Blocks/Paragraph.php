@@ -6,10 +6,9 @@ use Illuminate\View\Component;
 
 class Paragraph extends Component
 {
-    public function __construct(public ?string $text = null)
-    {
-        $this->text = $text;
-    }
+    public function __construct(
+        public ?string $text = null
+    ) {}
 
     public function render()
     {
