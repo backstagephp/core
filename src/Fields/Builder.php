@@ -49,11 +49,15 @@ class Builder extends FieldBase implements FieldInterface
                                 ->label($field->name),
                             'checkbox' => Checkbox::make($field->slug, $field)
                                 ->label($field->name),
-                            'textarea' => RichEditor::make($field->slug, $field)
+                            'rich-editor' => RichEditor::make($field->slug, $field)
+                                ->label($field->name),
+                            'textarea' => Textarea::make($field->slug, $field)
                                 ->label($field->name),
                             'select' => Select::make($field->slug, $field)
                                 ->label($field->name)
                                 ->options($field->options),
+                            'builder' => Builder::make($field->slug, $field)
+                                ->label($field->name),
                             default => Text::make($field->slug, $field)
                                 ->label($field->name),
                         };
