@@ -6,13 +6,10 @@ use Illuminate\View\Component;
 
 class Heading extends Component
 {
-    public function __construct(
-        public ?string $heading = null,
-        public ?int $level = null,
-    ) {}
+    public function __construct(public array $data = []) {}
 
     public function render()
     {
-        return view('backstage::components.blocks.heading');
+        return view('backstage::components.blocks.heading', $this->data);
     }
 }
