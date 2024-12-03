@@ -2,15 +2,15 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Set;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Resources\Resource;
 use Vormkracht10\Backstage\Models\Tag;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Resources\TagResource\Pages;
 use Vormkracht10\Backstage\View\Components\Filament\Badge;
 use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
@@ -57,18 +57,18 @@ class TagResource extends Resource
         return $table
             ->columns([
                 BadgeableColumn::make('name')
-                    ->formatStateUsing(fn() => '')
+                    ->formatStateUsing(fn () => '')
                     ->searchable()
                     ->sortable()
                     ->separator('')
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn(Tag $record) => '#' . $record->name)
+                            ->label(fn (Tag $record) => '#' . $record->name)
                             ->color('gray'),
                     ]),
                 TextColumn::make('content_count')
                     ->label('Times used')
-                    ->counts('content')
+                    ->counts('content'),
             ])
             ->filters([
                 //

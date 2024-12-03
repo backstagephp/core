@@ -2,19 +2,18 @@
 
 namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
-use Locale;
 use Filament\Actions;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Illuminate\Support\HtmlString;
 use Filament\Actions\ReplicateAction;
-use Vormkracht10\Backstage\Models\Tag;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
-use Vormkracht10\Backstage\Models\Content;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+use Locale;
 use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Tag;
 use Vormkracht10\Backstage\Resources\ContentResource;
 
 class EditContent extends EditRecord
@@ -37,9 +36,9 @@ class EditContent extends EditRecord
                     Notification::make()
                         ->success()
                         ->title('Content duplicated')
-                        ->body(fn() => "The content '" . $this->getRecord()->name . "' has been duplicated."),
+                        ->body(fn () => "The content '" . $this->getRecord()->name . "' has been duplicated."),
                 )
-                ->successRedirectUrl(fn(Model $replica): string => route('filament.backstage.resources.content.edit', [
+                ->successRedirectUrl(fn (Model $replica): string => route('filament.backstage.resources.content.edit', [
                     'tenant' => Filament::getTenant(),
                     'record' => $replica,
                 ])),
@@ -69,18 +68,18 @@ class EditContent extends EditRecord
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg')))))
                             ->url('#');
                     })
-                    ->toArray()
+                        ->toArray()
             )
                 ->label('Translate')
                 ->icon('heroicon-o-language')
                 ->iconPosition(IconPosition::Before)
                 ->color('gray')
                 ->button()
-                ->visible(fn() => Language::where('active', 1)->count() > 1),
+                ->visible(fn () => Language::where('active', 1)->count() > 1),
             Actions\Action::make('Preview')
                 ->color('gray')
                 ->icon('heroicon-o-eye')
-                ->url(fn() => $this->getRecord()->url)
+                ->url(fn () => $this->getRecord()->url)
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];
@@ -102,12 +101,12 @@ class EditContent extends EditRecord
     protected function afterSave(): void
     {
         $tags = collect($this->data['tags'] ?? [])
-            ->filter(fn($tag) => filled($tag))
-            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
+            ->filter(fn ($tag) => filled($tag))
+            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
                 'name' => $tag,
                 'slug' => Str::slug($tag),
             ]))
-            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
+            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
 

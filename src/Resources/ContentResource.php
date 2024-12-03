@@ -2,44 +2,40 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Filament\Resources\Resource;
-use Filament\Support\Colors\Color;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
-use Vormkracht10\Backstage\Models\Tag;
-use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select as SelectInput;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Vormkracht10\Backstage\Models\Field;
-use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
-use Vormkracht10\Backstage\Fields\Select;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Locale;
 use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Resources\TagResource;
-use Filament\Forms\Components\Select as SelectInput;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Tag;
+use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\View\Components\Filament\Badge;
 use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 
 class ContentResource extends Resource
@@ -105,7 +101,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->reorderable()
                                             ->splitKeys(['Tab', ' ', ','])
-                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
+                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
                         Section::make()
@@ -121,8 +117,8 @@ class ContentResource extends Resource
                                     ->placeholder(__('Select Language'))
                                     ->prefixIcon('heroicon-o-language')
                                     ->options(
-                                        Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
-                                            Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
+                                        Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn ($languages, $countryCode) => [
+                                            Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn ($language) => [
                                                 $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
                                             ])->toArray(),
                                         ])
@@ -136,13 +132,13 @@ class ContentResource extends Resource
                                     })
                                     ->dehydrated(false)
                                     ->allowHtml()
-                                    ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
                                 DatePicker::make('published_at')
                                     ->date()
                                     ->prefixIcon('heroicon-o-calendar-days')
                                     ->default(now()->format('dd/mm/YYYY'))
                                     ->native(false)
-                                    ->formatStateUsing(fn(?Content $record) => $record->published_at ?? now())
+                                    ->formatStateUsing(fn (?Content $record) => $record->published_at ?? now())
                                     ->columnSpanFull()
                                     // ->helperText('Set date in future to schedule publication.')
                                     ->required(),
@@ -160,7 +156,7 @@ class ContentResource extends Resource
                                     ->helperText('Add tags to group content.')
                                     ->tagPrefix('#')
                                     ->reorderable()
-                                    ->formatStateUsing(fn($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
+                                    ->formatStateUsing(fn ($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
                                     ->splitKeys(['Tab', ' ', ','])
                                     ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                             ]),
@@ -209,7 +205,7 @@ class ContentResource extends Resource
 
                 return $field;
             })
-            ->map(fn($field) => $field->input)
+            ->map(fn ($field) => $field->input)
             ->toArray();
     }
 
@@ -223,7 +219,7 @@ class ContentResource extends Resource
                     ->separator('')
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn(Content $record) => $record->type->name)
+                            ->label(fn (Content $record) => $record->type->name)
                             ->color('gray'),
                     ]),
                 TextColumn::make('edited_at')
@@ -245,12 +241,12 @@ class ContentResource extends Resource
                     ->native(false)
                     ->options([])
                     ->multiple()
-                    ->preload()
+                    ->preload(),
             ], layout: FiltersLayout::Modal)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])->filtersTriggerAction(
-                fn(Action $action) => $action
+                fn (Action $action) => $action
                     ->button()
                     ->label('Filter')
                     ->slideOver(),

@@ -3,10 +3,10 @@
 namespace Vormkracht10\Backstage\View\Components\Filament;
 
 use Closure;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Filament\Tables\Columns\TextColumn;
 
 class BadgeableColumn extends TextColumn
 {

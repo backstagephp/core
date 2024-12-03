@@ -3,9 +3,9 @@
 namespace Vormkracht10\Backstage\Http\Middleware\Filament;
 
 use Closure;
-use Illuminate\Http\Request;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Illuminate\Http\Request;
 use Vormkracht10\Backstage\Models\Type;
 
 class ContentNavigationItems
@@ -18,7 +18,7 @@ class ContentNavigationItems
                 ->parentItem('Content')
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
-                    'tableFilters[type_slug][values]' => ['page']
+                    'tableFilters[type_slug][values]' => ['page'],
                 ]));
         })->toArray();
 
@@ -28,7 +28,7 @@ class ContentNavigationItems
                 ->icon('heroicon-o-code-bracket-square')
                 ->group('SEO')
                 ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
-            ...$items
+            ...$items,
         ]);
 
         return $next($request);

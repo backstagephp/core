@@ -2,8 +2,8 @@
 
 namespace Vormkracht10\Backstage\Shared;
 
-use Vormkracht10\Backstage\Models\Tag;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Vormkracht10\Backstage\Models\Tag;
 
 trait HasTags
 {
