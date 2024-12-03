@@ -6,12 +6,10 @@ use Illuminate\View\Component;
 
 class Paragraph extends Component
 {
-    public function __construct(
-        public array $data = []
-    ) {}
+    public function __construct(public string $paragraph) {}
 
     public function render()
     {
-        return view('backstage::components.blocks.paragraph', $this->data);
+        return view('backstage::components.blocks.paragraph');
     }
 }
