@@ -18,7 +18,7 @@
     <meta property="og:description" content="{{ $content->meta_tags['description'] }}">
     @endif
     @if(isset($content->meta_tags['keywords']))
-    <meta name="keywords" content="{{ $content->meta_tags['keywords'] }}">
+    <meta name="keywords" content="{{ implode(', ', $content->meta_tags['keywords']) }}">
     @endif
 </head>
 <body>
