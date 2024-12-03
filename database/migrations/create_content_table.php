@@ -18,7 +18,7 @@ return new class extends Migration
             $table->char('country_code', 2)->nullable();
             $table->string('type_slug');
             $table->string('template_slug')->nullable();
-            $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('creator_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUlid('parent_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
             $table->string('name');
             $table->string('slug');

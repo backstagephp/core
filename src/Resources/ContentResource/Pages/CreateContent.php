@@ -50,6 +50,7 @@ class CreateContent extends CreateRecord
             ]));
 
         $this->getRecord()->update([
+            'creator_id' => auth()->id(),
             'edited_at' => now(),
         ]);
     }

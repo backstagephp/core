@@ -67,7 +67,7 @@ class Badge extends ViewComponent
         return $this;
     }
 
-    public function getSize(): BadgeSize | string | null
+    public function getSize(): string | null
     {
         return $this->evaluate($this->size);
     }

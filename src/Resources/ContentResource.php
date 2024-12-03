@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Tables\Actions\Action;
@@ -97,10 +98,14 @@ class ContentResource extends Resource
                                             ->label('Description')
                                             ->helperText('Meta description for search engines.')
                                             ->columnSpanFull(),
-                                        TextInput::make('meta_tags.keywords')
+                                        TagsInput::make('meta_tags.keywords')
                                             ->label('Keywords')
-                                            ->helperText('Meta keywords, altough not respected in search engines anymore, we also use it as focus keywords.')
-                                            ->columnSpanFull(),
+                                            ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords.')
+                                            ->color('gray')
+                                            ->columnSpanFull()
+                                            ->reorderable()
+                                            ->splitKeys(['Tab', ' ', ','])
+                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
                         Section::make()
@@ -150,6 +155,7 @@ class ContentResource extends Resource
                                     ->helperText('Path to generate URL for this content.')
                                     ->required(),
                                 TagsInput::make('tags')
+                                    ->color('gray')
                                     ->columnSpanFull()
                                     ->helperText('Add tags to group content.')
                                     ->tagPrefix('#')

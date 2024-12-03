@@ -1,10 +1,7 @@
 @if (! $isHidden())
     @php
         $color = $getColor();
-
-        $size = match ($size = $getSize()) {
-            default => $size,
-        };
+        $size = $getSize();
 
         $badgeClasses = \Illuminate\Support\Arr::toCssClasses([
             "badgeable-column-badge",
