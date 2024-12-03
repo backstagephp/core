@@ -20,6 +20,7 @@ use Vormkracht10\Backstage\Models\Tag;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\TextColumn;
 use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Models\Type;
@@ -64,6 +65,22 @@ class ContentResource extends Resource
     public static function getSlug(): string
     {
         return 'content';
+    }
+
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make(static::getNavigationLabel())
+                ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
+                ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
+                ->isActiveWhen(fn() => request()->routeIs(static::getRouteBaseName() . '.*') && !request()->input('tableFilters.type_slug.values.0') && !request()->is('*/meta-tags'))
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
+                ->sort(static::getNavigationSort())
+                ->url(static::getNavigationUrl()),
+        ];
     }
 
     public static function form(Form $form): Form

@@ -16,6 +16,7 @@ class ContentNavigationItems
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem('Content')
+                ->isActiveWhen(fn(NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
                     'tableFilters[type_slug][values]' => ['page'],
@@ -27,6 +28,7 @@ class ContentNavigationItems
                 ->label('Meta Tags')
                 ->icon('heroicon-o-code-bracket-square')
                 ->group('SEO')
+                ->isActiveWhen(fn(NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
                 ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
             ...$items,
         ]);
