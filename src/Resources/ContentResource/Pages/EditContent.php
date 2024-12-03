@@ -3,15 +3,12 @@
 namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
 use Filament\Actions;
-use Filament\Actions\ReplicateAction;
-use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Locale;
+use Vormkracht10\Backstage\Actions\Content\DuplicateContentAction;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Tag;
 use Vormkracht10\Backstage\Resources\ContentResource;
@@ -23,35 +20,7 @@ class EditContent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ReplicateAction::make()
-                ->label('Duplicate')
-                ->icon('heroicon-o-document-duplicate')
-                ->color('gray')
-                ->beforeReplicaSaved(function (Model $replica): void {
-                    $replica->edited_at = now();
-                })
-                ->after(function (Model $replica): void {
-                    $replica->tags()->sync($this->getRecord()->tags->pluck('ulid')->toArray());
-
-                    $this->getRecord()->values->each(fn($value) => $replica->values()->updateOrCreate([
-                        'content_ulid' => $replica->getKey(),
-                        'field_ulid' => $value->field_ulid,
-                    ], [
-                        'value' => $value->value,
-                    ]));
-                })
-                ->modalHeading("Duplicate {$this->getRecord()->name} {$this->getRecord()->type->name}")
-                ->requiresConfirmation()
-                ->successNotification(
-                    Notification::make()
-                        ->success()
-                        ->title('Content duplicated')
-                        ->body(fn() => "The content '" . $this->getRecord()->name . "' has been duplicated."),
-                )
-                ->successRedirectUrl(fn(Model $replica): string => route('filament.backstage.resources.content.edit', [
-                    'tenant' => Filament::getTenant(),
-                    'record' => $replica,
-                ])),
+            DuplicateContentAction::make('duplicate'),
             Actions\ActionGroup::make(
                 Language::distinct('country_code')->count() > 1 ?
                     // multiple countries
