@@ -16,6 +16,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Vormkracht10\MediaPicker\MediaPickerPlugin;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Vormkracht10\Backstage\Resources\TagResource;
+use Vormkracht10\MediaPicker\Pages\Media\Library;
 use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
@@ -121,6 +122,7 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->pages([
                 Dashboard::class,
+                Library::class
             ])
             ->widgets([
                 LatestContentWidget::class,
