@@ -12,10 +12,7 @@ class BackstagePlugin implements Plugin
         return 'backstage';
     }
 
-    public function register(Panel $panel): void
-    {
-        //
-    }
+    public function register(Panel $panel): void {}
 
     public function boot(Panel $panel): void
     {

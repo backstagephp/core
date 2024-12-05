@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Http\Middleware;
+namespace Vormkracht10\Backstage\Http\Middleware\Filament;
 
 use Closure;
 use Filament\Facades\Filament;
@@ -56,7 +56,7 @@ class ScopedBySite
         );
 
         Tag::addGlobalScope(
-            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         Template::addGlobalScope(

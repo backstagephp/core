@@ -13,18 +13,21 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Http\Middleware\MatchContentByPath;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Vormkracht10\Backstage\View\Components\Blocks;
+use Vormkracht10\Backstage\View\Components\Page;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -96,8 +99,14 @@ class BackstageServiceProvider extends PackageServiceProvider
         Relation::enforceMorphMap([
             'block' => 'Vormkracht10\Backstage\Models\Block',
             'content' => 'Vormkracht10\Backstage\Models\Content',
+            'domain' => 'Vormkracht10\Backstage\Models\Domain',
+            'field' => 'Vormkracht10\Backstage\Models\Field',
             'form' => 'Vormkracht10\Backstage\Models\Form',
+            'language' => 'Vormkracht10\Backstage\Models\Language',
+            'menu' => 'Vormkracht10\Backstage\Models\Menu',
             'setting' => 'Vormkracht10\Backstage\Models\Setting',
+            'site' => 'Vormkracht10\Backstage\Models\Site',
+            'tag' => 'Vormkracht10\Backstage\Models\Tag',
             'type' => 'Vormkracht10\Backstage\Models\Type',
             'user' => 'Vormkracht10\Backstage\Models\User',
         ]);
@@ -130,6 +139,12 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
+
+        collect($this->app['config']['backstage']['components']['blocks'] ?? [])
+            ->each(fn($component) => Blade::component(Str::slug(last(explode('\\', $component))), $component));
+
+        Blade::component('blocks', Blocks::class);
+        Blade::component('page', Page::class);
     }
 
     protected function getAssetPackageName(): ?string
@@ -195,6 +210,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_fields_table',
             'create_settings_table',
             'create_content_table',
+            'create_templates_table',
             'create_content_field_values_table',
             'create_blocks_table',
             'create_menus_table',
@@ -205,7 +221,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             'create_form_submissions_table',
             'create_form_submission_values_table',
             'create_tags_tables',
-            'create_templates_table',
 
             'create_notifications_table',
             'add_columns_to_users_table',

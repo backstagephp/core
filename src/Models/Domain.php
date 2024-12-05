@@ -3,10 +3,9 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Vormkracht10\Backstage\Factories\DomainFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class Domain extends Model
 {

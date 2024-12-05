@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -87,6 +88,10 @@ class TypeResource extends Resource
     {
         return $table
             ->columns([
+                IconColumn::make('icon')
+                    ->label('')
+                    ->width(0)
+                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

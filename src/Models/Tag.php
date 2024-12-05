@@ -3,9 +3,9 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class Tag extends Model
 {
@@ -14,8 +14,15 @@ class Tag extends Model
 
     protected $primaryKey = 'ulid';
 
-    public function site(): BelongsTo
+    protected $guarded = [];
+
+    public function content(): MorphToMany
     {
-        return $this->belongsTo(Site::class);
+        return $this->morphedByMany(Content::class, 'taggable', 'taggables', 'tag_ulid', 'taggable_ulid');
+    }
+
+    public function sites(): MorphToMany
+    {
+        return $this->morphedByMany(Site::class, 'taggable', 'taggables', 'tag_ulid', 'taggable_ulid');
     }
 }

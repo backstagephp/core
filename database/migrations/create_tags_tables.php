@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->ulid()->primary();
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->json('name');
-            $table->json('slug');
-            $table->string('type')->nullable();
+            $table->string('name');
+            $table->string('slug');
             $table->integer('position')->nullable();
 
             $table->timestamps();

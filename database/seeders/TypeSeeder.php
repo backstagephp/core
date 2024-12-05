@@ -23,24 +23,24 @@ class TypeSeeder extends Seeder
             'body_field' => 'body',
             'public' => true,
         ])
-        ->has(Field::factory(1, [
-            'name' => 'Title',
-            'slug' => 'title',
-            'field_type' => 'text',
-            'position' => 1,
-        ]))
-        ->has(Field::factory(1, [
-            'name' => 'Body',
-            'slug' => 'body',
-            'field_type' => 'rich-editor',
-            'position' => 2,
-        ]))
-        ->has(Field::factory(1, [
-            'name' => 'Blocks',
-            'slug' => 'blocks',
-            'field_type' => 'builder',
-            'position' => 3,
-        ]))
-        ->create();
+            ->has(Field::factory(1, [
+                'name' => 'Title',
+                'slug' => 'title',
+                'field_type' => 'text',
+                'position' => 1,
+            ]))
+            ->has(Field::factory(1, [
+                'name' => 'Body',
+                'slug' => 'body',
+                'field_type' => 'rich-editor',
+                'position' => 2,
+            ]))
+            ->has(Field::factory(1, [
+                'name' => 'Blocks',
+                'slug' => 'blocks',
+                'field_type' => 'builder',
+                'position' => 3,
+            ]))
+            ->create();
     }
 }

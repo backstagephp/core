@@ -3,15 +3,16 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Vormkracht10\Backstage\Factories\SiteFactory;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Backstage\Shared\HasTags;
 
 class Site extends Model
 {
     use HasPackageFactory;
+    use HasTags;
     use HasUlids;
 
     protected $primaryKey = 'ulid';

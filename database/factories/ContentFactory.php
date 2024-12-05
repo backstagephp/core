@@ -26,6 +26,7 @@ class ContentFactory extends Factory
             'slug' => 'home',
             'path' => '/',
             'meta_tags' => ['title' => 'Home'],
+            'edited_at' => now(),
         ];
     }
 }

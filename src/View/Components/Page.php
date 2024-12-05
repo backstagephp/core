@@ -6,10 +6,7 @@ use Illuminate\View\Component;
 
 class Page extends Component
 {
-    public function __construct(public ?string $title = null)
-    {
-        $this->title = $title;
-    }
+    public function __construct() {}
 
     public function render()
     {

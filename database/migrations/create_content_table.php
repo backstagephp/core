@@ -17,14 +17,14 @@ return new class extends Migration
             $table->char('language_code', 2);
             $table->char('country_code', 2)->nullable();
             $table->string('type_slug');
-            $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
+            $table->string('template_slug')->nullable();
+            $table->foreignId('creator_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUlid('parent_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
             $table->string('name');
             $table->string('slug');
             $table->string('path')->nullable();
             $table->json('meta_tags')->nullable();
             $table->json('microdata')->nullable();
-            $table->string('template')->nullable();
             $table->string('password')->nullable();
             $table->boolean('auth')->default(false);
             $table->boolean('cache')->default(true);
@@ -34,6 +34,7 @@ return new class extends Migration
             $table->timestamps();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('disapproved_at')->nullable();
+            $table->timestamp('edited_at')->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('locked_at')->nullable();
             $table->timestamp('pinned_at')->nullable();
@@ -44,6 +45,13 @@ return new class extends Migration
 
             $table->foreign('type_slug')->references('slug')->on('types')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+        });
+
+        Schema::create('content_user', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained(table: 'users', column: 'id')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('content_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->index(['user_id', 'content_ulid']);
         });
     }
 };

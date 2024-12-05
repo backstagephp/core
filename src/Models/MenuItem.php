@@ -3,8 +3,8 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class MenuItem extends Model
 {

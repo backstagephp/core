@@ -4,8 +4,8 @@ namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Field;
 
 class BlockSeeder extends Seeder
 {
@@ -20,12 +20,12 @@ class BlockSeeder extends Seeder
             'icon' => 'document-text',
             'name_field' => null,
         ])
-        ->has(Field::factory(1, [
-            'name' => 'Body',
-            'slug' => 'body',
-            'field_type' => 'rich-editor',
-            'position' => 1,
-        ]))
-        ->create();
+            ->has(Field::factory(1, [
+                'name' => 'Body',
+                'slug' => 'body',
+                'field_type' => 'rich-editor',
+                'position' => 1,
+            ]))
+            ->create();
     }
 }
