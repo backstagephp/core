@@ -48,7 +48,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -87,7 +87,7 @@ class BackstagePanelProvider extends PanelProvider
         return $panel
             ->id('backstage')
             ->path('backstage')
-            ->default(config('backstage.default_panel'))
+            ->default(config('backstage.panel.default'))
             ->tenant(Site::class)
             ->tenantRegistration(RegisterSite::class)
             ->databaseNotifications()
@@ -136,6 +136,7 @@ class BackstagePanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->viteTheme(config('backstage.panel.theme.path'))
             ->authMiddleware([
                 Authenticate::class,
             ])->tenantMiddleware([
