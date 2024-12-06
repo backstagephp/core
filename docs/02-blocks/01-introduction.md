@@ -29,4 +29,19 @@ use Vormkracht10\Backstage\Facades\Backstage;
 Backstage::registerComponent(CallToAction::class);
 ```
 
+You can also add this component to `config/backstage.php`.
+
+```php
+return [
+    // ...
+    'components' => [
+        'blocks' => [
+            Vormkracht10\Backstage\View\Components\Blocks\Heading::class,
+            Vormkracht10\Backstage\View\Components\Blocks\Paragraph::class,
+            CallToAction::class
+        ],
+    ];
+];
+```
+
 Then this component should be available in Backstage. You should add the required fields to the block.
