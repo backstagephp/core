@@ -28,7 +28,8 @@ class Block extends Model
 
     public function fields(): MorphMany
     {
-        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug');
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug')
+            ->orderBy('position');
     }
 
     public function sites(): BelongsToMany
