@@ -42,11 +42,6 @@ class Content extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function fields(): MorphMany
-    {
-        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug');
-    }
-
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class, ['code', 'country_code']);

@@ -55,7 +55,7 @@ class Builder extends FieldBase implements FieldInterface
                                 ->label($field->name),
                             'select' => Select::make($field->slug, $field)
                                 ->label($field->name)
-                                ->options($field->config['options']),
+                                ->options($field->config['options'] ?? null),
                             'builder' => Builder::make($field->slug, $field)
                                 ->label($field->name),
                             default => Text::make($field->slug, $field)

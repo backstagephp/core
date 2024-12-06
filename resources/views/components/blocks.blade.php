@@ -1,5 +1,9 @@
 <div {{ $attributes }}>
     @foreach($blocks as $block)
-        {!! Blade::renderComponent(new Vormkracht10\Backstage\View\Components\Blocks\Heading(...$block['data'])) !!}
+        @php($className = \Vormkracht10\Backstage\Facades\Backstage::resolveComponent($block['type']))
+        @php($component = $className::resolve($block['data'] + ['_type' => $block['type']]))
+        @if ($component->shouldRender())
+        {!!  \Illuminate\Support\Facades\Blade::renderComponent($component) !!}
+        @endif
     @endforeach
 </div>
