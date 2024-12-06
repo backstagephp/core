@@ -17,7 +17,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Vormkracht10\Backstage\Http\Middleware\Filament\ContentNavigationItems;
 use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
@@ -48,7 +47,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn(): string => Blade::render(
+            fn (): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -96,8 +95,8 @@ class BackstagePanelProvider extends PanelProvider
             ->passwordReset()
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
-            ->colors([
-                'primary' => Color::hex(Schema::hasColumn('sites', 'default') ? (Site::default()?->primary_color ?? '#ff9900') : '#ff9900'),
+            ->colors(fn () => [
+                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->plugins([
                 RedirectsPlugin::make(),
@@ -136,7 +135,6 @@ class BackstagePanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->viteTheme(config('backstage.panel.theme.path'))
             ->authMiddleware([
                 Authenticate::class,
             ])->tenantMiddleware([

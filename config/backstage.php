@@ -10,9 +10,5 @@ return [
 
     'panel' => [
         'default' => true,
-
-        'theme' => [
-            'path' => base_path('vendor/vormkracht10/backstage/resources/css/theme.css'),
-        ],
     ],
 ];
