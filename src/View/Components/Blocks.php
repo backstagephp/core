@@ -17,6 +17,8 @@ class Blocks extends Component
     {
         $blocks = $this->content->blocks($this->field);
 
+        dump($blocks);
+
         return view('backstage::components.blocks', compact('blocks'));
     }
 }
