@@ -136,7 +136,7 @@ class BackstagePanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->viteTheme(config('backstage.panel.theme.path'))
+            ->viteTheme(config('backstage.panel.theme.path') ?? [])
             ->authMiddleware([
                 Authenticate::class,
             ])->tenantMiddleware([
