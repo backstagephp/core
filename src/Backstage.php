@@ -6,7 +6,9 @@ use Illuminate\Support\Str;
 
 class Backstage
 {
-    private static array $components = [];
+    private static array $components = [
+        'default' => '\Vormkracht10\Backstage\View\Components\DefaultBlock',
+    ];
 
     public static function registerComponent(string $name, string $component = null): void
     {
@@ -28,5 +30,10 @@ class Backstage
         return collect(static::$components)
             ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
+    }
+
+    public static function resolveComponent($slug)
+    {
+        return static::$components[$slug] ?? static::$components['default'];
     }
 }
