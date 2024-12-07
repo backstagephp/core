@@ -93,13 +93,6 @@
             "options": {
                 "symlink": true
             }
-        },
-        "filament-media-picker": {
-            "type": "path",
-            "url": "/var/www/filament-media-picker",
-            "options": {
-                "symlink": true
-            }
         }
     },
     "minimum-stability": "dev",
