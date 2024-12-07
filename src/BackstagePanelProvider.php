@@ -8,7 +8,6 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Schema;
 use Vormkracht10\Backstage\Models\Site;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentView;
@@ -26,7 +25,6 @@ use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
 use Vormkracht10\Backstage\Resources\BlockResource;
 use Vormkracht10\Backstage\Resources\FieldResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
 use Vormkracht10\FilamentRedirects\RedirectsPlugin;
 use Vormkracht10\Backstage\Resources\DomainResource;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -104,8 +102,8 @@ class BackstagePanelProvider extends PanelProvider
             ->passwordReset()
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
-            ->colors([
-                'primary' => Color::hex(Schema::hasColumn('sites', 'default') ? (Site::default()?->primary_color ?? '#ff9900') : '#ff9900'),
+            ->colors(fn() => [
+                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->plugins([
                 RedirectsPlugin::make(),
@@ -146,7 +144,6 @@ class BackstagePanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->viteTheme(config('backstage.panel.theme.path') ?? [])
             ->authMiddleware([
                 Authenticate::class,
             ])->tenantMiddleware([

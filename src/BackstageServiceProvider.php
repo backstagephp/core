@@ -141,7 +141,10 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RouteServiceProvider::class);
 
         collect($this->app['config']['backstage']['components']['blocks'] ?? [])
-            ->each(fn($component) => Blade::component(Str::slug(last(explode('\\', $component))), $component));
+            ->each(function ($component) {
+                Blade::component(Str::slug(last(explode('\\', $component))), $component);
+                Backstage::registerComponent($component);
+            });
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
