@@ -13,13 +13,13 @@ class Backstage
         'default' => '\Vormkracht10\Backstage\View\Components\DefaultBlock',
     ];
 
-    public static function registerComponent(string $name, string $component = null): void
+    public static function registerComponent(string $name, ?string $component = null): void
     {
         if (empty($component)) {
             $component = $name;
             $name = Str::snake(Str::replaceLast('Component', '', class_basename($component)), '-');
         }
-        
+
         static::$components[$name] = $component;
     }
 
@@ -43,7 +43,7 @@ class Backstage
 
         $block = Block::select('component')->where('slug', $slug)->first();
 
-        if (!$block) {
+        if (! $block) {
             return self::$cachedBlocks[$slug] = static::$cachedBlocks['default'];
         }
 
