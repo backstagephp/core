@@ -12,12 +12,14 @@ use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
 class Content extends Model
 {
     use HasPackageFactory;
     use HasTags;
     use HasUlids;
+    use HasMedia;
 
     protected $primaryKey = 'ulid';
 

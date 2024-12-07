@@ -89,7 +89,7 @@ class BackstagePanelProvider extends PanelProvider
         );
 
         FilamentAsset::register([
-            Css::make('filament-media-picker', __DIR__ . '/../vendor/vormkracht10/filament-media-picker/resources/css/filament-media-picker.css'),
+            Css::make('filament-media-picker', __DIR__ . '/../vendor/vormkracht10/filament-media-picker/resources/dist/filament-media-picker.css'),
         ], package: 'vormkracht10/filament-media-picker');
 
         return $panel

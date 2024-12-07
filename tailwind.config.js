@@ -6,6 +6,5 @@ module.exports = {
         './app/Filament/**/*.php',
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        './vendor/vormkracht10/filament-media-picker/resources/views/**/*.blade.php',
     ],
 }

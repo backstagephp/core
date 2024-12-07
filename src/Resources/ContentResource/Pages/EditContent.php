@@ -12,6 +12,7 @@ use Vormkracht10\Backstage\Actions\Content\DuplicateContentAction;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Tag;
 use Vormkracht10\Backstage\Resources\ContentResource;
+use Vormkracht10\MediaPicker\MediaPicker;
 
 class EditContent extends EditRecord
 {
@@ -74,6 +75,10 @@ class EditContent extends EditRecord
             return [$value->field->ulid => $value->value];
         })->toArray();
 
+        $data['media'] = $this->getRecord()->media->map(function ($media) {
+            return 'media/' . $media->filename;
+        })->toArray();
+
         return $data;
     }
 
@@ -119,8 +124,17 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+
         unset($data['tags']);
         unset($data['values']);
+
+        $media = MediaPicker::create($data);
+
+        unset($data['media']);
+
+        foreach ($media as $value) {
+            $this->getRecord()->attachMedia($value->ulid);
+        }
 
         return $data;
     }

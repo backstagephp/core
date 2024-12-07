@@ -2,9 +2,10 @@
 
 namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Tag;
+use Vormkracht10\MediaPicker\MediaPicker;
+use Filament\Resources\Pages\CreateRecord;
 use Vormkracht10\Backstage\Resources\ContentResource;
 
 class CreateContent extends CreateRecord
@@ -28,6 +29,10 @@ class CreateContent extends CreateRecord
     {
         unset($data['tags']);
         unset($data['values']);
+
+        unset($data['media']);
+
+        // Get
 
         return $data;
     }
@@ -55,5 +60,11 @@ class CreateContent extends CreateRecord
         ]);
 
         $this->getRecord()->authors()->attach(auth()->id());
+
+        $media = MediaPicker::create($this->data);
+
+        foreach ($media as $value) {
+            $this->getRecord()->attachMedia($value->ulid);
+        }
     }
 }
