@@ -2,47 +2,49 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Vormkracht10\Backstage\Http\Middleware\Filament\ContentNavigationItems;
-use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
 use Vormkracht10\Backstage\Models\Site;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Support\Facades\FilamentView;
+use Filament\Support\Facades\FilamentAsset;
 use Vormkracht10\Backstage\Pages\Dashboard;
+use Illuminate\Session\Middleware\StartSession;
 use Vormkracht10\MediaPicker\MediaPickerPlugin;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Vormkracht10\Backstage\Resources\TagResource;
 use Vormkracht10\MediaPicker\Pages\Media\Library;
-use Vormkracht10\Backstage\Resources\BlockResource;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Resources\DomainResource;
-use Vormkracht10\Backstage\Resources\FieldResource;
 use Vormkracht10\Backstage\Resources\FormResource;
-use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
-use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
-use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
-use Vormkracht10\Backstage\Resources\TemplateResource;
 use Vormkracht10\Backstage\Resources\TypeResource;
 use Vormkracht10\Backstage\Resources\UserResource;
+use Vormkracht10\Backstage\Resources\BlockResource;
+use Vormkracht10\Backstage\Resources\FieldResource;
+use Vormkracht10\Backstage\Resources\MediaResource;
+use Vormkracht10\FilamentRedirects\RedirectsPlugin;
+use Vormkracht10\Backstage\Resources\DomainResource;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Vormkracht10\Backstage\Resources\ContentResource;
+use Vormkracht10\Backstage\Resources\SettingResource;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\Backstage\Resources\LanguageResource;
+use Vormkracht10\Backstage\Resources\TemplateResource;
+use Filament\Http\Middleware\DisableBladeIconComponents;
 use Vormkracht10\Backstage\Widgets\ContentUpdatesWidget;
 use Vormkracht10\Backstage\Widgets\FormSubmissionsWidget;
-use Vormkracht10\FilamentRedirects\RedirectsPlugin;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
+use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
+use Vormkracht10\Backstage\Http\Middleware\Filament\ContentNavigationItems;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -85,6 +87,10 @@ class BackstagePanelProvider extends PanelProvider
                 HTML
             ),
         );
+
+        FilamentAsset::register([
+            Css::make('filament-media-picker', __DIR__ . '/../vendor/vormkracht10/filament-media-picker/resources/css/filament-media-picker.css'),
+        ], package: 'vormkracht10/filament-media-picker');
 
         return $panel
             ->id('backstage')
