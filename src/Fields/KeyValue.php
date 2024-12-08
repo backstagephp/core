@@ -12,6 +12,10 @@ class KeyValue extends FieldBase implements FieldInterface
     {
         return [
             ...parent::getDefaultConfig(),
+            'addActionLabel' => __('Add row'),
+            'keyLabel' => __('Key'),
+            'valueLabel' => __('Value'),
+            'reorderable' => false,
         ];
     }
 
@@ -19,7 +23,11 @@ class KeyValue extends FieldBase implements FieldInterface
     {
         $input = self::applyDefaultSettings(Input::make($name), $field);
 
-        $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null);
+        $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
+            ->addActionLabel($field->config['addActionLabel'] ?? self::getDefaultConfig()['addActionLabel'])
+            ->keyLabel($field->config['keyLabel'] ?? self::getDefaultConfig()['keyLabel'])
+            ->valueLabel($field->config['valueLabel'] ?? self::getDefaultConfig()['valueLabel'])
+            ->reorderable($field->config['reorderable'] ?? self::getDefaultConfig()['reorderable']);
 
         return $input;
     }
@@ -38,18 +46,15 @@ class KeyValue extends FieldBase implements FieldInterface
                         ->label(__('Field specific'))
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
-
-                                // Forms\Components\Toggle::make('config.inline')
-                                //     ->label(__('Inline'))
-                                //     ->inline(false),
-                                // Forms\Components\Toggle::make('config.accepted')
-                                //     ->label(__('Accepted'))
-                                //     ->helperText(__('Requires the checkbox to be checked'))
-                                //     ->inline(false),
-                                // Forms\Components\Toggle::make('config.declined')
-                                //     ->label(__('Declined'))
-                                //     ->helperText(__('Requires the checkbox to be unchecked'))
-                                //     ->inline(false),
+                                Forms\Components\TextInput::make('config.addActionLabel')
+                                    ->label(__('Add action label')),
+                                Forms\Components\TextInput::make('config.keyLabel')
+                                    ->label(__('Key label')),
+                                Forms\Components\TextInput::make('config.valueLabel')
+                                    ->label(__('Value label')),
+                                Forms\Components\Toggle::make('config.reorderable')
+                                    ->label(__('Reorderable'))
+                                    ->inline(false),
                             ]),
                         ]),
                 ])->columnSpanFull(),
