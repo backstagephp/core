@@ -2,46 +2,48 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select as SelectInput;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Locale;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Navigation\NavigationItem;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Str;
-use Locale;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Language;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Hidden;
 use Vormkracht10\Backstage\Models\Tag;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Navigation\NavigationItem;
+use Filament\Tables\Columns\TextColumn;
+use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
-use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Vormkracht10\Backstage\Fields\Select;
+use Vormkracht10\Backstage\Fields\Builder;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\MediaPicker\Components\MediaPicker;
+use Vormkracht10\Backstage\View\Components\Filament\Badge;
+use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 
 class ContentResource extends Resource
 {
@@ -76,7 +78,7 @@ class ContentResource extends Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
+                ->isActiveWhen(fn() => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -123,7 +125,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->reorderable()
                                             ->splitKeys(['Tab', ' ', ','])
-                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
+                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
                         Hidden::make('language_code')
@@ -142,8 +144,8 @@ class ContentResource extends Resource
                                             ->placeholder(__('Select Language'))
                                             ->prefixIcon('heroicon-o-language')
                                             ->options(
-                                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn ($languages, $countryCode) => [
-                                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn ($language) => [
+                                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
+                                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
                                                         $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
                                                     ])->toArray(),
                                                 ])
@@ -157,9 +159,9 @@ class ContentResource extends Resource
                                             })
                                             ->dehydrated(false)
                                             ->allowHtml()
-                                            ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                            ->visible(fn() => Language::where('active', 1)->count() > 1),
                                     ])
-                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                    ->visible(fn() => Language::where('active', 1)->count() > 1),
                                 Tab::make('slug-path')
                                     ->label('Slug & Path')
                                     ->schema([
@@ -177,7 +179,7 @@ class ContentResource extends Resource
                                             ->helperText('Add tags to group content.')
                                             ->tagPrefix('#')
                                             ->reorderable()
-                                            ->formatStateUsing(fn ($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
+                                            ->formatStateUsing(fn($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                                     ]),
@@ -189,7 +191,7 @@ class ContentResource extends Resource
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->default(now()->format('dd/mm/YYYY'))
                                             ->native(false)
-                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
+                                            ->formatStateUsing(fn(?Content $record) => $record ? $record->published_at : now())
                                             ->columnSpanFull()
                                             ->helperText('Set a date in past or future to schedule publication.'),
                                         DatePicker::make('expired_at')
@@ -214,6 +216,9 @@ class ContentResource extends Resource
                     ->label($field->name),
                 'checkbox' => Checkbox::make($fieldName, $field)
                     ->label($field->name),
+                'checkbox-list' => CheckboxList::make($fieldName, $field)
+                    ->label($field->name)
+                    ->options($field->config['options']),
                 'rich-editor' => RichEditor::make($fieldName, $field)
                     ->label($field->name),
                 'textarea' => Textarea::make($fieldName, $field)
@@ -223,6 +228,9 @@ class ContentResource extends Resource
                     ->options($field->config['options']),
                 'builder' => Builder::make($fieldName, $field)
                     ->label($field->name),
+                'media' => MediaPicker::make($fieldName, $field)
+                    ->label($field->name),
+                'key-value' => KeyValue::make($fieldName, $field),
                 default => Text::make($fieldName, $field)
                     ->label($field->name),
             };
@@ -245,7 +253,7 @@ class ContentResource extends Resource
 
                 return $field;
             })
-            ->map(fn ($field) => $field->input)
+            ->map(fn($field) => $field->input)
             ->toArray();
     }
 
@@ -259,14 +267,14 @@ class ContentResource extends Resource
                     ->separator('')
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn (Content $record) => $record->type->name)
+                            ->label(fn(Content $record) => $record->type->name)
                             ->color('gray'),
                     ]),
                 ImageColumn::make('authors')
                     ->circular()
                     ->stacked()
                     ->ring(2)
-                    ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
+                    ->getStateUsing(fn(Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
                     ->limit(3),
                 TextColumn::make('edited_at')
                     ->since()
@@ -283,8 +291,8 @@ class ContentResource extends Resource
                             ->placeholder(__('Select Language'))
                             ->prefixIcon('heroicon-o-language')
                             ->options(
-                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn ($languages, $countryCode) => [
-                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn ($language) => [
+                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn($languages, $countryCode) => [
+                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn($language) => [
                                         $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
                                     ])->toArray(),
                                 ])
@@ -297,7 +305,7 @@ class ContentResource extends Resource
                         return $query->where('language_code', $locale[0])
                             ->where('country_code', $locale[1] ?? null);
                     })
-                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                    ->visible(fn() => Language::where('active', 1)->count() > 1),
                 SelectFilter::make('type_slug')
                     ->label('Type')
                     ->native(false)
@@ -341,11 +349,11 @@ class ContentResource extends Resource
                         return $query
                             ->when(
                                 $data['date_from'],
-                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
                             )
                             ->when(
                                 $data['date_until'],
-                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
                             );
                     }),
             ], layout: FiltersLayout::Modal)
@@ -353,7 +361,7 @@ class ContentResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])->filtersTriggerAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->button()
                     ->label('Filter')
                     ->slideOver(),

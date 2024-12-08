@@ -12,6 +12,8 @@ use Filament\Resources\Pages\EditRecord;
 use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
@@ -99,6 +101,8 @@ class EditSetting extends EditRecord
                 'select' => FieldsSelect::make('setting.' . $field->slug, $field),
                 'checkbox' => Checkbox::make('setting.' . $field->slug, $field),
                 'checkbox-list' => CheckboxList::make('setting.' . $field->slug, $field),
+                'media' => Media::make('setting.' . $field->slug, $field),
+                'key-value' => KeyValue::make('setting.' . $field->slug, $field),
                 default => TextInput::make('setting.' . $field->slug),
             };
 
