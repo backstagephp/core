@@ -29,7 +29,6 @@ return new class extends Migration
             $table->index(['site_ulid', 'template_slug']);
         });
 
-
         Schema::table('content', function (Blueprint $table) {
             $table->foreign('template_slug')->references('slug')->on('templates')->cascadeOnUpdate()->cascadeOnDelete();
         });

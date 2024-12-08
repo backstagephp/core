@@ -7,7 +7,9 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -28,7 +30,6 @@ use Vormkracht10\Backstage\Resources\DomainResource;
 use Vormkracht10\Backstage\Resources\FieldResource;
 use Vormkracht10\Backstage\Resources\FormResource;
 use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
 use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Resources\SiteResource;
@@ -40,6 +41,8 @@ use Vormkracht10\Backstage\Resources\UserResource;
 use Vormkracht10\Backstage\Widgets\ContentUpdatesWidget;
 use Vormkracht10\Backstage\Widgets\FormSubmissionsWidget;
 use Vormkracht10\FilamentRedirects\RedirectsPlugin;
+use Vormkracht10\MediaPicker\MediaPickerPlugin;
+use Vormkracht10\MediaPicker\Pages\Media\Library;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -83,6 +86,10 @@ class BackstagePanelProvider extends PanelProvider
             ),
         );
 
+        FilamentAsset::register([
+            Css::make('filament-media-picker', __DIR__ . '/../vendor/vormkracht10/filament-media-picker/resources/dist/filament-media-picker.css'),
+        ], package: 'vormkracht10/filament-media-picker');
+
         return $panel
             ->id('backstage')
             ->path('backstage')
@@ -100,6 +107,8 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->plugins([
                 RedirectsPlugin::make(),
+                MediaPickerPlugin::make()
+                    ->configureTenant('site', Site::class),
             ])
             ->resources([
                 BlockResource::class,
@@ -108,7 +117,6 @@ class BackstagePanelProvider extends PanelProvider
                 FieldResource::class,
                 FormResource::class,
                 LanguageResource::class,
-                MediaResource::class,
                 MenuResource::class,
                 SettingResource::class,
                 SiteResource::class,
@@ -119,6 +127,7 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->pages([
                 Dashboard::class,
+                Library::class,
             ])
             ->widgets([
                 ContentUpdatesWidget::class,
