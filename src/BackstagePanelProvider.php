@@ -29,6 +29,7 @@ use Vormkracht10\Backstage\Resources\ContentResource;
 use Vormkracht10\Backstage\Resources\DomainResource;
 use Vormkracht10\Backstage\Resources\FieldResource;
 use Vormkracht10\Backstage\Resources\FormResource;
+use Vormkracht10\Backstage\Resources\FormSubmissionResource;
 use Vormkracht10\Backstage\Resources\LanguageResource;
 use Vormkracht10\Backstage\Resources\MenuResource;
 use Vormkracht10\Backstage\Resources\SettingResource;
@@ -116,6 +117,7 @@ class BackstagePanelProvider extends PanelProvider
                 DomainResource::class,
                 FieldResource::class,
                 FormResource::class,
+                FormSubmissionResource::class,
                 LanguageResource::class,
                 MenuResource::class,
                 SettingResource::class,

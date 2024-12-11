@@ -67,4 +67,9 @@ class Site extends Model
     {
         return $this->belongsToMany(Block::class);
     }
+
+    public function forms(): BelongsToMany
+    {
+        return $this->belongsToMany(Form::class);
+    }
 }

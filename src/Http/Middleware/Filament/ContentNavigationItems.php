@@ -12,7 +12,7 @@ class ContentNavigationItems
 {
     public function handle(Request $request, Closure $next)
     {
-        $items = Type::orderBy('name')->get()->map(function (Type $type) {
+        $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) {
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem('Content')
@@ -30,7 +30,7 @@ class ContentNavigationItems
                 ->group('SEO')
                 ->isActiveWhen(fn (NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
                 ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
-            ...$items,
+            ...$contentTypes
         ]);
 
         return $next($request);

@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
@@ -24,9 +25,15 @@ class Form extends Model
         return [];
     }
 
+    public function actions(): HasMany
+    {
+        return $this->hasMany(FormAction::class);
+    }
+
     public function fields(): MorphMany
     {
-        return $this->morphMany(Field::class, 'model');
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug')
+            ->orderBy('position');
     }
 
     public function sites(): BelongsToMany
