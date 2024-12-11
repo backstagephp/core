@@ -7,9 +7,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -24,26 +22,7 @@ use Vormkracht10\Backstage\Http\Middleware\Filament\ContentNavigationItems;
 use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Pages\Dashboard;
-use Vormkracht10\Backstage\Resources\BlockResource;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Resources\DomainResource;
-use Vormkracht10\Backstage\Resources\FieldResource;
-use Vormkracht10\Backstage\Resources\FormResource;
-use Vormkracht10\Backstage\Resources\FormSubmissionResource;
-use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MenuResource;
-use Vormkracht10\Backstage\Resources\SettingResource;
-use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
-use Vormkracht10\Backstage\Resources\TagResource;
-use Vormkracht10\Backstage\Resources\TemplateResource;
-use Vormkracht10\Backstage\Resources\TypeResource;
-use Vormkracht10\Backstage\Resources\UserResource;
-use Vormkracht10\Backstage\Widgets\ContentUpdatesWidget;
-use Vormkracht10\Backstage\Widgets\FormSubmissionsWidget;
-use Vormkracht10\FilamentRedirects\RedirectsPlugin;
-use Vormkracht10\MediaPicker\MediaPickerPlugin;
-use Vormkracht10\MediaPicker\Pages\Media\Library;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -87,53 +66,24 @@ class BackstagePanelProvider extends PanelProvider
             ),
         );
 
-        FilamentAsset::register([
-            Css::make('filament-media-picker', __DIR__ . '/../vendor/vormkracht10/filament-media-picker/resources/dist/filament-media-picker.css'),
-        ], package: 'vormkracht10/filament-media-picker');
-
         return $panel
             ->id('backstage')
             ->path('backstage')
-            ->default(config('backstage.panel.default'))
-            ->tenant(Site::class)
-            ->tenantRegistration(RegisterSite::class)
             ->databaseNotifications()
-            ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
-            ->colors(fn () => [
-                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
-            ])
-            ->plugins([
-                RedirectsPlugin::make(),
-                MediaPickerPlugin::make()
-                    ->configureTenant('site', Site::class),
-            ])
-            ->resources([
-                BlockResource::class,
-                ContentResource::class,
-                DomainResource::class,
-                FieldResource::class,
-                FormResource::class,
-                FormSubmissionResource::class,
-                LanguageResource::class,
-                MenuResource::class,
-                SettingResource::class,
-                SiteResource::class,
-                TagResource::class,
-                TemplateResource::class,
-                TypeResource::class,
-                UserResource::class,
-            ])
+            ->spa()
+            ->unsavedChangesAlerts()
+            ->default(config('backstage.panel.default'))
+            ->plugins(config('backstage.panel.plugins'))
+            ->resources(config('backstage.panel.resources'))
+            ->widgets(config('backstage.panel.widgets'))
             ->pages([
                 Dashboard::class,
-                Library::class,
             ])
-            ->widgets([
-                ContentUpdatesWidget::class,
-                FormSubmissionsWidget::class,
+            ->colors(fn () => [
+                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -148,7 +98,10 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->tenantMiddleware([
+            ])
+            ->tenant(Site::class)
+            ->tenantRegistration(RegisterSite::class)
+            ->tenantMiddleware([
                 ScopedBySite::class,
                 ContentNavigationItems::class,
             ], isPersistent: true);
