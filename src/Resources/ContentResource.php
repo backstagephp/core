@@ -92,6 +92,29 @@ class ContentResource extends Resource
 
         return $form
             ->schema([
+                TextInput::make('values.' . self::$type->fields->where('slug', self::$type->name_field)->first()->ulid)
+                    ->hiddenLabel()
+                    ->placeholder(self::$type->fields->where('slug', self::$type->name_field)->first()->name)
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'font-size: 30px'])
+                    ->required()
+                    ->live(debounce: 250)
+                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                        $set('name', $state);
+                        $set('meta_tags.title', $state);
+                        $set('slug', Str::slug($state));
+
+                        if (blank($get('path'))) {
+                            $set('path', Str::slug($state));
+                        }
+                    }),
+
+                TextInput::make('path')
+                    ->hiddenLabel()
+                    ->columnSpanFull()
+                    ->prefix(config('app.url') . '/')
+                    ->required(),
+
                 Grid::make(12)
                     ->schema([
                         Tabs::make('Tabs')
@@ -158,16 +181,12 @@ class ContentResource extends Resource
                                             ->visible(fn() => Language::where('active', 1)->count() > 1),
                                     ])
                                     ->visible(fn() => Language::where('active', 1)->count() > 1),
-                                Tab::make('slug-path')
-                                    ->label('Slug & Path')
+                                Tab::make('slug-tags')
+                                    ->label('Slug & Tags')
                                     ->schema([
                                         TextInput::make('slug')
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
-                                            ->required(),
-                                        TextInput::make('path')
-                                            ->columnSpanFull()
-                                            ->helperText('Path to generate URL for this content.')
                                             ->required(),
                                         TagsInput::make('tags')
                                             ->color('gray')
@@ -233,22 +252,7 @@ class ContentResource extends Resource
 
             return $field;
         })
-            ->map(function ($field) {
-                if (self::$type->name_field == $field->slug) {
-                    $field->input->live(debounce: 250)
-                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
-                            $set('name', $state);
-                            $set('meta_tags.title', $state);
-                            $set('slug', Str::slug($state));
-
-                            if (blank($get('path'))) {
-                                $set('path', Str::slug($state));
-                            }
-                        });
-                }
-
-                return $field;
-            })
+            ->filter(fn($field) => self::$type->name_field !== $field->slug)
             ->map(fn($field) => $field->input)
             ->toArray();
     }
@@ -291,16 +295,15 @@ class ContentResource extends Resource
                                     ->get()
                                     ->sort()
                                     ->groupBy(function ($language) {
-                                        return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                        return explode('-', $language->code)[1] ?? 'Worldwide';
                                     })
-                                    ->mapWithKeys(fn($languages, $countryName) => [
-                                        $countryName => $languages->mapWithKeys(fn($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                    ->mapWithKeys(fn($languages, $countryCode) => [
+                                        $countryCode => $languages->mapWithKeys(fn($language) => [
+                                            $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
                                         ])->toArray(),
                                     ])
                             )
-                            ->allowHtml()
-                            ->visible(fn() => Language::where('active', 1)->count() > 1),
+                            ->allowHtml(),
                     ])
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
                         return $query->where('language_code', $data['language_code']);
