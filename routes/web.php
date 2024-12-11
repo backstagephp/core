@@ -18,7 +18,7 @@ Route::fallback(function (Request $request) {
 Route::post('/forms/{form}', function (Request $request, Form $form) {
     $request->validate(
         $form->fields->mapWithKeys(function ($field) {
-            if ($field->config['required']) {
+            if ($field->config['required'] ?? false) {
                 $field->rules[] = 'required';
             }
             return [$field->slug => $field->rules];
