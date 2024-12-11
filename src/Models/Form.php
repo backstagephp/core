@@ -41,4 +41,9 @@ class Form extends Model
     {
         return $this->belongsTo(Site::class);
     }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(FormSubmission::class, 'form_slug', 'slug');
+    }
 }

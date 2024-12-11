@@ -29,4 +29,9 @@ class FormSubmission extends Model
     {
         return $this->BelongsTo(Site::class);
     }
+
+    public function values()
+    {
+        return $this->hasMany(FormSubmissionValue::class, 'submission_ulid', 'ulid');
+    }
 }
