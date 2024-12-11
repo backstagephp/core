@@ -2,19 +2,20 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\HtmlString;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Backstage\Shared\HasTags;
+use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
 class Content extends Model
 {
+    use HasMedia;
     use HasPackageFactory;
     use HasTags;
     use HasUlids;
@@ -66,14 +67,14 @@ class Content extends Model
     protected function url(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
+            get: fn (?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
         );
     }
 
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 

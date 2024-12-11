@@ -2,20 +2,20 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Filament\Panel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Models\Contracts\HasAvatar;
-use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\HasTenants;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
-class User extends Authenticatable implements FilamentUser, HasTenants, HasAvatar
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
     use HasPackageFactory;
     use Notifiable;
@@ -108,6 +108,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
         return Attribute::make(
             get: function (?string $value, array $attributes) {
                 $uiAvatar = 'https://ui-avatars.com/api/?name=' . urlencode(substr($attributes['name'], 0, 1)) . '&color=FFFFFF&background=09090b';
+
                 return 'https://gravatar.com/avatar/' . hash('sha256', strtolower(trim($attributes['email']))) . '?d=' . urlencode($uiAvatar) . '&s=200';
             },
         );
