@@ -86,43 +86,21 @@ class BackstagePanelProvider extends PanelProvider
         return $panel
             ->id('backstage')
             ->path('backstage')
-            ->default(config('backstage.panel.default'))
-            ->tenant(Site::class)
-            ->tenantRegistration(RegisterSite::class)
             ->databaseNotifications()
-            ->spa()
             ->login()
             ->passwordReset()
-            ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
-            ->colors(fn () => [
-                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
-            ])
-            ->plugins([
-                RedirectsPlugin::make(),
-            ])
-            ->resources([
-                BlockResource::class,
-                ContentResource::class,
-                DomainResource::class,
-                FieldResource::class,
-                FormResource::class,
-                LanguageResource::class,
-                MediaResource::class,
-                MenuResource::class,
-                SettingResource::class,
-                SiteResource::class,
-                TagResource::class,
-                TemplateResource::class,
-                TypeResource::class,
-                UserResource::class,
-            ])
+            ->spa()
+            ->unsavedChangesAlerts()
+            ->default(config('backstage.panel.default'))
+            ->plugins(config('backstage.panel.plugins'))
+            ->resources(config('backstage.panel.resources'))
+            ->widgets(config('backstage.panel.widgets'))
             ->pages([
                 Dashboard::class,
             ])
-            ->widgets([
-                ContentUpdatesWidget::class,
-                FormSubmissionsWidget::class,
+            ->colors(fn () => [
+                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -137,7 +115,10 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->tenantMiddleware([
+            ])
+            ->tenant(Site::class)
+            ->tenantRegistration(RegisterSite::class)
+            ->tenantMiddleware([
                 ScopedBySite::class,
                 ContentNavigationItems::class,
             ], isPersistent: true);
