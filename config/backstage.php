@@ -9,13 +9,11 @@ return [
         ],
 
         'resources' => [
-            Vormkracht10\FilamentRedirects\RedirectsPlugin::class,
             Vormkracht10\Backstage\Resources\ContentResource::class,
             Vormkracht10\Backstage\Resources\DomainResource::class,
             Vormkracht10\Backstage\Resources\FieldResource::class,
             Vormkracht10\Backstage\Resources\FormResource::class,
             Vormkracht10\Backstage\Resources\LanguageResource::class,
-            Vormkracht10\Backstage\Resources\MediaResource::class,
             Vormkracht10\Backstage\Resources\MenuResource::class,
             Vormkracht10\Backstage\Resources\SettingResource::class,
             Vormkracht10\Backstage\Resources\SiteResource::class,
