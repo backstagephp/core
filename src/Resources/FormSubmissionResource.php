@@ -13,7 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\FormSubmission;
-use Vormkracht10\Backstage\Resources\FormResource\Pages;
+use Vormkracht10\Backstage\Resources\FormSubmissionResource\Pages;
 
 class FormSubmissionResource extends Resource
 {
@@ -25,12 +25,17 @@ class FormSubmissionResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Form');
+        return __('Submission');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Forms');
+        return __('Submissions');
+    }
+
+    public static function getNavigationParentItem(): ?string
+    {
+        return 'Forms';
     }
 
     public static function form(Form $form): Form
@@ -89,9 +94,7 @@ class FormSubmissionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListForms::route('/'),
-            'create' => Pages\CreateForm::route('/create'),
-            'edit' => Pages\EditForm::route('/{record}/edit'),
+            'index' => Pages\ListFormSubmissions::route('/'),
         ];
     }
 }

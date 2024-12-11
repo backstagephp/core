@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class FormAction extends Model
@@ -21,6 +22,13 @@ class FormAction extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'config' => 'json'
+        ];
+    }
+
+    public function form()
+    {
+        return $this->belongsTo(Form::class, 'form_slug', 'slug');
     }
 }

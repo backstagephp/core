@@ -7,6 +7,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -14,6 +15,8 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Form as FormModel;
 use Vormkracht10\Backstage\Resources\FormResource\Pages;
+use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
+use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\FieldsRelationManager;
 
 class FormResource extends Resource
 {
@@ -23,7 +26,7 @@ class FormResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+    protected static ?string $tenantOwnershipRelationshipName = 'site';
 
     public static function getModelLabel(): string
     {
@@ -55,6 +58,10 @@ class FormResource extends Resource
                                     ->columnSpanFull()
                                     ->required()
                                     ->unique(ignoreRecord: true),
+                                TextInput::make('submit_button')
+                                    ->label(__('Text on button'))
+                                    ->placeholder(__('Send'))
+                                    ->columnSpanFull()
                             ]),
                     ]),
             ]);
@@ -84,7 +91,8 @@ class FormResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            FieldsRelationManager::class,
+            ActionsRelationManager::class
         ];
     }
 

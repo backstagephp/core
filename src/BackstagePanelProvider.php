@@ -22,24 +22,7 @@ use Vormkracht10\Backstage\Http\Middleware\Filament\ContentNavigationItems;
 use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Pages\Dashboard;
-use Vormkracht10\Backstage\Resources\BlockResource;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Resources\DomainResource;
-use Vormkracht10\Backstage\Resources\FieldResource;
-use Vormkracht10\Backstage\Resources\FormResource;
-use Vormkracht10\Backstage\Resources\LanguageResource;
-use Vormkracht10\Backstage\Resources\MediaResource;
-use Vormkracht10\Backstage\Resources\MenuResource;
-use Vormkracht10\Backstage\Resources\SettingResource;
-use Vormkracht10\Backstage\Resources\SiteResource;
 use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
-use Vormkracht10\Backstage\Resources\TagResource;
-use Vormkracht10\Backstage\Resources\TemplateResource;
-use Vormkracht10\Backstage\Resources\TypeResource;
-use Vormkracht10\Backstage\Resources\UserResource;
-use Vormkracht10\Backstage\Widgets\ContentUpdatesWidget;
-use Vormkracht10\Backstage\Widgets\FormSubmissionsWidget;
-use Vormkracht10\FilamentRedirects\RedirectsPlugin;
 
 class BackstagePanelProvider extends PanelProvider
 {
