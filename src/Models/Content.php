@@ -11,11 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\HtmlString;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
-use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
 class Content extends Model
 {
-    use HasMedia;
     use HasPackageFactory;
     use HasTags;
     use HasUlids;
