@@ -15,15 +15,14 @@ return new class extends Migration
             $table->string('slug')->primary();
 
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->char('language_code', 2);
-            $table->char('country_code', 2);
+            $table->char('language_code', 5);
 
             $table->string('name');
 
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 };

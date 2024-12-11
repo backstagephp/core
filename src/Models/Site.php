@@ -30,7 +30,7 @@ class Site extends Model
 
     public static function default(): ?Site
     {
-        return Site::firstWhere('default', 1);
+        return static::firstWhere('default', 1);
     }
 
     public function contents(): HasMany

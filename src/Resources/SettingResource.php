@@ -66,28 +66,27 @@ class SettingResource extends Resource
                 ->prefixIcon('heroicon-o-link')
                 ->options(Site::orderBy('default', 'desc')->orderBy('name', 'asc')->pluck('name', 'ulid'))
                 ->default(Site::where('default', true)->first()?->ulid),
-            Select::make('country_code')
-                ->label(__('Country'))
-                ->columnSpanFull()
-                ->placeholder(__('Select Country'))
-                ->prefixIcon('heroicon-o-globe-europe-africa')
-                ->options(Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
-                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayRegion('-' . $language->code, app()->getLocale()),
-                ])->sort())
-                ->allowHtml()
-                ->default(Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::where('active', 1)->whereNotNull('country_code')->first()->country_code : null),
+
             Select::make('language_code')
                 ->label(__('Language'))
                 ->columnSpanFull()
                 ->placeholder(__('Select Language'))
                 ->prefixIcon('heroicon-o-language')
                 ->options(
-                    Language::where('active', 1)->get()->mapWithKeys(fn ($language) => [
-                        $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
-                    ])->sort()
+                    Language::where('active', 1)
+                        ->get()
+                        ->sort()
+                        ->groupBy(function ($language) {
+                            return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                        })
+                        ->mapWithKeys(fn($languages, $countryName) => [
+                            $countryName => $languages->mapWithKeys(fn($language) => [
+                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                            ])->toArray(),
+                        ])
                 )
                 ->allowHtml()
-                ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                ->visible(fn() => Language::where('active', 1)->count() > 1),
         ];
     }
 
@@ -123,11 +122,6 @@ class SettingResource extends Resource
                     ->sortable(),
                 TextColumn::make('language_code')
                     ->label(__('Language'))
-                    ->default('-')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('country_code')
-                    ->label(__('Country'))
                     ->default('-')
                     ->searchable()
                     ->sortable(),
