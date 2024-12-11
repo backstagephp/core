@@ -26,7 +26,7 @@ class FormResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+    protected static ?string $tenantOwnershipRelationshipName = 'site';
 
     public static function getModelLabel(): string
     {

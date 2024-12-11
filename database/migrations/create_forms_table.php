@@ -13,22 +13,12 @@ return new class extends Migration
     {
         Schema::create('forms', function (Blueprint $table) {
             $table->string('slug')->primary();
-
+            $table->foreignUlid('site_ulid')->nullable()->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
             $table->string('name_field')->nullable();
             $table->string('submit_button')->nullable();
 
             $table->timestamps();
-        });
-
-        Schema::create('form_site', function (Blueprint $table) {
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-
-            $table->string('form_slug');
-
-            $table->foreign('form_slug')->references('slug')->on('forms')->cascadeOnUpdate()->cascadeOnDelete();
-
-            $table->index(['site_ulid', 'form_slug']);
         });
     }
 };

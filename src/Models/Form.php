@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -36,8 +37,8 @@ class Form extends Model
             ->orderBy('position');
     }
 
-    public function sites(): BelongsToMany
+    public function site(): BelongsTo
     {
-        return $this->belongsToMany(Site::class);
+        return $this->belongsTo(Site::class);
     }
 }
