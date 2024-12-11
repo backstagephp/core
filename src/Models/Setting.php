@@ -29,7 +29,7 @@ class Setting extends Model
 
     public function language(): BelongsTo
     {
-        return $this->belongsTo(Language::class, ['code', 'country_code']);
+        return $this->belongsTo(Language::class, 'code');
     }
 
     public function tags(): MorphToMany

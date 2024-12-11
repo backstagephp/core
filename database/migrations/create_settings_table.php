@@ -16,14 +16,13 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->foreignUlid('site_ulid')->nullable()->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
-            $table->char('language_code', 2)->nullable();
-            $table->char('country_code', 2)->nullable();
+            $table->char('language_code', 5)->nullable();
             $table->string('name');
             $table->json('values')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 };

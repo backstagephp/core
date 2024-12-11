@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('form_slug')->constrained(table: 'forms', column: 'slug')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->char('language_code', 2);
-            $table->char('country_code', 2);
+            $table->char('language_code', 5);
 
             $table->foreignUlid('content_ulid')->nullable()->constrained(table: 'content', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
 
@@ -36,7 +35,7 @@ return new class extends Migration
             $table->timestamp('email_confirmed_at')->nullable();
             $table->timestamps();
 
-            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 };

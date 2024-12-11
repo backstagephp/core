@@ -78,7 +78,7 @@ class ContentResource extends Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
+                ->isActiveWhen(fn() => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -125,43 +125,39 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->reorderable()
                                             ->splitKeys(['Tab', ' ', ','])
-                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
+                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
                         Hidden::make('language_code')
                             ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
-                        Hidden::make('country_code')
-                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->country_code : Language::where('active', 1)->where('default', true)->first()?->country_code),
                         Tabs::make()
                             ->columnSpan(4)
                             ->tabs([
                                 Tab::make('locale')
                                     ->label('Locale')
                                     ->schema([
-                                        Select::make('language')
+                                        Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
                                             ->placeholder(__('Select Language'))
                                             ->prefixIcon('heroicon-o-language')
                                             ->options(
-                                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn ($languages, $countryCode) => [
-                                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn ($language) => [
-                                                        $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
-                                                    ])->toArray(),
-                                                ])
+                                                Language::where('active', 1)
+                                                    ->get()
+                                                    ->sort()
+                                                    ->groupBy(function ($language) {
+                                                        return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                                    })
+                                                    ->mapWithKeys(fn($languages, $countryName) => [
+                                                        $countryName => $languages->mapWithKeys(fn($language) => [
+                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                        ])->toArray(),
+                                                    ])
                                             )
-                                            ->afterStateHydrated(function (Get $get, SelectInput $component) {
-                                                $component->state($get('language_code') . '-' . $get('country_code'));
-                                            })
-                                            ->afterStateUpdated(function (Set $set, SelectInput $component) {
-                                                $set('language_code', Str::before($component->getState(), '-'));
-                                                $set('country_code', Str::after($component->getState(), '-'));
-                                            })
-                                            ->dehydrated(false)
                                             ->allowHtml()
-                                            ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                            ->visible(fn() => Language::where('active', 1)->count() > 1),
                                     ])
-                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                    ->visible(fn() => Language::where('active', 1)->count() > 1),
                                 Tab::make('slug-path')
                                     ->label('Slug & Path')
                                     ->schema([
@@ -179,7 +175,7 @@ class ContentResource extends Resource
                                             ->helperText('Add tags to group content.')
                                             ->tagPrefix('#')
                                             ->reorderable()
-                                            ->formatStateUsing(fn ($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
+                                            ->formatStateUsing(fn($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                                     ]),
@@ -191,7 +187,7 @@ class ContentResource extends Resource
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->default(now()->format('dd/mm/YYYY'))
                                             ->native(false)
-                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
+                                            ->formatStateUsing(fn(?Content $record) => $record ? $record->published_at : now())
                                             ->columnSpanFull()
                                             ->helperText('Set a date in past or future to schedule publication.'),
                                         DatePicker::make('expired_at')
@@ -253,7 +249,7 @@ class ContentResource extends Resource
 
                 return $field;
             })
-            ->map(fn ($field) => $field->input)
+            ->map(fn($field) => $field->input)
             ->toArray();
     }
 
@@ -267,14 +263,14 @@ class ContentResource extends Resource
                     ->separator('')
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn (Content $record) => $record->type->name)
+                            ->label(fn(Content $record) => $record->type->name)
                             ->color('gray'),
                     ]),
                 ImageColumn::make('authors')
                     ->circular()
                     ->stacked()
                     ->ring(2)
-                    ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
+                    ->getStateUsing(fn(Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
                     ->limit(3),
                 TextColumn::make('edited_at')
                     ->since()
@@ -285,27 +281,31 @@ class ContentResource extends Resource
             ->filters([
                 Filter::make('locale')
                     ->form([
-                        Select::make('locale')
+                        Select::make('language_code')
                             ->label(__('Language'))
                             ->columnSpanFull()
                             ->placeholder(__('Select Language'))
                             ->prefixIcon('heroicon-o-language')
                             ->options(
-                                Language::where('active', 1)->get()->sort()->groupBy('country_code')->mapWithKeys(fn ($languages, $countryCode) => [
-                                    Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide' => $languages->mapWithKeys(fn ($language) => [
-                                        $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
-                                    ])->toArray(),
-                                ])
+                                Language::where('active', 1)
+                                    ->get()
+                                    ->sort()
+                                    ->groupBy(function ($language) {
+                                        return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                    })
+                                    ->mapWithKeys(fn($languages, $countryName) => [
+                                        $countryName => $languages->mapWithKeys(fn($language) => [
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                        ])->toArray(),
+                                    ])
                             )
-                            ->allowHtml(),
+                            ->allowHtml()
+                            ->visible(fn() => Language::where('active', 1)->count() > 1),
                     ])
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
-                        $locale = explode('-', $data['locale']);
-
-                        return $query->where('language_code', $locale[0])
-                            ->where('country_code', $locale[1] ?? null);
+                        return $query->where('language_code', $data['language_code']);
                     })
-                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                    ->visible(fn() => Language::where('active', 1)->count() > 1),
                 SelectFilter::make('type_slug')
                     ->label('Type')
                     ->native(false)
@@ -349,11 +349,11 @@ class ContentResource extends Resource
                         return $query
                             ->when(
                                 $data['date_from'],
-                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
                             )
                             ->when(
                                 $data['date_until'],
-                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
                             );
                     }),
             ], layout: FiltersLayout::Modal)
@@ -361,7 +361,7 @@ class ContentResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])->filtersTriggerAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->button()
                     ->label('Filter')
                     ->slideOver(),

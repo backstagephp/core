@@ -20,7 +20,7 @@ class ContentFactory extends Factory
     {
         return [
             'site_ulid' => Site::default(),
-            'language_code' => Language::first(),
+            'language_code' => Language::default(),
             'type_slug' => 'page',
             'name' => 'Home',
             'slug' => 'home',

@@ -12,16 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('languages', function (Blueprint $table) {
-            $table->char('code', 2);
-            $table->char('country_code', 2)->nullable();
-            $table->string('hreflang')->nullable();
+            $table->char('code', 5)->primary();
             $table->string('name');
             $table->string('native')->nullable();
             $table->boolean('active')->default(true);
             $table->boolean('default')->default(true);
             $table->timestamps();
-
-            $table->unique(['code', 'country_code']);
         });
     }
 };

@@ -60,10 +60,6 @@ class LanguageResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                ViewColumn::make('country_code')
-                    ->label('Default country')
-                    ->getStateUsing(fn (Language $record) => $record->country_code)
-                    ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')
                     ->width(0)

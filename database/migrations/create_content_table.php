@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('content', function (Blueprint $table) {
             $table->ulid()->primary();
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->char('language_code', 2);
-            $table->char('country_code', 2)->nullable();
+            $table->char('language_code', 5);
             $table->string('type_slug');
             $table->string('template_slug')->nullable();
             $table->foreignId('creator_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
@@ -44,7 +43,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('type_slug')->references('slug')->on('types')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreign(['language_code', 'country_code'])->references(['code', 'country_code'])->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::create('content_user', function (Blueprint $table) {

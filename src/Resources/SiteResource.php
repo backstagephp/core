@@ -110,7 +110,7 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn ($color, $name) => [
+                                                ->mapWithKeys(fn($color, $name) => [
                                                     sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
                                                 ])
                                                 ->put('#000000', 'Black')
@@ -146,30 +146,27 @@ class SiteResource extends Resource
                                 Grid::make([
                                     'default' => 12,
                                 ])->schema([
-                                    Select::make('default_country_code')
-                                        ->label(__('Default country'))
-                                        ->columnSpan($fullWidth ? 12 : 6)
-                                        ->placeholder(fn () => Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->count() === 0 ? __('No countries available') : __('Select Country'))
-                                        ->prefixIcon('heroicon-o-globe-europe-africa')
-                                        ->options(Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->get()->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayRegion('-' . $language->code, app()->getLocale()),
-                                        ])->sort())
-                                        ->allowHtml()
-                                        ->disabled(fn () => Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->count() === 0)
-                                        ->default(Language::where('active', 1)->whereNotNull('country_code')->distinct('country_code')->count() === 1 ? Language::where('active', 1)->whereNotNull('country_code')->first()->country_code : null),
-                                    Select::make('default_language_code')
-                                        ->label(__('Default language'))
-                                        ->columnSpan($fullWidth ? 12 : 6)
+                                    Select::make('language_code')
+                                        ->label(__('Language'))
+                                        ->columnSpanFull()
                                         ->placeholder(__('Select Language'))
                                         ->prefixIcon('heroicon-o-language')
                                         ->options(
-                                            Language::where('active', 1)->get()->mapWithKeys(fn ($language) => [
-                                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $language->code . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage($language->code, app()->getLocale()),
-                                            ])->sort()
+                                            Language::where('active', 1)
+                                                ->get()
+                                                ->sort()
+                                                ->groupBy(function ($language) {
+                                                    return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                                })
+                                                ->mapWithKeys(fn($languages, $countryName) => [
+                                                    $countryName => $languages->mapWithKeys(fn($language) => [
+                                                        $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                    ])->toArray(),
+                                                ])
                                         )
                                         ->allowHtml()
-                                        ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code)
-                                        ->required(),
+                                        ->visible(fn() => Language::where('active', 1)->count() > 1),
+
                                     Select::make('timezone')
                                         ->label('Timezone')
                                         ->columnSpanFull()
@@ -184,7 +181,7 @@ class SiteResource extends Resource
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
                                             ])->map(function ($code) {
-                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
                                             })
                                         )
                                         ->default(config('app.timezone'))
@@ -219,13 +216,13 @@ class SiteResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                ImageColumn::make('default_language_code')
+                ImageColumn::make('language_code')
                     ->label('Default language')
-                    ->getStateUsing(fn (Site $record) => $record->default_language_code)
+                    ->getStateUsing(fn(Site $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column'),
-                ViewColumn::make('default_country_code')
+                ViewColumn::make('country_code')
                     ->label('Default country')
-                    ->getStateUsing(fn (Site $record) => $record->default_country_code)
+                    ->getStateUsing(fn(Site $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')

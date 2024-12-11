@@ -17,13 +17,14 @@ return new class extends Migration
             $table->string('form_slug')->constrained(table: 'forms', column: 'slug')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->char('language_code', 2);
-            $table->char('country_code', 2);
+            $table->char('language_code', 5);
 
             $table->string('type')->nullable();
             $table->json('config')->nullable();
 
             $table->timestamps();
+
+            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 };

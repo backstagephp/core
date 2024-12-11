@@ -25,6 +25,11 @@ class Language extends Model
         return [];
     }
 
+    public static function default(): ?Language
+    {
+        return static::firstWhere('default', 1);
+    }
+
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class, 'language_site', 'code');
