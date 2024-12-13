@@ -23,6 +23,7 @@
         "php": "^8.1",
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^3.2",
+        "nette/php-generator": "^4.1",
         "reedware/laravel-composite-relations": "^4.0",
         "spatie/laravel-package-tools": "^1.15.0",
         "spatie/once": "*",
