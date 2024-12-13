@@ -40,7 +40,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                 $command
                     ->startWith(function (InstallCommand $command) use ($package) {
                         $command->info('Welcome to the Backstage setup process.');
-                        $command->comment('We will guide you through the setup process.');
+                        $command->comment("Don't trip over the wires; this is where the magic happens.");
                         $command->comment('Let\'s get started!');
 
                         if ($command->confirm('Would you like us to install Backstage for you?', true)) {
@@ -57,6 +57,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                             ]);
 
                             if ($command->confirm('Would you like us to setup the media picker package?', true)) {
+                                $command->comment('Lights, camera, action! Setting up the media picker for the show...');
                                 $this->writeMediaPickerConfig();
 
                                 $command->callSilently('vendor:publish', [
@@ -75,7 +76,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         }
                     })
                     ->endWith(function (InstallCommand $command) {
-                        $command->info('Backstage has been successfully installed.');
+                        $command->info('The stage is cleared for a fresh start');
                         $command->comment('You can now go on stage and start creating!');
                     })
                     ->askToStarRepoOnGitHub('vormkracht10/backstage');
