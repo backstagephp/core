@@ -19,6 +19,7 @@ use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\Toggle;
 use Vormkracht10\Backstage\Resources\SettingResource; // rename
 
 class EditSetting extends EditRecord
@@ -105,6 +106,7 @@ class EditSetting extends EditRecord
                 'media' => Media::make(name: 'setting.' . $field->slug, field: $field),
                 'key-value' => KeyValue::make(name: 'setting.' . $field->slug, field: $field),
                 'radio' => Radio::make(name: 'setting.' . $field->slug, field: $field),
+                'toggle' => Toggle::make(name: 'setting.' . $field->slug, field: $field),
                 default => TextInput::make(name: 'setting.' . $field->slug),
             };
 
