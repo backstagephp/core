@@ -40,8 +40,8 @@ class EditSetting extends EditRecord
             return $data;
         }
 
-        foreach ($this->record->fields as $slug => $value) {
-            $data['setting'][$slug] = $value;
+        foreach ($this->record->fields as $field) {
+            $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
         }
 
         return $data;
@@ -98,12 +98,12 @@ class EditSetting extends EditRecord
                 'text' => Text::make(name: 'setting.' . $field->slug, field: $field),
                 'textarea' => Textarea::make(name: 'setting.' . $field->slug, field: $field),
                 'rich-editor' => RichEditor::make(name: 'setting.' . $field->slug, field: $field),
-                'select' => FieldsSelect::make('setting.' . $field->slug, $field),
-                'checkbox' => Checkbox::make('setting.' . $field->slug, $field),
-                'checkbox-list' => CheckboxList::make('setting.' . $field->slug, $field),
-                'media' => Media::make('setting.' . $field->slug, $field),
-                'key-value' => KeyValue::make('setting.' . $field->slug, $field),
-                default => TextInput::make('setting.' . $field->slug),
+                'select' => FieldsSelect::make(name: 'setting.' . $field->slug, field: $field),
+                'checkbox' => Checkbox::make(name: 'setting.' . $field->slug, field: $field),
+                'checkbox-list' => CheckboxList::make(name: 'setting.' . $field->slug, field: $field),
+                'media' => Media::make(name: 'setting.' . $field->slug, field: $field),
+                'key-value' => KeyValue::make(name: 'setting.' . $field->slug, field: $field),
+                default => TextInput::make(name: 'setting.' . $field->slug),
             };
 
             $inputs[] = $input;
