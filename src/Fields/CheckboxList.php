@@ -4,27 +4,20 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList as Input;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Repeater;
-use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Concerns\HasOptions;
 use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Type;
 
 class CheckboxList extends FieldBase implements FieldInterface
 {
+    use HasOptions;
+
     public static function getDefaultConfig(): array
     {
         return [
             ...parent::getDefaultConfig(),
+            ...self::getOptionsConfig(),
             'searchable' => false,
             'allowHtml' => false,
-            'optionType' => null,
-            'options' => [],
-            'descriptions' => [],
-            'relations' => [],
-            'contentType' => null,
-            'relationKey' => null,
-            'relationValue' => null,
             'columns' => 1,
             'gridDirection' => 'row',
             'bulkToggleable' => false,
@@ -53,34 +46,7 @@ class CheckboxList extends FieldBase implements FieldInterface
             $input->searchDebounce($field->config['searchDebounce']);
         }
 
-        if (isset($field->config['optionType']) && $field->config['optionType'] === 'relationship') {
-            $options = [];
-
-            foreach ($field->config['relations'] as $relation) {
-                $content = Content::where('type_slug', $relation['contentType'])->get();
-
-                if (! $content) {
-                    continue;
-                }
-
-                $opts = $content->pluck($relation['relationValue'], 'ulid')->toArray();
-
-                if (count($opts) === 0) {
-                    continue;
-                }
-
-                // CheckboxList cannot be grouped.
-                $options[] = $opts;
-            }
-
-            $options = array_merge(...$options);
-
-            $input->options($options);
-        }
-
-        if (isset($field->config['optionType']) && $field->config['optionType'] === 'array') {
-            $input->options($field->config['options']);
-        }
+        $input = self::addOptionsToInput($input, $field);
 
         return $input;
     }
@@ -111,69 +77,7 @@ class CheckboxList extends FieldBase implements FieldInterface
                                         ->label(__('Bulk toggle'))
                                         ->inline(false),
                                 ]),
-                            Forms\Components\Fieldset::make('Options')
-                                ->columnSpanFull()
-                                ->label(__('Options'))
-                                ->schema([
-                                    Forms\Components\Grid::make(2)
-                                        ->schema([
-                                            Forms\Components\Select::make('config.optionType')
-                                                ->options([
-                                                    'array' => __('Array'),
-                                                    'relationship' => __('Relationship'),
-                                                ])
-                                                ->searchable()
-                                                ->live(onBlur: true)
-                                                ->reactive()
-                                                ->label(__('Type')),
-                                            // Array options
-                                            Forms\Components\KeyValue::make('config.options')
-                                                ->label(__('Options'))
-                                                ->columnSpanFull()
-                                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'array')
-                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'array'),
-                                            // Relationship options
-                                            Repeater::make('config.relations')
-                                                ->label(__('Relations'))
-                                                ->schema([
-                                                    Grid::make()
-                                                        ->columns(2)
-                                                        ->schema([
-                                                            Forms\Components\Select::make('contentType')
-                                                                ->label(__('Type'))
-                                                                ->searchable()
-                                                                ->preload()
-                                                                ->live(debounce: 250)
-                                                                ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
-                                                                    $type = Type::where('slug', $state)->first();
-
-                                                                    if (! $type || ! $type->slug) {
-                                                                        return;
-                                                                    }
-
-                                                                    $set('relationValue', $type->name_field ?? null);
-                                                                })
-                                                                ->options(fn () => Type::all()->pluck('name', 'slug'))
-                                                                ->noSearchResultsMessage(__('No types found'))
-                                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                                            Forms\Components\Hidden::make('relationKey')
-                                                                ->default('ulid')
-                                                                ->label(__('Key'))
-                                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                                            Forms\Components\Select::make('relationValue')
-                                                                ->options([
-                                                                    'slug' => __('Slug'),
-                                                                    'name' => __('Name'),
-                                                                ])
-                                                                ->disabled(fn (Forms\Get $get): bool => ! $get('contentType'))
-                                                                ->label(__('Label'))
-                                                                ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
-                                                        ]),
-                                                ])
-                                                ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
-                                                ->columnSpanFull(),
-                                        ]),
-                                ]),
+                            self::optionFormFields(),
                             Forms\Components\Grid::make(2)
                                 ->schema([
                                     Forms\Components\TextInput::make('config.columns')
@@ -189,16 +93,16 @@ class CheckboxList extends FieldBase implements FieldInterface
                                     //
                                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
                                         ->label(__('No search results message'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchPrompt')
                                         ->label(__('Search prompt'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchDebounce')
                                         ->numeric()
                                         ->minValue(0)
                                         ->step(100)
                                         ->label(__('Search debounce'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                                 ]),
                         ]),
                 ])->columnSpanFull(),

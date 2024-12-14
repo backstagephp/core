@@ -14,6 +14,7 @@ use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
+use Vormkracht10\Backstage\Fields\Radio;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Fields\Text;
@@ -103,6 +104,7 @@ class EditSetting extends EditRecord
                 'checkbox-list' => CheckboxList::make(name: 'setting.' . $field->slug, field: $field),
                 'media' => Media::make(name: 'setting.' . $field->slug, field: $field),
                 'key-value' => KeyValue::make(name: 'setting.' . $field->slug, field: $field),
+                'radio' => Radio::make(name: 'setting.' . $field->slug, field: $field),
                 default => TextInput::make(name: 'setting.' . $field->slug),
             };
 
