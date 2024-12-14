@@ -16,8 +16,8 @@ class Toggle extends FieldBase implements FieldInterface
             'inline' => false,
             'accepted' => null,
             'declined' => null,
-            'onColor' => ToggleColor::SUCCESS,
-            'offColor' => ToggleColor::DANGER,
+            'onColor' => ToggleColor::SUCCESS->value,
+            'offColor' => ToggleColor::DANGER->value,
             'onIcon' => null,
             'offIcon' => null,
         ];
