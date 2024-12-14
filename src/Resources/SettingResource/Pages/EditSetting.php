@@ -13,6 +13,7 @@ use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\Color;
+use Vormkracht10\Backstage\Fields\DateTime;
 use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
@@ -109,6 +110,7 @@ class EditSetting extends EditRecord
                 'radio' => Radio::make(name: 'setting.' . $field->slug, field: $field),
                 'toggle' => Toggle::make(name: 'setting.' . $field->slug, field: $field),
                 'color' => Color::make(name: 'setting.' . $field->slug, field: $field),
+                'datetime' => DateTime::make(name: 'setting.' . $field->slug, field: $field),
                 default => TextInput::make(name: 'setting.' . $field->slug),
             };
 

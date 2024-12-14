@@ -5,23 +5,21 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput as Input;
 use Filament\Support\Colors\Color;
+use Vormkracht10\Backstage\Concerns\HasAffixes;
 use Vormkracht10\Backstage\Models\Field;
 
 class Text extends FieldBase implements FieldInterface
 {
+    use HasAffixes;
+
     public static function getDefaultConfig(): array
     {
         return [
             ...parent::getDefaultConfig(),
+            ...self::getAffixesConfig(),
             'readOnly' => false,
             'autocapitalize' => 'none',
             'autocomplete' => null,
-            'prefix' => null,
-            'prefixIcon' => null,
-            'prefixIconColor' => null,
-            'suffix' => null,
-            'suffixIcon' => null,
-            'suffixIconColor' => null,
             'placeholder' => null,
             'mask' => null,
             'minLength' => null,
@@ -41,10 +39,6 @@ class Text extends FieldBase implements FieldInterface
         $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
             ->readOnly($field->config['readOnly'] ?? self::getDefaultConfig()['readOnly'])
             ->placeholder($field->config['placeholder'] ?? self::getDefaultConfig()['placeholder'])
-            ->prefix($field->config['prefix'] ?? self::getDefaultConfig()['prefix'])
-            ->prefixIcon($field->config['prefixIcon'] ?? self::getDefaultConfig()['prefixIcon'])
-            ->suffix($field->config['suffix'] ?? self::getDefaultConfig()['suffix'])
-            ->suffixIcon($field->config['suffixIcon'] ?? self::getDefaultConfig()['suffixIcon'])
             ->mask($field->config['mask'] ?? self::getDefaultConfig()['mask'])
             ->minLength($field->config['minLength'] ?? self::getDefaultConfig()['minLength'])
             ->maxLength($field->config['maxLength'] ?? self::getDefaultConfig()['maxLength'])
@@ -54,13 +48,7 @@ class Text extends FieldBase implements FieldInterface
             ->telRegex($field->config['telRegex'] ?? self::getDefaultConfig()['telRegex'])
             ->revealable($field->config['revealable'] ?? self::getDefaultConfig()['revealable']);
 
-        if (isset($field->config['prefixIconColor']) && $field->config['prefixIconColor']) {
-            $input->prefixIconColor(Color::hex($field->config['prefixIconColor']));
-        }
-
-        if (isset($field->config['suffixIconColor']) && $field->config['suffixIconColor']) {
-            $input->suffixIconColor(Color::hex($field->config['suffixIconColor']));
-        }
+        $input = self::addAffixesToInput($input, $field);
 
         return $input;
     }
@@ -94,28 +82,7 @@ class Text extends FieldBase implements FieldInterface
                                     Forms\Components\TextInput::make('config.autocomplete')
                                         ->default(false)
                                         ->label(__('Autocomplete')),
-                                    Forms\Components\Fieldset::make('Affixes')
-                                        ->columnSpanFull()
-                                        ->label(__('Affixes'))
-                                        ->schema([
-                                            Forms\Components\Grid::make(3)
-                                                ->schema([
-                                                    Forms\Components\TextInput::make('config.prefix')
-                                                        ->label(__('Prefix')),
-                                                    Forms\Components\TextInput::make('config.prefixIcon')
-                                                        ->placeholder('heroicon-m-')
-                                                        ->label(__('Prefix icon')),
-                                                    Forms\Components\ColorPicker::make('config.prefixIconColor')
-                                                        ->label(__('Prefix color')),
-                                                    Forms\Components\TextInput::make('config.suffix')
-                                                        ->label(__('Suffix')),
-                                                    Forms\Components\TextInput::make('config.suffixIcon')
-                                                        ->placeholder('heroicon-m-')
-                                                        ->label(__('Suffix icon')),
-                                                    Forms\Components\ColorPicker::make('config.suffixIconColor')
-                                                        ->label(__('Suffix color')),
-                                                ]),
-                                        ]),
+                                    self::affixFormFields(),
                                     Forms\Components\TextInput::make('config.placeholder')
                                         ->label(__('Placeholder')),
                                     Forms\Components\TextInput::make('config.mask')
@@ -145,7 +112,7 @@ class Text extends FieldBase implements FieldInterface
                                         ->numeric()
                                         ->minValue(0)
                                         ->label(__('Step'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'numeric'),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'numeric'),
                                     Forms\Components\Select::make('config.inputMode')
                                         ->label(__('Input mode'))
                                         ->options([
@@ -158,13 +125,13 @@ class Text extends FieldBase implements FieldInterface
                                             'email' => __('Email'),
                                             'url' => __('URL'),
                                         ])
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'numeric'),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'numeric'),
                                     Forms\Components\Toggle::make('config.revealable')
                                         ->label(__('Revealable'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'password'),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'password'),
                                     Forms\Components\TextInput::make('config.telRegex')
                                         ->label(__('Telephone regex'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.type') === 'tel'),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.type') === 'tel'),
                                 ]),
                         ]),
                 ])->columnSpanFull(),
