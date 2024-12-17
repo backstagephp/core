@@ -113,8 +113,9 @@ class ContentResource extends Resource
                 TextInput::make('path')
                     ->hiddenLabel()
                     ->columnSpanFull()
-                    ->prefix(config('app.url') . '/')
-                    ->required(),
+                    ->prefix('Path')
+                    ->required()
+                    ->formatStateUsing(fn(?Content $record) => '/' . ltrim($record->path ?? '', '/')),
 
                 Grid::make(12)
                     ->schema([
