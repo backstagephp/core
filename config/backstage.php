@@ -20,7 +20,7 @@ return [
             Vormkracht10\Backstage\Resources\SettingResource::class,
             Vormkracht10\Backstage\Resources\SiteResource::class,
             Vormkracht10\Backstage\Resources\TagResource::class,
-            Vormkracht10\Backstage\Resources\TemplateResource::class,
+            // Vormkracht10\Backstage\Resources\TemplateResource::class,
             Vormkracht10\Backstage\Resources\TypeResource::class,
             Vormkracht10\Backstage\Resources\UserResource::class,
         ],
