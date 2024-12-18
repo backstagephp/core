@@ -305,7 +305,9 @@ class ContentResource extends Resource
                             ->allowHtml(),
                     ])
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
-                        return $query->where('language_code', $data['language_code']);
+                        return $query->when($data['language_code'] ?? null, function ($query, $languageCode) {
+                            return $query->where('language_code', $languageCode);
+                        });
                     })
                     ->visible(fn() => Language::where('active', 1)->count() > 1),
                 SelectFilter::make('type_slug')
