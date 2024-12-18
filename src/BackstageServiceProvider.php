@@ -22,9 +22,12 @@ use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Events\FormSubmitted;
+use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -160,6 +163,8 @@ class BackstageServiceProvider extends PackageServiceProvider
         });
 
         Menu::observe(MenuObserver::class);
+        
+        Event::listen(FormSubmitted::class, ExecuteFormActions::class);
 
         Filament::registerNavigationGroups([
             NavigationGroup::make()

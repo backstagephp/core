@@ -27,5 +27,19 @@ class BlockSeeder extends Seeder
                 'position' => 1,
             ]))
             ->create();
+
+        Block::factory()->state([
+            'name' => $name = 'Form',
+            'slug' => Str::slug($name),
+            'icon' => 'document-text',
+            'name_field' => null,
+        ])
+            ->has(Field::factory(1, [
+                'name' => 'Slug',
+                'slug' => 'slug',
+                'field_type' => 'text',
+                'position' => 1,
+            ]))
+            ->create();
     }
 }

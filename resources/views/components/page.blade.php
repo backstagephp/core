@@ -20,7 +20,7 @@
     @if (count($content->meta_tags['keywords'] ?? []))
         <meta name="keywords" content="{{ implode(', ', $content->meta_tags['keywords']) }}">
     @endif
-    {{ $headLast }}
+    {{ $headLast ?? ''}}
 </head>
 
 <body>
