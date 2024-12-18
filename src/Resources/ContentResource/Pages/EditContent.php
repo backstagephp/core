@@ -132,14 +132,6 @@ class EditContent extends EditRecord
         unset($data['tags']);
         unset($data['values']);
 
-        $media = MediaPicker::create($data);
-
-        unset($data['media']);
-
-        foreach ($media as $value) {
-            $this->getRecord()->attachMedia($value->ulid);
-        }
-
         return $data;
     }
 }

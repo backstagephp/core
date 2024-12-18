@@ -65,11 +65,5 @@ class CreateContent extends CreateRecord
         ]);
 
         $this->getRecord()->authors()->attach(auth()->id());
-
-        $media = MediaPicker::create($this->data);
-
-        foreach ($media as $value) {
-            $this->getRecord()->attachMedia($value->ulid);
-        }
     }
 }

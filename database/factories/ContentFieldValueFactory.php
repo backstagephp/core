@@ -4,12 +4,13 @@ namespace Vormkracht10\Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\ContentFieldValue;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 
-class ContentFactory extends Factory
+class ContentFieldValueFactory extends Factory
 {
-    protected $model = Content::class;
+    protected $model = ContentFieldValue::class;
 
     /**
      * Define the model's default state.
@@ -19,15 +20,7 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'site_ulid' => Site::default(),
-            'language_code' => Language::default(),
-            'type_slug' => 'page',
-            'name' => 'Home',
-            'slug' => 'home',
-            'path' => '/',
-            'meta_tags' => ['title' => 'Home'],
-            'published_at' => now(),
-            'edited_at' => now(),
+            'value' => 'Spotlights are on.'
         ];
     }
 }

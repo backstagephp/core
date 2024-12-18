@@ -33,6 +33,7 @@ class BlockSeeder extends Seeder
             'slug' => Str::slug($name),
             'icon' => 'document-text',
             'name_field' => null,
+            'component' => 'form',
         ])
             ->has(Field::factory(1, [
                 'name' => 'Slug',

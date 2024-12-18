@@ -55,6 +55,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                             ]);
 
                             $command->callSilently('vendor:publish', [
+                                '--tag' => "backstage-config",
+                                '--force' => true,
+                            ]);
+
+                            $command->callSilently('vendor:publish', [
                                 '--tag' => "redirects-migrations",
                                 '--force' => true,
                             ]);
