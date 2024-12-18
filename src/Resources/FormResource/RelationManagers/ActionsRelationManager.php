@@ -21,7 +21,7 @@ use Vormkracht10\Backstage\Models\Language;
 
 class ActionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'actions';
+    protected static string $relationship = 'formActions';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
