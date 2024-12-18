@@ -82,7 +82,7 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->unsavedChangesAlerts()
             ->default(config('backstage.panel.default'))
-            ->plugins(config('backstage.panel.pluginsou'))
+            ->plugins(config('backstage.panel.plugins'))
             ->resources(config('backstage.panel.resources'))
             ->widgets(config('backstage.panel.widgets'))
             ->pages([
