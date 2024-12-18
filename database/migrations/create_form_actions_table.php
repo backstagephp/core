@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->string('form_slug')->constrained(table: 'forms', column: 'slug')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('site_ulid')->nullable()->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->char('language_code', 5);
 
             $table->string('type')->nullable();

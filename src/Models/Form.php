@@ -25,7 +25,7 @@ class Form extends Model
         return [];
     }
 
-    public function actions(): HasMany
+    public function formActions(): HasMany
     {
         return $this->hasMany(FormAction::class);
     }

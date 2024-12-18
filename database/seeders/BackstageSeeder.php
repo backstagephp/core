@@ -16,6 +16,7 @@ class BackstageSeeder extends Seeder
             SiteSeeder::class,
             LanguageSeeder::class,
             TypeSeeder::class,
+            FormSeeder::class,
             BlockSeeder::class,
             ContentSeeder::class,
             DomainSeeder::class,
