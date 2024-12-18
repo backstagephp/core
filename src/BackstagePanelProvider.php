@@ -30,7 +30,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -66,6 +66,10 @@ class BackstagePanelProvider extends PanelProvider
             ),
         );
 
+        FilamentAsset::register([
+            Css::make('filament-media-picker', __DIR__ . '/../vendor/vormkracht10/filament-media-picker/resources/dist/filament-media-picker.css'),
+        ], package: 'vormkracht10/filament-media-picker');
+
         return $panel
             ->id('backstage')
             ->path('backstage')
@@ -76,13 +80,13 @@ class BackstagePanelProvider extends PanelProvider
             ->spa()
             ->unsavedChangesAlerts()
             ->default(config('backstage.panel.default'))
-            ->plugins(config('backstage.panel.plugins'))
+            ->plugins(config('backstage.panel.pluginsou'))
             ->resources(config('backstage.panel.resources'))
             ->widgets(config('backstage.panel.widgets'))
             ->pages([
                 Dashboard::class,
             ])
-            ->colors(fn () => [
+            ->colors(fn() => [
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->middleware([
