@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\View;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 use Vormkracht10\MediaPicker\Concerns\HasMedia;
@@ -98,13 +99,7 @@ class Content extends Model
 
     public function view($data = [])
     {
-        $view = view($this->templateFile ?? 'backstage::types.page');
-
-        if (filled($data)) {
-            $view->with($data);
-        }
-
-        return $view;
+        return View::first([$this->templateFile, 'types.page', 'backstage::types.page'], $data);
     }
 
     public function response(int $code = 200)

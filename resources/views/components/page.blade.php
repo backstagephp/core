@@ -13,15 +13,18 @@
     <meta name="robots" content="index,follow">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta property="author" content="Mark van Eijk">
-    @if(isset($content->meta_tags['description']))
-    <meta name="description" content="{{ $content->meta_tags['description'] }}">
-    <meta property="og:description" content="{{ $content->meta_tags['description'] }}">
+    @if (isset($content->meta_tags['description']))
+        <meta name="description" content="{{ $content->meta_tags['description'] }}">
+        <meta property="og:description" content="{{ $content->meta_tags['description'] }}">
     @endif
-    @if(count($content->meta_tags['keywords'] ?? []))
-    <meta name="keywords" content="{{ implode(', ', $content->meta_tags['keywords']) }}">
+    @if (count($content->meta_tags['keywords'] ?? []))
+        <meta name="keywords" content="{{ implode(', ', $content->meta_tags['keywords']) }}">
     @endif
+    {{ $headLast }}
 </head>
+
 <body>
     {{ $slot }}
 </body>
+
 </html>
