@@ -39,7 +39,6 @@ use Vormkracht10\Backstage\Models\Language;
 use Filament\Forms\Components\DateTimePicker;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\CheckboxList;
-use Filament\Forms\Components\Select as SelectInput;
 use Vormkracht10\MediaPicker\Components\MediaPicker;
 use Vormkracht10\Backstage\View\Components\Filament\Badge;
 use Vormkracht10\Backstage\Resources\ContentResource\Pages;
@@ -131,7 +130,6 @@ class ContentResource extends Resource
                                         Grid::make()
                                             ->columns(1)
                                             ->schema(self::getTypeInputs()),
-                                        MediaPicker::make(),
                                     ]),
                                 Tab::make('seo')
                                     ->label('SEO')
