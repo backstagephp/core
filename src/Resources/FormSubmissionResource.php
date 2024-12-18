@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -134,7 +135,13 @@ class FormSubmissionResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('form_slug')
+                    ->label('Form')
+                    ->native(false)
+                    ->searchable()
+                    ->multiple()
+                    ->preload()
+                    ->relationship('form', 'name'),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),

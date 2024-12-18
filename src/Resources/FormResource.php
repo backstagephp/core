@@ -2,6 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -17,6 +18,7 @@ use Vormkracht10\Backstage\Models\Form as FormModel;
 use Vormkracht10\Backstage\Resources\FormResource\Pages;
 use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
 use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\FieldsRelationManager;
+use Vormkracht10\Backstage\Resources\FormSubmissionResource\Pages\ListFormSubmissions;
 
 class FormResource extends Resource
 {
@@ -73,7 +75,8 @@ class FormResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->url(fn ($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
             ])
             ->filters([
                 //
