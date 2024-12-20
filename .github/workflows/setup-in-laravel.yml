@@ -8,7 +8,7 @@ on:
 
 jobs:
   stagehand:
-    name: Setup Backstage with Laravel (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+    name: Setup Backstage (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -23,7 +23,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, dom, fileinfo, intl, zip, sqlite
+          extensions: mbstring, dom, fileinfo, intl, zip, sqlite, pdo_sqlite
 
       - name: Install Laravel Installer
         run: composer global require laravel/installer
