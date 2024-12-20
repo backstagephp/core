@@ -5,7 +5,6 @@ namespace Vormkracht10\Backstage\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Vormkracht10\Backstage\Mail\FormActionExecute;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
