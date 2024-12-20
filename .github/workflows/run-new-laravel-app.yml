@@ -1,4 +1,4 @@
-name: Testing new Laravel App
+name: Setup fresh Backstage
 
 on:
   push:
@@ -7,19 +7,18 @@ on:
     branches: [main]
 
 jobs:
-  laravel:
-    name: Laravel (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+  stagehand:
+    name: Setup Backstage with Laravel (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest] # , windows-latest, macos-latest
-        php-versions: ['8.2'] # , '8.2', '8.3'
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        php-versions: ['8.2', '8.3']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Docs: https://github.com/shivammathur/setup-php
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -31,13 +30,13 @@ jobs:
 
       - name: Create a new Laravel app
         run: |
-          laravel new laravel-app
+          laravel new theater
 
       - name: Prepare and install backstage
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
         run: |
-          cd laravel-app
+          cd theater
           composer config minimum-stability dev
           composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
           composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
