@@ -24,7 +24,7 @@ class FormAction extends Model
     protected function casts(): array
     {
         return [
-            'config' => 'json'
+            'config' => 'json',
         ];
     }
 
@@ -43,7 +43,7 @@ class FormAction extends Model
      */
     public function configValue($field)
     {
-        if (!preg_match('/\{\{([^\}]+))\}\}/', $field, $matches)) {
+        if (! preg_match('/\{\{([^\}]+))\}\}/', $field, $matches)) {
             return $field;
         }
 
@@ -53,12 +53,14 @@ class FormAction extends Model
     /**
      * Executes the action.
      */
-    public function execute(FormSubmission $submission) {
+    public function execute(FormSubmission $submission)
+    {
         switch ($this->type) {
             case 'email':
                 Mail::to($submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'])
                     ->send(new FormActionExecute($this, $submission));
-            break;
+
+                break;
         }
     }
 }

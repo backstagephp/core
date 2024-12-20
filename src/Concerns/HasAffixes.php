@@ -3,8 +3,8 @@
 namespace Vormkracht10\Backstage\Concerns;
 
 use Filament\Forms;
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Fieldset;
+use Filament\Support\Colors\Color;
 
 trait HasAffixes
 {
@@ -22,6 +22,7 @@ trait HasAffixes
         if (isset($field->config['suffixIconColor']) && $field->config['suffixIconColor']) {
             $input->suffixIconColor(Color::hex($field->config['suffixIconColor']));
         }
+
         return $input;
     }
 
@@ -39,7 +40,7 @@ trait HasAffixes
 
     public function affixFormFields(): Fieldset
     {
-        return   Forms\Components\Fieldset::make('Affixes')
+        return Forms\Components\Fieldset::make('Affixes')
             ->columnSpanFull()
             ->label(__('Affixes'))
             ->schema([

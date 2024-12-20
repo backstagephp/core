@@ -9,17 +9,19 @@ use Vormkracht10\Backstage\Models\Form;
 
 class FormController
 {
-    public function submit (Request $request, Form $form) {
+    public function submit(Request $request, Form $form)
+    {
         $request->validate(
             $form->fields->mapWithKeys(function ($field) {
                 if ($field->config['required'] ?? false) {
                     $field->rules = ['required'];
                 }
+
                 return [$field->slug => $field->rules];
             })
-            ->filter()
-            ->merge(['content_ulid' => ['nullable', 'exists:content,ulid']])
-            ->toArray()
+                ->filter()
+                ->merge(['content_ulid' => ['nullable', 'exists:content,ulid']])
+                ->toArray()
         );
 
         $content = Content::where('ulid', $request->input('content_ulid'))->first();

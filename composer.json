@@ -4,7 +4,9 @@
     "keywords": [
         "vormkracht10",
         "laravel",
-        "backstage"
+        "backstage",
+        "cms",
+        "filament"
     ],
     "homepage": "https://github.com/vormkracht10/backstage",
     "support": {
@@ -16,6 +18,16 @@
         {
             "name": "Mark van Eijk",
             "email": "mark@vormkracht10.nl",
+            "role": "Developer"
+        },
+        {
+            "name": "Mathieu de Ruiter",
+            "email": "mathieu@vormkracht10.nl",
+            "role": "Developer"
+        },
+        {
+            "name": "Bas van Dinther",
+            "email": "bas@vormkracht10.nl",
             "role": "Developer"
         }
     ],
@@ -33,13 +45,13 @@
         "vormkracht10/filament-redirects": "dev-main"
     },
     "require-dev": {
+        "larastan/larastan": "^2.0.1",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^7.9",
-        "larastan/larastan": "^2.0.1",
-        "orchestra/testbench": "^8.0",
-        "pestphp/pest": "^2.1",
+        "orchestra/testbench": "^8.29",
+        "pestphp/pest": "^2.36",
         "pestphp/pest-plugin-arch": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.4",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0"
@@ -47,6 +59,7 @@
     "autoload": {
         "psr-4": {
             "Vormkracht10\\Backstage\\": "src/",
+            "Vormkracht10\\Backstage\\Tests\\": "tests",
             "Vormkracht10\\Backstage\\Database\\Factories\\": "database/factories/",
             "Vormkracht10\\Backstage\\Database\\Seeders\\": "database/seeders/"
         }

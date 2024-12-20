@@ -3,10 +3,10 @@
 namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\ContentFieldValue;
 use Vormkracht10\Backstage\Models\Field;
-use Illuminate\Support\Str;
 
 class ContentSeeder extends Seeder
 {
@@ -20,7 +20,7 @@ class ContentSeeder extends Seeder
             ->state([])
             ->has(ContentFieldValue::factory(1, [
                 'field_ulid' => Field::where('slug', 'title')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
-                'value' => 'Home'
+                'value' => 'Home',
             ]), 'values')
             ->create();
 
@@ -34,13 +34,13 @@ class ContentSeeder extends Seeder
             ])
             ->has(ContentFieldValue::factory(1, [
                 'field_ulid' => Field::where('slug', 'title')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
-                'value' => 'Contact'
+                'value' => 'Contact',
             ]), 'values')
             ->has(ContentFieldValue::factory(1, [
                 'field_ulid' => Field::where('slug', 'blocks')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
                 'value' => json_encode([
-                    (string) Str::uuid() => ['type' => 'form', 'data' => ['slug' => 'contact']]
-                ])
+                    (string) Str::uuid() => ['type' => 'form', 'data' => ['slug' => 'contact']],
+                ]),
             ]), 'values')->create();
     }
 }

@@ -9,6 +9,7 @@ use Vormkracht10\Backstage\Models\Field;
 
 /**
  * For validation regex patterns, check the Filament documentation.
+ *
  * @see https://filamentphp.com/docs/3.x/forms/fields/color-picker#color-picker-validation
  */
 class Color extends FieldBase implements FieldInterface

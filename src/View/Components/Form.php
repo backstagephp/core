@@ -2,8 +2,8 @@
 
 namespace Vormkracht10\Backstage\View\Components;
 
-use Illuminate\View\Component;
 use Illuminate\Support\Facades\View;
+use Illuminate\View\Component;
 use Vormkracht10\Backstage\Models\Form as ModelsForm;
 
 class Form extends Component
@@ -23,7 +23,7 @@ class Form extends Component
         return View::first([
             'components.forms.' . $this->slug,
             'components.forms.default',
-            'backstage::components.form'
+            'backstage::components.form',
         ]);
     }
 }
