@@ -2,9 +2,7 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
-use Filament\Navigation\NavigationGroup;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
@@ -22,12 +20,16 @@ use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 use Vormkracht10\Backstage\Events\FormSubmitted;
 use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
 use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Media;
 use Vormkracht10\Backstage\Models\Menu;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Vormkracht10\Backstage\View\Components\Page;
+use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -170,17 +172,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         Menu::observe(MenuObserver::class);
 
         Event::listen(FormSubmitted::class, ExecuteFormActions::class);
-
-        Filament::registerNavigationGroups([
-            NavigationGroup::make()
-                ->label('Content'),
-            NavigationGroup::make()
-                ->label('Structure'),
-            NavigationGroup::make()
-                ->label('Users'),
-            NavigationGroup::make()
-                ->label('Setup'),
-        ]);
 
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);

@@ -71,6 +71,7 @@ class SettingResource extends Resource
                 ->label(__('Language'))
                 ->columnSpanFull()
                 ->placeholder(__('Select Language'))
+                ->prefixIcon('heroicon-o-language')
                 ->options(
                     Language::where('active', 1)
                         ->get()
@@ -80,7 +81,7 @@ class SettingResource extends Resource
                         })
                         ->mapWithKeys(fn ($languages, $countryName) => [
                             $countryName => $languages->mapWithKeys(fn ($language) => [
-                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                             ])->toArray(),
                         ])
                 )

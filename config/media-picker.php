@@ -2,6 +2,7 @@
 
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Models\User;
 
 return [
     /*

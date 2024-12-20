@@ -5,6 +5,7 @@ namespace Vormkracht10\Backstage;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
@@ -104,6 +105,16 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Content'),
+                NavigationGroup::make()
+                    ->label('Structure'),
+                NavigationGroup::make()
+                    ->label('Users'),
+                NavigationGroup::make()
+                    ->label('Setup'),
             ])
             ->tenant(Site::class)
             ->tenantRegistration(RegisterSite::class)

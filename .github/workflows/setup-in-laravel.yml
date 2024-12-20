@@ -1,4 +1,4 @@
-name: Tests
+name: Setup
 
 on:
   push:
@@ -7,41 +7,39 @@ on:
     branches: [main]
 
 jobs:
-  rehearsal:
-    name: Rehearsal Backstage (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+  stagehand:
+    name: Building Backstage (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
       matrix:
-        stability: [dev] # "dev"| "alpha"| "beta"| "RC" | "stable" 
         operating-system: [ubuntu-latest, windows-latest, macos-latest]
         php-versions: ['8.2', '8.3']
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, dom, fileinfo, intl, zip, sqlite, pdo_sqlite
 
-      - name: Setup problem matchers
+      - name: Install Laravel Installer
+        run: composer global require laravel/installer
+
+      - name: Create a new Laravel app
         run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+          laravel new theater
 
-      - name: Install dependencies
+      - name: Prepare and install backstage
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
         run: |
-          composer config minimum-stability ${{ matrix.stability }}
+          cd theater
+          composer config minimum-stability dev
           composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
           composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
           composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
-          composer install --no-interaction --dev
-
-      - name: Execute tests
-        run: vendor/bin/pest --ci
+          composer require vormkracht10/backstage
+          php artisan backstage:install

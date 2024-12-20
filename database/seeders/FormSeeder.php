@@ -37,6 +37,8 @@ class FormSeeder extends Seeder
                     'subject' => 'Contact submission',
                     'to_email' => 'email',
                     'to_name' => 'name',
+                    'from_email' => config('mail.from.address', 'contact@vormkracht10.nl'),
+                    'from_name' => config('mail.from.name', 'Vormkracht10'),
                     'body' => 'Thanks for contacting us.',
                 ],
             ]))
