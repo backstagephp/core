@@ -18,3 +18,11 @@ The following variables are available.
 ```php
 @dump($slug, $form, $content)
 ```
+
+### Form component
+
+Use the following blade component to include the form in your blade files:
+
+```blade
+<x-form slug="contact" />
+```
