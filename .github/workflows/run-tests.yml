@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  rehearsal:
+    name: Rehearsal test (PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
