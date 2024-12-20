@@ -62,7 +62,10 @@
             "Vormkracht10\\Backstage\\Tests\\": "tests",
             "Vormkracht10\\Backstage\\Database\\Factories\\": "database/factories/",
             "Vormkracht10\\Backstage\\Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
