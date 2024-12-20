@@ -53,7 +53,7 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $fields = $data['setting'];
+        $fields = $data['setting'] ?? [];
         unset($data['setting']);
 
         $data['values'] = $fields;
