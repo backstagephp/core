@@ -171,17 +171,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         
         Event::listen(FormSubmitted::class, ExecuteFormActions::class);
 
-        Filament::registerNavigationGroups([
-            NavigationGroup::make()
-                ->label('Content'),
-            NavigationGroup::make()
-                ->label('Structure'),
-            NavigationGroup::make()
-                ->label('Users'),
-            NavigationGroup::make()
-                ->label('Setup'),
-        ]);
-
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
 

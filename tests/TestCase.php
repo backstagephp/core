@@ -20,17 +20,6 @@ use Vormkracht10\Backstage\BackstageServiceProvider;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->withFactories(realpath(dirname(__DIR__) . '/database/factories'));
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Vormkracht10\\Backstage\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
-        );
-    }
-
     protected function getPackageProviders($app)
     {
         return [
