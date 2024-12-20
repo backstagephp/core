@@ -8,7 +8,7 @@ class Stylesheet extends Component
 {
     public function __construct(
         public string $src,
-        bool $defer = true
+        public bool $defer = true
     ) {}
 
     public function render()

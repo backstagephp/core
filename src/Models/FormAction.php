@@ -39,23 +39,11 @@ class FormAction extends Model
     }
 
     /**
-     * Replace the config field with values from the submission.
-     */
-    public function configValue($field)
-    {
-        if (! preg_match('/\{\{([^\}]+))\}\}/', $field, $matches)) {
-            return $field;
-        }
-
-        return $this->form?->value($matches[1]) ?? '';
-    }
-
-    /**
      * Executes the action.
      */
     public function execute(FormSubmission $submission)
     {
-        switch ($this->type) {
+        switch ($this->get('type')) {
             case 'email':
                 Mail::to($submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'])
                     ->send(new FormActionExecute($this, $submission));

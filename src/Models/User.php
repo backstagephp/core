@@ -103,6 +103,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         return (string) $this->avatarUrl;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     */
     protected function avatarUrl(): Attribute
     {
         return Attribute::make(

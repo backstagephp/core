@@ -2,7 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Checkbox;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
@@ -34,6 +34,7 @@ use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select;
 use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Field;
@@ -72,6 +73,18 @@ class ContentResource extends Resource
 
     public static function getNavigationItems(): array
     {
+
+        $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) {
+            return NavigationItem::make($type->slug)
+                ->label($type->name_plural)
+                ->parentItem('Content')
+                ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
+                ->url(route('filament.backstage.resources.content.index', [
+                    'tenant' => Filament::getTenant(),
+                    'tableFilters[type_slug][values]' => ['page'],
+                ]));
+        })->toArray();
+
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
@@ -83,6 +96,13 @@ class ContentResource extends Resource
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
+            ...$contentTypes,
+            NavigationItem::make('meta_tags')
+                ->label('Meta Tags')
+                ->icon('heroicon-o-code-bracket-square')
+                ->group('SEO')
+                ->isActiveWhen(fn (NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
+                ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
         ];
     }
 
@@ -240,7 +260,7 @@ class ContentResource extends Resource
                     ->options($field->config['options']),
                 'builder' => Builder::make($fieldName, $field)
                     ->label($field->name),
-                'media' => MediaPicker::make($fieldName, $field)
+                'media' => MediaPicker::make($fieldName)
                     ->label($field->name),
                 'key-value' => KeyValue::make($fieldName, $field),
                 default => Text::make($fieldName, $field)

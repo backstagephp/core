@@ -81,7 +81,7 @@ class EditSetting extends EditRecord
                                 Grid::make()
                                     ->columns(2)
                                     ->schema(
-                                        SettingResource::fields($form),
+                                        SettingResource::fields(),
                                     ),
                             ]),
                     ]),

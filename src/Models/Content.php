@@ -64,14 +64,19 @@ class Content extends Model
         return $this->hasMany(ContentFieldValue::class)
             ->with('field');
     }
-
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     */
     protected function url(): Attribute
     {
         return Attribute::make(
             get: fn (?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
         );
     }
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     */
     protected function templateFile(): Attribute
     {
         return Attribute::make(
@@ -99,7 +104,7 @@ class Content extends Model
 
     public function view($data = [])
     {
-        return View::first([$this->templateFile, 'types.page', 'backstage::types.page'], $data);
+        return View::first([$this->template_file, 'types.page', 'backstage::types.page'], $data);
     }
 
     public function response(int $code = 200)

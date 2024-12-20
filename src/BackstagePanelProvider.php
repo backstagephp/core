@@ -21,7 +21,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Vormkracht10\Backstage\Http\Middleware\Filament\ContentNavigationItems;
 use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Pages\Dashboard;
@@ -120,7 +119,6 @@ class BackstagePanelProvider extends PanelProvider
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
-                ContentNavigationItems::class,
             ], isPersistent: true);
     }
 }

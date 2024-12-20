@@ -102,7 +102,7 @@ class SettingResource extends Resource
                             ->schema([
                                 Grid::make()
                                     ->columns(2)
-                                    ->schema(static::fields($form)),
+                                    ->schema(static::fields()),
                             ]),
                     ]),
             ]);
