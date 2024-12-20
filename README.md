@@ -1,10 +1,10 @@
 # Welcome Backstage
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/vormkracht10/backstage/fix-php-code-styling.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/vormkracht10/backstage/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
 ![Test](https://github.com/vormkracht10/backstage/actions/workflows/run-tests.yml/badge.svg)
 ![Fresh Laravel install](https://github.com/vormkracht10/backstage/actions/workflows/setup-in-laravel.yml/badge.svg)
+![PHPStan](https://github.com/vormkracht10/backstage/actions/workflows/phpstan.yml/badge.svg)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
+[![Total Downloads](https://img.shields.io/packagist/dt/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
 
 Backstage is the CMS for building the modern web. Made with Laravel and Filament.
 

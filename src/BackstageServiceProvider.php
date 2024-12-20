@@ -20,12 +20,16 @@ use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 use Vormkracht10\Backstage\Events\FormSubmitted;
 use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
 use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Media;
 use Vormkracht10\Backstage\Models\Menu;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Vormkracht10\Backstage\View\Components\Page;
+use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {

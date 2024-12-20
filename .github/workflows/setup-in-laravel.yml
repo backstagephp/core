@@ -1,4 +1,4 @@
-name: Setup Backstage in Laravel
+name: Setup
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   stagehand:
-    name: Setup Backstage (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
+    name: Building Backstage (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
