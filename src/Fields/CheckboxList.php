@@ -93,16 +93,16 @@ class CheckboxList extends FieldBase implements FieldInterface
                                     //
                                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
                                         ->label(__('No search results message'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchPrompt')
                                         ->label(__('Search prompt'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchDebounce')
                                         ->numeric()
                                         ->minValue(0)
                                         ->step(100)
                                         ->label(__('Search debounce'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                 ]),
                         ]),
                 ])->columnSpanFull(),

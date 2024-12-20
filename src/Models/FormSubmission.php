@@ -45,7 +45,10 @@ class FormSubmission extends Model
         return $this->hasMany(FormSubmissionValue::class, 'submission_ulid', 'ulid');
     }
 
-    public function value($fieldSlug) {
-        return $this->values()->whereHas('field', function ($query) use ($fieldSlug) { return $query->where('slug', $fieldSlug); })->first()?->value;
+    public function value($fieldSlug)
+    {
+        return $this->values()->whereHas('field', function ($query) use ($fieldSlug) {
+            return $query->where('slug', $fieldSlug);
+        })->first()?->value;
     }
 }

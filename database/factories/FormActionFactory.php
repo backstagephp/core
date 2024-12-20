@@ -26,9 +26,9 @@ class FormActionFactory extends Factory
                 'subject' => 'Contact submission',
                 'to_email' => 'email',
                 'to_name' => 'name',
-                'body' => 'Thanks for your submission.'
-            ]
+                'body' => 'Thanks for your submission.',
+            ],
         ];
-        
+
     }
 }

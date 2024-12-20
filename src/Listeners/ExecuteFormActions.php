@@ -24,7 +24,7 @@ class ExecuteFormActions implements ShouldQueue
     public function handle(FormSubmitted $event): void
     {
         //
-        if (!$event->formSubmission?->form?->formActions) {
+        if (! $event->formSubmission?->form?->formActions) {
             return;
         }
 
