@@ -1,23 +1,31 @@
-# CMS for building the modern web.
+# Welcome Backstage
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/vormkracht10/backstage/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/vormkracht10/backstage/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/vormkracht10/backstage/fix-php-code-styling.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/vormkracht10/backstage/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
+![Fresh Laravel install](https://github.com/vormkracht10/backstage/actions/workflows/setup-in-laravel.yml/badge.svg)
 
-
-
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Backstage is the CMS for building the modern web. Made with Laravel and Filament.
 
 ## Installation
 
-You can install the package via composer:
+You can install the package via composer in your (new) [Laravel app](https://laravel.com/docs/11.x#creating-a-laravel-project):
 
 ```bash
 composer require vormkracht10/backstage
 ```
 
-You can publish and run the migrations with:
+To get started quickly, use the backstage:install command:
+
+```bash
+php artisan backstage:install
+```
+
+
+### Advanced setup
+
+You can publish the migrations with:
 
 ```bash
 php artisan vendor:publish --tag="backstage-migrations"
@@ -36,26 +44,6 @@ Optionally, you can publish the views using
 php artisan vendor:publish --tag="backstage-views"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-## Usage
-
-```php
-$backstage = new Vormkracht10\Backstage();
-echo $backstage->echoPhrase('Hello, Vormkracht10!');
-```
-
-## Testing
-
-```bash
-composer test
-```
-
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
@@ -71,6 +59,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [Mark van Eijk](https://github.com/markvaneijk)
+- [Bas van Dinther](https://github.com/baspa)
+- [Mathieu de Ruiter](https://github.com/casmo)
 - [All Contributors](../../contributors)
 
 ## License
