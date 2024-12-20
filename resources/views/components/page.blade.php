@@ -25,8 +25,6 @@
 
 <body>
     {{ $slot }}
-
-    {{ setting('address.sdfadf') }}
 </body>
 
 </html>
