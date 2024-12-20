@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\HtmlString;
+use Vormkracht10\Backstage\Casts\ContentPathCast;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 use Vormkracht10\MediaPicker\Concerns\HasMedia;
@@ -30,6 +31,7 @@ class Content extends Model
     protected function casts(): array
     {
         return [
+            'path' => ContentPathCast::class,
             'meta_tags' => 'array',
         ];
     }

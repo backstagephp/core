@@ -8,7 +8,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\LanguageResource\Pages;

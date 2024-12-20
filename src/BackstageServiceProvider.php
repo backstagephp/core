@@ -2,32 +2,32 @@
 
 namespace Vormkracht10\Backstage;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
-use Filament\Support\Assets\Asset;
 use Filament\Forms\Components\Select;
+use Filament\Navigation\NavigationGroup;
+use Filament\Support\Assets\Asset;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
-use Spatie\LaravelPackageTools\Package;
-use Vormkracht10\Backstage\Models\Menu;
-use Vormkracht10\Backstage\Models\Type;
-use Filament\Navigation\NavigationGroup;
-use Vormkracht10\Backstage\Models\Block;
-use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Facades\FilamentAsset;
-use Livewire\Features\SupportTesting\Testable;
-use Vormkracht10\Backstage\View\Components\Page;
-use Vormkracht10\Backstage\Observers\MenuObserver;
-use Vormkracht10\Backstage\Testing\TestsBackstage;
-use Vormkracht10\Backstage\View\Components\Blocks;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
 use Vormkracht10\Backstage\Events\FormSubmitted;
 use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Menu;
+use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Observers\MenuObserver;
+use Vormkracht10\Backstage\Testing\TestsBackstage;
+use Vormkracht10\Backstage\View\Components\Blocks;
+use Vormkracht10\Backstage\View\Components\Page;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -39,9 +39,9 @@ class BackstageServiceProvider extends PackageServiceProvider
     {
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
-            ->hasInstallCommand(function (InstallCommand $command) use ($package) {
+            ->hasInstallCommand(function (InstallCommand $command) {
                 $command
-                    ->startWith(function (InstallCommand $command) use ($package) {
+                    ->startWith(function (InstallCommand $command) {
                         $command->info('Welcome to the Backstage setup process.');
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
                         $command->comment('Let\'s get started!');
@@ -50,17 +50,17 @@ class BackstageServiceProvider extends PackageServiceProvider
                             $command->comment('Executing...');
 
                             $command->callSilently('vendor:publish', [
-                                '--tag' => "backstage-migrations",
+                                '--tag' => 'backstage-migrations',
                                 '--force' => true,
                             ]);
 
                             $command->callSilently('vendor:publish', [
-                                '--tag' => "backstage-config",
+                                '--tag' => 'backstage-config',
                                 '--force' => true,
                             ]);
 
                             $command->callSilently('vendor:publish', [
-                                '--tag' => "redirects-migrations",
+                                '--tag' => 'redirects-migrations',
                                 '--force' => true,
                             ]);
 
@@ -69,7 +69,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                                 $this->writeMediaPickerConfig();
 
                                 $command->callSilently('vendor:publish', [
-                                    '--tag' => "media-picker-migrations",
+                                    '--tag' => 'media-picker-migrations',
                                     '--force' => true,
                                 ]);
                             }
@@ -168,7 +168,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         });
 
         Menu::observe(MenuObserver::class);
-        
+
         Event::listen(FormSubmitted::class, ExecuteFormActions::class);
 
         Filament::registerNavigationGroups([
@@ -305,17 +305,17 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'navigation_sort' => null,
                 'navigation_count_badge' => false,
                 'resource' => MediaResource::class,
-            ]
+            ],
         ];
     }
 
-    private function writeMediaPickerConfig(string $path = null): void
+    private function writeMediaPickerConfig(?string $path = null): void
     {
         $path ??= config_path('media-picker.php');
 
         // Ensure directory exists
         $directory = dirname($path);
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
 
@@ -327,7 +327,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $configContent .= "use Vormkracht10\MediaPicker\Resources\MediaResource;\n\n";
 
         // Custom export function to create more readable output
-        $configContent .= "return " . $this->customVarExport($this->generateMediaPickerConfig()) . ";\n";
+        $configContent .= 'return ' . $this->customVarExport($this->generateMediaPickerConfig()) . ";\n";
 
         file_put_contents($path, $configContent);
     }
@@ -340,8 +340,10 @@ class BackstageServiceProvider extends PackageServiceProvider
                 if (str_contains($var, '\\')) {
                     // Extract the short name and return as Class::class
                     $parts = explode('\\', $var);
+
                     return end($parts) . '::class';
                 }
+
                 // For regular strings, keep existing behavior
                 return "'" . addslashes($var) . "'";
             case 'array':
@@ -349,12 +351,13 @@ class BackstageServiceProvider extends PackageServiceProvider
                 $result = "[\n";
                 foreach ($var as $key => $value) {
                     $result .= $indent . '    ';
-                    if (!$indexed) {
+                    if (! $indexed) {
                         $result .= "'" . $key . "' => ";
                     }
                     $result .= $this->customVarExport($value, $indent . '    ') . ",\n";
                 }
                 $result .= $indent . ']';
+
                 return $result;
             case 'boolean':
                 return $var ? 'true' : 'false';

@@ -4,7 +4,6 @@ namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Form;
 use Vormkracht10\Backstage\Models\FormAction;
@@ -38,8 +37,8 @@ class FormSeeder extends Seeder
                     'subject' => 'Contact submission',
                     'to_email' => 'email',
                     'to_name' => 'name',
-                    'body' => 'Thanks for contacting us.'
-                ]
+                    'body' => 'Thanks for contacting us.',
+                ],
             ]))
             ->create();
     }

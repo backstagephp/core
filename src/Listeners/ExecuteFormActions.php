@@ -5,7 +5,6 @@ namespace Vormkracht10\Backstage\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\Models\FormSubmission;
 
 class ExecuteFormActions implements ShouldQueue
 {
@@ -25,7 +24,7 @@ class ExecuteFormActions implements ShouldQueue
     public function handle(FormSubmitted $event): void
     {
         //
-        if (!$event->formSubmission?->form?->formActions) {
+        if (! $event->formSubmission?->form?->formActions) {
             return;
         }
 

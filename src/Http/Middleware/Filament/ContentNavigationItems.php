@@ -30,7 +30,7 @@ class ContentNavigationItems
                 ->group('SEO')
                 ->isActiveWhen(fn (NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
                 ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
-            ...$contentTypes
+            ...$contentTypes,
         ]);
 
         return $next($request);

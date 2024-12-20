@@ -14,7 +14,8 @@ use Vormkracht10\Backstage\Models\FormSubmission;
 
 class FormActionExecute extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
