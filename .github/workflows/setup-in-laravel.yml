@@ -1,4 +1,4 @@
-name: Setup fresh Backstage
+name: Setup Backstage in Laravel
 
 on:
   push:
