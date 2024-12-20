@@ -2,12 +2,11 @@
 
 namespace Vormkracht10\Backstage\Fields;
 
-use Filament\Forms;
 use Baspa\Timezones\Facades\Timezones;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Enums\ColorFormat;
-use Vormkracht10\Backstage\Concerns\HasAffixes;
+use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker as Input;
+use Vormkracht10\Backstage\Concerns\HasAffixes;
+use Vormkracht10\Backstage\Models\Field;
 
 class DateTime extends FieldBase implements FieldInterface
 {
@@ -49,7 +48,6 @@ class DateTime extends FieldBase implements FieldInterface
             ->minutesStep($field->config['minutesStep'] ?? self::getDefaultConfig()['minutesStep'])
             ->secondsStep($field->config['secondsStep'] ?? self::getDefaultConfig()['secondsStep'])
             ->closeOnDateSelection($field->config['closeOnDateSelection'] ?? self::getDefaultConfig()['closeOnDateSelection']);
-
 
         $input = self::addAffixesToInput($input, $field);
 

@@ -110,7 +110,7 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn($color, $name) => [
+                                                ->mapWithKeys(fn ($color, $name) => [
                                                     sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
                                                 ])
                                                 ->put('#000000', 'Black')
@@ -158,14 +158,14 @@ class SiteResource extends Resource
                                                 ->groupBy(function ($language) {
                                                     return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                                 })
-                                                ->mapWithKeys(fn($languages, $countryName) => [
-                                                    $countryName => $languages->mapWithKeys(fn($language) => [
+                                                ->mapWithKeys(fn ($languages, $countryName) => [
+                                                    $countryName => $languages->mapWithKeys(fn ($language) => [
                                                         $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                     ])->toArray(),
                                                 ])
                                         )
                                         ->allowHtml()
-                                        ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                        ->visible(fn () => Language::where('active', 1)->count() > 1),
 
                                     Select::make('timezone')
                                         ->label('Timezone')
@@ -181,7 +181,7 @@ class SiteResource extends Resource
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
                                             ])->map(function ($code) {
-                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
                                             })
                                         )
                                         ->default(config('app.timezone'))
@@ -218,11 +218,11 @@ class SiteResource extends Resource
                     ->sortable(),
                 ImageColumn::make('language_code')
                     ->label('Default language')
-                    ->getStateUsing(fn(Site $record) => explode('-', $record->language_code)[0])
+                    ->getStateUsing(fn (Site $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Default country')
-                    ->getStateUsing(fn(Site $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
+                    ->getStateUsing(fn (Site $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')

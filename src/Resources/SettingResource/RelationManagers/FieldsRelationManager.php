@@ -52,7 +52,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -80,10 +80,10 @@ class FieldsRelationManager extends RelationManager
                             ]),
                         Section::make('Configuration')
                             ->columns(3)
-                            ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
+                            ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
                                 $get('field_type')
                             ))
-                            ->visible(fn(Get $get) => filled($get('field_type'))),
+                            ->visible(fn (Get $get) => filled($get('field_type'))),
                     ]),
             ]);
     }
@@ -136,7 +136,7 @@ class FieldsRelationManager extends RelationManager
                 Tables\Actions\DeleteAction::make()
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
-                    })
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

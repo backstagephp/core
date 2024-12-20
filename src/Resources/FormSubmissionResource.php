@@ -7,13 +7,11 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Infolists\Infolist;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -83,7 +81,7 @@ class FormSubmissionResource extends Resource
                     ->label(__('Content'))
                     ->default('-')
                     ->state(function (FormSubmission $record): HtmlString {
-                        return new HtmlString($record->content ? '<a href="'. $record->content->url .'" target="_blank">'. $record->content->name .'</a>' : '-');
+                        return new HtmlString($record->content ? '<a href="' . $record->content->url . '" target="_blank">' . $record->content->name . '</a>' : '-');
                     }),
                 TextEntry::make('language_code')
                     ->columnSpanFull()
@@ -116,8 +114,8 @@ class FormSubmissionResource extends Resource
                 RepeatableEntry::make('values')
                     ->schema([
                         TextEntry::make('value'),
-                        TextEntry::make('field.name')
-                    ])
+                        TextEntry::make('field.name'),
+                    ]),
             ]);
     }
 

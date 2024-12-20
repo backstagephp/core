@@ -8,7 +8,6 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
-use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -18,7 +17,6 @@ use Vormkracht10\Backstage\Models\Form as FormModel;
 use Vormkracht10\Backstage\Resources\FormResource\Pages;
 use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
 use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\FieldsRelationManager;
-use Vormkracht10\Backstage\Resources\FormSubmissionResource\Pages\ListFormSubmissions;
 
 class FormResource extends Resource
 {
@@ -63,7 +61,7 @@ class FormResource extends Resource
                                 TextInput::make('submit_button')
                                     ->label(__('Text on button'))
                                     ->placeholder(__('Send'))
-                                    ->columnSpanFull()
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
@@ -95,7 +93,7 @@ class FormResource extends Resource
     {
         return [
             FieldsRelationManager::class,
-            ActionsRelationManager::class
+            ActionsRelationManager::class,
         ];
     }
 

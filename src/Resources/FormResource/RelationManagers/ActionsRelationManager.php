@@ -9,11 +9,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Illuminate\Support\Str;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Locale;
 use Vormkracht10\Backstage\Models\FormAction;
@@ -71,14 +71,14 @@ class ActionsRelationManager extends RelationManager
                                             ->groupBy(function ($language) {
                                                 return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                             })
-                                            ->mapWithKeys(fn($languages, $countryName) => [
-                                                $countryName => $languages->mapWithKeys(fn($language) => [
+                                            ->mapWithKeys(fn ($languages, $countryName) => [
+                                                $countryName => $languages->mapWithKeys(fn ($language) => [
                                                     $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
                                     )
                                     ->allowHtml()
-                                    ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
                             ]),
                         Section::make(__('Configuration'))
                             ->columns(3)
@@ -92,7 +92,7 @@ class ActionsRelationManager extends RelationManager
                                     ->options($fields)
                                     ->searchable()
                                     ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search) :  array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
+                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
                                     ->native(false),
                                 Select::make('config.from_email')
                                     ->label(__('Email from'))
@@ -100,24 +100,24 @@ class ActionsRelationManager extends RelationManager
                                     ->options($fields)
                                     ->searchable()
                                     ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search) :  array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
                                 Select::make('config.to_name')
                                     ->label(__('Name to'))
                                     ->columnSpan(6)
                                     ->options($fields)
                                     ->searchable()
                                     ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search) :  array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
                                 Select::make('config.to_email')
                                     ->label(__('Name email'))
                                     ->columnSpan(6)
                                     ->options($fields)
                                     ->searchable()
                                     ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search) :  array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
                                 Textarea::make('config.body')
                                     ->label(__('Body'))
-                                    ->columnSpan(6)
+                                    ->columnSpan(6),
                             ]),
                     ]),
             ]);
@@ -134,7 +134,7 @@ class ActionsRelationManager extends RelationManager
                     ->limit(),
                 Tables\Columns\TextColumn::make('config.subject')
                     ->label(__('Subject'))
-                    ->description(fn (FormAction $record): string => ($record->config['from_name'] ?? '') . ' <' . ($record->config['from_email'] ?? '') . '>')
+                    ->description(fn (FormAction $record): string => ($record->config['from_name'] ?? '') . ' <' . ($record->config['from_email'] ?? '') . '>'),
             ])
             ->filters([])
             ->headerActions([
