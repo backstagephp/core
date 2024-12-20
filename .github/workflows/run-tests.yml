@@ -13,6 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        stability: [prefer-stable, prefer-lowest]
         operating-system: [ubuntu-latest, windows-latest, macos-latest]
         php-versions: ['8.2', '8.3']
 
@@ -36,12 +37,10 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
         run: |
-          composer config minimum-stability dev
           composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
           composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
           composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nesbot/carbon:${{ matrix.carbon }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --dev
+          composer install --${{ matrix.stability }} --prefer-dist --no-interaction --dev
 
       - name: Execute tests
         run: vendor/bin/pest --ci
