@@ -180,19 +180,20 @@ class ContentResource extends Resource
                                     ->label('Publication')
                                     ->schema([
                                         DateTimePicker::make('published_at')
-                                            ->label('Publication date')
-                                            ->date()
-                                            ->prefixIcon('heroicon-o-calendar-days')
-                                            ->default(now()->format('dd/mm/YYYY'))
-                                            ->native(false)
-                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
                                             ->columnSpanFull()
-                                            ->helperText('Set a date in past or future to schedule publication.'),
+                                            ->date()
+                                            ->default(now()->format('dd/mm/YYYY'))
+                                            ->displayFormat('M j, Y - H:i')
+                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
+                                            ->label('Publication date')
+                                            ->helperText('Set a date in past or future to schedule publication.')
+                                            ->native(false)
+                                            ->prefixIcon('heroicon-o-calendar-days')
+                                            ->seconds(false),
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
                                             ->placeholder(__('Select Language'))
-                                            ->prefixIcon('heroicon-o-language')
                                             ->options(
                                                 Language::where('active', 1)
                                                     ->get()
@@ -306,7 +307,6 @@ class ContentResource extends Resource
                             ->label(__('Language'))
                             ->columnSpanFull()
                             ->placeholder(__('Select Language'))
-                            ->prefixIcon('heroicon-o-language')
                             ->options(
                                 Language::where('active', 1)
                                     ->get()

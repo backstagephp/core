@@ -150,7 +150,6 @@ class SiteResource extends Resource
                                         ->label(__('Language'))
                                         ->columnSpanFull()
                                         ->placeholder(__('Select Language'))
-                                        ->prefixIcon('heroicon-o-language')
                                         ->options(
                                             Language::where('active', 1)
                                                 ->get()
