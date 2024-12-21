@@ -3,26 +3,28 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Form;
+use Livewire\Attributes\On;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Vormkracht10\Backstage\Fields\Text;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\FileUploadcare;
-use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Models\Media as MediaModel;
-use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\MediaPicker\MediaPicker;
+use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\DateTime;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\FileUploadcare;
+use Vormkracht10\Backstage\Resources\SettingResource;
+use Vormkracht10\Backstage\Models\Media as MediaModel;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\MediaPicker\Models\Media as MediaPickerModel; // rename
 
 class EditSetting extends EditRecord
@@ -191,16 +193,19 @@ class EditSetting extends EditRecord
                 $info = $file['fileInfo'];
                 $detailedInfo = ! empty($info['imageInfo']) ? $info['imageInfo'] : (! empty($info['videoInfo']) ? $info['videoInfo'] : (! empty($info['contentInfo']) ? $info['contentInfo'] : []));
 
-                $media[] = MediaPickerModel::create([
+                $media[] = MediaPickerModel::updateOrCreate([
                     'site_ulid' => Filament::getTenant()->ulid,
-                    'disk' => 'uploadcare', // TODO: Of 'config('media-picker.disk')'?
-                    'uploaded_by' => auth()->user()->id,
+                    'disk' => 'uploadcare',
                     'original_filename' => $info['name'],
+                    'checksum' => md5_file($info['cdnUrl']),
+                ], [
                     'filename' => $info['cdnUrl'], // TODO: Of 'uuid'?
+                    'uploaded_by' => auth()->user()->id,
                     'extension' => $detailedInfo['format'] ?? null,
                     'mime_type' => $info['mimeType'],
                     'size' => $info['size'],
-                    'checksum' => md5_file($info['cdnUrl']),
+                    'width' => isset($detailedInfo['width']) ? $detailedInfo['width'] : null,
+                    'height' => isset($detailedInfo['height']) ? $detailedInfo['height'] : null,
                     'public' => config('media-picker.visibility') === 'public',
                     'metadata' => $info,
                 ]);
