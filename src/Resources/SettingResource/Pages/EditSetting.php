@@ -3,24 +3,24 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
-use Filament\Forms\Form;
-use Livewire\Attributes\On;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\Media;
-use Vormkracht10\Backstage\Fields\Radio;
+use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\Color;
 use Vormkracht10\Backstage\Fields\DateTime;
 use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Media;
+use Vormkracht10\Backstage\Fields\Radio;
 use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Uploadcare;
-use Vormkracht10\Backstage\Fields\CheckboxList;
-use Vormkracht10\Backstage\Models\Media as MediaModel;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
+use Vormkracht10\Backstage\Fields\Uploadcare;
+use Vormkracht10\Backstage\Models\Media as MediaModel;
 use Vormkracht10\Backstage\Resources\SettingResource; // rename
 
 class EditSetting extends EditRecord
@@ -78,6 +78,7 @@ class EditSetting extends EditRecord
     public function form(Form $form): Form
     {
         dd('test');
+
         return $form
             ->schema([
                 Tabs::make('Tabs')
