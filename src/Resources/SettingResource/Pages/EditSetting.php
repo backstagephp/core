@@ -3,25 +3,27 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Form;
+use Livewire\Attributes\On;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Vormkracht10\Backstage\Fields\Text;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Livewire\Attributes\On;
-use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Fields\Toggle;
+use Vormkracht10\MediaPicker\MediaPicker;
+use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\DateTime;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Models\Media as MediaModel;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Resources\SettingResource; // rename
 
 class EditSetting extends EditRecord
@@ -45,6 +47,18 @@ class EditSetting extends EditRecord
         }
 
         foreach ($this->record->fields as $field) {
+            if ($field->field_type === 'media') {
+                $media = MediaModel::whereIn('ulid', $this->record->values[$field->slug])
+                    ->get()
+                    ->map(function ($media) {
+                        return 'media/' . $media->filename;
+                    })->toArray();
+
+                $data['setting'][$field->slug] = $media;
+
+                continue;
+            }
+
             $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
         }
 
@@ -53,6 +67,8 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $data = $this->handleMediaCreation($data);
+
         $fields = $data['setting'] ?? [];
         unset($data['setting']);
 
@@ -118,5 +134,26 @@ class EditSetting extends EditRecord
         }
 
         return $inputs;
+    }
+
+    private function handleMediaCreation(array $data): array
+    {
+        $mediaFields = $this->record->fields->filter(function ($field) {
+            return $field->field_type === 'media';
+        });
+
+        if ($mediaFields->count() === 0) {
+            return $data;
+        }
+
+        foreach ($mediaFields as $field) {
+            $media = MediaPicker::create($data['setting'][$field->slug]);
+
+            $data['setting'][$field->slug] = collect($media)->map(function ($media) {
+                return $media->ulid;
+            })->toArray();
+        }
+
+        return $data;
     }
 }
