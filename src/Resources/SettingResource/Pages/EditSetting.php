@@ -3,24 +3,26 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Form;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\MediaPicker\MediaPicker;
-use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
+use Vormkracht10\MediaPicker\MediaPicker;
+use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\DateTime;
+use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\FileUploadcare;
-use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Models\Media as MediaModel;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
+use Vormkracht10\MediaPicker\Models\Media as MediaPickerModel;
 use Vormkracht10\Backstage\Resources\SettingResource; // rename
 
 class EditSetting extends EditRecord
@@ -57,6 +59,19 @@ class EditSetting extends EditRecord
                 continue;
             }
 
+            if ($field->field_type === 'file-uploadcare' && isset($this->record->values[$field->slug])) {
+                $media = MediaPickerModel::whereIn('ulid', $this->record->values[$field->slug])
+                    ->get()
+                    ->map(function ($media) {
+                        return $media->filename; // TODO: Of dit moet uit de metadata komen? En dan UUID opslaan
+                    })->toArray();
+
+                $data['setting'][$field->slug] = json_encode($media);
+
+                continue;
+            }
+
+
             $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
         }
 
@@ -66,6 +81,8 @@ class EditSetting extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = $this->handleMediaCreation($data);
+
+        $data = $this->handleUploadcare($data);
 
         $fields = $data['setting'] ?? [];
         unset($data['setting']);
@@ -147,6 +164,48 @@ class EditSetting extends EditRecord
 
         foreach ($mediaFields as $field) {
             $media = MediaPicker::create($data['setting'][$field->slug]);
+
+            $data['setting'][$field->slug] = collect($media)->map(function ($media) {
+                return $media->ulid;
+            })->toArray();
+        }
+
+        return $data;
+    }
+
+    private function handleUploadcare(array $data): array
+    {
+        $mediaFields = $this->record->fields->filter(function ($field) {
+            return $field->field_type === 'file-uploadcare';
+        });
+
+        if ($mediaFields->count() === 0) {
+            return $data;
+        }
+
+        foreach ($mediaFields as $field) {
+            $values = json_decode($data['setting'][$field->slug], true);
+
+            $media = [];
+
+            foreach ($values as $file) {
+                $info = $file['fileInfo'];
+                $detailedInfo = !empty($info['imageInfo']) ? $info['imageInfo'] : (!empty($info['videoInfo']) ? $info['videoInfo'] : (!empty($info['contentInfo']) ? $info['contentInfo'] : []));
+
+                $media[] = MediaPickerModel::create([ // TODO: Rename dit
+                    'site_ulid' => Filament::getTenant()->ulid,
+                    'disk' => 'uploadcare', // TODO: Of 'config('media-picker.disk')'?
+                    'uploaded_by' => auth()->user()->id,
+                    'original_filename' => $info['name'],
+                    'filename' => $info['cdnUrl'], // TODO: Of 'uuid'?
+                    'extension' => $detailedInfo['format'] ?? null,
+                    'mime_type' => $info['mimeType'],
+                    'size' => $info['size'],
+                    'checksum' => md5_file($info['cdnUrl']),
+                    'public' => config('media-picker.visibility') === 'public',
+                    'metadata' => $info,
+                ]);
+            }
 
             $data['setting'][$field->slug] = collect($media)->map(function ($media) {
                 return $media->ulid;

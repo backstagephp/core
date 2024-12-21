@@ -21,7 +21,7 @@ class FileUploadcare extends FieldBase implements FieldInterface
 
     public static function make(string $name, Field $field): Input
     {
-        $input = self::applyDefaultSettings(Input::make($name), $field);
+        $input = self::applyDefaultSettings(Input::make($name)->withMetadata(), $field);
 
         $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
             ->uploaderStyle(Style::tryFrom($field->config['uploaderStyle'] ?? null) ?? Style::tryFrom(self::getDefaultConfig()['uploaderStyle']))
