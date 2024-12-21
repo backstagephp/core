@@ -71,7 +71,6 @@ class EditSetting extends EditRecord
                 continue;
             }
 
-
             $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
         }
 
@@ -192,7 +191,7 @@ class EditSetting extends EditRecord
                 $info = $file['fileInfo'];
                 $detailedInfo = !empty($info['imageInfo']) ? $info['imageInfo'] : (!empty($info['videoInfo']) ? $info['videoInfo'] : (!empty($info['contentInfo']) ? $info['contentInfo'] : []));
 
-                $media[] = MediaPickerModel::create([ // TODO: Rename dit
+                $media[] = MediaPickerModel::create([
                     'site_ulid' => Filament::getTenant()->ulid,
                     'disk' => 'uploadcare', // TODO: Of 'config('media-picker.disk')'?
                     'uploaded_by' => auth()->user()->id,
