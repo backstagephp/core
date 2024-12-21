@@ -65,7 +65,11 @@ class EditSetting extends EditRecord
                 $media = MediaPickerModel::whereIn('ulid', $this->record->values[$field->slug])
                     ->get()
                     ->map(function ($media) {
-                        return $media->filename; // TODO: Of dit moet uit de metadata komen? En dan UUID opslaan
+                        if (! isset($media->metadata['cdnUrl'])) {
+                            throw new \Exception('Uploadcare file does not have a CDN URL');
+                        }
+
+                        return $media->metadata['cdnUrl'];
                     })->toArray();
 
                 $data['setting'][$field->slug] = json_encode($media);
@@ -199,7 +203,7 @@ class EditSetting extends EditRecord
                     'original_filename' => $info['name'],
                     'checksum' => md5_file($info['cdnUrl']),
                 ], [
-                    'filename' => $info['cdnUrl'], // TODO: Of 'uuid'?
+                    'filename' => $info['uuid'],
                     'uploaded_by' => auth()->user()->id,
                     'extension' => $detailedInfo['format'] ?? null,
                     'mime_type' => $info['mimeType'],
