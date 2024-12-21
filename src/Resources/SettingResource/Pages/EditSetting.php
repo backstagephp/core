@@ -9,12 +9,8 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\Media;
-use Vormkracht10\Backstage\Fields\Radio;
 use Vormkracht10\MediaPicker\MediaPicker;
 use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\Color;
 use Vormkracht10\Backstage\Fields\DateTime;
 use Vormkracht10\Backstage\Fields\KeyValue;
@@ -23,9 +19,7 @@ use Vormkracht10\Backstage\Fields\Radio;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\CheckboxList;
 use Vormkracht10\Backstage\Fields\FileUploadcare;
-use Vormkracht10\Backstage\Models\Media as MediaModel;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Fields\Uploadcare;
 use Vormkracht10\Backstage\Models\Media as MediaModel;
 use Vormkracht10\Backstage\Resources\SettingResource; // rename
 
