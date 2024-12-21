@@ -36,7 +36,7 @@ class EditSetting extends EditRecord
     #[On('refreshFields')]
     public function refresh(): void
     {
-        // 
+        //
     }
 
     protected function getHeaderActions(): array
