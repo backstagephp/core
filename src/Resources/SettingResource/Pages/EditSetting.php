@@ -13,12 +13,13 @@ use Filament\Resources\Pages\EditRecord;
 use Vormkracht10\Backstage\Fields\Color;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
+use Vormkracht10\MediaPicker\MediaPicker;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\DateTime;
 use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Uploadcare;
 use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\FileUploadcare;
 use Vormkracht10\Backstage\Models\Media as MediaModel;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\Backstage\Resources\SettingResource; // rename
@@ -77,7 +78,6 @@ class EditSetting extends EditRecord
 
     public function form(Form $form): Form
     {
-        dd('test');
         return $form
             ->schema([
                 Tabs::make('Tabs')
@@ -121,7 +121,7 @@ class EditSetting extends EditRecord
                 'checkbox' => Checkbox::make(name: 'setting.' . $field->slug, field: $field),
                 'checkbox-list' => CheckboxList::make(name: 'setting.' . $field->slug, field: $field),
                 'media' => Media::make(name: 'setting.' . $field->slug, field: $field),
-                'file-uploadcare' => Uploadcare::make(name: 'setting.' . $field->slug, field: $field),
+                'file-uploadcare' => FileUploadcare::make(name: 'setting.' . $field->slug, field: $field),
                 'key-value' => KeyValue::make(name: 'setting.' . $field->slug, field: $field),
                 'radio' => Radio::make(name: 'setting.' . $field->slug, field: $field),
                 'toggle' => Toggle::make(name: 'setting.' . $field->slug, field: $field),
