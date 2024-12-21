@@ -34,7 +34,10 @@ class EditSetting extends EditRecord
     protected static string $resource = SettingResource::class;
 
     #[On('refreshFields')]
-    public function refresh(): void {}
+    public function refresh(): void
+    {
+        // 
+    }
 
     protected function getHeaderActions(): array
     {
