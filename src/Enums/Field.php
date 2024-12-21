@@ -14,6 +14,7 @@ enum Field: string
     case Color = 'color';
     case DateTime = 'datetime';
     case File = 'file-upload';
+    case Uploadcare = 'file-uploadcare';
     case Hidden = 'hidden';
     case KeyValue = 'key-value';
     case Link = 'link';
