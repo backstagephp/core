@@ -66,7 +66,7 @@ class Content extends Model
         return $this->hasMany(ContentFieldValue::class)
             ->with('field');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
      */
@@ -76,6 +76,7 @@ class Content extends Model
             get: fn (?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
         );
     }
+
     /**
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
      */
