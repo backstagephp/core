@@ -38,7 +38,7 @@ class Uploadcare extends FieldBase implements FieldInterface
                         ->label(__('Field specific'))
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
-                                // 
+                                //
                             ]),
                         ]),
                 ])->columnSpanFull(),
