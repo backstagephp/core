@@ -46,7 +46,6 @@ class EditSetting extends EditRecord
         ];
     }
 
-    // TODO: Wanneer slug wordt aangepast werkt dit niet meer goed.
     protected function mutateFormDataBeforeFill(array $data): array
     {
         if ($this->record->fields->count() === 0) {
