@@ -5,8 +5,8 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
 use Vormkracht10\Backstage\Models\Media as MediaModel;
+use Vormkracht10\MediaPicker\Components\MediaPicker;
 
 class Media extends FieldBase implements FieldInterface
 {

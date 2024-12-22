@@ -3,33 +3,30 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
-use Filament\Forms\Form;
-use Livewire\Attributes\On;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Vormkracht10\Backstage\Enums\Field;
-use Vormkracht10\Backstage\Fields\Text;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Backstage;
 use Vormkracht10\Backstage\Concerns\ClassInspectorTrait;
-use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\Media;
-use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\Toggle;
-use Vormkracht10\MediaPicker\MediaPicker;
+use Vormkracht10\Backstage\Enums\Field;
 use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\Color;
 use Vormkracht10\Backstage\Fields\DateTime;
 use Vormkracht10\Backstage\Fields\KeyValue;
-use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\Media;
+use Vormkracht10\Backstage\Fields\Radio;
 use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\CheckboxList;
-use Vormkracht10\Backstage\Fields\FileUploadcare;
-use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\MediaPicker\Models\Media as MediaPickerModel; // rename
+use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\Toggle;
+use Vormkracht10\Backstage\Resources\SettingResource;
+
+// rename
 
 class EditSetting extends EditRecord
 {
