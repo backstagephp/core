@@ -70,7 +70,7 @@ class Media extends FieldBase implements FieldInterface
             return $data;
         }
 
-        if (!isset($data['setting'][$field->slug])) {
+        if (! isset($data['setting'][$field->slug])) {
             return $data;
         }
 
