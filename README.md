@@ -1,4 +1,4 @@
-# Laravel Backstage
+# Backstage CMS
 ## CMS done the Laravel Way
 *Enter backstage if you want to be in front*
 
