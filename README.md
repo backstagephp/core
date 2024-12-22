@@ -1,6 +1,6 @@
 # Laravel Backstage
 ## CMS done the Laravel Way
-### Enter backstage if you want to be in front
+*Enter backstage if you want to be in front*
 
 ![Test](https://github.com/vormkracht10/backstage/actions/workflows/run-tests.yml/badge.svg)
 ![Fresh Laravel install](https://github.com/vormkracht10/backstage/actions/workflows/setup-in-laravel.yml/badge.svg)
