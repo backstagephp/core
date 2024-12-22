@@ -17,7 +17,13 @@ class LanguageFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'code' => 'nl',
+            'name' => 'Netherlands',
+            'native' => 'Nederlands',
+            'active' => true,
+            'default' => false,
+        ];
     }
 
     public function configure()
