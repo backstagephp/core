@@ -2,10 +2,10 @@
 
 namespace Vormkracht10\Backstage\Concerns;
 
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
-use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Backstage;
 
 trait ClassInspectorTrait
@@ -13,18 +13,20 @@ trait ClassInspectorTrait
     private function initializeDefaultField(string $fieldType): array
     {
         $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+
         return $this->getClassDetails($className);
     }
 
     private function initializeCustomField(string $fieldType): array
     {
         $className = Backstage::getFields()[$fieldType] ?? null;
+
         return $this->getClassDetails($className);
     }
 
     private function getClassDetails(?string $className): array
     {
-        if (!$className || !class_exists($className)) {
+        if (! $className || ! class_exists($className)) {
             return [
                 'exists' => false,
                 'class' => $className,
@@ -32,7 +34,7 @@ trait ClassInspectorTrait
                 'properties' => [],
                 'constants' => [],
                 'interfaces' => [],
-                'instance' => null
+                'instance' => null,
             ];
         }
 
@@ -48,7 +50,7 @@ trait ClassInspectorTrait
             'interfaces' => $reflection->getInterfaceNames(),
             'instance' => $instance,
             'parentClass' => $reflection->getParentClass() ? $reflection->getParentClass()->getName() : null,
-            'traits' => $reflection->getTraitNames()
+            'traits' => $reflection->getTraitNames(),
         ];
     }
 
@@ -64,6 +66,7 @@ trait ClassInspectorTrait
                 'docComment' => $method->getDocComment() ?: null,
             ];
         }
+
         return $methods;
     }
 
@@ -79,6 +82,7 @@ trait ClassInspectorTrait
                 'defaultValue' => $this->getPropertyDefaultValue($property),
             ];
         }
+
         return $properties;
     }
 
@@ -94,13 +98,19 @@ trait ClassInspectorTrait
                 'isPassedByReference' => $param->isPassedByReference(),
             ];
         }
+
         return $parameters;
     }
 
     private function getVisibility($reflection): string
     {
-        if ($reflection->isPrivate()) return 'private';
-        if ($reflection->isProtected()) return 'protected';
+        if ($reflection->isPrivate()) {
+            return 'private';
+        }
+        if ($reflection->isProtected()) {
+            return 'protected';
+        }
+
         return 'public';
     }
 
