@@ -1,5 +1,5 @@
 # Backstage CMS
-## CMS done the Laravel Way
+## CMS done the Laravel way
 *Enter backstage if you want to be in front*
 
 ![Test](https://github.com/vormkracht10/backstage/actions/workflows/run-tests.yml/badge.svg)
