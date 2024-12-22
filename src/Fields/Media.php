@@ -3,8 +3,10 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
+use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\MediaPicker\Components\MediaPicker;
+use Vormkracht10\Backstage\Models\Media as MediaModel;
 
 class Media extends FieldBase implements FieldInterface
 {
@@ -43,5 +45,43 @@ class Media extends FieldBase implements FieldInterface
                         ]),
                 ])->columnSpanFull(),
         ];
+    }
+
+    public static function mutateFormDataCallback(Model $record, Field $field, array $data): array
+    {
+        if (! isset($record->values[$field->slug])) {
+            return $data;
+        }
+
+        $media = MediaModel::whereIn('ulid', $record->values[$field->slug])
+            ->get()
+            ->map(function ($media) {
+                return 'media/' . $media->filename;
+            })->toArray();
+
+        $data['setting'][$field->slug] = $media;
+
+        return $data;
+    }
+
+    public static function mutateBeforeSaveCallback(Model $record, Field $field, array $data): array
+    {
+        $mediaFields = $record->fields->filter(function ($field) {
+            return $field->field_type === 'media';
+        });
+
+        if ($mediaFields->count() === 0) {
+            return $data;
+        }
+
+        foreach ($mediaFields as $field) {
+            $media = MediaPicker::create($data['setting'][$field->slug]);
+
+            $data['setting'][$field->slug] = collect($media)->map(function ($media) {
+                return $media->ulid;
+            })->toArray();
+        }
+
+        return $data;
     }
 }

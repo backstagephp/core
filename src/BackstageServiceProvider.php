@@ -179,6 +179,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                 Backstage::registerComponent($component);
             });
 
+        collect($this->app['config']['backstage']['fields'] ?? [])
+            ->each(function ($field) {
+                Backstage::registerField($field);
+            });
+
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
     }

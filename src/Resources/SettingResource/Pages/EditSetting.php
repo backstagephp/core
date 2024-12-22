@@ -3,35 +3,39 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Form;
+use Livewire\Attributes\On;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Vormkracht10\Backstage\Enums\Field;
+use Vormkracht10\Backstage\Fields\Text;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Livewire\Attributes\On;
-use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Backstage;
+use Vormkracht10\Backstage\Concerns\ClassInspectorTrait;
 use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\FileUploadcare;
-use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Fields\Toggle;
-use Vormkracht10\Backstage\Models\Media as MediaModel;
-use Vormkracht10\Backstage\Resources\SettingResource;
 use Vormkracht10\MediaPicker\MediaPicker;
+use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\DateTime;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\FileUploadcare;
+use Vormkracht10\Backstage\Resources\SettingResource;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 use Vormkracht10\MediaPicker\Models\Media as MediaPickerModel; // rename
 
 class EditSetting extends EditRecord
 {
     protected static string $resource = SettingResource::class;
+
+    use ClassInspectorTrait;
 
     #[On('refreshFields')]
     public function refresh(): void
@@ -53,30 +57,17 @@ class EditSetting extends EditRecord
         }
 
         foreach ($this->record->fields as $field) {
-            if ($field->field_type === 'media' && isset($this->record->values[$field->slug])) {
-                $media = MediaModel::whereIn('ulid', $this->record->values[$field->slug])
-                    ->get()
-                    ->map(function ($media) {
-                        return 'media/' . $media->filename;
-                    })->toArray();
 
-                $data['setting'][$field->slug] = $media;
+            $f = Field::tryFrom($field->field_type)
+                ? $this->initializeDefaultField($field->field_type)
+                : $this->initializeCustomField($field->field_type);
 
-                continue;
-            }
+            if ($f['methods']['mutateFormDataCallback']) {
+                $class = $f['class'];
 
-            if ($field->field_type === 'file-uploadcare' && isset($this->record->values[$field->slug])) {
-                $media = MediaPickerModel::whereIn('ulid', $this->record->values[$field->slug])
-                    ->get()
-                    ->map(function ($media) {
-                        if (! isset($media->metadata['cdnUrl'])) {
-                            throw new \Exception('Uploadcare file does not have a CDN URL');
-                        }
+                $f = new $class;
 
-                        return $media->metadata['cdnUrl'];
-                    })->toArray();
-
-                $data['setting'][$field->slug] = json_encode($media);
+                $data = $f::mutateFormDataCallback($this->record, $field, $data);
 
                 continue;
             }
@@ -89,9 +80,19 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data = $this->handleMediaCreation($data);
+        foreach ($this->record->fields as $field) {
+            $f = Field::tryFrom($field->field_type)
+                ? $this->initializeDefaultField($field->field_type)
+                : $this->initializeCustomField($field->field_type);
 
-        $data = $this->handleUploadcare($data);
+            if ($f['methods']['mutateBeforeSaveCallback']) {
+                $class = $f['class'];
+
+                $f = new $class;
+
+                $data = $f::mutateBeforeSaveCallback($this->record, $field, $data);
+            }
+        }
 
         $fields = $data['setting'] ?? [];
         unset($data['setting']);
@@ -136,6 +137,14 @@ class EditSetting extends EditRecord
             return $inputs;
         }
 
+        $customFields = [];
+
+        foreach (Backstage::getFields() as $fieldType => $field) {
+            $f = new $field;
+
+            $customFields[$fieldType] = $f;
+        }
+
         foreach ($this->record->fields as $field) {
 
             $input = match ($field->field_type) {
@@ -146,84 +155,21 @@ class EditSetting extends EditRecord
                 'checkbox' => Checkbox::make(name: 'setting.' . $field->slug, field: $field),
                 'checkbox-list' => CheckboxList::make(name: 'setting.' . $field->slug, field: $field),
                 'media' => Media::make(name: 'setting.' . $field->slug, field: $field),
-                'file-uploadcare' => FileUploadcare::make(name: 'setting.' . $field->slug, field: $field),
                 'key-value' => KeyValue::make(name: 'setting.' . $field->slug, field: $field),
                 'radio' => Radio::make(name: 'setting.' . $field->slug, field: $field),
                 'toggle' => Toggle::make(name: 'setting.' . $field->slug, field: $field),
                 'color' => Color::make(name: 'setting.' . $field->slug, field: $field),
                 'datetime' => DateTime::make(name: 'setting.' . $field->slug, field: $field),
-                default => TextInput::make(name: 'setting.' . $field->slug),
+                default => null
             };
+
+            if (! $input) {
+                $input = $customFields[$fieldType] = $f::make('setting.' . $field->slug, $field);
+            }
 
             $inputs[] = $input;
         }
 
         return $inputs;
-    }
-
-    private function handleMediaCreation(array $data): array
-    {
-        $mediaFields = $this->record->fields->filter(function ($field) {
-            return $field->field_type === 'media';
-        });
-
-        if ($mediaFields->count() === 0) {
-            return $data;
-        }
-
-        foreach ($mediaFields as $field) {
-            $media = MediaPicker::create($data['setting'][$field->slug]);
-
-            $data['setting'][$field->slug] = collect($media)->map(function ($media) {
-                return $media->ulid;
-            })->toArray();
-        }
-
-        return $data;
-    }
-
-    private function handleUploadcare(array $data): array
-    {
-        $mediaFields = $this->record->fields->filter(function ($field) {
-            return $field->field_type === 'file-uploadcare';
-        });
-
-        if ($mediaFields->count() === 0) {
-            return $data;
-        }
-
-        foreach ($mediaFields as $field) {
-            $values = json_decode($data['setting'][$field->slug], true);
-
-            $media = [];
-
-            foreach ($values as $file) {
-                $info = $file['fileInfo'];
-                $detailedInfo = ! empty($info['imageInfo']) ? $info['imageInfo'] : (! empty($info['videoInfo']) ? $info['videoInfo'] : (! empty($info['contentInfo']) ? $info['contentInfo'] : []));
-
-                $media[] = MediaPickerModel::updateOrCreate([
-                    'site_ulid' => Filament::getTenant()->ulid,
-                    'disk' => 'uploadcare',
-                    'original_filename' => $info['name'],
-                    'checksum' => md5_file($info['cdnUrl']),
-                ], [
-                    'filename' => $info['uuid'],
-                    'uploaded_by' => auth()->user()->id,
-                    'extension' => $detailedInfo['format'] ?? null,
-                    'mime_type' => $info['mimeType'],
-                    'size' => $info['size'],
-                    'width' => isset($detailedInfo['width']) ? $detailedInfo['width'] : null,
-                    'height' => isset($detailedInfo['height']) ? $detailedInfo['height'] : null,
-                    'public' => config('media-picker.visibility') === 'public',
-                    'metadata' => $info,
-                ]);
-            }
-
-            $data['setting'][$field->slug] = collect($media)->map(function ($media) {
-                return $media->ulid;
-            })->toArray();
-        }
-
-        return $data;
     }
 }

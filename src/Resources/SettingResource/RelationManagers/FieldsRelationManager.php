@@ -2,21 +2,22 @@
 
 namespace Vormkracht10\Backstage\Resources\SettingResource\RelationManagers;
 
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Livewire\Component;
-use Vormkracht10\Backstage\Enums\Field as EnumsField;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Facades\Backstage;
+use Vormkracht10\Backstage\Enums\Field as EnumsField;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class FieldsRelationManager extends RelationManager
 {
@@ -28,7 +29,11 @@ class FieldsRelationManager extends RelationManager
             return [];
         }
 
-        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+        if (EnumsField::tryFrom($fieldType)) {
+            $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+        } else {
+            $className = Backstage::getFields()[$fieldType] ?? null;
+        }
 
         if (! class_exists($className) || ! method_exists($className, 'getForm')) {
             return [];
@@ -52,7 +57,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -63,29 +68,73 @@ class FieldsRelationManager extends RelationManager
                                     ->label(__('Field Type'))
                                     ->live(debounce: 250)
                                     ->reactive()
-                                    ->options(EnumsField::array())
+                                    ->options(
+                                        function () {
+                                            $defaultFields = EnumsField::array();
+                                            $customFields = $this->formatCustomFields(Backstage::getFields());
+
+                                            $mergedFields = array_merge($defaultFields, $customFields);
+
+                                            asort($mergedFields);
+
+                                            return $mergedFields;
+                                        }
+                                    )
                                     ->required()
                                     ->afterStateUpdated(function ($state, Set $set) {
                                         $set('config', []);
 
-                                        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($state);
-
-                                        if (class_exists($className)) {
-                                            // Initialize default config structure for this field type
-                                            $fieldInstance = app($className);
-                                            $defaultConfig = $fieldInstance::getDefaultConfig();
-                                            $set('config', $defaultConfig);
+                                        if (EnumsField::tryFrom($state)) {
+                                            $set('config', $this->initializeDefaultConfig($state));
+                                        } else {
+                                            $set('config', $this->initializeCustomConfig($state));
                                         }
                                     }),
                             ]),
                         Section::make('Configuration')
                             ->columns(3)
-                            ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
+                            ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
                                 $get('field_type')
                             ))
-                            ->visible(fn (Get $get) => filled($get('field_type'))),
+                            ->visible(fn(Get $get) => filled($get('field_type'))),
                     ]),
             ]);
+    }
+
+    private function formatCustomFields(array $fields): array
+    {
+        return collect($fields)->mapWithKeys(function ($field, $key) {
+            $parts = explode('\\', $field);
+            $lastPart = end($parts);
+            $formattedName = ucwords(str_replace('_', ' ', strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $lastPart))));
+            return [$key => $formattedName];
+        })->toArray();
+    }
+
+    private function initializeDefaultConfig(string $fieldType): array
+    {
+        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+
+        if (! class_exists($className)) {
+            return [];
+        }
+
+        $fieldInstance = app($className);
+
+        return $fieldInstance::getDefaultConfig();
+    }
+
+    private function initializeCustomConfig(string $fieldType): array
+    {
+        $className = Backstage::getFields()[$fieldType] ?? null;
+
+        if (! class_exists($className)) {
+            return [];
+        }
+
+        $fieldInstance = app($className);
+
+        return $fieldInstance::getDefaultConfig();
     }
 
     public function table(Table $table): Table
