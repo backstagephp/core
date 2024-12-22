@@ -49,7 +49,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Let\'s get started!');
 
                         if ($command->confirm('Would you like us to install Backstage for you?', true)) {
-                            $command->comment('Executing...');
+                            $command->comment('Lights, camera, action! Setting up for the show...');
 
                             $command->callSilently('vendor:publish', [
                                 '--tag' => 'backstage-migrations',
@@ -66,15 +66,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                                 '--force' => true,
                             ]);
 
-                            if ($command->confirm('Would you like us to setup the media picker package?', true)) {
-                                $command->comment('Lights, camera, action! Setting up the media picker for the show...');
-                                $this->writeMediaPickerConfig();
+                            $this->writeMediaPickerConfig();
 
-                                $command->callSilently('vendor:publish', [
-                                    '--tag' => 'media-picker-migrations',
-                                    '--force' => true,
-                                ]);
-                            }
+                            $command->callSilently('vendor:publish', [
+                                '--tag' => 'media-picker-migrations',
+                                '--force' => true,
+                            ]);
 
                             $command->callSilently('migrate:fresh', [
                                 '--force' => true,
