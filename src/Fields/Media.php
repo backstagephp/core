@@ -66,21 +66,19 @@ class Media extends FieldBase implements FieldInterface
 
     public static function mutateBeforeSaveCallback(Model $record, Field $field, array $data): array
     {
-        $mediaFields = $record->fields->filter(function ($field) {
-            return $field->field_type === 'media';
-        });
-
-        if ($mediaFields->count() === 0) {
+        if ($field->field_type !== 'media') {
             return $data;
         }
 
-        foreach ($mediaFields as $field) {
-            $media = MediaPicker::create($data['setting'][$field->slug]);
-
-            $data['setting'][$field->slug] = collect($media)->map(function ($media) {
-                return $media->ulid;
-            })->toArray();
+        if (!isset($data['setting'][$field->slug])) {
+            return $data;
         }
+
+        $media = MediaPicker::create($data['setting'][$field->slug]);
+
+        $data['setting'][$field->slug] = collect($media)->map(function ($media) {
+            return $media->ulid;
+        })->toArray();
 
         return $data;
     }
