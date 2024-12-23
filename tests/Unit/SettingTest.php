@@ -2,7 +2,7 @@
 
 use Vormkracht10\Backstage\Models\Setting;
 
-test('confirm setting returns value', function () {
+test('confirm setting returns correct value', function () {
     Setting::factory()->create([
         'name' => 'address',
         'slug' => 'address',
@@ -12,15 +12,27 @@ test('confirm setting returns value', function () {
         ],
     ]);
 
-    // Single value
     expect(setting('address.street'))->toBe($street);
+});
 
-    // All setting values
+test('confirm setting returns array on setting', function () {
+
+    Setting::factory()->create([
+        'name' => 'address',
+        'slug' => 'address',
+        'values' => [
+            'street' => $street = 'St. Annastraat',
+            'city' => $city = 'Nijmegen',
+        ],
+    ]);
+
     expect(setting('address'))->toBe([
         'street' => $street,
         'city' => $city,
     ]);
 
-    // Default value
-    expect(setting('address.zipcode', $zipcode = '1234AB'))->toBe($zipcode);
+});
+
+test('confirm setting returns default value', function () {
+    expect(setting('address.street', 'default'))->toBe('default');
 });
