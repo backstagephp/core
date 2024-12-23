@@ -184,8 +184,6 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
-
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     protected function getAssetPackageName(): ?string
