@@ -14,15 +14,15 @@ class RequestServiceProvider extends ServiceProvider
     {
         Request::macro('content', function () {
             return once(function () {
-                $content = Content::
-                join('sites', 'sites.ulid', 'content.site_ulid')
-                ->join('domains', 'domains.site_ulid', 'sites.ulid')
-                ->join('domain_language', function (JoinClause $join) {
-                    $join->on('domain_language.domain_ulid', '=', 'domains.ulid')
-                        ->on('domain_language.language_code', '=', 'content.language_code');
-                })
-                ->whereRaw('CONCAT(domain_language.prefix, content.path) = ?', [$this->path()])
-                ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())]);
+                $content = Content::join('sites', 'sites.ulid', 'content.site_ulid')
+                    ->join('domains', 'domains.site_ulid', 'sites.ulid')
+                    ->join('domain_language', function (JoinClause $join) {
+                        $join->on('domain_language.domain_ulid', '=', 'domains.ulid')
+                            ->on('domain_language.language_code', '=', 'content.language_code');
+                    })
+                    ->whereRaw('CONCAT(domain_language.prefix, content.path) = ?', [$this->path()])
+                    ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())]);
+
                 return $content->first();
             });
         });
@@ -40,4 +40,3 @@ class RequestServiceProvider extends ServiceProvider
         });
     }
 }
- 
