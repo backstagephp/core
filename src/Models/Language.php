@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
@@ -30,8 +31,8 @@ class Language extends Model
         return static::firstWhere('default', 1);
     }
 
-    public function sites(): BelongsToMany
+    public function domains(): BelongsToMany
     {
-        return $this->belongsToMany(Site::class, 'language_site', 'code');
+        return $this->belongsToMany(Domain::class);
     }
 }

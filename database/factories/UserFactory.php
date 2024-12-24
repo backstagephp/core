@@ -25,7 +25,6 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'current_site_ulid' => Site::default(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

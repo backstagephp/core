@@ -30,19 +30,23 @@ class BackstageSeeder extends Seeder
             'code' => 'en',
             'default' => true,
         ])->create();
-        $domain = Domain::factory([
-           'name' => pathinfo(config('app.url', 'localhost'))['basename'],
-        ])
-            ->for($language)
-            ->create();
 
         $site = Site::factory([
-            'name' => config('app.name', 'Backstage'),
+            'name' => $name = config('app.name', 'Backstage'),
+            'slug' => Str::slug($name),
+            'title' => $name,
+            'default' => true
         ])
-            ->for($domain)
             ->create();
 
-        Type::factory()->state([
+        $domain = Domain::factory([
+            'site_ulid' => $site->ulid,
+            'name' => pathinfo(config('app.url', 'localhost'))['basename'],
+        ])
+            ->hasLanguages($language)
+            ->create();
+
+        $type = Type::factory()->state([
                 'name' => $name = 'Page',
                 'name_plural' => Str::plural($name),
                 'slug' => Str::slug($name),
@@ -69,15 +73,16 @@ class BackstageSeeder extends Seeder
                 'field_type' => 'builder',
                 'position' => 3,
             ]))
-            ->for($site)
+            ->hasAttached($site)
             ->create();
 
-        Form::factory()->state([
+        Form::factory([
             'name' => $name = 'Contact',
             'slug' => Str::slug($name),
             'name_field' => null,
             'site_ulid' => $site->ulid,
         ])
+            ->for($site)
             ->has(Field::factory(1, [
                 'name' => 'Name',
                 'slug' => 'name',
@@ -91,6 +96,7 @@ class BackstageSeeder extends Seeder
                 'position' => 2,
             ]))
             ->has(FormAction::factory(1, [
+                'langauge_code' => $language,
                 'config' => [
                     'subject' => 'Contact submission',
                     'to_email' => 'email',
@@ -99,16 +105,14 @@ class BackstageSeeder extends Seeder
                     'from_name' => config('mail.from.name', 'Vormkracht10'),
                     'body' => 'Thanks for contacting us.',
                 ],
-            ]))
-            ->create();
+            ]));
 
-        Block::factory()->state([
+        Block::factory([
             'name' => $name = 'Text',
             'slug' => Str::slug($name),
             'icon' => 'document-text',
             'name_field' => null,
         ])
-            ->for($site)
             ->has(Field::factory(1, [
                 'name' => 'Body',
                 'slug' => 'body',
@@ -124,7 +128,6 @@ class BackstageSeeder extends Seeder
             'name_field' => null,
             'component' => 'form',
         ])
-            ->for($site)
             ->has(Field::factory(1, [
                 'name' => 'Slug',
                 'slug' => 'slug',
@@ -133,9 +136,8 @@ class BackstageSeeder extends Seeder
             ]))
             ->create();
 
-
-        Content::factory()
-            ->state([
+        Content::factory([
+                'type_slug' => $type->slug,
                 'site_ulid' => $site->ulid,
                 'language_code' => $language->code,
             ])
@@ -146,8 +148,7 @@ class BackstageSeeder extends Seeder
             ->create();
 
         // Contact
-        Content::factory()
-            ->state([
+        Content::factory([
                 'name' => 'Contact',
                 'slug' => 'contact',
                 'path' => 'contact',
@@ -166,26 +167,25 @@ class BackstageSeeder extends Seeder
                 ]),
             ]), 'values')->create();
 
-            User::factory()->state([
+            User::factory([
                 'name' => 'Mark',
                 'email' => 'mark@vk10.nl',
                 'password' => 'mark@vk10.nl',
             ])
-            ->for($site)
             ->create();
     
-            User::factory()->state([
+            User::factory([
                 'name' => 'Mathieu',
                 'email' => 'mathieu@vk10.nl',
                 'password' => 'mathieu@vk10.nl',
             ])
-            ->for($site)->create();
+            ->create();
     
-            User::factory()->state([
+            User::factory([
                 'name' => 'Bas',
                 'email' => 'bas@vk10.nl',
                 'password' => 'bas@vk10.nl',
             ])
-            ->for($site)->create();
+            ->create();
     }
 }

@@ -25,7 +25,7 @@ return new class extends Migration
         });
 
         Schema::create('domain_language', function (Blueprint $table) {
-            $table->foreignUlid('domain_ulid')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('domain_ulid')->constrained(table: 'domains', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->char('language_code', 5);
             $table->string('path')->default()->nullable();
             $table->primary(['domain_ulid', 'language_code']);

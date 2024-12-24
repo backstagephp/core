@@ -18,8 +18,8 @@ class LanguageFactory extends Factory
     {
         return [
             'code' => $this->faker->unique()->languageCode(),
-            'name' => 'Netherlands',
-            'native' => 'Nederlands',
+            'name' => $this->faker->unique()->country(),
+            'native' => $this->faker->unique()->country(),
             'active' => true,
             'default' => false,
         ];
