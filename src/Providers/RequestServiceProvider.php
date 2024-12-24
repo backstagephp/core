@@ -22,6 +22,7 @@ class RequestServiceProvider extends ServiceProvider
                     })
                     ->whereRaw('CONCAT(sites.path, domain_language.path, content.path) = ?', [$this->path()])
                     ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())]);
+
                 return $content->first();
             });
         });

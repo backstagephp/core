@@ -2,11 +2,9 @@
 
 namespace Vormkracht10\Backstage\Resources\DomainResource\RelationManagers;
 
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -18,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Locale;
-use Vormkracht10\Backstage\Models\FormAction;
 use Vormkracht10\Backstage\Models\Language;
 
 class LanguagesRelationManager extends RelationManager
@@ -69,9 +66,9 @@ class LanguagesRelationManager extends RelationManager
                                     )
                                     ->allowHtml()
                                     ->visible(fn () => Language::where('active', 1)->count() > 1),
-                                    TextInput::make('path')
-                                        ->label(__('Path'))
-                                        ->columnSpan(6),
+                                TextInput::make('path')
+                                    ->label(__('Path'))
+                                    ->columnSpan(6),
                             ]),
                     ]),
             ]);
