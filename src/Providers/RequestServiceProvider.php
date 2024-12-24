@@ -2,6 +2,7 @@
 
 namespace Vormkracht10\Backstage\Providers;
 
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Vormkracht10\Backstage\Models\Content;
@@ -12,7 +13,18 @@ class RequestServiceProvider extends ServiceProvider
     public function boot()
     {
         Request::macro('content', function () {
-            return once(fn () => Content::where('path', $this->path())->first());
+            return once(function () {
+                $content = Content::
+                join('sites', 'sites.ulid', 'content.site_ulid')
+                ->join('domains', 'domains.site_ulid', 'sites.ulid')
+                ->join('domain_language', function (JoinClause $join) {
+                    $join->on('domain_language.domain_ulid', '=', 'domains.ulid')
+                        ->on('domain_language.language_code', '=', 'content.language_code');
+                })
+                ->whereRaw('CONCAT(domain_language.prefix, content.path) = ?', [$this->path()])
+                ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())]);
+                return $content->first();
+            });
         });
 
         Request::macro('domain', function () {
@@ -28,3 +40,4 @@ class RequestServiceProvider extends ServiceProvider
         });
     }
 }
+ 

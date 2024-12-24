@@ -18,18 +18,11 @@ class LanguageFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => 'nl',
+            'code' => $this->faker->unique()->languageCode(),
             'name' => 'Netherlands',
             'native' => 'Nederlands',
             'active' => true,
             'default' => false,
         ];
-    }
-
-    public function configure()
-    {
-        return $this->afterCreating(function (Language $language) {
-            $language->sites()->attach(Site::default());
-        });
     }
 }
