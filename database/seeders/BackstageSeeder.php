@@ -3,17 +3,17 @@
 namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\language;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\ContentFieldValue;
+use Vormkracht10\Backstage\Models\Domain;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Form;
 use Vormkracht10\Backstage\Models\FormAction;
+use Vormkracht10\Backstage\Models\language;
+use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
 
 class BackstageSeeder extends Seeder
@@ -31,7 +31,7 @@ class BackstageSeeder extends Seeder
             'default' => true,
         ])->create();
         $domain = Domain::factory([
-           'name' => pathinfo(config('app.url', 'localhost'))['basename'],
+            'name' => pathinfo(config('app.url', 'localhost'))['basename'],
         ])
             ->for($language)
             ->create();
@@ -43,14 +43,14 @@ class BackstageSeeder extends Seeder
             ->create();
 
         Type::factory()->state([
-                'name' => $name = 'Page',
-                'name_plural' => Str::plural($name),
-                'slug' => Str::slug($name),
-                'icon' => 'document',
-                'name_field' => 'title',
-                'body_field' => 'body',
-                'public' => true,
-            ])
+            'name' => $name = 'Page',
+            'name_plural' => Str::plural($name),
+            'slug' => Str::slug($name),
+            'icon' => 'document',
+            'name_field' => 'title',
+            'body_field' => 'body',
+            'public' => true,
+        ])
             ->has(Field::factory(1, [
                 'name' => 'Title',
                 'slug' => 'title',
@@ -133,7 +133,6 @@ class BackstageSeeder extends Seeder
             ]))
             ->create();
 
-
         Content::factory()
             ->state([
                 'site_ulid' => $site->ulid,
@@ -166,26 +165,26 @@ class BackstageSeeder extends Seeder
                 ]),
             ]), 'values')->create();
 
-            User::factory()->state([
-                'name' => 'Mark',
-                'email' => 'mark@vk10.nl',
-                'password' => 'mark@vk10.nl',
-            ])
+        User::factory()->state([
+            'name' => 'Mark',
+            'email' => 'mark@vk10.nl',
+            'password' => 'mark@vk10.nl',
+        ])
             ->for($site)
             ->create();
-    
-            User::factory()->state([
-                'name' => 'Mathieu',
-                'email' => 'mathieu@vk10.nl',
-                'password' => 'mathieu@vk10.nl',
-            ])
+
+        User::factory()->state([
+            'name' => 'Mathieu',
+            'email' => 'mathieu@vk10.nl',
+            'password' => 'mathieu@vk10.nl',
+        ])
             ->for($site)->create();
-    
-            User::factory()->state([
-                'name' => 'Bas',
-                'email' => 'bas@vk10.nl',
-                'password' => 'bas@vk10.nl',
-            ])
+
+        User::factory()->state([
+            'name' => 'Bas',
+            'email' => 'bas@vk10.nl',
+            'password' => 'bas@vk10.nl',
+        ])
             ->for($site)->create();
     }
 }
