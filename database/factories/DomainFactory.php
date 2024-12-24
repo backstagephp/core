@@ -18,8 +18,8 @@ class DomainFactory extends Factory
     public function definition(): array
     {
         return [
-            'site_ulid' => Site::default(),
-            'name' => 'localhost',
+            'site_ulid' => Site::factory(),
+            'name' => $this->faker->domainName(),
             'environment' => 'local',
         ];
     }

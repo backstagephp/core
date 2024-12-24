@@ -18,7 +18,7 @@ class FormFactory extends Factory
     public function definition(): array
     {
         return [
-            'site_ulid' => Site::default(),
+            'site_ulid' => Site::factory(),
             'name' => 'Contact',
             'submit_button' => 'Send',
         ];

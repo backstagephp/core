@@ -39,6 +39,11 @@ class Site extends Model
         return $this->hasMany(Content::class);
     }
 
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
+
     public function languages(): HasManyThrough
     {
         return $this->hasManyThrough(Language::class, Domain::class);

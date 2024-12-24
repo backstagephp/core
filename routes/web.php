@@ -6,7 +6,6 @@ use Vormkracht10\Backstage\Http\Controllers\FormController;
 
 Route::fallback(function (Request $request) {
 
-    dd($request, $request->content());
     abort_unless($request->content(), 404);
 
     if (! $request->isMethod('GET')) {

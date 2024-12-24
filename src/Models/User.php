@@ -63,11 +63,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         ];
     }
 
-    public function site(): BelongsTo
-    {
-        return $this->belongsTo(Site::class, 'current_site_id');
-    }
-
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);

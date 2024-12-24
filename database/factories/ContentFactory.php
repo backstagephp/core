@@ -19,8 +19,8 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'site_ulid' => Site::default(),
-            'language_code' => Language::default(),
+            'site_ulid' => Site::factory(),
+            'language_code' => Language::factory(),
             'type_slug' => 'page',
             'name' => 'Home',
             'slug' => 'home',
