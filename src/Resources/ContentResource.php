@@ -296,9 +296,9 @@ class ContentResource extends Resource
                     ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
                     ->limit(3),
                 ImageColumn::make('language_code')
-                ->label('Language')
-                ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
-                ->view('backstage::filament.tables.columns.language-flag-column'),
+                    ->label('Language')
+                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
+                    ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
                     ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
