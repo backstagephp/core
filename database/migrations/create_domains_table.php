@@ -18,8 +18,6 @@ return new class extends Migration
             $table->ulid('alias_of')->nullable()->index();
             $table->string('environment')->nullable();
             $table->timestamps();
-
-            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->nullOnDelete();
         });
 
         Schema::table('domains', function (Blueprint $table) {
