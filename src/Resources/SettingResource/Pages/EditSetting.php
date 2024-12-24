@@ -26,8 +26,6 @@ use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Fields\Toggle;
 use Vormkracht10\Backstage\Resources\SettingResource;
 
-// rename
-
 class EditSetting extends EditRecord
 {
     protected static string $resource = SettingResource::class;
