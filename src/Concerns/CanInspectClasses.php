@@ -8,7 +8,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Vormkracht10\Backstage\Backstage;
 
-trait ClassInspectorTrait
+trait CanInspectClasses
 {
     private function initializeDefaultField(string $fieldType): array
     {

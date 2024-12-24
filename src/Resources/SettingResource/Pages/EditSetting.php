@@ -10,7 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Backstage;
-use Vormkracht10\Backstage\Concerns\ClassInspectorTrait;
+use Vormkracht10\Backstage\Concerns\CanInspectClasses;
 use Vormkracht10\Backstage\Enums\Field;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;
@@ -32,7 +32,7 @@ class EditSetting extends EditRecord
 {
     protected static string $resource = SettingResource::class;
 
-    use ClassInspectorTrait;
+    use CanInspectClasses;
 
     #[On('refreshFields')]
     public function refresh(): void

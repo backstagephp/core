@@ -2,12 +2,12 @@
 
 namespace Vormkracht10\Backstage\Concerns;
 
-trait EnumValuesTrait
+trait HasEnumValues
 {
     abstract public static function cases(): array;
 
     public static function values(): array
     {
-        return array_map(fn ($enum) => $enum->value, static::cases());
+        return array_map(fn($enum) => $enum->value, static::cases());
     }
 }
