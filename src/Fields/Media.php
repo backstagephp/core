@@ -6,7 +6,8 @@ use Filament\Forms;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Media as MediaModel;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
+use Vormkracht10\MediaPicker\Components\MediaPicker as Input;
+use Vormkracht10\MediaPicker\MediaPicker;
 
 class Media extends FieldBase implements FieldInterface
 {
@@ -17,9 +18,9 @@ class Media extends FieldBase implements FieldInterface
         ];
     }
 
-    public static function make(string $name, Field $field): MediaPicker
+    public static function make(string $name, Field $field): Input
     {
-        $input = self::applyDefaultSettings(MediaPicker::make($name), $field);
+        $input = self::applyDefaultSettings(Input::make($name), $field);
 
         $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null);
 
