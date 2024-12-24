@@ -159,7 +159,11 @@ class EditSetting extends EditRecord
             };
 
             if (! $input) {
-                $input = $customFields[$fieldType] = $f::make('setting.' . $field->slug, $field);
+                $input = $customFields[$field->field_type] ?? null;
+
+                if ($input) {
+                    $input = $input::make('setting.' . $field->slug, $field);
+                }
             }
 
             $inputs[] = $input;
