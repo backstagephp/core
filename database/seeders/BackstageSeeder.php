@@ -35,7 +35,7 @@ class BackstageSeeder extends Seeder
             'name' => $name = config('app.name', 'Backstage'),
             'slug' => Str::slug($name),
             'title' => $name,
-            'default' => true
+            'default' => true,
         ])
             ->create();
 
@@ -47,14 +47,14 @@ class BackstageSeeder extends Seeder
             ->create();
 
         $type = Type::factory()->state([
-                'name' => $name = 'Page',
-                'name_plural' => Str::plural($name),
-                'slug' => Str::slug($name),
-                'icon' => 'document',
-                'name_field' => 'title',
-                'body_field' => 'body',
-                'public' => true,
-            ])
+            'name' => $name = 'Page',
+            'name_plural' => Str::plural($name),
+            'slug' => Str::slug($name),
+            'icon' => 'document',
+            'name_field' => 'title',
+            'body_field' => 'body',
+            'public' => true,
+        ])
             ->has(Field::factory(1, [
                 'name' => 'Title',
                 'slug' => 'title',
@@ -137,10 +137,10 @@ class BackstageSeeder extends Seeder
             ->create();
 
         Content::factory([
-                'type_slug' => $type->slug,
-                'site_ulid' => $site->ulid,
-                'language_code' => $language->code,
-            ])
+            'type_slug' => $type->slug,
+            'site_ulid' => $site->ulid,
+            'language_code' => $language->code,
+        ])
             ->has(ContentFieldValue::factory(1, [
                 'field_ulid' => Field::where('slug', 'title')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
                 'value' => 'Home',
@@ -149,13 +149,13 @@ class BackstageSeeder extends Seeder
 
         // Contact
         Content::factory([
-                'name' => 'Contact',
-                'slug' => 'contact',
-                'path' => 'contact',
-                'site_ulid' => $site->ulid,
-                'language_code' => $language->code,
-                'meta_tags' => ['title' => 'Contact'],
-            ])
+            'name' => 'Contact',
+            'slug' => 'contact',
+            'path' => 'contact',
+            'site_ulid' => $site->ulid,
+            'language_code' => $language->code,
+            'meta_tags' => ['title' => 'Contact'],
+        ])
             ->has(ContentFieldValue::factory(1, [
                 'field_ulid' => Field::where('slug', 'title')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
                 'value' => 'Contact',
@@ -167,25 +167,25 @@ class BackstageSeeder extends Seeder
                 ]),
             ]), 'values')->create();
 
-            User::factory([
-                'name' => 'Mark',
-                'email' => 'mark@vk10.nl',
-                'password' => 'mark@vk10.nl',
-            ])
+        User::factory([
+            'name' => 'Mark',
+            'email' => 'mark@vk10.nl',
+            'password' => 'mark@vk10.nl',
+        ])
             ->create();
-    
-            User::factory([
-                'name' => 'Mathieu',
-                'email' => 'mathieu@vk10.nl',
-                'password' => 'mathieu@vk10.nl',
-            ])
+
+        User::factory([
+            'name' => 'Mathieu',
+            'email' => 'mathieu@vk10.nl',
+            'password' => 'mathieu@vk10.nl',
+        ])
             ->create();
-    
-            User::factory([
-                'name' => 'Bas',
-                'email' => 'bas@vk10.nl',
-                'password' => 'bas@vk10.nl',
-            ])
+
+        User::factory([
+            'name' => 'Bas',
+            'email' => 'bas@vk10.nl',
+            'password' => 'bas@vk10.nl',
+        ])
             ->create();
     }
 }
