@@ -16,9 +16,10 @@ class Domain extends Model
 
     protected $guarded = [];
 
-    public function language()
+    public function languages()
     {
-        return $this->belongsTo(Language::class, 'language_code', 'code');
+        return $this->belongsToMany(Language::class, 'domain_language', 'domain_ulid', 'language_code')
+            ->withPivot('path');
     }
 
     public function site(): BelongsTo

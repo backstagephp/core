@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('slug');
             $table->string('title')->nullable();
             $table->string('title_separator')->nullable();
-            $table->char('language_code', 5)->nullable();
             $table->string('theme')->nullable();
             $table->string('primary_color')->nullable();
             $table->string('logo')->nullable();
@@ -29,8 +28,6 @@ return new class extends Migration
             $table->boolean('default')->default(false);
             $table->boolean('trailing_slash')->default(false);
             $table->timestamps();
-
-            $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::create('site_user', function (Blueprint $table) {
@@ -38,16 +35,6 @@ return new class extends Migration
             $table->foreignId('user_id');
 
             $table->index(['site_ulid', 'user_id']);
-        });
-
-        Schema::create('language_site', function (Blueprint $table) {
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-
-            $table->char('code', 5);
-
-            $table->foreign('code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
-
-            $table->index(['site_ulid', 'code']);
         });
     }
 };
