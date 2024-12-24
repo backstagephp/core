@@ -3,17 +3,17 @@
 namespace Vormkracht10\Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\language;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\ContentFieldValue;
+use Vormkracht10\Backstage\Models\Domain;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Form;
 use Vormkracht10\Backstage\Models\FormAction;
+use Vormkracht10\Backstage\Models\language;
+use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
 
 class BackstageSeeder extends Seeder
