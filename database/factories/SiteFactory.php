@@ -22,7 +22,6 @@ class SiteFactory extends Factory
             'slug' => Str::slug($name),
             'title' => $this->faker->sentence(),
             'title_separator' => '|',
-            'timezone' => config('app.locale'),
             'primary_color' => $this->faker->hexColor(),
             'timezone' => $this->faker->timezone(),
             'auth' => false,

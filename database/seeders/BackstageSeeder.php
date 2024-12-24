@@ -11,7 +11,7 @@ use Vormkracht10\Backstage\Models\Domain;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Form;
 use Vormkracht10\Backstage\Models\FormAction;
-use Vormkracht10\Backstage\Models\language;
+use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
@@ -24,7 +24,7 @@ class BackstageSeeder extends Seeder
     public function run(): void
     {
         // Create language
-        $language = language::factory([
+        $language = Language::factory([
             'name' => 'English',
             'native' => 'English',
             'code' => 'en',
