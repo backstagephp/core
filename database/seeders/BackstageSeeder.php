@@ -43,7 +43,7 @@ class BackstageSeeder extends Seeder
             'site_ulid' => $site->ulid,
             'name' => pathinfo(config('app.url', 'localhost'))['basename'],
         ])
-            ->hasLanguages($language)
+            ->hasAttached($language, ['path' => ''])
             ->create();
 
         $type = Type::factory()->state([

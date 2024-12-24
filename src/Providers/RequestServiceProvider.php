@@ -20,7 +20,7 @@ class RequestServiceProvider extends ServiceProvider
                         $join->on('domain_language.domain_ulid', '=', 'domains.ulid')
                             ->on('domain_language.language_code', '=', 'content.language_code');
                     })
-                    ->whereRaw('CONCAT(sites.path, domain_language.path, content.path) = ?', [$this->path()])
+                    ->whereRaw('CONCAT(IFNULL(sites.path, ""), IFNULL(domain_language.path, ""), IFNULL(content.path, "")) = ?', [$this->path()])
                     ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())]);
 
                 return $content->first();
