@@ -26,7 +26,7 @@ class SettingFactory extends Factory
             'values' => [
                 fake()->slug() => fake()->name(),
                 fake()->slug() => fake()->name(),
-            ]
+            ],
         ];
     }
 }
