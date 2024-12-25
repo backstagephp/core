@@ -32,6 +32,21 @@ class EditSetting extends EditRecord
 
     use CanInspectClasses;
 
+    private const FIELD_TYPE_MAP = [
+        'text' => Text::class,
+        'textarea' => Textarea::class,
+        'rich-editor' => RichEditor::class,
+        'select' => FieldsSelect::class,
+        'checkbox' => Checkbox::class,
+        'checkbox-list' => CheckboxList::class,
+        'media' => Media::class,
+        'key-value' => KeyValue::class,
+        'radio' => Radio::class,
+        'toggle' => Toggle::class,
+        'color' => Color::class,
+        'datetime' => DateTime::class,
+    ];
+
     #[On('refreshFields')]
     public function refresh(): void
     {
@@ -123,49 +138,28 @@ class EditSetting extends EditRecord
 
     private function getValueInputs(): array
     {
-        $inputs = [];
-
-        if ($this->record->fields->count() === 0) {
-            return $inputs;
+        if ($this->record->fields->isEmpty()) {
+            return [];
         }
 
-        $customFields = [];
+        $customFields = collect(Backstage::getFields())->map(
+            fn($fieldClass) => new $fieldClass
+        );
 
-        foreach (Backstage::getFields() as $fieldType => $field) {
-            $f = new $field;
+        return $this->record->fields->map(function ($field) use ($customFields) {
+            $inputName = "setting.{$field->slug}";
 
-            $customFields[$fieldType] = $f;
-        }
+            $fieldClass = self::FIELD_TYPE_MAP[$field->field_type] ?? null;
 
-        foreach ($this->record->fields as $field) {
-
-            $input = match ($field->field_type) {
-                'text' => Text::make(name: 'setting.' . $field->slug, field: $field),
-                'textarea' => Textarea::make(name: 'setting.' . $field->slug, field: $field),
-                'rich-editor' => RichEditor::make(name: 'setting.' . $field->slug, field: $field),
-                'select' => FieldsSelect::make(name: 'setting.' . $field->slug, field: $field),
-                'checkbox' => Checkbox::make(name: 'setting.' . $field->slug, field: $field),
-                'checkbox-list' => CheckboxList::make(name: 'setting.' . $field->slug, field: $field),
-                'media' => Media::make(name: 'setting.' . $field->slug, field: $field),
-                'key-value' => KeyValue::make(name: 'setting.' . $field->slug, field: $field),
-                'radio' => Radio::make(name: 'setting.' . $field->slug, field: $field),
-                'toggle' => Toggle::make(name: 'setting.' . $field->slug, field: $field),
-                'color' => Color::make(name: 'setting.' . $field->slug, field: $field),
-                'datetime' => DateTime::make(name: 'setting.' . $field->slug, field: $field),
-                default => null
-            };
-
-            if (! $input) {
-                $input = $customFields[$field->field_type] ?? null;
-
-                if ($input) {
-                    $input = $input::make('setting.' . $field->slug, $field);
-                }
+            if ($fieldClass) {
+                return $fieldClass::make(name: $inputName, field: $field);
             }
 
-            $inputs[] = $input;
-        }
-
-        return $inputs;
+            $customField = $customFields->get($field->field_type);
+            return $customField ? $customField::make($inputName, $field) : null;
+        })
+            ->filter()
+            ->values()
+            ->all();
     }
 }
