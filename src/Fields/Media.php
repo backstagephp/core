@@ -15,6 +15,8 @@ class Media extends FieldBase implements FieldInterface
     {
         return [
             ...parent::getDefaultConfig(),
+            'acceptedFileTypes' => ['image/*', 'video/*', 'audio/*', 'application/pdf'],
+            'multiple' => true,
         ];
     }
 
@@ -22,7 +24,13 @@ class Media extends FieldBase implements FieldInterface
     {
         $input = self::applyDefaultSettings(Input::make($name), $field);
 
-        $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null);
+        if (!empty($field->config['acceptedFileTypes']) && !is_array($field->config['acceptedFileTypes'])) {
+            $field->config['acceptedFileTypes'] = [$field->config['acceptedFileTypes']];
+        }
+
+        $input = $input->label($field->name ?? self::getDefaultConfig()['label'] ?? null)
+            ->acceptedFileTypes($field->config['acceptedFileTypes'] ?? self::getDefaultConfig()['acceptedFileTypes'])
+            ->multiple($field->config['multiple'] ?? self::getDefaultConfig()['multiple']);
 
         return $input;
     }
@@ -41,7 +49,17 @@ class Media extends FieldBase implements FieldInterface
                         ->label(__('Field specific'))
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
-                                //
+                                Forms\Components\Select::make('config.acceptedFileTypes')
+                                    ->label(__('Accepted file types'))
+                                    ->options([
+                                        'image/*' => 'Images',
+                                        'video/*' => 'Videos',
+                                        'audio/*' => 'Audio',
+                                        'application/pdf' => 'PDF',
+                                    ])
+                                    ->multiple(),
+                                Forms\Components\Toggle::make('config.multiple')
+                                    ->label(__('Multiple'))
                             ]),
                         ]),
                 ])->columnSpanFull(),
