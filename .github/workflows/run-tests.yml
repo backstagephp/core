@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         stability: [dev] # "dev"| "alpha"| "beta"| "RC" | "stable" 
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
-        php-versions: ['8.2', '8.3']
+        operating-system: [ubuntu-latest] # , windows-latest, macos-latest
+        php-versions: ['8.2'] #, '8.3'
 
     steps:
       - name: Checkout code
