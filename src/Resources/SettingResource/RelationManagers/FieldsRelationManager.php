@@ -76,10 +76,8 @@ class FieldsRelationManager extends RelationManager
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
                                     ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
-
                                 TextInput::make('slug')
                                     ->readonly(),
-
                                 Select::make('field_type')
                                     ->searchable()
                                     ->preload()
@@ -88,25 +86,21 @@ class FieldsRelationManager extends RelationManager
                                     ->reactive()
                                     ->options(
                                         function () {
-                                            $defaultFields = EnumsField::array();
-                                            $customFields = $this->formatCustomFields(Backstage::getFields());
+                                            $options = array_merge(
+                                                EnumsField::array(),
+                                                $this->formatCustomFields(Backstage::getFields())
+                                            );
 
-                                            $mergedFields = array_merge($defaultFields, $customFields);
-
-                                            asort($mergedFields);
-
-                                            return $mergedFields;
+                                            return asort($options);
                                         }
                                     )
                                     ->required()
                                     ->afterStateUpdated(function ($state, Set $set) {
                                         $set('config', []);
 
-                                        if (EnumsField::tryFrom($state)) {
-                                            $set('config', $this->initializeDefaultConfig($state));
-                                        } else {
-                                            $set('config', $this->initializeCustomConfig($state));
-                                        }
+                                        $set('config', EnumsField::tryFrom($state)
+                                            ? $this->initializeDefaultConfig($state)
+                                            : $this->initializeCustomConfig($state));
                                     }),
                             ]),
                         Section::make('Configuration')
