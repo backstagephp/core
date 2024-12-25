@@ -76,8 +76,10 @@ class FieldsRelationManager extends RelationManager
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
                                     ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
                                 TextInput::make('slug')
                                     ->readonly(),
+
                                 Select::make('field_type')
                                     ->searchable()
                                     ->preload()
@@ -91,7 +93,9 @@ class FieldsRelationManager extends RelationManager
                                                 $this->formatCustomFields(Backstage::getFields())
                                             );
 
-                                            return asort($options);
+                                            asort($options);
+
+                                            return $options;
                                         }
                                     )
                                     ->required()
