@@ -14,12 +14,12 @@ use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Vormkracht10\Backstage\BackstageServiceProvider;
-use Orchestra\Testbench\Attributes\WithMigration; 
 
-#[WithMigration] 
+#[WithMigration]
 class TestCase extends Orchestra
 {
     use RefreshDatabase;
@@ -45,23 +45,21 @@ class TestCase extends Orchestra
 
     public function defineEnvironment($app)
     {
-        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
+        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
 
-        foreach (glob(__DIR__.'/../config/*.php') as $filename)
-        {
+        foreach (glob(__DIR__ . '/../config/*.php') as $filename) {
             $app['config']->set(pathinfo($filename)['filename'], require $filename);
         }
     }
 
     public function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
 
         // foreach (glob(__DIR__.'/../database/migrations/*.php') as $filename)
         // {
