@@ -52,11 +52,12 @@ class EditSetting extends EditRecord
         }
 
         return $this->mutateFormData($data, function ($field, $fieldConfig, $fieldInstance, $data) {
-            if (!empty($fieldConfig['methods']['mutateFormDataCallback'])) {
+            if (! empty($fieldConfig['methods']['mutateFormDataCallback'])) {
                 return $fieldInstance->mutateFormDataCallback($this->record, $field, $data);
             }
 
             $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
+
             return $data;
         });
     }
@@ -64,9 +65,10 @@ class EditSetting extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = $this->mutateFormData($data, function ($field, $fieldConfig, $fieldInstance, $data) {
-            if (!empty($fieldConfig['methods']['mutateBeforeSaveCallback'])) {
+            if (! empty($fieldConfig['methods']['mutateBeforeSaveCallback'])) {
                 return $fieldInstance->mutateBeforeSaveCallback($this->record, $field, $data);
             }
+
             return $data;
         });
 
