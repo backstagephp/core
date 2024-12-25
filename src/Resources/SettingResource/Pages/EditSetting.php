@@ -47,52 +47,47 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if ($this->record->fields->count() === 0) {
+        if ($this->record->fields->isEmpty()) {
             return $data;
         }
 
-        foreach ($this->record->fields as $field) {
-
-            $f = Field::tryFrom($field->field_type)
-                ? $this->initializeDefaultField($field->field_type)
-                : $this->initializeCustomField($field->field_type);
-
-            if ($f['methods']['mutateFormDataCallback']) {
-                $class = $f['class'];
-
-                $f = new $class;
-
-                $data = $f::mutateFormDataCallback($this->record, $field, $data);
-
-                continue;
+        return $this->mutateFormData($data, function ($field, $fieldConfig, $fieldInstance, $data) {
+            if (!empty($fieldConfig['methods']['mutateFormDataCallback'])) {
+                return $fieldInstance->mutateFormDataCallback($this->record, $field, $data);
             }
 
             $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
-        }
-
-        return $data;
+            return $data;
+        });
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $data = $this->mutateFormData($data, function ($field, $fieldConfig, $fieldInstance, $data) {
+            if (!empty($fieldConfig['methods']['mutateBeforeSaveCallback'])) {
+                return $fieldInstance->mutateBeforeSaveCallback($this->record, $field, $data);
+            }
+            return $data;
+        });
+
+        // Move settings to values
+        $fields = $data['setting'] ?? [];
+        unset($data['setting']);
+        $data['values'] = $fields;
+
+        return $data;
+    }
+
+    protected function mutateFormData(array $data, callable $mutationStrategy): array
+    {
         foreach ($this->record->fields as $field) {
-            $f = Field::tryFrom($field->field_type)
+            $fieldConfig = Field::tryFrom($field->field_type)
                 ? $this->initializeDefaultField($field->field_type)
                 : $this->initializeCustomField($field->field_type);
 
-            if ($f['methods']['mutateBeforeSaveCallback']) {
-                $class = $f['class'];
-
-                $f = new $class;
-
-                $data = $f::mutateBeforeSaveCallback($this->record, $field, $data);
-            }
+            $fieldInstance = new $fieldConfig['class'];
+            $data = $mutationStrategy($field, $fieldConfig, $fieldInstance, $data);
         }
-
-        $fields = $data['setting'] ?? [];
-        unset($data['setting']);
-
-        $data['values'] = $fields;
 
         return $data;
     }
