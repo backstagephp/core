@@ -143,7 +143,7 @@ class EditSetting extends EditRecord
         }
 
         $customFields = collect(Backstage::getFields())->map(
-            fn($fieldClass) => new $fieldClass
+            fn ($fieldClass) => new $fieldClass
         );
 
         return $this->record->fields->map(function ($field) use ($customFields) {
@@ -156,6 +156,7 @@ class EditSetting extends EditRecord
             }
 
             $customField = $customFields->get($field->field_type);
+
             return $customField ? $customField::make($inputName, $field) : null;
         })
             ->filter()
