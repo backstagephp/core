@@ -1,7 +1,3 @@
----
-title: Getting started
----
-
 ## Overview
 
 Fields are configurable (custom) Filament form fields that can be used in Forms and Settings. We provide a set of fields that can be used out of the box, but you can also create your own fields.

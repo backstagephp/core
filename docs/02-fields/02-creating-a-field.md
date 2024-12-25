@@ -1,7 +1,3 @@
----
-title: Creating a field
----
-
 # Creating a field
 
 You can create a field by extending the `FieldBase` class and implementing the `FieldInterface` interface.
