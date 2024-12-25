@@ -69,7 +69,7 @@ class Color extends FieldBase implements FieldInterface
 }
 ```
 
-# Mutate form data before filling the form
+## Mutate form data before filling the form
 
 You can mutate the form data before filling the form by implementing the `mutateFormDataCallback` method in your field class.
 
@@ -84,7 +84,7 @@ Make sure when you are mutating the form data that you are returning the `$data`
     }
 ```
 
-# Mutate the record before saving
+## Mutate the record before saving
 
 You can mutate the record before saving by implementing the `mutateBeforeSaveCallback` method in your field class.
 
