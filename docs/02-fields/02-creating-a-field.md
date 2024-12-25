@@ -2,7 +2,9 @@
 
 You can create a field by extending the `FieldBase` class and implementing the `FieldInterface` interface.
 
-## Default configuration options
+## Configuration options
+
+### Adding additional configuration options
 
 Each field in Filament has some default configuration options. You can override these options by creating a `getDefaultConfig` method in your field class. The `getDefaultConfig` method should return an array with the default configuration options for your field. In this example we will add a `color` and `regex` configuration option to a color field.
 
@@ -20,7 +22,7 @@ class Color extends FieldBase implements FieldInterface
 }
 ```
 
-### Adding the configuration options to the field
+### Apply the configuration options to the field
 
 You can add the default configuration options to the field by using the `applyDefaultSettings` method in the `method` method. The `applyDefaultSettings` method will apply the default settings to the field. In this example we will add additional `color` and `regex` configuration options to the color field.
 
