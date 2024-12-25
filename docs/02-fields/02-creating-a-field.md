@@ -72,7 +72,11 @@ public function getForm(): array
 }
 ```
 
-## Mutate form data before filling the form
+## Mutating data
+
+When working with Filament forms you might want to mutate the data before filling the form or before saving the record. You can do this by implementing the `mutateFormDataCallback` and `mutateBeforeSaveCallback` methods in your field class.
+
+### Mutate form data before filling the form
 
 You can mutate the form data before filling the form by implementing the `mutateFormDataCallback` method in your field class.
 
@@ -87,7 +91,7 @@ Make sure when you are mutating the form data that you are returning the `$data`
     }
 ```
 
-## Mutate the record before saving
+### Mutate the record before saving
 
 You can mutate the record before saving by implementing the `mutateBeforeSaveCallback` method in your field class.
 
