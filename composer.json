@@ -43,7 +43,7 @@
         "spatie/schema-org": "^3.23",
         "vormkracht10/filament-media-picker": "dev-main",
         "vormkracht10/filament-redirects": "dev-main",
-        "vormkracht10/filament-fileuploadcare-component": "@dev"
+        "vormkracht10/filament-fileuploadcare-component": "dev-main"
     },
     "require-dev": {
         "larastan/larastan": "^2.0.1",
