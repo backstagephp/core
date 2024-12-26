@@ -29,9 +29,9 @@ class Backstage
     {
         $parts = explode('\\', $name);
         $lastPart = end($parts);
-        $formattedName = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $lastPart));
+        $slug = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $lastPart));
 
-        static::$fields[$formattedName] = $name;
+        static::$fields[$slug] = $name;
     }
 
     public static function getComponents(): array
@@ -47,7 +47,7 @@ class Backstage
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 
