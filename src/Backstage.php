@@ -34,12 +34,14 @@ class Backstage
     private static function generateFieldSlug(string $className): string
     {
         $shortClassName = self::getClassNameWithoutNamespace($className);
+
         return self::convertToKebabCase($shortClassName);
     }
 
     private static function getClassNameWithoutNamespace(string $className): string
     {
         $parts = explode('\\', $className);
+
         return end($parts);
     }
 
@@ -61,7 +63,7 @@ class Backstage
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 
