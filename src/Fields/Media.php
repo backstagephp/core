@@ -24,7 +24,7 @@ class Media extends FieldBase implements FieldInterface
     {
         $input = self::applyDefaultSettings(Input::make($name), $field);
 
-        if (!empty($field->config['acceptedFileTypes']) && !is_array($field->config['acceptedFileTypes'])) {
+        if (! empty($field->config['acceptedFileTypes']) && ! is_array($field->config['acceptedFileTypes'])) {
             $field->config['acceptedFileTypes'] = [$field->config['acceptedFileTypes']];
         }
 
@@ -59,7 +59,7 @@ class Media extends FieldBase implements FieldInterface
                                     ])
                                     ->multiple(),
                                 Forms\Components\Toggle::make('config.multiple')
-                                    ->label(__('Multiple'))
+                                    ->label(__('Multiple')),
                             ]),
                         ]),
                 ])->columnSpanFull(),
