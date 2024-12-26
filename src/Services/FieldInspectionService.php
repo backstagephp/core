@@ -1,23 +1,24 @@
 <?php
 
-namespace Vormkracht10\Backstage\Concerns;
+namespace Vormkracht10\Backstage\Services;
 
+use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Vormkracht10\Backstage\Backstage;
 
-trait CanInspectClasses
+class FieldInspectionService implements FieldInspector
 {
-    private function initializeDefaultField(string $fieldType): array
+    public function initializeDefaultField(string $fieldType): array
     {
         $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
 
         return $this->getClassDetails($className);
     }
 
-    private function initializeCustomField(string $fieldType): array
+    public function initializeCustomField(string $fieldType): array
     {
         $className = Backstage::getFields()[$fieldType] ?? null;
 

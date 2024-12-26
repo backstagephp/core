@@ -10,7 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Backstage;
-use Vormkracht10\Backstage\Concerns\CanInspectClasses;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Vormkracht10\Backstage\Enums\Field;
 use Vormkracht10\Backstage\Fields\Checkbox;
 use Vormkracht10\Backstage\Fields\CheckboxList;
@@ -30,7 +30,7 @@ class EditSetting extends EditRecord
 {
     protected static string $resource = SettingResource::class;
 
-    use CanInspectClasses;
+    private FieldInspector $fieldInspector;
 
     private const FIELD_TYPE_MAP = [
         'text' => Text::class,
@@ -46,6 +46,11 @@ class EditSetting extends EditRecord
         'color' => Color::class,
         'datetime' => DateTime::class,
     ];
+
+    public function boot(): void
+    {
+        $this->fieldInspector = app(FieldInspector::class);
+    }
 
     #[On('refreshFields')]
     public function refresh(): void
@@ -99,8 +104,8 @@ class EditSetting extends EditRecord
     {
         foreach ($this->record->fields as $field) {
             $fieldConfig = Field::tryFrom($field->field_type)
-                ? $this->initializeDefaultField($field->field_type)
-                : $this->initializeCustomField($field->field_type);
+                ? $this->fieldInspector->initializeDefaultField($field->field_type)
+                : $this->fieldInspector->initializeCustomField($field->field_type);
 
             $fieldInstance = new $fieldConfig['class'];
             $data = $mutationStrategy($field, $fieldConfig, $fieldInstance, $data);
@@ -143,7 +148,7 @@ class EditSetting extends EditRecord
         }
 
         $customFields = collect(Backstage::getFields())->map(
-            fn ($fieldClass) => new $fieldClass
+            fn($fieldClass) => new $fieldClass
         );
 
         return $this->record->fields->map(function ($field) use ($customFields) {
