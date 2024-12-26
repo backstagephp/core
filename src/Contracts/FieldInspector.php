@@ -6,8 +6,7 @@ interface FieldInspector
 {
     /**
      * Initialize a default field type and return its details
-     * 
-     * @param string $fieldType
+     *
      * @return array{
      *   exists: bool,
      *   class: ?string,
@@ -24,8 +23,7 @@ interface FieldInspector
 
     /**
      * Initialize a custom field type and return its details
-     * 
-     * @param string $fieldType
+     *
      * @return array{
      *   exists: bool,
      *   class: ?string,
