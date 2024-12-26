@@ -114,11 +114,9 @@
             }
         },
         "filament-fileuploadcare-component": {
-            "type": "path",
-            "url": "/var/www/filament-fileuploadcare-component",
-            "options": {
-                "symlink": true
-            }
+            "type": "github",
+            "url": "git@github.com:vormkracht10/filament-fileuploadcare-component",
+            "reference": "main"
         }
     },
     "minimum-stability": "dev",
