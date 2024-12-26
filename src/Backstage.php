@@ -25,13 +25,27 @@ class Backstage
         static::$components[$name] = $component;
     }
 
-    public static function registerField(string $name): void
+    public static function registerField(string $className): void
     {
-        $parts = explode('\\', $name);
-        $lastPart = end($parts);
-        $slug = strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $lastPart));
+        $fieldSlug = self::generateFieldSlug($className);
+        static::$fields[$fieldSlug] = $className;
+    }
 
-        static::$fields[$slug] = $name;
+    private static function generateFieldSlug(string $className): string
+    {
+        $shortClassName = self::getClassNameWithoutNamespace($className);
+        return self::convertToKebabCase($shortClassName);
+    }
+
+    private static function getClassNameWithoutNamespace(string $className): string
+    {
+        $parts = explode('\\', $className);
+        return end($parts);
+    }
+
+    private static function convertToKebabCase(string $input): string
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $input));
     }
 
     public static function getComponents(): array
@@ -47,7 +61,7 @@ class Backstage
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 
