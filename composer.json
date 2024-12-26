@@ -42,8 +42,7 @@
         "spatie/once": "*",
         "spatie/schema-org": "^3.23",
         "vormkracht10/filament-media-picker": "dev-main",
-        "vormkracht10/filament-redirects": "dev-main",
-        "vormkracht10/filament-fileuploadcare-component": "dev-main"
+        "vormkracht10/filament-redirects": "dev-main"
     },
     "require-dev": {
         "larastan/larastan": "^2.0.1",
@@ -112,11 +111,6 @@
             "options": {
                 "symlink": true
             }
-        },
-        "filament-fileuploadcare-component": {
-            "type": "github",
-            "url": "git@github.com:vormkracht10/filament-fileuploadcare-component",
-            "reference": "main"
         }
     },
     "minimum-stability": "dev",
