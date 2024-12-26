@@ -2,12 +2,12 @@
 
 namespace Vormkracht10\Backstage\Services;
 
-use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Vormkracht10\Backstage\Backstage;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
 
 class FieldInspectionService implements FieldInspector
 {
