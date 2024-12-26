@@ -16,7 +16,7 @@ class Media extends FieldBase implements FieldInterface
         return [
             ...parent::getDefaultConfig(),
             'acceptedFileTypes' => ['image/*', 'video/*', 'audio/*', 'application/pdf'],
-            'multiple' => true,
+            'multiple' => false,
         ];
     }
 
