@@ -10,11 +10,8 @@ use Filament\Forms\Set;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Backstage;
 use Filament\Forms\Components\Section;
-use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Concerns\HasOptions;
 use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
@@ -54,7 +51,6 @@ class Repeater extends FieldBase implements FieldContract
         'color' => Color::class,
         'datetime' => DateTime::class,
     ];
-
 
     public static function getDefaultConfig(): array
     {
