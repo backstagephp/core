@@ -3,17 +3,17 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Vormkracht10\Backstage\Backstage;
+use Filament\Forms\Components\Repeater as Input;
 use Filament\Forms\Components\Textarea;
 use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Backstage;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Concerns\HasOptions;
-use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
-use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Field;
 
 class Repeater extends FieldBase implements FieldContract
 {
@@ -167,8 +167,7 @@ class Repeater extends FieldBase implements FieldContract
                                                 ->columnSpanFull()
                                                 ->label(__('Options'))
                                                 ->visible(
-                                                    fn(Forms\Get $get): bool =>
-                                                    $get('field_type') === 'select' &&
+                                                    fn(Forms\Get $get): bool => $get('field_type') === 'select' &&
                                                         $get('config.optionType') === 'array'
                                                 ),
                                             Repeater::make('config.relations')
@@ -191,8 +190,7 @@ class Repeater extends FieldBase implements FieldContract
                                                         ]),
                                                 ])
                                                 ->visible(
-                                                    fn(Forms\Get $get): bool =>
-                                                    $get('field_type') === 'select' &&
+                                                    fn(Forms\Get $get): bool => $get('field_type') === 'select' &&
                                                         $get('config.optionType') === 'relationship'
                                                 ),
                                         ])->columns(3),
