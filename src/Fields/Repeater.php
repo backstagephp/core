@@ -5,6 +5,7 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Vormkracht10\Backstage\Backstage;
 use Filament\Forms\Components\Textarea;
+use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Content;
@@ -61,56 +62,6 @@ class Repeater extends FieldBase implements FieldContract
         }
 
         return $input;
-    }
-
-    private static function buildFormSchema(array $formFields): array
-    {
-        $schema = [];
-
-        foreach ($formFields as $formField) {
-            $fieldType = $formField['field_type'];
-
-            if (!isset(self::FIELD_TYPE_MAP[$fieldType])) {
-                continue;
-            }
-
-            $fieldClass = self::FIELD_TYPE_MAP[$fieldType];
-            $field = $fieldClass::make($formField['name'])
-                ->label($formField['label']);
-
-            // Handle select field options
-            if ($fieldType === 'select' && isset($formField['config'])) {
-                if ($formField['config']['optionType'] === 'array' && !empty($formField['config']['options'])) {
-                    $field->options($formField['config']['options']);
-                } elseif ($formField['config']['optionType'] === 'relationship' && !empty($formField['config']['relations'])) {
-                    $options = [];
-
-                    foreach ($formField['config']['relations'] as $relation) {
-                        $content = Content::where('type_slug', $relation['contentType'])->get();
-
-                        if (!$content) {
-                            continue;
-                        }
-
-                        $opts = $content->pluck($relation['relationValue'], 'ulid')->toArray();
-
-                        if (count($opts) === 0) {
-                            continue;
-                        }
-
-                        $options[] = $opts;
-                    }
-
-                    if (!empty($options)) {
-                        $field->options(array_merge(...$options));
-                    }
-                }
-            }
-
-            $schema[] = $field;
-        }
-
-        return $schema;
     }
 
     public function getForm(): array
@@ -213,6 +164,7 @@ class Repeater extends FieldBase implements FieldContract
                                                 ->live()
                                                 ->visible(fn(Forms\Get $get): bool => $get('field_type') === 'select'),
                                             Forms\Components\KeyValue::make('config.options')
+                                                ->columnSpanFull()
                                                 ->label(__('Options'))
                                                 ->visible(
                                                     fn(Forms\Get $get): bool =>
@@ -248,5 +200,55 @@ class Repeater extends FieldBase implements FieldContract
                         ])->columns(2),
                 ])->columnSpanFull(),
         ];
+    }
+
+    private static function buildFormSchema(array $formFields): array
+    {
+        $schema = [];
+
+        foreach ($formFields as $formField) {
+            $fieldType = $formField['field_type'];
+
+            if (!isset(self::FIELD_TYPE_MAP[$fieldType])) {
+                continue;
+            }
+
+            $fieldClass = self::FIELD_TYPE_MAP[$fieldType];
+            $field = $fieldClass::make($formField['name'])
+                ->label($formField['label']);
+
+            // Handle select field options
+            if ($fieldType === 'select' && isset($formField['config'])) {
+                if ($formField['config']['optionType'] === 'array' && !empty($formField['config']['options'])) {
+                    $field->options($formField['config']['options']);
+                } elseif ($formField['config']['optionType'] === 'relationship' && !empty($formField['config']['relations'])) {
+                    $options = [];
+
+                    foreach ($formField['config']['relations'] as $relation) {
+                        $content = Content::where('type_slug', $relation['contentType'])->get();
+
+                        if (!$content) {
+                            continue;
+                        }
+
+                        $opts = $content->pluck($relation['relationValue'], 'ulid')->toArray();
+
+                        if (count($opts) === 0) {
+                            continue;
+                        }
+
+                        $options[] = $opts;
+                    }
+
+                    if (!empty($options)) {
+                        $field->options(array_merge(...$options));
+                    }
+                }
+            }
+
+            $schema[] = $field;
+        }
+
+        return $schema;
     }
 }
