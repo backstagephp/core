@@ -3,16 +3,16 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Vormkracht10\Backstage\Backstage;
+use Filament\Forms\Components\Repeater as Input;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Backstage;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Concerns\HasOptions;
-use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
-use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Field;
 
 class Repeater extends FieldBase implements FieldContract
 {
@@ -70,7 +70,7 @@ class Repeater extends FieldBase implements FieldContract
         foreach ($formFields as $formField) {
             $fieldType = $formField['field_type'];
 
-            if (!isset(self::FIELD_TYPE_MAP[$fieldType])) {
+            if (! isset(self::FIELD_TYPE_MAP[$fieldType])) {
                 continue;
             }
 
@@ -80,15 +80,15 @@ class Repeater extends FieldBase implements FieldContract
 
             // Handle select field options
             if ($fieldType === 'select' && isset($formField['config'])) {
-                if ($formField['config']['optionType'] === 'array' && !empty($formField['config']['options'])) {
+                if ($formField['config']['optionType'] === 'array' && ! empty($formField['config']['options'])) {
                     $field->options($formField['config']['options']);
-                } elseif ($formField['config']['optionType'] === 'relationship' && !empty($formField['config']['relations'])) {
+                } elseif ($formField['config']['optionType'] === 'relationship' && ! empty($formField['config']['relations'])) {
                     $options = [];
 
                     foreach ($formField['config']['relations'] as $relation) {
                         $content = Content::where('type_slug', $relation['contentType'])->get();
 
-                        if (!$content) {
+                        if (! $content) {
                             continue;
                         }
 
@@ -101,7 +101,7 @@ class Repeater extends FieldBase implements FieldContract
                         $options[] = $opts;
                     }
 
-                    if (!empty($options)) {
+                    if (! empty($options)) {
                         $field->options(array_merge(...$options));
                     }
                 }
@@ -140,7 +140,7 @@ class Repeater extends FieldBase implements FieldContract
                                 Forms\Components\Toggle::make('config.reorderableWithButtons')
                                     ->label(__('Reorderable with buttons'))
                                     ->dehydrated()
-                                    ->disabled(fn(Forms\Get $get): bool => $get('config.reorderable') === false)
+                                    ->disabled(fn (Forms\Get $get): bool => $get('config.reorderable') === false)
                                     ->inline(false),
                             ]),
                             Forms\Components\Toggle::make('config.collapsible')
@@ -148,7 +148,7 @@ class Repeater extends FieldBase implements FieldContract
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.collapsed')
                                 ->label(__('Collapsed'))
-                                ->visible(fn(Forms\Get $get): bool => $get('config.collapsible') === true)
+                                ->visible(fn (Forms\Get $get): bool => $get('config.collapsible') === true)
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.cloneable')
                                 ->label(__('Cloneable'))
@@ -211,12 +211,11 @@ class Repeater extends FieldBase implements FieldContract
                                                 ])
                                                 ->searchable()
                                                 ->live()
-                                                ->visible(fn(Forms\Get $get): bool => $get('field_type') === 'select'),
+                                                ->visible(fn (Forms\Get $get): bool => $get('field_type') === 'select'),
                                             Forms\Components\KeyValue::make('config.options')
                                                 ->label(__('Options'))
                                                 ->visible(
-                                                    fn(Forms\Get $get): bool =>
-                                                    $get('field_type') === 'select' &&
+                                                    fn (Forms\Get $get): bool => $get('field_type') === 'select' &&
                                                         $get('config.optionType') === 'array'
                                                 ),
                                             Repeater::make('config.relations')
@@ -229,7 +228,7 @@ class Repeater extends FieldBase implements FieldContract
                                                                 ->label(__('Type'))
                                                                 ->searchable()
                                                                 ->preload()
-                                                                ->options(fn() => Type::all()->pluck('name', 'slug')),
+                                                                ->options(fn () => Type::all()->pluck('name', 'slug')),
                                                             Forms\Components\Select::make('relationValue')
                                                                 ->options([
                                                                     'slug' => __('Slug'),
@@ -239,8 +238,7 @@ class Repeater extends FieldBase implements FieldContract
                                                         ]),
                                                 ])
                                                 ->visible(
-                                                    fn(Forms\Get $get): bool =>
-                                                    $get('field_type') === 'select' &&
+                                                    fn (Forms\Get $get): bool => $get('field_type') === 'select' &&
                                                         $get('config.optionType') === 'relationship'
                                                 ),
                                         ])->columns(3),
