@@ -13,8 +13,8 @@ use Vormkracht10\Backstage\Shared\HasPackageFactory;
 class Field extends Model
 {
     use HasPackageFactory;
-    use HasUlids;
     use HasRecursiveRelationships;
+    use HasUlids;
 
     protected $primaryKey = 'ulid';
 
