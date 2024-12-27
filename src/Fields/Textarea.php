@@ -5,8 +5,9 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\Textarea as Input;
 use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 
-class Textarea extends FieldBase implements FieldInterface
+class Textarea extends FieldBase implements FieldContract
 {
     public static function getDefaultConfig(): array
     {

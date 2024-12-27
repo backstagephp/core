@@ -6,8 +6,9 @@ use Filament\Forms;
 use Filament\Forms\Components\CheckboxList as Input;
 use Vormkracht10\Backstage\Concerns\HasOptions;
 use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 
-class CheckboxList extends FieldBase implements FieldInterface
+class CheckboxList extends FieldBase implements FieldContract
 {
     use HasOptions;
 
@@ -93,16 +94,16 @@ class CheckboxList extends FieldBase implements FieldInterface
                                     //
                                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
                                         ->label(__('No search results message'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchPrompt')
                                         ->label(__('Search prompt'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchDebounce')
                                         ->numeric()
                                         ->minValue(0)
                                         ->step(100)
                                         ->label(__('Search debounce'))
-                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
                                 ]),
                         ]),
                 ])->columnSpanFull(),

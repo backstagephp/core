@@ -7,8 +7,9 @@ use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker as Input;
 use Vormkracht10\Backstage\Concerns\HasAffixes;
 use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 
-class DateTime extends FieldBase implements FieldInterface
+class DateTime extends FieldBase implements FieldContract
 {
     use HasAffixes;
 

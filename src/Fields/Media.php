@@ -8,8 +8,9 @@ use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Models\Media as MediaModel;
 use Vormkracht10\MediaPicker\Components\MediaPicker as Input;
 use Vormkracht10\MediaPicker\MediaPicker;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 
-class Media extends FieldBase implements FieldInterface
+class Media extends FieldBase implements FieldContract
 {
     public static function getDefaultConfig(): array
     {

@@ -7,7 +7,7 @@ use Filament\Forms\Components\Radio as Input;
 use Vormkracht10\Backstage\Concerns\HasOptions;
 use Vormkracht10\Backstage\Models\Field;
 
-class Radio extends FieldBase implements FieldInterface
+class Radio extends FieldBase implements FieldContract
 {
     use HasOptions;
 

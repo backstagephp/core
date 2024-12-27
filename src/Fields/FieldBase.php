@@ -5,8 +5,9 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Support\Colors\Color;
 use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 
-abstract class FieldBase implements FieldInterface
+abstract class FieldBase implements FieldContract
 {
     public function getForm(): array
     {
