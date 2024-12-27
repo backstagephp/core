@@ -16,12 +16,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
 use Vormkracht10\Backstage\Facades\Backstage;
 use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager
 {
+    use HasConfigurableFields;
+
     protected static string $relationship = 'fields';
 
     /** @throws Exception If the field type class cannot be resolved. */
@@ -40,6 +43,7 @@ class FieldsRelationManager extends RelationManager
 
             return app($className)->getForm();
         } catch (Exception $e) {
+            dd($e->getMessage());
             throw new Exception("Failed to resolve field type class for '{$fieldType}'");
         }
     }
@@ -75,7 +79,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -109,49 +113,12 @@ class FieldsRelationManager extends RelationManager
                             ]),
                         Section::make('Configuration')
                             ->columns(3)
-                            ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
+                            ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
                                 $get('field_type')
                             ))
-                            ->visible(fn (Get $get) => filled($get('field_type'))),
+                            ->visible(fn(Get $get) => filled($get('field_type'))),
                     ]),
             ]);
-    }
-
-    private function formatCustomFields(array $fields): array
-    {
-        return collect($fields)->mapWithKeys(function ($field, $key) {
-            $parts = explode('\\', $field);
-            $lastPart = end($parts);
-            $formattedName = ucwords(str_replace('_', ' ', strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $lastPart))));
-
-            return [$key => $formattedName];
-        })->toArray();
-    }
-
-    private function initializeDefaultConfig(string $fieldType): array
-    {
-        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
-
-        if (! class_exists($className)) {
-            return [];
-        }
-
-        $fieldInstance = app($className);
-
-        return $fieldInstance::getDefaultConfig();
-    }
-
-    private function initializeCustomConfig(string $fieldType): array
-    {
-        $className = Backstage::getFields()[$fieldType] ?? null;
-
-        if (! class_exists($className)) {
-            return [];
-        }
-
-        $fieldInstance = app($className);
-
-        return $fieldInstance::getDefaultConfig();
     }
 
     public function table(Table $table): Table
@@ -196,7 +163,7 @@ class FieldsRelationManager extends RelationManager
                             'model_key' => $this->ownerRecord->slug,
                         ];
                     })
-                    ->mutateFormDataUsing(fn (array $data, Model $record): array => $this->handleUpdatingSlugs($data, $record))
+                    ->mutateFormDataUsing(fn(array $data, Model $record): array => $this->handleUpdatingSlugs($data, $record))
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
