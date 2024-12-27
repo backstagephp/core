@@ -6,8 +6,8 @@ use Filament\Forms;
 use Filament\Forms\Components\Select as Input;
 use Vormkracht10\Backstage\Concerns\HasAffixes;
 use Vormkracht10\Backstage\Concerns\HasOptions;
-use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Contracts\FieldContract;
+use Vormkracht10\Backstage\Models\Field;
 
 class Select extends FieldBase implements FieldContract
 {
@@ -104,44 +104,44 @@ class Select extends FieldBase implements FieldContract
                                 ->label(__('Preload'))
                                 ->live()
                                 ->inline(false)
-                                ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                             self::optionFormFields(),
                             self::affixFormFields(),
                             Forms\Components\Grid::make(2)
                                 ->schema([
                                     Forms\Components\TextInput::make('config.loadingMessage')
                                         ->label(__('Loading message'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.noSearchResultsMessage')
                                         ->label(__('No search results message'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchPrompt')
                                         ->label(__('Search prompt'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchingMessage')
                                         ->label(__('Searching message'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.searchDebounce')
                                         ->numeric()
                                         ->minValue(0)
                                         ->step(100)
                                         ->label(__('Search debounce'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.optionsLimit')
                                         ->numeric()
                                         ->minValue(0)
                                         ->label(__('Options limit'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.minItemsForSearch')
                                         ->numeric()
                                         ->minValue(0)
                                         ->label(__('Min items for search'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                     Forms\Components\TextInput::make('config.maxItemsForSearch')
                                         ->numeric()
                                         ->minValue(0)
                                         ->label(__('Max items for search'))
-                                        ->visible(fn(Forms\Get $get): bool => $get('config.searchable')),
+                                        ->visible(fn (Forms\Get $get): bool => $get('config.searchable')),
                                 ]),
                         ]),
                 ])->columnSpanFull(),
