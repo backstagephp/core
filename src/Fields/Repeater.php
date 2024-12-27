@@ -2,18 +2,37 @@
 
 namespace Vormkracht10\Backstage\Fields;
 
+use Exception;
 use Filament\Forms;
-use Filament\Forms\Components\Repeater as Input;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
+use Vormkracht10\Backstage\Backstage;
+use Filament\Forms\Components\Section;
+use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Backstage;
-use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Concerns\HasOptions;
+use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
+use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\Color;
+use Vormkracht10\Backstage\Fields\DateTime;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Media;
+use Vormkracht10\Backstage\Fields\Radio;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
+use Vormkracht10\Backstage\Fields\Text;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\Toggle;
 
 class Repeater extends FieldBase implements FieldContract
 {
@@ -21,10 +40,21 @@ class Repeater extends FieldBase implements FieldContract
     use HasOptions;
 
     private const FIELD_TYPE_MAP = [
-        'text' => TextInput::class,
+        'text' => Text::class,
         'textarea' => Textarea::class,
-        'select' => Select::class,
+        'rich-editor' => RichEditor::class,
+        'repeater' => Repeater::class,
+        'select' => FieldsSelect::class,
+        'checkbox' => Checkbox::class,
+        'checkbox-list' => CheckboxList::class,
+        'media' => Media::class,
+        'key-value' => KeyValue::class,
+        'radio' => Radio::class,
+        'toggle' => Toggle::class,
+        'color' => Color::class,
+        'datetime' => DateTime::class,
     ];
+
 
     public static function getDefaultConfig(): array
     {
@@ -56,9 +86,15 @@ class Repeater extends FieldBase implements FieldContract
         }
 
         if ($field->config['form'] ?? false) {
-            $input = $input->schema(
-                self::buildFormSchema($field->config['form'])
-            );
+            $schema = [];
+
+            foreach ($field->children as $f) {
+                $instance = new self();
+
+                $schema[] = $instance->resolveFieldTypeClassName($f->field_type)::make($f->name, $f);
+            }
+
+            $input = $input->schema($schema);
         }
 
         return $input;
@@ -114,85 +150,64 @@ class Repeater extends FieldBase implements FieldContract
                                         ->addable()
                                         ->deletable()
                                         ->schema([
-                                            Forms\Components\TextInput::make('name')
-                                                ->label(__('Name'))
-                                                ->required(),
-                                            Forms\Components\TextInput::make('label')
-                                                ->label(__('Label'))
-                                                ->required(),
-                                            Forms\Components\Select::make('field_type')
-                                                ->searchable()
-                                                ->preload()
-                                                ->label(__('Field Type'))
-                                                ->live(debounce: 250)
-                                                ->reactive()
-                                                ->options(
-                                                    function () {
-                                                        $options = array_merge(
-                                                            collect(EnumsField::array())
-                                                                ->filter(function ($value, $key) {
-                                                                    return in_array($key, ['text', 'textarea', 'select']);
-                                                                })
-                                                                ->toArray(),
-                                                            $this->formatCustomFields(Backstage::getFields())
-                                                        );
-
-                                                        asort($options);
-
-                                                        return $options;
-                                                    }
-                                                )
-                                                ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
-                                                    if ($state === 'select') {
-                                                        $set('config', [
-                                                            'optionType' => null,
-                                                            'options' => null,
-                                                            'relations' => [],
-                                                        ]);
-                                                    } else {
-                                                        $set('config', null);
-                                                    }
-                                                })
-                                                ->required(),
-                                            // Add options configuration for select fields
-                                            Forms\Components\Select::make('config.optionType')
-                                                ->options([
-                                                    'array' => __('Array'),
-                                                    'relationship' => __('Relationship'),
-                                                ])
-                                                ->searchable()
-                                                ->live()
-                                                ->visible(fn(Forms\Get $get): bool => $get('field_type') === 'select'),
-                                            Forms\Components\KeyValue::make('config.options')
+                                            AdjacencyList::make('field_type')
                                                 ->columnSpanFull()
-                                                ->label(__('Options'))
-                                                ->visible(
-                                                    fn(Forms\Get $get): bool => $get('field_type') === 'select' &&
-                                                        $get('config.optionType') === 'array'
-                                                ),
-                                            Repeater::make('config.relations')
-                                                ->label(__('Relations'))
-                                                ->schema([
-                                                    Forms\Components\Grid::make()
-                                                        ->columns(2)
+                                                ->label(__('Field Type'))
+                                                ->relationship('children')
+                                                ->live(debounce: 250)
+                                                ->labelKey('name')
+                                                ->maxDepth(1)
+                                                ->form([
+                                                    Section::make('Field')
+                                                        ->columns(3)
                                                         ->schema([
-                                                            Forms\Components\Select::make('contentType')
-                                                                ->label(__('Type'))
+                                                            Hidden::make('model_type')
+                                                                ->default('field'),
+                                                            Hidden::make('model_key')
+                                                                ->default('slug'),
+                                                            TextInput::make('name')
+                                                                ->label(__('Name'))
+                                                                ->required()
+                                                                ->placeholder(__('Name'))
+                                                                ->live(debounce: 250)
+                                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                                            TextInput::make('slug')
+                                                                ->readonly(),
+                                                            Select::make('field_type')
                                                                 ->searchable()
                                                                 ->preload()
-                                                                ->options(fn() => Type::all()->pluck('name', 'slug')),
-                                                            Forms\Components\Select::make('relationValue')
-                                                                ->options([
-                                                                    'slug' => __('Slug'),
-                                                                    'name' => __('Name'),
-                                                                ])
-                                                                ->label(__('Label')),
-                                                        ]),
+                                                                ->label(__('Field Type'))
+                                                                ->live(debounce: 250)
+                                                                ->reactive()
+                                                                ->options(
+                                                                    function () {
+                                                                        $options = array_merge(
+                                                                            EnumsField::array(),
+                                                                            $this->formatCustomFields(Backstage::getFields())
+                                                                        );
+
+                                                                        asort($options);
+
+                                                                        return $options;
+                                                                    }
+                                                                )
+                                                                ->required()
+                                                                ->afterStateUpdated(function ($state, Set $set) {
+                                                                    $set('config', []);
+
+                                                                    $set('config', EnumsField::tryFrom($state)
+                                                                        ? $this->initializeDefaultConfig($state)
+                                                                        : $this->initializeCustomConfig($state));
+                                                                }),
+                                                        ])->columnSpanFull(),
+                                                    Section::make('Configuration')
+                                                        ->columns(3)
+                                                        ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
+                                                            $get('field_type')
+                                                        ))
+                                                        ->visible(fn(Get $get) => filled($get('field_type'))),
                                                 ])
-                                                ->visible(
-                                                    fn(Forms\Get $get): bool => $get('field_type') === 'select' &&
-                                                        $get('config.optionType') === 'relationship'
-                                                ),
+                                                ->required(),
                                         ])->columns(3),
                                 ])->columns(1),
                         ])->columns(2),
@@ -200,53 +215,39 @@ class Repeater extends FieldBase implements FieldContract
         ];
     }
 
-    private static function buildFormSchema(array $formFields): array
+    /** @throws Exception If the field type class cannot be resolved. */
+    protected function getFieldTypeFormSchema(?string $fieldType): array
     {
-        $schema = [];
-
-        foreach ($formFields as $formField) {
-            $fieldType = $formField['field_type'];
-
-            if (!isset(self::FIELD_TYPE_MAP[$fieldType])) {
-                continue;
-            }
-
-            $fieldClass = self::FIELD_TYPE_MAP[$fieldType];
-            $field = $fieldClass::make($formField['name'])
-                ->label($formField['label']);
-
-            // Handle select field options
-            if ($fieldType === 'select' && isset($formField['config'])) {
-                if ($formField['config']['optionType'] === 'array' && !empty($formField['config']['options'])) {
-                    $field->options($formField['config']['options']);
-                } elseif ($formField['config']['optionType'] === 'relationship' && !empty($formField['config']['relations'])) {
-                    $options = [];
-
-                    foreach ($formField['config']['relations'] as $relation) {
-                        $content = Content::where('type_slug', $relation['contentType'])->get();
-
-                        if (!$content) {
-                            continue;
-                        }
-
-                        $opts = $content->pluck($relation['relationValue'], 'ulid')->toArray();
-
-                        if (count($opts) === 0) {
-                            continue;
-                        }
-
-                        $options[] = $opts;
-                    }
-
-                    if (!empty($options)) {
-                        $field->options(array_merge(...$options));
-                    }
-                }
-            }
-
-            $schema[] = $field;
+        if (empty($fieldType)) {
+            return [];
         }
 
-        return $schema;
+        try {
+            $className = $this->resolveFieldTypeClassName($fieldType);
+
+            if (! $this->isValidFieldClass($className)) {
+                return [];
+            }
+
+            return app($className)->getForm();
+        } catch (Exception $e) {
+            throw new Exception("Failed to resolve field type class for '{$fieldType}'");
+        }
+    }
+
+    protected function resolveFieldTypeClassName(string $fieldType): ?string
+    {
+        if (EnumsField::tryFrom($fieldType)) {
+            return sprintf('Vormkracht10\\Backstage\\Fields\\%s', Str::studly($fieldType));
+        }
+
+        return Backstage::getFields()[$fieldType] ?? null;
+    }
+
+    protected function isValidFieldClass(?string $className): bool
+    {
+        return $className !== null
+            && class_exists($className)
+            && method_exists($className, 'getForm');
     }
 }
