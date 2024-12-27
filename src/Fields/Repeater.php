@@ -5,31 +5,20 @@ namespace Vormkracht10\Backstage\Fields;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater as Input;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Str;
+use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Vormkracht10\Backstage\Backstage;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Concerns\HasOptions;
-use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
-use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
-use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
-use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
-use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\KeyValue;
-use Vormkracht10\Backstage\Fields\Media;
-use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Fields\Toggle;
 
 class Repeater extends FieldBase implements FieldContract
 {
@@ -85,7 +74,7 @@ class Repeater extends FieldBase implements FieldContract
             $schema = [];
 
             foreach ($field->children as $f) {
-                $instance = new self();
+                $instance = new self;
 
                 $schema[] = $instance->resolveFieldTypeClassName($f->field_type)::make($f->name, $f);
             }
