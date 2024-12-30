@@ -25,11 +25,7 @@ jobs:
           MYSQL_DATABASE: test
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout code
@@ -56,10 +52,6 @@ jobs:
           composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
           composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
           composer install --no-interaction --dev
-
-      - name: Wait for MySQL
-        run: |
-          dockerize -wait tcp://mysql:3306 -timeout 1m
 
       - name: Execute tests
         env:
