@@ -73,7 +73,7 @@ class Content extends Model
     protected function url(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
+            get: fn (?string $value, array $attributes) => url($this->path_prefix . ltrim($attributes['path'], '/')),
         );
     }
 
@@ -84,6 +84,35 @@ class Content extends Model
     {
         return Attribute::make(
             get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+        );
+    }
+
+    /**
+     * The full url, domain and language path. Without the content path.
+     */
+    protected function pathPrefix(): Attribute
+    {
+        $url = '';
+
+        $domain = $this->site?->domains()->with([
+            'languages' => function ($query) {
+                $query->where('code', $this->language_code);
+                $query->limit(1);
+            }])
+            ->first();
+
+        if ($domain) {
+            $url .= 'https://'. $domain->name .'/';
+            $url .= $this->site->path ? ltrim($this->site->path, '/') : '';
+            if ($language = $domain->languages->first()) {
+                $url .= $language->pivot->path ? ltrim($language->pivot->path, '/') : '';
+            }
+        }
+
+        $url .= '/';
+
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => $url,
         );
     }
 
