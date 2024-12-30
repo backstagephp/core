@@ -1,7 +1,6 @@
 <?php
 
 use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 
 test('confirm home url works', function () {
