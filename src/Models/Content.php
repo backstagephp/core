@@ -15,6 +15,13 @@ use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
+/**
+ * Vormkracht10\Backstage\Models\Content
+ *
+ * @property string $path
+ * @property string $url
+ * @property string $language_code
+ */
 class Content extends Model
 {
     use HasMedia;
@@ -72,7 +79,7 @@ class Content extends Model
      */
     protected function url(): Attribute
     {
-        $url = rtrim($this->path_prefix . $this->path, '/');
+        $url = rtrim($this->pathPrefix . $this->path, '/');
         if ($this->site->trailing_slash) {
             $url .= '/';
         }
@@ -94,6 +101,8 @@ class Content extends Model
 
     /**
      * The full url, domain and language path. Without the content path, with trailing slash.
+     * 
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
      */
     protected function pathPrefix(): Attribute
     {
