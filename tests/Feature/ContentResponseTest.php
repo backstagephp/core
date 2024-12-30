@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Query\JoinClause;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Site;
 
