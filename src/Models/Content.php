@@ -102,7 +102,7 @@ class Content extends Model
             ->first();
 
         if ($domain) {
-            $url .= 'https://'. $domain->name .'/';
+            $url .= 'https://' . $domain->name . '/';
             $url .= $this->site->path ? ltrim($this->site->path, '/') : '';
             if ($language = $domain->languages->first()) {
                 $url .= $language->pivot->path ? ltrim($language->pivot->path, '/') : '';
