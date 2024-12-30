@@ -48,7 +48,7 @@ class Content extends Model
 
     public function language(): BelongsTo
     {
-        return $this->belongsTo(Language::class, 'code');
+        return $this->belongsTo(Language::class, 'language_code', 'code');
     }
 
     public function site(): BelongsTo
@@ -72,8 +72,13 @@ class Content extends Model
      */
     protected function url(): Attribute
     {
+        $url = rtrim($this->path_prefix . $this->path, '/');
+        if ($this->site->trailing_slash) {
+            $url .= '/';
+        }
+
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => url($this->path_prefix . ltrim($attributes['path'], '/')),
+            get: fn () => $url,
         );
     }
 
@@ -88,7 +93,7 @@ class Content extends Model
     }
 
     /**
-     * The full url, domain and language path. Without the content path.
+     * The full url, domain and language path. Without the content path, with trailing slash.
      */
     protected function pathPrefix(): Attribute
     {
@@ -102,10 +107,10 @@ class Content extends Model
             ->first();
 
         if ($domain) {
-            $url .= 'https://'. $domain->name .'/';
-            $url .= $this->site->path ? ltrim($this->site->path, '/') : '';
+            $url .= 'https://'. $domain->name;
+            $url .= $this->site->path ? '/'. trim($this->site->path, '/') : '';
             if ($language = $domain->languages->first()) {
-                $url .= $language->pivot->path ? ltrim($language->pivot->path, '/') : '';
+                $url .= $language->pivot->path ? '/'. trim($language->pivot->path, '/') : '';
             }
         }
 

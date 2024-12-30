@@ -29,4 +29,13 @@ class SiteFactory extends Factory
             'trailing_slash' => false,
         ];
     }
+
+    public function withDomain($domain = 'localhost'): self
+    {
+        return $this->afterCreating(function (Site $site) use ($domain) {
+            $site->domains()->create([
+                'name' => $domain,
+            ]);
+        });
+    }
 }
