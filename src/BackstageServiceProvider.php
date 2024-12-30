@@ -240,29 +240,28 @@ class BackstageServiceProvider extends PackageServiceProvider
     /**
      * @return array<string>
      */
-    protected function getMigrations(): array
+    public function getMigrations(): array
     {
         return [
-            'create_languages_table',
-            'create_sites_table',
-            'create_types_table',
-            'create_fields_table',
-            'create_settings_table',
-            'create_content_table',
-            'create_templates_table',
-            'create_content_field_values_table',
-            'create_blocks_table',
-            'create_menus_table',
-            'create_menu_items_table',
-            'create_domains_table',
-            'create_forms_table',
-            'create_form_actions_table',
-            'create_form_submissions_table',
-            'create_form_submission_values_table',
-            'create_tags_tables',
-
-            'create_notifications_table',
-            'add_columns_to_users_table',
+            '01_create_languages_table',
+            '02_create_sites_table',
+            '03_create_types_table',
+            '04_create_fields_table',
+            '05_create_settings_table',
+            '06_create_content_table',
+            '07_create_templates_table',
+            '08_create_content_field_values_table',
+            '09_create_blocks_table',
+            '10_create_menus_table',
+            '11_create_menu_items_table',
+            '12_create_domains_table',
+            '13_create_forms_table',
+            '14_create_form_actions_table',
+            '15_create_form_submissions_table',
+            '16_create_form_submission_values_table',
+            '17_create_tags_tables',
+            '18_create_notifications_table',
+            '19_add_columns_to_users_table',
         ];
     }
 

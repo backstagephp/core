@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Vormkracht10\Backstage\Models\Domain;
 use Vormkracht10\Backstage\Models\Site;
 
 class SiteFactory extends Factory
@@ -24,6 +25,7 @@ class SiteFactory extends Factory
             'title_separator' => '|',
             'primary_color' => $this->faker->hexColor(),
             'timezone' => $this->faker->timezone(),
+            'path' => '',
             'auth' => false,
             'default' => false,
             'trailing_slash' => false,
@@ -32,10 +34,9 @@ class SiteFactory extends Factory
 
     public function withDomain($domain = 'localhost'): self
     {
-        return $this->afterCreating(function (Site $site) use ($domain) {
-            $site->domains()->create([
+        return $this->has(Domain::factory()
+            ->state([
                 'name' => $domain,
-            ]);
-        });
+            ]));
     }
 }
