@@ -101,7 +101,7 @@ class Content extends Model
 
     /**
      * The full url, domain and language path. Without the content path, with trailing slash.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
      */
     protected function pathPrefix(): Attribute
