@@ -6,7 +6,6 @@ use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
-use Illuminate\Foundation\Application;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
@@ -60,8 +59,8 @@ class TestCase extends Orchestra
         // foreach (app()->getProvider('Vormkracht10\Backstage\BackstageServiceProvider')->getMigrations() as $filename)
         // {
         //     $this->loadMigrationsFrom(__DIR__.'/../database/migrations/'. $filename .'.php');
-            // $migration = include __DIR__.'/../database/migrations/'. $filename .'.php';
-            // $migration->up();
+        // $migration = include __DIR__.'/../database/migrations/'. $filename .'.php';
+        // $migration->up();
         // }
     }
 
