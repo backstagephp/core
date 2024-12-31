@@ -8,6 +8,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
@@ -130,12 +131,28 @@ class ContentResource extends Resource
                         }
                     }),
 
-                TextInput::make('path')
-                    ->hiddenLabel()
-                    ->columnSpanFull()
-                    ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                    ->required()
-                    ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                Grid::make('Content')
+                    ->schema([
+                        Select::make('parent_ulid')
+                            ->placeholder('Parent')
+                            ->hiddenLabel()
+                            ->columnSpan(['xl' => 1])
+                            ->relationship(
+                                name: 'parent',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn (EloquentBuilder $query) => $query->where('type_slug', self::$type->slug),
+                                ignoreRecord: true,
+                            )
+                            ->nullable(),
+
+                        TextInput::make('path')
+                            ->hiddenLabel()
+                            ->columnSpan(['xl' => 3])
+                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
+                            ->required()
+                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                    ])
+                    ->columns(['xl' => 4]),
 
                 Grid::make(12)
                     ->schema([
