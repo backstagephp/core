@@ -28,6 +28,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Locale;
 use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\Backstage\Fields\Checkbox;
@@ -138,6 +139,10 @@ class ContentResource extends Resource
                             ->searchable()
                             ->preload()
                             ->columnSpan(['xl' => 1])
+                            ->rules([
+                                Rule::exists('content', 'ulid')->where('type_slug', self::$type->slug)
+                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
+                            ])
                             ->relationship(
                                 name: 'parent',
                                 titleAttribute: 'name',
