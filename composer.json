@@ -41,6 +41,7 @@
         "spatie/laravel-package-tools": "^1.15.0",
         "spatie/once": "*",
         "spatie/schema-org": "^3.23",
+        "staudenmeir/laravel-adjacency-list": "^1.0",
         "vormkracht10/filament-media-picker": "dev-main",
         "vormkracht10/filament-redirects": "dev-main"
     },

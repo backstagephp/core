@@ -14,6 +14,7 @@ use Vormkracht10\Backstage\Casts\ContentPathCast;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 use Vormkracht10\MediaPicker\Concerns\HasMedia;
+use \Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
  * Vormkracht10\Backstage\Models\Content
@@ -28,6 +29,7 @@ class Content extends Model
     use HasPackageFactory;
     use HasTags;
     use HasUlids;
+    use HasRecursiveRelationships;
 
     protected $primaryKey = 'ulid';
 
@@ -97,6 +99,16 @@ class Content extends Model
         return Attribute::make(
             get: fn (?string $value, array $attributes) => $attributes['template_slug'],
         );
+    }
+
+    public function getParentKeyName()
+    {
+        return 'parent_ulid';
+    }
+
+    public function getLocalKeyName()
+    {
+        return 'ulid';
     }
 
     /**
