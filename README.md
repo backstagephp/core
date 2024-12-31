@@ -42,7 +42,8 @@ Note: For now you may have to update composer.json to:
                 "symlink": true
             }
         }
-    }
+    },
+    "minimum-stability": "dev",
 ```
 
 To get started quickly, use the backstage:install command:
