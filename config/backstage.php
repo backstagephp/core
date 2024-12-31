@@ -40,6 +40,6 @@ return [
     ],
 
     'fields' => [
-        //
+        // App\Backstage\Fields\CustomField;
     ],
 ];
