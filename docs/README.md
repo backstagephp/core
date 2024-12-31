@@ -4,6 +4,8 @@ Welcome to the playbook for Backstage.
 
 Backstage is the CMS for building the modern web.
 
+[Content](01-content.md)
+
 [Blocks](02-blocks/01-introduction.md)
 
 [Forms Documentation](02-forms.md)

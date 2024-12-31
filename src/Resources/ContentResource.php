@@ -28,6 +28,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Locale;
 use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\Backstage\Fields\Checkbox;
@@ -130,12 +131,38 @@ class ContentResource extends Resource
                         }
                     }),
 
-                TextInput::make('path')
-                    ->hiddenLabel()
-                    ->columnSpanFull()
-                    ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                    ->required()
-                    ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                Grid::make('Content')
+                    ->schema([
+                        Select::make('parent_ulid')
+                            ->placeholder('Parent')
+                            ->hiddenLabel()
+                            ->searchable()
+                            ->preload()
+                            ->columnSpan(['xl' => 1])
+                            ->rules([
+                                Rule::exists('content', 'ulid')->where('type_slug', self::$type->slug)
+                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
+                            ])
+                            ->relationship(
+                                name: 'parent',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
+                                    $query->where('type_slug', self::$type->slug)
+                                        ->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                            $query->where('language_code', $languageCode);
+                                        });
+                                },
+                                ignoreRecord: true,
+                            ),
+
+                        TextInput::make('path')
+                            ->hiddenLabel()
+                            ->columnSpan(['xl' => 3])
+                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
+                            ->required()
+                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                    ])
+                    ->columns(['xl' => 4]),
 
                 Grid::make(12)
                     ->schema([
@@ -284,6 +311,10 @@ class ContentResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->separator('')
+                    ->description(
+                        description: fn (Content $record) => $record->ancestors?->implode('name', ' / ') ?? null,
+                        position: 'above'
+                    )
                     ->suffixBadges([
                         Badge::make('type')
                             ->label(fn (Content $record) => $record->type->name)
