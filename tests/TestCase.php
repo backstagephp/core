@@ -18,7 +18,6 @@ use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Vormkracht10\Backstage\BackstageServiceProvider;
-use Vormkracht10\Backstage\Facades\Backstage;
 
 #[WithMigration]
 class TestCase extends Orchestra
