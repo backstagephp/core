@@ -18,6 +18,32 @@ You can install the package via composer in your (new) [Laravel app](https://lar
 composer require vormkracht10/backstage
 ```
 
+Note: For now you may have to update composer.json to:
+```json
+    "repositories": {
+        "backstage": {
+            "type": "path",
+            "url": "/var/www/backstage",
+            "options": {
+                "symlink": true
+            }
+        },
+        "filament-redirects": {
+            "type": "path",
+            "url": "/var/www/filament-redirects",
+            "options": {
+                "symlink": true
+            }
+        },
+        "laravel-redirects": {
+            "type": "path",
+            "url": "/var/www/laravel-redirects",
+            "options": {
+                "symlink": true
+            }
+        }
+```
+
 To get started quickly, use the backstage:install command:
 
 ```bash
