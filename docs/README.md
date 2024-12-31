@@ -9,3 +9,5 @@ Backstage is the CMS for building the modern web.
 [Forms Documentation](02-forms.md)
 
 [Settings Documentation](03-settings.md)
+
+[Content url Documentation](04-urls.md)
