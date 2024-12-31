@@ -12,6 +12,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select as FilamentSelect;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -135,14 +136,20 @@ class ContentResource extends Resource
                         Select::make('parent_ulid')
                             ->placeholder('Parent')
                             ->hiddenLabel()
+                            ->searchable()
+                            ->preload()
                             ->columnSpan(['xl' => 1])
                             ->relationship(
                                 name: 'parent',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (EloquentBuilder $query) => $query->where('type_slug', self::$type->slug),
+                                modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
+                                    $query->where('type_slug', self::$type->slug)
+                                        ->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                            $query->where('language_code', $languageCode);
+                                    });
+                                },
                                 ignoreRecord: true,
-                            )
-                            ->nullable(),
+                            ),
 
                         TextInput::make('path')
                             ->hiddenLabel()

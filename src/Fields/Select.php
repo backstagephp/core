@@ -23,7 +23,7 @@ class Select extends FieldBase implements FieldInterface
             'multiple' => false,
             'preload' => false,
             'allowHtml' => false,
-            'selectablePlaceholder' => false,
+            'selectablePlaceholder' => true,
             'loadingMessage' => null,
             'noSearchResultsMessage' => null,
             'searchPrompt' => null,
