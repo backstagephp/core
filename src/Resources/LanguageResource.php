@@ -11,8 +11,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\Language;
 use Illuminate\Database\Eloquent\Builder;
+use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\LanguageResource\Pages;
 
 class LanguageResource extends Resource

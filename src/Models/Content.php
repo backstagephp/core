@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\HtmlString;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 use Vormkracht10\Backstage\Casts\ContentPathCast;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 use Vormkracht10\MediaPicker\Concerns\HasMedia;
-use \Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
  * Vormkracht10\Backstage\Models\Content
@@ -27,9 +27,9 @@ class Content extends Model
 {
     use HasMedia;
     use HasPackageFactory;
+    use HasRecursiveRelationships;
     use HasTags;
     use HasUlids;
-    use HasRecursiveRelationships;
 
     protected $primaryKey = 'ulid';
 
