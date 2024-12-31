@@ -1,7 +1,6 @@
 <?php
 
 use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Site;
 
 test('content can have a parent', function () {
     $parent = Content::factory()->create();
