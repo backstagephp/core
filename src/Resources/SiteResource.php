@@ -16,13 +16,9 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Locale;
-use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\SiteResource\Pages;
 
@@ -146,26 +142,6 @@ class SiteResource extends Resource
                                 Grid::make([
                                     'default' => 12,
                                 ])->schema([
-                                    Select::make('language_code')
-                                        ->label(__('Language'))
-                                        ->columnSpanFull()
-                                        ->placeholder(__('Select Language'))
-                                        ->options(
-                                            Language::where('active', 1)
-                                                ->get()
-                                                ->sort()
-                                                ->groupBy(function ($language) {
-                                                    return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
-                                                })
-                                                ->mapWithKeys(fn ($languages, $countryName) => [
-                                                    $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                        $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
-                                                    ])->toArray(),
-                                                ])
-                                        )
-                                        ->allowHtml()
-                                        ->visible(fn () => Language::where('active', 1)->count() > 1),
-
                                     Select::make('timezone')
                                         ->label('Timezone')
                                         ->columnSpanFull()
@@ -215,14 +191,6 @@ class SiteResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                ImageColumn::make('language_code')
-                    ->label('Default language')
-                    ->getStateUsing(fn (Site $record) => explode('-', $record->language_code)[0])
-                    ->view('backstage::filament.tables.columns.language-flag-column'),
-                ViewColumn::make('country_code')
-                    ->label('Default country')
-                    ->getStateUsing(fn (Site $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
-                    ->view('backstage::filament.tables.columns.country-flag-column'),
                 IconColumn::make('default')
                     ->label('Default')
                     ->width(0)

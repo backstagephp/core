@@ -19,8 +19,8 @@ class FormActionFactory extends Factory
     public function definition(): array
     {
         return [
-            'language_code' => Language::default(),
-            'site_ulid' => Site::default(),
+            'language_code' => Language::factory(),
+            'site_ulid' => Site::factory(),
             'type' => 'email',
             'config' => [
                 'subject' => 'Contact submission',

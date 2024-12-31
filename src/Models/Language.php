@@ -30,8 +30,8 @@ class Language extends Model
         return static::firstWhere('default', 1);
     }
 
-    public function sites(): BelongsToMany
+    public function domains(): BelongsToMany
     {
-        return $this->belongsToMany(Site::class, 'language_site', 'code');
+        return $this->belongsToMany(Domain::class);
     }
 }

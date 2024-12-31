@@ -20,9 +20,7 @@ class LanguageResource extends Resource
 
     public static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationParentItem = 'Sites';
-
-    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+    protected static bool $isScopedToTenant = false;
 
     public static function getNavigationGroup(): ?string
     {

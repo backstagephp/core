@@ -14,12 +14,13 @@ use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Vormkracht10\Backstage\BackstageServiceProvider;
-use Orchestra\Testbench\Attributes\WithMigration; 
+use Vormkracht10\Backstage\Facades\Backstage;
 
-#[WithMigration] 
+#[WithMigration]
 class TestCase extends Orchestra
 {
     use RefreshDatabase;
@@ -45,29 +46,28 @@ class TestCase extends Orchestra
 
     public function defineEnvironment($app)
     {
-        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
+        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
 
-        foreach (glob(__DIR__.'/../config/*.php') as $filename)
-        {
+        foreach (glob(__DIR__ . '/../config/*.php') as $filename) {
             $app['config']->set(pathinfo($filename)['filename'], require $filename);
         }
     }
 
     public function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        // foreach (app()->getProvider('Vormkracht10\Backstage\BackstageServiceProvider')->getMigrations() as $filename)
+        // {
+        //     $this->loadMigrationsFrom(__DIR__.'/../database/migrations/'. $filename .'.php');
+        // $migration = include __DIR__.'/../database/migrations/'. $filename .'.php';
+        // $migration->up();
+        // }
     }
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        // config()->set('database.default', 'sqlite');
 
-
-        // foreach (glob(__DIR__.'/../database/migrations/*.php') as $filename)
-        // {
-        //     $migration = include $filename;
-        //     $migration->up();
-        // }
         /*
         $migration = include __DIR__.'/../database/migrations/create_backstage_table.php.stub';
         $migration->up();
