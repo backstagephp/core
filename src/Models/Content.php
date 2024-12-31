@@ -111,6 +111,11 @@ class Content extends Model
         return 'ulid';
     }
 
+    public function getPathName()
+    {
+        return 'parent_path';
+    }
+
     /**
      * The full url, domain and language path. Without the content path, with trailing slash.
      *

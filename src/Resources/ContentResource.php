@@ -8,7 +8,6 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
@@ -301,6 +300,10 @@ class ContentResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->separator('')
+                    ->description(
+                        description: fn (Content $record) => $record->ancestors?->implode('name', ' / ') ?? null,
+                        position: 'above'
+                    )
                     ->suffixBadges([
                         Badge::make('type')
                             ->label(fn (Content $record) => $record->type->name)
