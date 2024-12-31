@@ -45,7 +45,7 @@ class Backstage
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 
