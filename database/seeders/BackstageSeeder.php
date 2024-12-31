@@ -152,6 +152,7 @@ class BackstageSeeder extends Seeder
             'name' => 'Contact',
             'slug' => 'contact',
             'path' => 'contact',
+            'type_slug' => $type->slug,
             'site_ulid' => $site->ulid,
             'language_code' => $language->code,
             'meta_tags' => ['title' => 'Contact'],
