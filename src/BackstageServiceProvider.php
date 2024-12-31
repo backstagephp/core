@@ -83,6 +83,10 @@ class BackstageServiceProvider extends PackageServiceProvider
                             $command->callSilently('backstage:seed', [
                                 '--force' => true,
                             ]);
+
+                            $command->callSilently('filament:assets', [
+                                '--force' => true,
+                            ]);
                         }
                     })
                     ->endWith(function (InstallCommand $command) {
