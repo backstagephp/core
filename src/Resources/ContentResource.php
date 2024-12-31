@@ -21,6 +21,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -132,9 +133,9 @@ class ContentResource extends Resource
                 TextInput::make('path')
                     ->hiddenLabel()
                     ->columnSpanFull()
-                    ->prefix('Path')
+                    ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
                     ->required()
-                    ->formatStateUsing(fn (?Content $record) => '/' . ltrim($record->path ?? '', '/')),
+                    ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
 
                 Grid::make(12)
                     ->schema([
@@ -294,6 +295,14 @@ class ContentResource extends Resource
                     ->ring(2)
                     ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
                     ->limit(3),
+                ImageColumn::make('language_code')
+                    ->label('Language')
+                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
+                    ->view('backstage::filament.tables.columns.language-flag-column'),
+                ViewColumn::make('country_code')
+                    ->label('Country')
+                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
+                    ->view('backstage::filament.tables.columns.country-flag-column'),
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()

@@ -8,7 +8,6 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -61,11 +60,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function site(): BelongsTo
-    {
-        return $this->belongsTo(Site::class, 'current_site_id');
     }
 
     public function sites(): BelongsToMany

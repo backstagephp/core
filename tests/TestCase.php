@@ -18,6 +18,7 @@ use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Vormkracht10\Backstage\BackstageServiceProvider;
+use Vormkracht10\Backstage\Facades\Backstage;
 
 #[WithMigration]
 class TestCase extends Orchestra
@@ -55,20 +56,11 @@ class TestCase extends Orchestra
     public function defineDatabaseMigrations()
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
     }
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
-
-        // foreach (glob(__DIR__.'/../database/migrations/*.php') as $filename)
-        // {
-        //     $migration = include $filename;
-        //     $migration->up();
-        // }
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_backstage_table.php.stub';
-        $migration->up();
-        */
+        // config()->set('database.default', 'sqlite');
     }
 }
