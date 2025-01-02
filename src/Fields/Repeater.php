@@ -3,23 +3,25 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater as Input;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
+use Illuminate\Support\Collection;
+use Filament\Forms\Components\Hidden;
 use Vormkracht10\Backstage\Backstage;
-use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
-use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
+use Filament\Forms\Components\Section;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Vormkracht10\Backstage\Models\Field;
 use Vormkracht10\Backstage\Concerns\HasOptions;
+use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
+use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 
 class Repeater extends FieldBase implements FieldContract
 {
@@ -130,11 +132,9 @@ class Repeater extends FieldBase implements FieldContract
                                 ->live(debounce: 250)
                                 ->labelKey('name')
                                 ->maxDepth(0)
-                                ->addable(fn($state) => count($state) > 0)
-                                ->disabled(fn($state) => count($state) === 0)
-                                ->hint(function ($state) {
-                                    return count($state) > 0 ? '' : __('Fields can be added once the field is created.');
-                                })
+                                ->addable(fn(string $operation) => $operation !== 'create')
+                                ->disabled(fn(string $operation) => $operation === 'create')
+                                ->hint(fn(string $operation) => $operation === 'create' ? __('Fields can be added once the field is created.') : '')
                                 ->hintColor('primary')
                                 ->form([
                                     Section::make('Field')
