@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Exception;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater as Input;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
@@ -123,11 +125,17 @@ class Repeater extends FieldBase implements FieldContract
                                 ->label(__('Add action label')),
                             AdjacencyList::make('config.form')
                                 ->columnSpanFull()
-                                ->label(__('Field Type'))
+                                ->label(__('Fields'))
                                 ->relationship('children')
                                 ->live(debounce: 250)
                                 ->labelKey('name')
                                 ->maxDepth(1)
+                                ->addable(fn($state) => count($state) > 0)
+                                ->disabled(fn($state) => count($state) === 0)
+                                ->hint(function ($state) {
+                                    return count($state) > 0 ? '' : __('Fields can be added once the field is created.');
+                                })
+                                ->hintColor('primary')
                                 ->form([
                                     Section::make('Field')
                                         ->columns(3)
