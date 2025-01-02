@@ -10,6 +10,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Vormkracht10\Backstage\Backstage;
@@ -70,16 +71,8 @@ class Repeater extends FieldBase implements FieldContract
             $input = $input->reorderableWithButtons();
         }
 
-        if ($field->config['form'] ?? false) {
-            $schema = [];
-
-            foreach ($field->children as $f) {
-                $instance = new self;
-
-                $schema[] = $instance->resolveFieldTypeClassName($f->field_type)::make($f->name, $f);
-            }
-
-            $input = $input->schema($schema);
+        if (count($field->children) > 0) {
+            $input = $input->schema(self::generateSchemaFromChildren($field->children));
         }
 
         return $input;
@@ -112,7 +105,7 @@ class Repeater extends FieldBase implements FieldContract
                                 Forms\Components\Toggle::make('config.reorderableWithButtons')
                                     ->label(__('Reorderable with buttons'))
                                     ->dehydrated()
-                                    ->disabled(fn (Forms\Get $get): bool => $get('config.reorderable') === false)
+                                    ->disabled(fn(Forms\Get $get): bool => $get('config.reorderable') === false)
                                     ->inline(false),
                             ]),
                             Forms\Components\Toggle::make('config.collapsible')
@@ -120,81 +113,71 @@ class Repeater extends FieldBase implements FieldContract
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.collapsed')
                                 ->label(__('Collapsed'))
-                                ->visible(fn (Forms\Get $get): bool => $get('config.collapsible') === true)
+                                ->visible(fn(Forms\Get $get): bool => $get('config.collapsible') === true)
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.cloneable')
                                 ->label(__('Cloneable'))
                                 ->inline(false),
                             Forms\Components\TextInput::make('config.addActionLabel')
                                 ->label(__('Add action label')),
-                            Forms\Components\Fieldset::make('form')
-                                ->label(__('Form'))
-                                ->schema([
-                                    Input::make('config.form')
-                                        ->label(__('Fields'))
-                                        ->addable()
-                                        ->deletable()
+                            AdjacencyList::make('config.form')
+                                ->columnSpanFull()
+                                ->label(__('Field Type'))
+                                ->relationship('children')
+                                ->live(debounce: 250)
+                                ->labelKey('name')
+                                ->maxDepth(1)
+                                ->form([
+                                    Section::make('Field')
+                                        ->columns(3)
                                         ->schema([
-                                            AdjacencyList::make('field_type')
-                                                ->columnSpanFull()
-                                                ->label(__('Field Type'))
-                                                ->relationship('children')
+                                            Hidden::make('model_type')
+                                                ->default('field'),
+                                            Hidden::make('model_key')
+                                                ->default('slug'),
+                                            TextInput::make('name')
+                                                ->label(__('Name'))
+                                                ->required()
+                                                ->placeholder(__('Name'))
                                                 ->live(debounce: 250)
-                                                ->labelKey('name')
-                                                ->maxDepth(1)
-                                                ->form([
-                                                    Section::make('Field')
-                                                        ->columns(3)
-                                                        ->schema([
-                                                            Hidden::make('model_type')
-                                                                ->default('field'),
-                                                            Hidden::make('model_key')
-                                                                ->default('slug'),
-                                                            TextInput::make('name')
-                                                                ->label(__('Name'))
-                                                                ->required()
-                                                                ->placeholder(__('Name'))
-                                                                ->live(debounce: 250)
-                                                                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                                                            TextInput::make('slug')
-                                                                ->readonly(),
-                                                            Select::make('field_type')
-                                                                ->searchable()
-                                                                ->preload()
-                                                                ->label(__('Field Type'))
-                                                                ->live(debounce: 250)
-                                                                ->reactive()
-                                                                ->options(
-                                                                    function () {
-                                                                        $options = array_merge(
-                                                                            EnumsField::array(),
-                                                                            $this->formatCustomFields(Backstage::getFields())
-                                                                        );
+                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                            TextInput::make('slug')
+                                                ->readonly(),
+                                            Select::make('field_type')
+                                                ->searchable()
+                                                ->preload()
+                                                ->label(__('Field Type'))
+                                                ->live(debounce: 250)
+                                                ->reactive()
+                                                ->options(
+                                                    function () {
+                                                        $options = array_merge(
+                                                            EnumsField::array(),
+                                                            $this->formatCustomFields(Backstage::getFields())
+                                                        );
 
-                                                                        asort($options);
+                                                        asort($options);
 
-                                                                        return $options;
-                                                                    }
-                                                                )
-                                                                ->required()
-                                                                ->afterStateUpdated(function ($state, Set $set) {
-                                                                    $set('config', []);
+                                                        return $options;
+                                                    }
+                                                )
+                                                ->required()
+                                                ->afterStateUpdated(function ($state, Set $set) {
+                                                    $set('config', []);
 
-                                                                    $set('config', EnumsField::tryFrom($state)
-                                                                        ? $this->initializeDefaultConfig($state)
-                                                                        : $this->initializeCustomConfig($state));
-                                                                }),
-                                                        ])->columnSpanFull(),
-                                                    Section::make('Configuration')
-                                                        ->columns(3)
-                                                        ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
-                                                            $get('field_type')
-                                                        ))
-                                                        ->visible(fn (Get $get) => filled($get('field_type'))),
-                                                ])
-                                                ->required(),
-                                        ])->columns(3),
-                                ])->columns(1),
+                                                    $set('config', EnumsField::tryFrom($state)
+                                                        ? $this->initializeDefaultConfig($state)
+                                                        : $this->initializeCustomConfig($state));
+                                                }),
+                                        ])->columnSpanFull(),
+                                    Section::make('Configuration')
+                                        ->columns(3)
+                                        ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
+                                            $get('field_type')
+                                        ))
+                                        ->visible(fn(Get $get) => filled($get('field_type'))),
+                                ])
+                                ->required(),
                         ])->columns(2),
                 ])->columnSpanFull(),
         ];
@@ -220,7 +203,7 @@ class Repeater extends FieldBase implements FieldContract
         }
     }
 
-    protected function resolveFieldTypeClassName(string $fieldType): ?string
+    protected static function resolveFieldTypeClassName(string $fieldType): ?string
     {
         if (EnumsField::tryFrom($fieldType)) {
             return sprintf('Vormkracht10\\Backstage\\Fields\\%s', Str::studly($fieldType));
@@ -234,5 +217,24 @@ class Repeater extends FieldBase implements FieldContract
         return $className !== null
             && class_exists($className)
             && method_exists($className, 'getForm');
+    }
+
+    private static function generateSchemaFromChildren(Collection $children): array
+    {
+        $schema = [];
+
+        foreach ($children as $child) {
+            $fieldType = $child['field_type'];
+
+            $field = self::resolveFieldTypeClassName($fieldType);
+
+            if ($field === null) {
+                continue;
+            }
+
+            $schema[] = $field::make($child['name'], $child);
+        }
+
+        return $schema;
     }
 }
