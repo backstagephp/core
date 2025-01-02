@@ -54,6 +54,7 @@ class Repeater extends FieldBase implements FieldContract
             'collapsible' => false,
             'collapsed' => false,
             'cloneable' => false,
+            'form' => [],
         ];
     }
 
@@ -158,7 +159,7 @@ class Repeater extends FieldBase implements FieldContract
 
                                                         asort($options);
 
-                                                        return $options;
+                                                        return $options ?? [];
                                                     }
                                                 )
                                                 ->required()
@@ -176,8 +177,7 @@ class Repeater extends FieldBase implements FieldContract
                                             $get('field_type')
                                         ))
                                         ->visible(fn(Get $get) => filled($get('field_type'))),
-                                ])
-                                ->required(),
+                                ]),
                         ])->columns(2),
                 ])->columnSpanFull(),
         ];
@@ -222,6 +222,8 @@ class Repeater extends FieldBase implements FieldContract
     private static function generateSchemaFromChildren(Collection $children): array
     {
         $schema = [];
+
+        $children = $children->sortBy('position');
 
         foreach ($children as $child) {
             $fieldType = $child['field_type'];
