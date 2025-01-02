@@ -21,12 +21,16 @@ trait HasConfigurableFields
         return $fieldInstance::getDefaultConfig();
     }
 
-    private function formatCustomFields(array $fields): array
+    private function prepareCustomFieldOptions(array $fields): array
     {
         return collect($fields)->mapWithKeys(function ($field, $key) {
-            $parts = explode('\\', $field);
-            $lastPart = end($parts);
-            $formattedName = ucwords(str_replace('_', ' ', strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $lastPart))));
+            $lastPart = Str::afterLast($field, '\\');
+
+            $formattedName = Str::of($lastPart)
+                ->snake()
+                ->replace('_', ' ')
+                ->title()
+                ->value();
 
             return [$key => $formattedName];
         })->toArray();
