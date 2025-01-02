@@ -3,24 +3,23 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Illuminate\Support\Str;
-use Filament\Actions\Action;
-use Illuminate\Support\Collection;
 use Filament\Forms\Components\Hidden;
-use Vormkracht10\Backstage\Backstage;
+use Filament\Forms\Components\Repeater as Input;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Models\Field;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
+use Vormkracht10\Backstage\Backstage;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Concerns\HasOptions;
-use Filament\Forms\Components\Repeater as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
-use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
-use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
+use Vormkracht10\Backstage\Models\Field;
 
 class Repeater extends FieldBase implements FieldContract
 {
