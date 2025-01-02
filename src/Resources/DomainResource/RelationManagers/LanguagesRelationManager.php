@@ -52,7 +52,8 @@ class LanguagesRelationManager extends RelationManager
                                     ->columnSpanFull()
                                     ->placeholder(__('Select Language'))
                                     ->options(
-                                        Language::where('active', 1)
+                                        Language::withoutGlobalScopes()
+                                            ->where('active', 1)
                                             ->get()
                                             ->sort()
                                             ->groupBy(function ($language) {
@@ -64,8 +65,7 @@ class LanguagesRelationManager extends RelationManager
                                                 ])->toArray(),
                                             ])
                                     )
-                                    ->allowHtml()
-                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                    ->allowHtml(),
                                 TextInput::make('path')
                                     ->label(__('Path'))
                                     ->columnSpan(6),

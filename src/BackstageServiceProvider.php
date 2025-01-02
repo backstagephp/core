@@ -53,6 +53,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         if ($command->confirm('Would you like us to install Backstage for you?', true)) {
                             $command->comment('Lights, camera, action! Setting up for the show...');
 
+                            $command->comment('Preparing stage...');
                             $command->callSilently('vendor:publish', [
                                 '--tag' => 'backstage-migrations',
                                 '--force' => true,
@@ -75,13 +76,26 @@ class BackstageServiceProvider extends PackageServiceProvider
                                 '--force' => true,
                             ]);
 
+                            $command->comment('Clean the decor...');
                             $command->callSilently('migrate:fresh', [
                                 '--force' => true,
                             ]);
 
+                            $command->comment('Hanging up lights...');
                             $command->callSilently('backstage:seed', [
                                 '--force' => true,
                             ]);
+
+                            $command->comment('Plugin wires...');
+                            $command->callSilently('filament:assets');
+
+                            $command->comment('Turn on the lights...');
+                            $key = 'AUTH_MODEL';
+                            $value = '\Vormkracht10\Backstage\Models\User';
+                            $path = app()->environmentFilePath();
+                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '='.$value);
+
+                            $command->comment('Raise the curtain...');
                         }
                     })
                     ->endWith(function (InstallCommand $command) {
