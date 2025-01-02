@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Fields;
 
-use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater as Input;
@@ -25,8 +24,8 @@ use Vormkracht10\Backstage\Models\Field;
 class Repeater extends FieldBase implements FieldContract
 {
     use HasConfigurableFields;
-    use HasOptions;
     use HasFieldTypeResolver;
+    use HasOptions;
 
     private const FIELD_TYPE_MAP = [
         'text' => Text::class,
@@ -108,7 +107,7 @@ class Repeater extends FieldBase implements FieldContract
                                 Forms\Components\Toggle::make('config.reorderableWithButtons')
                                     ->label(__('Reorderable with buttons'))
                                     ->dehydrated()
-                                    ->disabled(fn(Forms\Get $get): bool => $get('config.reorderable') === false)
+                                    ->disabled(fn (Forms\Get $get): bool => $get('config.reorderable') === false)
                                     ->inline(false),
                             ]),
                             Forms\Components\Toggle::make('config.collapsible')
@@ -116,7 +115,7 @@ class Repeater extends FieldBase implements FieldContract
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.collapsed')
                                 ->label(__('Collapsed'))
-                                ->visible(fn(Forms\Get $get): bool => $get('config.collapsible') === true)
+                                ->visible(fn (Forms\Get $get): bool => $get('config.collapsible') === true)
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.cloneable')
                                 ->label(__('Cloneable'))
@@ -130,8 +129,8 @@ class Repeater extends FieldBase implements FieldContract
                                 ->live(debounce: 250)
                                 ->labelKey('name')
                                 ->maxDepth(1)
-                                ->addable(fn($state) => count($state) > 0)
-                                ->disabled(fn($state) => count($state) === 0)
+                                ->addable(fn ($state) => count($state) > 0)
+                                ->disabled(fn ($state) => count($state) === 0)
                                 ->hint(function ($state) {
                                     return count($state) > 0 ? '' : __('Fields can be added once the field is created.');
                                 })
@@ -149,7 +148,7 @@ class Repeater extends FieldBase implements FieldContract
                                                 ->required()
                                                 ->placeholder(__('Name'))
                                                 ->live(debounce: 250)
-                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                                             TextInput::make('slug')
                                                 ->readonly(),
                                             Select::make('field_type')
@@ -179,10 +178,10 @@ class Repeater extends FieldBase implements FieldContract
                                         ])->columnSpanFull(),
                                     Section::make('Configuration')
                                         ->columns(3)
-                                        ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
+                                        ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
                                             $get('field_type')
                                         ))
-                                        ->visible(fn(Get $get) => filled($get('field_type'))),
+                                        ->visible(fn (Get $get) => filled($get('field_type'))),
                                 ]),
                         ])->columns(2),
                 ])->columnSpanFull(),
