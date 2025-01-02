@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 use Vormkracht10\Backstage\Backstage;
 use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Concerns\HasOptions;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
@@ -25,6 +26,7 @@ class Repeater extends FieldBase implements FieldContract
 {
     use HasConfigurableFields;
     use HasOptions;
+    use HasFieldTypeResolver;
 
     private const FIELD_TYPE_MAP = [
         'text' => Text::class,
@@ -106,7 +108,7 @@ class Repeater extends FieldBase implements FieldContract
                                 Forms\Components\Toggle::make('config.reorderableWithButtons')
                                     ->label(__('Reorderable with buttons'))
                                     ->dehydrated()
-                                    ->disabled(fn (Forms\Get $get): bool => $get('config.reorderable') === false)
+                                    ->disabled(fn(Forms\Get $get): bool => $get('config.reorderable') === false)
                                     ->inline(false),
                             ]),
                             Forms\Components\Toggle::make('config.collapsible')
@@ -114,7 +116,7 @@ class Repeater extends FieldBase implements FieldContract
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.collapsed')
                                 ->label(__('Collapsed'))
-                                ->visible(fn (Forms\Get $get): bool => $get('config.collapsible') === true)
+                                ->visible(fn(Forms\Get $get): bool => $get('config.collapsible') === true)
                                 ->inline(false),
                             Forms\Components\Toggle::make('config.cloneable')
                                 ->label(__('Cloneable'))
@@ -128,8 +130,8 @@ class Repeater extends FieldBase implements FieldContract
                                 ->live(debounce: 250)
                                 ->labelKey('name')
                                 ->maxDepth(1)
-                                ->addable(fn ($state) => count($state) > 0)
-                                ->disabled(fn ($state) => count($state) === 0)
+                                ->addable(fn($state) => count($state) > 0)
+                                ->disabled(fn($state) => count($state) === 0)
                                 ->hint(function ($state) {
                                     return count($state) > 0 ? '' : __('Fields can be added once the field is created.');
                                 })
@@ -147,7 +149,7 @@ class Repeater extends FieldBase implements FieldContract
                                                 ->required()
                                                 ->placeholder(__('Name'))
                                                 ->live(debounce: 250)
-                                                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
                                             TextInput::make('slug')
                                                 ->readonly(),
                                             Select::make('field_type')
@@ -177,50 +179,14 @@ class Repeater extends FieldBase implements FieldContract
                                         ])->columnSpanFull(),
                                     Section::make('Configuration')
                                         ->columns(3)
-                                        ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
+                                        ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
                                             $get('field_type')
                                         ))
-                                        ->visible(fn (Get $get) => filled($get('field_type'))),
+                                        ->visible(fn(Get $get) => filled($get('field_type'))),
                                 ]),
                         ])->columns(2),
                 ])->columnSpanFull(),
         ];
-    }
-
-    /** @throws Exception If the field type class cannot be resolved. */
-    protected function getFieldTypeFormSchema(?string $fieldType): array
-    {
-        if (empty($fieldType)) {
-            return [];
-        }
-
-        try {
-            $className = $this->resolveFieldTypeClassName($fieldType);
-
-            if (! $this->isValidFieldClass($className)) {
-                return [];
-            }
-
-            return app($className)->getForm();
-        } catch (Exception $e) {
-            throw new Exception("Failed to resolve field type class for '{$fieldType}'");
-        }
-    }
-
-    protected static function resolveFieldTypeClassName(string $fieldType): ?string
-    {
-        if (EnumsField::tryFrom($fieldType)) {
-            return sprintf('Vormkracht10\\Backstage\\Fields\\%s', Str::studly($fieldType));
-        }
-
-        return Backstage::getFields()[$fieldType] ?? null;
-    }
-
-    protected function isValidFieldClass(?string $className): bool
-    {
-        return $className !== null
-            && class_exists($className)
-            && method_exists($className, 'getForm');
     }
 
     private static function generateSchemaFromChildren(Collection $children): array
