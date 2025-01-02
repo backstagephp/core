@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 
@@ -38,9 +39,14 @@ class Site extends Model
         return $this->hasMany(Content::class);
     }
 
-    public function languages(): BelongsToMany
+    public function domains(): HasMany
     {
-        return $this->belongsToMany(Language::class);
+        return $this->hasMany(Domain::class);
+    }
+
+    public function languages(): HasManyThrough
+    {
+        return $this->hasManyThrough(Language::class, Domain::class);
     }
 
     public function menus(): HasMany

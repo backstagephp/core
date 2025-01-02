@@ -5,6 +5,7 @@ namespace Vormkracht10\Backstage\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class Domain extends Model
@@ -16,9 +17,10 @@ class Domain extends Model
 
     protected $guarded = [];
 
-    public function language()
+    public function languages(): BelongsToMany
     {
-        return $this->belongsTo(Language::class, 'language_code', 'code');
+        return $this->belongsToMany(Language::class, 'domain_language', 'domain_ulid', 'language_code')
+            ->withPivot('path');
     }
 
     public function site(): BelongsTo

@@ -15,6 +15,13 @@ use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
 use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
+/**
+ * Vormkracht10\Backstage\Models\Content
+ *
+ * @property string $path
+ * @property string $url
+ * @property string $language_code
+ */
 class Content extends Model
 {
     use HasMedia;
@@ -48,7 +55,7 @@ class Content extends Model
 
     public function language(): BelongsTo
     {
-        return $this->belongsTo(Language::class, 'code');
+        return $this->belongsTo(Language::class, 'language_code', 'code');
     }
 
     public function site(): BelongsTo
@@ -72,8 +79,13 @@ class Content extends Model
      */
     protected function url(): Attribute
     {
+        $url = rtrim($this->pathPrefix . $this->path, '/');
+        if ($this->site->trailing_slash) {
+            $url .= '/';
+        }
+
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => url(ltrim($attributes['path'], '/')),
+            get: fn () => $url,
         );
     }
 
@@ -84,6 +96,37 @@ class Content extends Model
     {
         return Attribute::make(
             get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+        );
+    }
+
+    /**
+     * The full url, domain and language path. Without the content path, with trailing slash.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     */
+    protected function pathPrefix(): Attribute
+    {
+        $url = '';
+
+        $domain = $this->site?->domains()->with([
+            'languages' => function ($query) {
+                $query->where('code', $this->language_code);
+                $query->limit(1);
+            }])
+            ->first();
+
+        if ($domain) {
+            $url .= 'https://' . $domain->name;
+            $url .= $this->site->path ? '/' . trim($this->site->path, '/') : '';
+            if ($language = $domain->languages->first()) {
+                $url .= $language->pivot->path ? '/' . trim($language->pivot->path, '/') : '';
+            }
+        }
+
+        $url .= '/';
+
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => $url,
         );
     }
 

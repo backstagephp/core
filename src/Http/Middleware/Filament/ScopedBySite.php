@@ -40,7 +40,7 @@ class ScopedBySite
         );
 
         Language::addGlobalScope(
-            fn (Builder $query) => $query->whereHas('sites', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
+            fn (Builder $query) => $query->whereHas('domains.site', fn ($query) => $query->where('sites.ulid', Filament::getTenant()->ulid)),
         );
 
         // Media::addGlobalScope(

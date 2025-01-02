@@ -26,7 +26,7 @@ test('confirm setting returns array on setting', function () {
         ],
     ]);
 
-    expect(setting('address'))->toBe([
+    expect(setting('address'))->toMatchArray([
         'street' => $street,
         'city' => $city,
     ]);

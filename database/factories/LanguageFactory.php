@@ -4,7 +4,6 @@ namespace Vormkracht10\Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Site;
 
 class LanguageFactory extends Factory
 {
@@ -18,18 +17,11 @@ class LanguageFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => 'nl',
-            'name' => 'Netherlands',
-            'native' => 'Nederlands',
+            'code' => $this->faker->unique()->languageCode(),
+            'name' => $this->faker->unique()->country(),
+            'native' => $this->faker->unique()->country(),
             'active' => true,
             'default' => false,
         ];
-    }
-
-    public function configure()
-    {
-        return $this->afterCreating(function (Language $language) {
-            $language->sites()->attach(Site::default());
-        });
     }
 }

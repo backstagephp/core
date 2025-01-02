@@ -17,7 +17,15 @@ class TypeFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'name' => $this->faker->word,
+            'slug' => $this->faker->slug,
+            'name_plural' => $this->faker->word,
+            'icon' => 'document',
+            'name_field' => 'name',
+            'body_field' => 'body',
+            'public' => true,
+        ];
     }
 
     public function configure()

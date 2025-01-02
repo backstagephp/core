@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Site;
+use Vormkracht10\Backstage\Models\Type;
 
 class ContentFactory extends Factory
 {
@@ -19,9 +20,9 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'site_ulid' => Site::default(),
-            'language_code' => Language::default(),
-            'type_slug' => 'page',
+            'site_ulid' => Site::factory(),
+            'language_code' => Language::factory(),
+            'type_slug' => Type::factory(),
             'name' => 'Home',
             'slug' => 'home',
             'path' => '/',

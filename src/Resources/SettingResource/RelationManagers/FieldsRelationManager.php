@@ -164,7 +164,7 @@ class FieldsRelationManager extends RelationManager
                             'model_key' => $this->ownerRecord->slug,
                         ];
                     })
-                    ->mutateFormDataUsing(fn (array $data, Model $record): array => $this->handleUpdatingSlugs($data, $record))
+                    ->mutateFormDataUsing(fn (array $data, Model $record): array => $this->transferValuesOnSlugChange($data, $record))
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
@@ -201,7 +201,7 @@ class FieldsRelationManager extends RelationManager
         return __('Fields');
     }
 
-    private function handleUpdatingSlugs(array $data, Model $record): array
+    private function transferValuesOnSlugChange(array $data, Model $record): array
     {
         $oldSlug = $record->slug;
         $newSlug = $data['slug'];

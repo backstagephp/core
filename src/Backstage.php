@@ -27,27 +27,9 @@ class Backstage
 
     public static function registerField(string $className): void
     {
-        $fieldSlug = self::generateFieldSlug($className);
-        static::$fields[$fieldSlug] = $className;
-    }
+        $name = Str::kebab(class_basename($className));
 
-    private static function generateFieldSlug(string $className): string
-    {
-        $shortClassName = self::getClassNameWithoutNamespace($className);
-
-        return self::convertToKebabCase($shortClassName);
-    }
-
-    private static function getClassNameWithoutNamespace(string $className): string
-    {
-        $parts = explode('\\', $className);
-
-        return end($parts);
-    }
-
-    private static function convertToKebabCase(string $input): string
-    {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $input));
+        static::$fields[$name] = $className;
     }
 
     public static function getComponents(): array
