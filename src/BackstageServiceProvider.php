@@ -93,7 +93,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                             $key = 'AUTH_MODEL';
                             $value = '\Vormkracht10\Backstage\Models\User';
                             $path = app()->environmentFilePath();
-                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '='.$value);
+                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
                             $command->comment('Raise the curtain...');
                         }
