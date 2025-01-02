@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Fields;
 
-use Exception;
 use Filament\Forms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -26,8 +25,8 @@ use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 class Repeater extends FieldBase implements FieldContract
 {
     use HasConfigurableFields;
-    use HasOptions;
     use HasFieldTypeResolver;
+    use HasOptions;
 
     private const FIELD_TYPE_MAP = [
         'text' => Text::class,
