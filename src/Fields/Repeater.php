@@ -167,7 +167,7 @@ class Repeater extends FieldBase implements FieldContract
 
                                                         asort($options);
 
-                                                        return $options ?? [];
+                                                        return $options;
                                                     }
                                                 )
                                                 ->required()
