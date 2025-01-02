@@ -7,22 +7,10 @@ use Vormkracht10\Backstage\Backstage;
 
 trait HasConfigurableFields
 {
-    private function initializeDefaultConfig(string $fieldType): array
+    private function initializeConfig(string $fieldType): array
     {
-        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
-
-        if (! class_exists($className)) {
-            return [];
-        }
-
-        $fieldInstance = app($className);
-
-        return $fieldInstance::getDefaultConfig();
-    }
-
-    private function initializeCustomConfig(string $fieldType): array
-    {
-        $className = Backstage::getFields()[$fieldType] ?? null;
+        $className = Backstage::getFields()[$fieldType] ??
+            'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
 
         if (! class_exists($className)) {
             return [];
