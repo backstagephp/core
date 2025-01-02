@@ -2,6 +2,8 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -9,6 +11,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Resources\LanguageResource\Pages;
 
@@ -21,6 +24,11 @@ class LanguageResource extends Resource
     public static ?string $recordTitleAttribute = 'name';
 
     protected static bool $isScopedToTenant = false;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes();
+    }
 
     public static function getNavigationGroup(): ?string
     {
@@ -40,7 +48,22 @@ class LanguageResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                TextInput::make('code')
+                    ->unique(ignoreRecord: true)
+                    ->required()
+                    ->columnSpanFull(),
+                TextInput::make('name')
+                    ->required()
+                    ->columnSpan(1),
+                TextInput::make('native')
+                    ->required()
+                    ->columnSpan(1),
+                Toggle::make('active')
+                    ->columnSpanFull(),
+                Toggle::make('default')
+                    ->columnSpanFull(),
+            ]);
     }
 
     public static function table(Table $table): Table

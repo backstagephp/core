@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\HtmlString;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 use Vormkracht10\Backstage\Casts\ContentPathCast;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Backstage\Shared\HasTags;
@@ -26,6 +27,7 @@ class Content extends Model
 {
     use HasMedia;
     use HasPackageFactory;
+    use HasRecursiveRelationships;
     use HasTags;
     use HasUlids;
 
@@ -97,6 +99,21 @@ class Content extends Model
         return Attribute::make(
             get: fn (?string $value, array $attributes) => $attributes['template_slug'],
         );
+    }
+
+    public function getParentKeyName()
+    {
+        return 'parent_ulid';
+    }
+
+    public function getLocalKeyName()
+    {
+        return 'ulid';
+    }
+
+    public function getPathName()
+    {
+        return 'parent_path';
     }
 
     /**

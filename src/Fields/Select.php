@@ -24,7 +24,7 @@ class Select extends FieldBase implements FieldContract
             'multiple' => false,
             'preload' => false,
             'allowHtml' => false,
-            'selectablePlaceholder' => false,
+            'selectablePlaceholder' => true,
             'loadingMessage' => null,
             'noSearchResultsMessage' => null,
             'searchPrompt' => null,
