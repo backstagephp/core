@@ -3,28 +3,29 @@
 namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Form;
+use Livewire\Attributes\On;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
-use Filament\Resources\Pages\EditRecord;
-use Livewire\Attributes\On;
 use Vormkracht10\Backstage\Backstage;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
+use Filament\Forms\Components\Tabs\Tab;
 use Vormkracht10\Backstage\Enums\Field;
-use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Fields\Tags;
+use Vormkracht10\Backstage\Fields\Text;
+use Filament\Resources\Pages\EditRecord;
 use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\KeyValue;
 use Vormkracht10\Backstage\Fields\Media;
 use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Fields\Toggle;
+use Vormkracht10\Backstage\Fields\Checkbox;
+use Vormkracht10\Backstage\Fields\DateTime;
+use Vormkracht10\Backstage\Fields\KeyValue;
+use Vormkracht10\Backstage\Fields\Textarea;
+use Vormkracht10\Backstage\Fields\RichEditor;
+use Vormkracht10\Backstage\Fields\CheckboxList;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Vormkracht10\Backstage\Resources\SettingResource;
+use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
 
 class EditSetting extends EditRecord
 {
@@ -45,6 +46,7 @@ class EditSetting extends EditRecord
         'toggle' => Toggle::class,
         'color' => Color::class,
         'datetime' => DateTime::class,
+        'tags' => Tags::class,
     ];
 
     public function boot(): void
@@ -148,7 +150,7 @@ class EditSetting extends EditRecord
         }
 
         $customFields = collect(Backstage::getFields())->map(
-            fn ($fieldClass) => new $fieldClass
+            fn($fieldClass) => new $fieldClass
         );
 
         return $this->record->fields->map(function ($field) use ($customFields) {
