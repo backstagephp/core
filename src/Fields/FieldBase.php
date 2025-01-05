@@ -87,6 +87,6 @@ abstract class FieldBase implements FieldContract
             return $value;
         }
 
-        return !empty($value) ? explode($delimiter, $value) : [];
+        return ! empty($value) ? explode($delimiter, $value) : [];
     }
 }
