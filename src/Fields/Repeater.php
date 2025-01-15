@@ -67,7 +67,9 @@ class Repeater extends FieldBase implements FieldContract
             ->addActionLabel($field->config['addActionLabel'] ?? self::getDefaultConfig()['addActionLabel'])
             ->addable($field->config['addable'] ?? self::getDefaultConfig()['addable'])
             ->deletable($field->config['deletable'] ?? self::getDefaultConfig()['deletable'])
-            ->reorderable($field->config['reorderable'] ?? self::getDefaultConfig()['reorderable']);
+            ->reorderable($field->config['reorderable'] ?? self::getDefaultConfig()['reorderable'])
+            ->collapsible($field->config['collapsible'] ?? self::getDefaultConfig()['collapsible'])
+            ->cloneable($field->config['cloneable'] ?? self::getDefaultConfig()['cloneable']);
 
         if ($field->config['reorderableWithButtons'] ?? self::getDefaultConfig()['reorderableWithButtons']) {
             $input = $input->reorderableWithButtons();
@@ -160,7 +162,7 @@ class Repeater extends FieldBase implements FieldContract
                                                     function () {
                                                         $options = array_merge(
                                                             EnumsField::array(),
-                                                            $this->formatCustomFields(Backstage::getFields())
+                                                            $this->prepareCustomFieldOptions(Backstage::getFields())
                                                         );
 
                                                         asort($options);
