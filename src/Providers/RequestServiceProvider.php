@@ -14,7 +14,11 @@ class RequestServiceProvider extends ServiceProvider
     {
         Request::macro('content', function () {
             return once(function () {
-                $content = Content::join('sites', 'sites.ulid', 'content.site_ulid')
+                $path = $this->path() == '/' ? '' : $this->path();
+                $host = str_replace('www.', '', $this->getHost());
+
+                $content = Content::select('content.*')
+                    ->join('sites', 'sites.ulid', 'content.site_ulid')
                     ->join('domains', 'domains.site_ulid', 'sites.ulid')
                     ->join('domain_language', function (JoinClause $join) {
                         $join->on('domain_language.domain_ulid', '=', 'domains.ulid')
@@ -30,9 +34,9 @@ class RequestServiceProvider extends ServiceProvider
                             "\/+", "/"
                         ),
                         "^/|/$", ""
-                    ) = ?', [$this->path()])
-                    ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())]);
-
+                    ) = ?', [$path])
+                    ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [$host]);
+                
                 return $content->first();
             });
         });
