@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\Toggle as Input;
+use Filament\Support\Facades\FilamentColor;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\ToggleColor;
 use Vormkracht10\Backstage\Models\Field;
@@ -83,12 +84,30 @@ class Toggle extends FieldBase implements FieldContract
                                     ->options(
                                         collect(ToggleColor::array())->map(function ($color) {
                                             return match (strtoupper($color)) {
-                                                'DANGER' => '<div class="flex items-center gap-2"><span class="bg-danger-500 rounded-full h-3 w-3 inline-block"></span>Danger</div>',
-                                                'GRAY' => '<div class="flex items-center gap-2"><span class="bg-gray-500 rounded-full h-3 w-3 inline-block"></span>Gray</div>',
-                                                'INFO' => '<div class="flex items-center gap-2"><span class="bg-info-500 rounded-full h-3 w-3 inline-block"></span>Info</div>',
-                                                'PRIMARY' => '<div class="flex items-center gap-2"><span class="bg-primary-500 rounded-full h-3 w-3 inline-block"></span>Primary</div>',
-                                                'SUCCESS' => '<div class="flex items-center gap-2"><span class="bg-success-500 rounded-full h-3 w-3 inline-block"></span>Success</div>',
-                                                'WARNING' => '<div class="flex items-center gap-2"><span class="bg-warning-500 rounded-full h-3 w-3 inline-block"></span>Warning</div>',
+                                                'DANGER' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Danger</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'GRAY' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Gray</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'INFO' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Info</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'PRIMARY' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Primary</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'SUCCESS' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Success</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'WARNING' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Warning</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
                                                 default => $color
                                             };
                                         })
@@ -98,12 +117,30 @@ class Toggle extends FieldBase implements FieldContract
                                     ->options(
                                         collect(ToggleColor::array())->map(function ($color) {
                                             return match (strtoupper($color)) {
-                                                'DANGER' => '<div class="flex items-center gap-2"><span class="bg-danger-500 rounded-full h-3 w-3 inline-block"></span>Danger</div>',
-                                                'GRAY' => '<div class="flex items-center gap-2"><span class="bg-gray-500 rounded-full h-3 w-3 inline-block"></span>Gray</div>',
-                                                'INFO' => '<div class="flex items-center gap-2"><span class="bg-info-500 rounded-full h-3 w-3 inline-block"></span>Info</div>',
-                                                'PRIMARY' => '<div class="flex items-center gap-2"><span class="bg-primary-500 rounded-full h-3 w-3 inline-block"></span>Primary</div>',
-                                                'SUCCESS' => '<div class="flex items-center gap-2"><span class="bg-success-500 rounded-full h-3 w-3 inline-block"></span>Success</div>',
-                                                'WARNING' => '<div class="flex items-center gap-2"><span class="bg-warning-500 rounded-full h-3 w-3 inline-block"></span>Warning</div>',
+                                                'DANGER' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Danger</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'GRAY' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Gray</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'INFO' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Info</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'PRIMARY' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Primary</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'SUCCESS' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Success</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
+                                                'WARNING' => sprintf(
+                                                    '<div class="flex items-center gap-2"><span style="background-color: rgb(%s)" class="rounded-full h-3 w-3 inline-block"></span>Warning</div>',
+                                                    FilamentColor::getColors()[strtolower($color)]['500']
+                                                ),
                                                 default => $color
                                             };
                                         })
