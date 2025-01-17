@@ -41,5 +41,5 @@ jobs:
           composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
           composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
           composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
-          composer require vormkracht10/backstage dev-main
+          composer require vormkracht10/backstage ${{ github.ref_name }}
           php artisan backstage:install
