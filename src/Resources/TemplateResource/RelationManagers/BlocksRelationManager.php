@@ -31,7 +31,7 @@ class BlocksRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                // 
+                //
             ]);
     }
 
@@ -52,7 +52,7 @@ class BlocksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect()
+                    ->preloadRecordSelect(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

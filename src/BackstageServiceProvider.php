@@ -2,37 +2,37 @@
 
 namespace Vormkracht10\Backstage;
 
-use Illuminate\Support\Str;
-use Filament\Support\Assets\Asset;
 use Filament\Forms\Components\Select;
+use Filament\Support\Assets\Asset;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportTesting\Testable;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Vormkracht10\Backstage\Models\Menu;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
+use Vormkracht10\Backstage\Events\FormSubmitted;
+use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Media;
-use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Facades\FilamentAsset;
+use Vormkracht10\Backstage\Models\Menu;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Template;
-use Livewire\Features\SupportTesting\Testable;
-use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\View\Components\Page;
+use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
+use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
+use Vormkracht10\Backstage\View\Components\Page;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
-use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Services\FieldInspectionService;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {

@@ -2,15 +2,15 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Set;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Template;
 use Vormkracht10\Backstage\Resources\TemplateResource\Pages;
 use Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
