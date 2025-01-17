@@ -55,11 +55,7 @@ class BlocksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect()
-                    ->form(fn (AttachAction $action): array => [
-                        $action->getRecordSelect(),
-                        TextInput::make('position'),
-                    ]),
+                    ->preloadRecordSelect(),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),
