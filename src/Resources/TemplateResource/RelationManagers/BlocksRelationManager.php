@@ -2,11 +2,9 @@
 
 namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
