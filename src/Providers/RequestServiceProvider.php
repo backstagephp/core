@@ -36,7 +36,7 @@ class RequestServiceProvider extends ServiceProvider
                         "^/|/$", ""
                     ) = ?', [$path])
                     ->whereRaw("REPLACE(domains.name, 'www.', '') = ?", [$host]);
-                
+
                 return $content->first();
             });
         });
