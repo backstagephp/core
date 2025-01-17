@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
+
+/**
+ * Vormkracht10\Backstage\Models\ContentFieldValue
+ *
+ * @property string $value
+*/
 class ContentFieldValue extends Pivot
 {
     use HasPackageFactory;

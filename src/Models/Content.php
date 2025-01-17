@@ -23,6 +23,7 @@ use Vormkracht10\MediaPicker\Concerns\HasMedia;
  * @property string $path
  * @property string $url
  * @property string $language_code
+ * @property string $type_slug
  */
 class Content extends Model
 {
