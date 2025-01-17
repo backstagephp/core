@@ -267,7 +267,7 @@ class ContentResource extends Resource
 
     public static function getTypeInputs()
     {
-        
+
         return self::$type->fields->map(function (Field $field) {
             $fieldName = 'values.' . $field->ulid;
 
