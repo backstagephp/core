@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('block_template', function (Blueprint $table) {
             $table->string('block_slug');
             $table->string('template_slug');
+            $table->integer('position')->default(0);
 
             $table->foreign('block_slug')->references('slug')->on('blocks')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('template_slug')->references('slug')->on('templates')->cascadeOnUpdate()->cascadeOnDelete();

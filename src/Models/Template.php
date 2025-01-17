@@ -38,6 +38,8 @@ class Template extends Model
 
     public function blocks(): BelongsToMany
     {
-        return $this->belongsToMany(Block::class, 'block_template', 'template_slug', 'block_slug');
+        return $this->belongsToMany(Block::class, 'block_template', 'template_slug', 'block_slug')
+            ->withPivot('position')
+            ->orderBy('position');
     }
 }
