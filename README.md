@@ -21,28 +21,19 @@ composer require vormkracht10/backstage
 Note: For now you may have to update composer.json to:
 ```json
     "repositories": {
-        "backstage": {
-            "type": "path",
-            "url": "/var/www/backstage",
-            "options": {
-                "symlink": true
-            }
+        "laravel-redirects": {
+            "type": "vcs",
+            "url": "git@github.com:vormkracht10/laravel-redirects.git"
         },
         "filament-redirects": {
-            "type": "path",
-            "url": "/var/www/filament-redirects",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "git@github.com:vormkracht10/filament-redirects.git"
         },
-        "laravel-redirects": {
-            "type": "path",
-            "url": "/var/www/laravel-redirects",
-            "options": {
-                "symlink": true
-            }
+        "backstage": {
+            "type": "vcs",
+            "url": "git@github.com:vormkracht10/backstage.git"
         }
-    },
+    }
     "minimum-stability": "dev",
 ```
 
