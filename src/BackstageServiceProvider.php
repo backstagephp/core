@@ -2,36 +2,37 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Forms\Components\Select;
+use Illuminate\Support\Str;
 use Filament\Support\Assets\Asset;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Forms\Components\Select;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
-use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Media;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Media;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Vormkracht10\Backstage\Models\Template;
+use Livewire\Features\SupportTesting\Testable;
+use Vormkracht10\Backstage\Events\FormSubmitted;
+use Vormkracht10\Backstage\View\Components\Page;
 use Vormkracht10\Backstage\Observers\MenuObserver;
-use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
-use Vormkracht10\Backstage\View\Components\Page;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Services\FieldInspectionService;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -167,6 +168,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'tag' => 'Vormkracht10\Backstage\Models\Tag',
             'type' => 'Vormkracht10\Backstage\Models\Type',
             'user' => 'Vormkracht10\Backstage\Models\User',
+            'template' => 'Vormkracht10\Backstage\Models\Template',
         ]);
 
         Route::bind('type', function (string $slug) {
@@ -175,6 +177,10 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Route::bind('block', function (string $slug) {
             return Block::where('slug', $slug)->firstOrFail();
+        });
+
+        Route::bind('template', function (string $slug) {
+            return Template::where('slug', $slug)->firstOrFail();
         });
 
         Select::configureUsing(function (Select $select): void {
@@ -282,6 +288,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             '17_create_tags_tables',
             '18_create_notifications_table',
             '19_add_columns_to_users_table',
+            '20_create_block_template_table',
         ];
     }
 

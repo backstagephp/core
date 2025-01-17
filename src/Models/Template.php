@@ -2,16 +2,15 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Template extends Model
 {
     use HasPackageFactory;
-    use HasUlids;
 
     protected $primaryKey = 'slug';
 
@@ -26,13 +25,19 @@ class Template extends Model
         return [];
     }
 
-    public function fields(): MorphToMany
+    public function fields(): MorphMany
     {
-        return $this->morphToMany(Field::class, 'fieldable');
+        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug')
+            ->orderBy('position');
     }
 
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
+    }
+
+    public function blocks(): BelongsToMany
+    {
+        return $this->belongsToMany(Block::class, 'block_template', 'template_slug', 'block_slug');
     }
 }

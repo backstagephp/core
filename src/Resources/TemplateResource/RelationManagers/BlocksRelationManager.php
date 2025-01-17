@@ -2,49 +2,36 @@
 
 namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Field;
 
-class FieldsRelationManager extends RelationManager
+class BlocksRelationManager extends RelationManager
 {
-    protected static string $relationship = 'fields';
+    protected static string $relationship = 'blocks';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('Fields');
+        return __('Blocks');
     }
 
     public static function getModelLabel(): string
     {
-        return __('Field');
+        return __('Block');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Fields');
+        return __('Blocks');
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('Name'))
-                    ->required()
-                    ->placeholder(__('Name'))
-                    ->live(debounce: 250)
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                TextInput::make('slug')
-                    ->readonly(),
-                TextInput::make('field_type')
-                    ->required(),
+                // 
             ]);
     }
 
@@ -64,13 +51,8 @@ class FieldsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->slideOver()
-                    ->mutateFormDataUsing(function (array $data) {
-                        $data['position'] = Field::where('model_key', $this->ownerRecord->id)->get()->max('position') + 1;
-
-                        return $data;
-                    }),
+                Tables\Actions\AttachAction::make()
+                    ->preloadRecordSelect()
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

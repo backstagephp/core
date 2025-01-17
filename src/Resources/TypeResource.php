@@ -2,19 +2,20 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Vormkracht10\Backstage\Resources\TypeResource\Pages;
+use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
 
 class TypeResource extends Resource
 {
@@ -45,42 +46,45 @@ class TypeResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->columnSpanFull()
-                    ->required()
-                    ->live(debounce: 250)
-                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                        $set('slug', Str::slug($state));
-                        $set('name_plural', Str::plural($state));
-                    }),
-                TextInput::make('slug')
-                    ->columnSpanFull()
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->rules([
-                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
-                            if (in_array(strtolower($value), ['content', 'advanced'])) {
-                                $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
-                            }
-                        },
+                Section::make()
+                    ->schema([
+                        TextInput::make('name')
+                            ->columnSpanFull()
+                            ->required()
+                            ->live(debounce: 250)
+                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                $set('slug', Str::slug($state));
+                                $set('name_plural', Str::plural($state));
+                            }),
+                        TextInput::make('slug')
+                            ->columnSpanFull()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->rules([
+                                fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                    if (in_array(strtolower($value), ['content', 'advanced'])) {
+                                        $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
+                                    }
+                                },
+                            ]),
+                        TextInput::make('name_plural')
+                            ->columnSpanFull()
+                            ->required(),
+                        ToggleButtons::make('icon')
+                            ->columnSpanFull()
+                            ->default('circle-stack')
+                            ->options([
+                                'circle-stack' => '',
+                                'light-bulb' => '',
+                            ])
+                            ->icons([
+                                'circle-stack' => 'heroicon-o-circle-stack',
+                                'light-bulb' => 'heroicon-o-light-bulb',
+                            ])
+                            ->inline()
+                            ->grouped()
+                            ->required(),
                     ]),
-                TextInput::make('name_plural')
-                    ->columnSpanFull()
-                    ->required(),
-                ToggleButtons::make('icon')
-                    ->columnSpanFull()
-                    ->default('circle-stack')
-                    ->options([
-                        'circle-stack' => '',
-                        'light-bulb' => '',
-                    ])
-                    ->icons([
-                        'circle-stack' => 'heroicon-o-circle-stack',
-                        'light-bulb' => 'heroicon-o-light-bulb',
-                    ])
-                    ->inline()
-                    ->grouped()
-                    ->required(),
             ]);
     }
 
@@ -91,7 +95,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(0)
-                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
