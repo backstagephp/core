@@ -159,7 +159,7 @@ class Content extends Model
     {
         $value = $this->values->where('field.slug', $field)->first();
 
-        if (!$value) {
+        if (! $value) {
             return new HtmlString('');
         }
 

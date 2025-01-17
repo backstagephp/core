@@ -14,12 +14,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
 use Vormkracht10\Backstage\Facades\Backstage;
-use Illuminate\Validation\Rule;
 use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager

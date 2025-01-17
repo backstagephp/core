@@ -2,12 +2,9 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\HtmlString;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 
 class ContentFieldValue extends Pivot
@@ -35,5 +32,4 @@ class ContentFieldValue extends Pivot
     {
         return $this->belongsTo(Field::class);
     }
-
 }
