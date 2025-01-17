@@ -159,10 +159,10 @@ class Content extends Model
 
     /**
      * Returns the value of a field based on the slug.
-     * 
+     *
      * @return HtmlString|Collection
      */
-    public function field(string $slug): HtmlString | Collection | Array
+    public function field(string $slug): HtmlString | Collection | array
     {
         $value = $this->values->where('field.slug', $slug)->first();
 
@@ -180,7 +180,7 @@ class Content extends Model
 
     public function view($data = [])
     {
-        return View::first([$this->template_file, 'types.'. $this->type_slug, 'types.default', 'backstage::types.default'], $data);
+        return View::first([$this->template_file, 'types.' . $this->type_slug, 'types.default', 'backstage::types.default'], $data);
     }
 
     public function response(int $code = 200)
