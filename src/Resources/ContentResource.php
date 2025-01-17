@@ -83,7 +83,7 @@ class ContentResource extends Resource
                 ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
-                    'tableFilters[type_slug][values]' => ['page'],
+                    'tableFilters[type_slug][values]' => [$type->slug],
                 ]));
         })->toArray();
 
