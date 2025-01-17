@@ -157,9 +157,9 @@ class ContentResource extends Resource
 
                         TextInput::make('path')
                             ->hiddenLabel()
+                            ->unique(ignoreRecord: true)
                             ->columnSpan(['xl' => 3])
                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                            ->required()
                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
                     ])
                     ->columns(['xl' => 4]),
