@@ -19,6 +19,7 @@ use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
 use Vormkracht10\Backstage\Facades\Backstage;
+use Illuminate\Validation\Rule;
 use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager
@@ -46,7 +47,10 @@ class FieldsRelationManager extends RelationManager
                                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
-                                    ->readonly(),
+                                    ->readonly()
+                                    ->rules([
+                                        Rule::notIn(['default']),
+                                    ]),
 
                                 Select::make('field_type')
                                     ->searchable()

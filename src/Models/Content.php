@@ -157,7 +157,13 @@ class Content extends Model
 
     public function field(string $field): HtmlString
     {
-        return new HtmlString($this->values->where('field.slug', $field)->first()?->value);
+        $value = $this->values->where('field.slug', $field)->first();
+
+        if (!$value) {
+            return new HtmlString('');
+        }
+
+        return new HtmlString($value?->value);
     }
 
     public function rawField(string $field): mixed
