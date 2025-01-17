@@ -145,6 +145,10 @@ class BackstageSeeder extends Seeder
                 'field_ulid' => Field::where('slug', 'title')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
                 'value' => 'Home',
             ]), 'values')
+            ->has(ContentFieldValue::factory(1, [
+                'field_ulid' => Field::where('slug', 'body')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
+                'value' => '<p>Welcome Backstage!</p><p>Open <a href="/backstage">/backstage</a> to begin.</p>',
+            ]), 'values')
             ->create();
 
         // Contact
