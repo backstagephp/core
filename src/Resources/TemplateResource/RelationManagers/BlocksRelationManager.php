@@ -2,13 +2,13 @@
 
 namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
 
-use Filament\Tables;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class BlocksRelationManager extends RelationManager
 {
@@ -56,10 +56,10 @@ class BlocksRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn(AttachAction $action): array => [
+                    ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         TextInput::make('position'),
-                    ])
+                    ]),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),
