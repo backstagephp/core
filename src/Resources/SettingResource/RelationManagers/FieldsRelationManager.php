@@ -2,6 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources\SettingResource\RelationManagers;
 
+use Exception;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -16,25 +17,47 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
+use Vormkracht10\Backstage\Facades\Backstage;
 use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager
 {
     protected static string $relationship = 'fields';
 
+    /** @throws Exception If the field type class cannot be resolved. */
     protected function getFieldTypeFormSchema(?string $fieldType): array
     {
         if (empty($fieldType)) {
             return [];
         }
 
-        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+        try {
+            $className = $this->resolveFieldTypeClassName($fieldType);
 
-        if (! class_exists($className) || ! method_exists($className, 'getForm')) {
-            return [];
+            if (! $this->isValidFieldClass($className)) {
+                return [];
+            }
+
+            return app($className)->getForm();
+        } catch (Exception $e) {
+            throw new Exception("Failed to resolve field type class for '{$fieldType}'");
+        }
+    }
+
+    protected function resolveFieldTypeClassName(string $fieldType): ?string
+    {
+        if (EnumsField::tryFrom($fieldType)) {
+            return sprintf('Vormkracht10\\Backstage\\Fields\\%s', Str::studly($fieldType));
         }
 
-        return app($className)->getForm();
+        return Backstage::getFields()[$fieldType] ?? null;
+    }
+
+    protected function isValidFieldClass(?string $className): bool
+    {
+        return $className !== null
+            && class_exists($className)
+            && method_exists($className, 'getForm');
     }
 
     public function form(Form $form): Form
@@ -63,19 +86,25 @@ class FieldsRelationManager extends RelationManager
                                     ->label(__('Field Type'))
                                     ->live(debounce: 250)
                                     ->reactive()
-                                    ->options(EnumsField::array())
+                                    ->options(
+                                        function () {
+                                            $options = array_merge(
+                                                EnumsField::array(),
+                                                $this->formatCustomFields(Backstage::getFields())
+                                            );
+
+                                            asort($options);
+
+                                            return $options;
+                                        }
+                                    )
                                     ->required()
                                     ->afterStateUpdated(function ($state, Set $set) {
                                         $set('config', []);
 
-                                        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($state);
-
-                                        if (class_exists($className)) {
-                                            // Initialize default config structure for this field type
-                                            $fieldInstance = app($className);
-                                            $defaultConfig = $fieldInstance::getDefaultConfig();
-                                            $set('config', $defaultConfig);
-                                        }
+                                        $set('config', EnumsField::tryFrom($state)
+                                            ? $this->initializeDefaultConfig($state)
+                                            : $this->initializeCustomConfig($state));
                                     }),
                             ]),
                         Section::make('Configuration')
@@ -86,6 +115,43 @@ class FieldsRelationManager extends RelationManager
                             ->visible(fn (Get $get) => filled($get('field_type'))),
                     ]),
             ]);
+    }
+
+    private function formatCustomFields(array $fields): array
+    {
+        return collect($fields)->mapWithKeys(function ($field, $key) {
+            $parts = explode('\\', $field);
+            $lastPart = end($parts);
+            $formattedName = Str::title(Str::snake($lastPart, ' '));
+
+            return [$key => $formattedName];
+        })->toArray();
+    }
+
+    private function initializeDefaultConfig(string $fieldType): array
+    {
+        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+
+        if (! class_exists($className)) {
+            return [];
+        }
+
+        $fieldInstance = app($className);
+
+        return $fieldInstance::getDefaultConfig();
+    }
+
+    private function initializeCustomConfig(string $fieldType): array
+    {
+        $className = Backstage::getFields()[$fieldType] ?? null;
+
+        if (! class_exists($className)) {
+            return [];
+        }
+
+        $fieldInstance = app($className);
+
+        return $fieldInstance::getDefaultConfig();
     }
 
     public function table(Table $table): Table
@@ -130,11 +196,15 @@ class FieldsRelationManager extends RelationManager
                             'model_key' => $this->ownerRecord->slug,
                         ];
                     })
+                    ->mutateFormDataUsing(fn (array $data, Model $record): array => $this->transferValuesOnSlugChange($data, $record))
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
                 Tables\Actions\DeleteAction::make()
-                    ->after(function (Component $livewire) {
+                    ->after(function (Component $livewire, array $data, Model $record, array $arguments) {
+                        $this->ownerRecord->update([
+                            'values' => collect($this->ownerRecord->values)->forget($record->slug)->toArray(),
+                        ]);
                         $livewire->dispatch('refreshFields');
                     }),
             ])
@@ -161,5 +231,32 @@ class FieldsRelationManager extends RelationManager
     public static function getPluralModelLabel(): string
     {
         return __('Fields');
+    }
+
+    private function transferValuesOnSlugChange(array $data, Model $record): array
+    {
+        $oldSlug = $record->slug;
+        $newSlug = $data['slug'];
+
+        if ($newSlug === $oldSlug) {
+            return $data;
+        }
+
+        $existingValues = $this->ownerRecord->values;
+
+        // Handle slug update in existing values
+        if (isset($existingValues[$oldSlug])) {
+            // Transfer value from old slug to new slug
+            $existingValues[$newSlug] = $existingValues[$oldSlug];
+            unset($existingValues[$oldSlug]);
+
+            $this->ownerRecord->update([
+                'values' => $existingValues,
+            ]);
+        } else {
+            $existingValues[$newSlug] = null;
+        }
+
+        return $data;
     }
 }

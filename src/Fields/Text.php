@@ -5,9 +5,10 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput as Input;
 use Vormkracht10\Backstage\Concerns\HasAffixes;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Field;
 
-class Text extends FieldBase implements FieldInterface
+class Text extends FieldBase implements FieldContract
 {
     use HasAffixes;
 

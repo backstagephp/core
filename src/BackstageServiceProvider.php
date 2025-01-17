@@ -17,6 +17,7 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Vormkracht10\Backstage\Events\FormSubmitted;
 use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
 use Vormkracht10\Backstage\Models\Block;
@@ -26,6 +27,7 @@ use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
+use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Vormkracht10\Backstage\View\Components\Page;
@@ -49,7 +51,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Let\'s get started!');
 
                         if ($command->confirm('Would you like us to install Backstage for you?', true)) {
-                            $command->comment('Executing...');
+                            $command->comment('Lights, camera, action! Setting up for the show...');
 
                             $command->comment('Preparing stage...');
                             $command->callSilently('vendor:publish', [
@@ -67,15 +69,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                                 '--force' => true,
                             ]);
 
-                            if ($command->confirm('Would you like us to setup the media picker package?', true)) {
-                                $command->comment('Lights, camera, action! Setting up the media picker for the show...');
-                                $this->writeMediaPickerConfig();
+                            $this->writeMediaPickerConfig();
 
-                                $command->callSilently('vendor:publish', [
-                                    '--tag' => 'media-picker-migrations',
-                                    '--force' => true,
-                                ]);
-                            }
+                            $command->callSilently('vendor:publish', [
+                                '--tag' => 'media-picker-migrations',
+                                '--force' => true,
+                            ]);
 
                             $command->comment('Clean the decor...');
                             $command->callSilently('migrate:fresh', [
@@ -94,7 +93,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                             $key = 'AUTH_MODEL';
                             $value = '\Vormkracht10\Backstage\Models\User';
                             $path = app()->environmentFilePath();
-                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '='.$value);
+                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
                             $command->comment('Raise the curtain...');
                         }
@@ -190,10 +189,17 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
 
+        $this->app->bind(FieldInspector::class, FieldInspectionService::class);
+
         collect($this->app['config']['backstage']['components']['blocks'] ?? [])
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
                 Backstage::registerComponent($component);
+            });
+
+        collect($this->app['config']['backstage']['fields'] ?? [])
+            ->each(function ($field) {
+                Backstage::registerField($field);
             });
 
         Blade::component('blocks', Blocks::class);
@@ -287,6 +293,10 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'image/png',
                 'image/webp',
                 'image/svg+xml',
+                'video/mp4',
+                'video/webm',
+                'audio/mpeg',
+                'audio/ogg',
                 'application/pdf',
             ],
             'directory' => 'media',
