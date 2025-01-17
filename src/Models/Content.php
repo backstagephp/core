@@ -3,6 +3,7 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -155,15 +156,20 @@ class Content extends Model
         ) ?? [];
     }
 
-    public function field(string $field): HtmlString
+    /**
+     * Returns the value of a field based on the slug.
+     * 
+     * @return HtmlString|Collection
+     */
+    public function field(string $slug): HtmlString | Collection | Array
     {
-        $value = $this->values->where('field.slug', $field)->first();
+        $value = $this->values->where('field.slug', $slug)->first();
 
         if (!$value) {
             return new HtmlString('');
         }
 
-        return new HtmlString($value?->value);
+        return $value->value();
     }
 
     public function rawField(string $field): mixed
@@ -173,7 +179,7 @@ class Content extends Model
 
     public function view($data = [])
     {
-        return View::first([$this->template_file, 'types.page', 'backstage::types.page'], $data);
+        return View::first([$this->template_file, 'types.'. $this->type_slug, 'types.default', 'backstage::types.default'], $data);
     }
 
     public function response(int $code = 200)
