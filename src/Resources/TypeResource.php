@@ -2,20 +2,20 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Vormkracht10\Backstage\Resources\TypeResource\Pages;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
+use Vormkracht10\Backstage\Resources\TypeResource\Pages;
 
 class TypeResource extends Resource
 {
@@ -61,7 +61,7 @@ class TypeResource extends Resource
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->rules([
-                                fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                     if (in_array(strtolower($value), ['content', 'advanced'])) {
                                         $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                                     }
@@ -95,7 +95,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(0)
-                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

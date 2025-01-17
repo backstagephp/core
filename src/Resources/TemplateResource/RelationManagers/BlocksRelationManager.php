@@ -33,7 +33,7 @@ class BlocksRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                // 
+                //
             ]);
     }
 
