@@ -4,6 +4,7 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker as Input;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\ColorFormat;
 use Vormkracht10\Backstage\Models\Field;
 
@@ -12,7 +13,7 @@ use Vormkracht10\Backstage\Models\Field;
  *
  * @see https://filamentphp.com/docs/3.x/forms/fields/color-picker#color-picker-validation
  */
-class Color extends FieldBase implements FieldInterface
+class Color extends FieldBase implements FieldContract
 {
     public static function getDefaultConfig(): array
     {

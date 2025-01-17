@@ -5,9 +5,10 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList as Input;
 use Vormkracht10\Backstage\Concerns\HasOptions;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Field;
 
-class CheckboxList extends FieldBase implements FieldInterface
+class CheckboxList extends FieldBase implements FieldContract
 {
     use HasOptions;
 

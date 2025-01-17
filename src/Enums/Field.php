@@ -2,11 +2,11 @@
 
 namespace Vormkracht10\Backstage\Enums;
 
-use Vormkracht10\Backstage\Concerns\EnumArraySerializableTrait;
+use Vormkracht10\Backstage\Concerns\SerializableEnumArray;
 
 enum Field: string
 {
-    use EnumArraySerializableTrait;
+    use SerializableEnumArray;
 
     case Builder = 'builder';
     case Checkbox = 'checkbox';

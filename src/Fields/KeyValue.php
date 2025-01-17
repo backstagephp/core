@@ -4,9 +4,10 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\KeyValue as Input;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Field;
 
-class KeyValue extends FieldBase implements FieldInterface
+class KeyValue extends FieldBase implements FieldContract
 {
     public static function getDefaultConfig(): array
     {

@@ -6,9 +6,10 @@ use Filament\Forms;
 use Filament\Forms\Components\Select as Input;
 use Vormkracht10\Backstage\Concerns\HasAffixes;
 use Vormkracht10\Backstage\Concerns\HasOptions;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Field;
 
-class Select extends FieldBase implements FieldInterface
+class Select extends FieldBase implements FieldContract
 {
     use HasAffixes;
     use HasOptions;

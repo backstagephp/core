@@ -2,10 +2,10 @@
 
 namespace Vormkracht10\Backstage\Concerns;
 
-trait EnumArraySerializableTrait
+trait SerializableEnumArray
 {
-    use EnumNamesTrait;
-    use EnumValuesTrait;
+    use HasEnumNames;
+    use HasEnumValues;
 
     public static function array(): array
     {

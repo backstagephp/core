@@ -2,7 +2,7 @@
 
 namespace Vormkracht10\Backstage\Concerns;
 
-trait EnumValuesTrait
+trait HasEnumValues
 {
     abstract public static function cases(): array;
 

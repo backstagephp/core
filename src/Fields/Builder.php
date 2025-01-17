@@ -5,10 +5,11 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Field;
 
-class Builder extends FieldBase implements FieldInterface
+class Builder extends FieldBase implements FieldContract
 {
     public static function getDefaultConfig(): array
     {

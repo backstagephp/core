@@ -2,11 +2,11 @@
 
 namespace Vormkracht10\Backstage\Enums;
 
-use Vormkracht10\Backstage\Concerns\EnumArraySerializableTrait;
+use Vormkracht10\Backstage\Concerns\SerializableEnumArray;
 
 enum ToolbarButton: string
 {
-    use EnumArraySerializableTrait;
+    use SerializableEnumArray;
 
     case AttachFiles = 'attachFiles';
     case Blockquote = 'blockquote';

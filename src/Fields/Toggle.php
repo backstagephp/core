@@ -4,10 +4,11 @@ namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\Toggle as Input;
+use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Enums\ToggleColor;
 use Vormkracht10\Backstage\Models\Field;
 
-class Toggle extends FieldBase implements FieldInterface
+class Toggle extends FieldBase implements FieldContract
 {
     public static function getDefaultConfig(): array
     {
