@@ -43,6 +43,14 @@ To get started quickly, use the backstage:install command:
 php artisan backstage:install
 ```
 
+(Optional) Remove or comment the default Laravel routes:
+```php
+// routes/web.php
+
+// Route::get('/', function () {
+//    return view('welcome');
+//});
+```
 
 ### Advanced setup
 
