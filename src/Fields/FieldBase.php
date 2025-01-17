@@ -80,4 +80,13 @@ abstract class FieldBase implements FieldContract
 
         return $input;
     }
+
+    protected static function ensureArray($value, string $delimiter = ','): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return ! empty($value) ? explode($delimiter, $value) : [];
+    }
 }

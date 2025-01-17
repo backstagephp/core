@@ -23,6 +23,7 @@ use Vormkracht10\Backstage\Fields\Radio;
 use Vormkracht10\Backstage\Fields\Repeater;
 use Vormkracht10\Backstage\Fields\RichEditor;
 use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
+use Vormkracht10\Backstage\Fields\Tags;
 use Vormkracht10\Backstage\Fields\Text;
 use Vormkracht10\Backstage\Fields\Textarea;
 use Vormkracht10\Backstage\Fields\Toggle;
@@ -49,6 +50,7 @@ class EditSetting extends EditRecord
         'toggle' => Toggle::class,
         'color' => Color::class,
         'datetime' => DateTime::class,
+        'tags' => Tags::class,
     ];
 
     public function boot(): void
