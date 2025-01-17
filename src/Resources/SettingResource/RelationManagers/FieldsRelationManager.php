@@ -43,7 +43,7 @@ class FieldsRelationManager extends RelationManager
                                     ->required()
                                     ->placeholder(__('Name'))
                                     ->live(debounce: 250)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
                                     ->readonly(),
@@ -75,12 +75,49 @@ class FieldsRelationManager extends RelationManager
                             ]),
                         Section::make('Configuration')
                             ->columns(3)
-                            ->schema(fn (Get $get) => $this->getFieldTypeFormSchema(
+                            ->schema(fn(Get $get) => $this->getFieldTypeFormSchema(
                                 $get('field_type')
                             ))
-                            ->visible(fn (Get $get) => filled($get('field_type'))),
+                            ->visible(fn(Get $get) => filled($get('field_type'))),
                     ]),
             ]);
+    }
+
+    private function formatCustomFields(array $fields): array
+    {
+        return collect($fields)->mapWithKeys(function ($field, $key) {
+            $parts = explode('\\', $field);
+            $lastPart = end($parts);
+            $formattedName = Str::title(Str::snake($lastPart, ' '));
+
+            return [$key => $formattedName];
+        })->toArray();
+    }
+
+    private function initializeDefaultConfig(string $fieldType): array
+    {
+        $className = 'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+
+        if (! class_exists($className)) {
+            return [];
+        }
+
+        $fieldInstance = app($className);
+
+        return $fieldInstance::getDefaultConfig();
+    }
+
+    private function initializeCustomConfig(string $fieldType): array
+    {
+        $className = Backstage::getFields()[$fieldType] ?? null;
+
+        if (! class_exists($className)) {
+            return [];
+        }
+
+        $fieldInstance = app($className);
+
+        return $fieldInstance::getDefaultConfig();
     }
 
     public function table(Table $table): Table
@@ -125,7 +162,7 @@ class FieldsRelationManager extends RelationManager
                             'model_key' => $this->ownerRecord->slug,
                         ];
                     })
-                    ->mutateFormDataUsing(fn (array $data, Model $record): array => $this->transferValuesOnSlugChange($data, $record))
+                    ->mutateFormDataUsing(fn(array $data, Model $record): array => $this->transferValuesOnSlugChange($data, $record))
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
