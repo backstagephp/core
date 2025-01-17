@@ -34,13 +34,13 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function value() {
+    public function value()
+    {
 
-        if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && !empty($this->field['config']['relations'])) {
+        if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations'])) {
             return Content::whereIn('ulid', json_decode($this->value))->get();
         }
 
         return json_decode($this->value, true) ?? new HtmlString($this->value);
     }
-
 }
