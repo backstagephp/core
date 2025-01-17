@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->ulid('ulid')->primary();
+            $table->ulid('parent_ulid')->nullable();
 
             $table->string('model_type');
             $table->string('model_key');

@@ -2,7 +2,6 @@
 
 namespace Vormkracht10\Backstage\Resources\SettingResource\RelationManagers;
 
-use Exception;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -16,49 +15,18 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
+use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
 use Vormkracht10\Backstage\Enums\Field as EnumsField;
 use Vormkracht10\Backstage\Facades\Backstage;
 use Vormkracht10\Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager
 {
+    use HasConfigurableFields;
+    use HasFieldTypeResolver;
+
     protected static string $relationship = 'fields';
-
-    /** @throws Exception If the field type class cannot be resolved. */
-    protected function getFieldTypeFormSchema(?string $fieldType): array
-    {
-        if (empty($fieldType)) {
-            return [];
-        }
-
-        try {
-            $className = $this->resolveFieldTypeClassName($fieldType);
-
-            if (! $this->isValidFieldClass($className)) {
-                return [];
-            }
-
-            return app($className)->getForm();
-        } catch (Exception $e) {
-            throw new Exception("Failed to resolve field type class for '{$fieldType}'");
-        }
-    }
-
-    protected function resolveFieldTypeClassName(string $fieldType): ?string
-    {
-        if (EnumsField::tryFrom($fieldType)) {
-            return sprintf('Vormkracht10\\Backstage\\Fields\\%s', Str::studly($fieldType));
-        }
-
-        return Backstage::getFields()[$fieldType] ?? null;
-    }
-
-    protected function isValidFieldClass(?string $className): bool
-    {
-        return $className !== null
-            && class_exists($className)
-            && method_exists($className, 'getForm');
-    }
 
     public function form(Form $form): Form
     {
@@ -90,7 +58,7 @@ class FieldsRelationManager extends RelationManager
                                         function () {
                                             $options = array_merge(
                                                 EnumsField::array(),
-                                                $this->formatCustomFields(Backstage::getFields())
+                                                $this->prepareCustomFieldOptions(Backstage::getFields())
                                             );
 
                                             asort($options);
@@ -102,9 +70,7 @@ class FieldsRelationManager extends RelationManager
                                     ->afterStateUpdated(function ($state, Set $set) {
                                         $set('config', []);
 
-                                        $set('config', EnumsField::tryFrom($state)
-                                            ? $this->initializeDefaultConfig($state)
-                                            : $this->initializeCustomConfig($state));
+                                        $set('config', $this->initializeConfig($state));
                                     }),
                             ]),
                         Section::make('Configuration')
