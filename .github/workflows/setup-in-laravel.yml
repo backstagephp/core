@@ -32,6 +32,12 @@ jobs:
         run: |
           laravel new theater
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+
       - name: Prepare and install backstage
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
@@ -41,5 +47,5 @@ jobs:
           composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
           composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
           composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
-          composer require vormkracht10/backstage dev-${{ github.ref_name }}
+          composer require vormkracht10/backstage ${{ steps.extract_branch.outputs.branch }}
           php artisan backstage:install
