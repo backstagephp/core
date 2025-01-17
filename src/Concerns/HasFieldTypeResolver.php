@@ -25,7 +25,7 @@ trait HasFieldTypeResolver
 
             return app($className)->getForm();
         } catch (Exception $e) {
-            throw new Exception("Failed to resolve field type class for '{$fieldType}'");
+            throw new Exception(message: "Failed to resolve field type class for '{$fieldType}'", code: 0, previous: $e);
         }
     }
 
