@@ -2,11 +2,13 @@
 
 namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
 
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class BlocksRelationManager extends RelationManager
 {
@@ -38,6 +40,7 @@ class BlocksRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->allowDuplicates()
             ->recordTitleAttribute('name')
             ->reorderable('position')
             ->defaultSort('position', 'asc')
@@ -53,11 +56,13 @@ class BlocksRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
+                    ->form(fn(AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        TextInput::make('position'),
+                    ])
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->slideOver(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('block_template', function (Blueprint $table) {
+            $table->id();
             $table->string('block_slug');
             $table->string('template_slug');
             $table->integer('position')->default(0);

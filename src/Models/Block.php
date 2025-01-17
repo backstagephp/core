@@ -40,7 +40,7 @@ class Block extends Model
     public function templates(): BelongsToMany
     {
         return $this->belongsToMany(Template::class, 'block_template', 'block_slug', 'template_slug')
-            ->withPivot('position')
+            ->withPivot('id', 'position')
             ->orderBy('position');
     }
 
