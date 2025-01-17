@@ -3,9 +3,10 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Template extends Model
 {
@@ -40,5 +41,10 @@ class Template extends Model
         return $this->belongsToMany(Block::class, 'block_template', 'template_slug', 'block_slug')
             ->withPivot('id', 'position')
             ->orderBy('position');
+    }
+
+    public function types(): HasMany
+    {
+        return $this->hasMany(Type::class, 'template_slug', 'slug');
     }
 }

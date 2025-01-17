@@ -22,5 +22,10 @@ return new class extends Migration
 
             $table->index(['block_slug', 'template_slug']);
         });
+
+        Schema::table('types', function (Blueprint $table) {
+            $table->string('template_slug')->nullable();
+            $table->foreign('template_slug')->references('slug')->on('templates')->cascadeOnUpdate()->cascadeOnDelete();
+        });
     }
 };

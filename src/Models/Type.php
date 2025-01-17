@@ -3,9 +3,12 @@
 namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Vormkracht10\Backstage\Models\Template;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Type extends Model
 {
@@ -33,5 +36,10 @@ class Type extends Model
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
+    }
+
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(Template::class, 'template_slug', 'slug');
     }
 }
