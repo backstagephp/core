@@ -44,7 +44,8 @@
         "spatie/schema-org": "^3.23",
         "staudenmeir/laravel-adjacency-list": "^1.0",
         "vormkracht10/filament-media-picker": "dev-main",
-        "vormkracht10/filament-redirects": "dev-main"
+        "vormkracht10/filament-redirects": "dev-main",
+        "vormkracht10/filament-fields": "dev-main"
     },
     "require-dev": {
         "larastan/larastan": "^2.0.1",
@@ -113,6 +114,10 @@
             "options": {
                 "symlink": true
             }
+        },
+        "filament-fields": {
+            "type": "git",
+            "url": "https://github.com/vormkracht10/filament-fields.git"
         }
     },
     "minimum-stability": "dev",
