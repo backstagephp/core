@@ -370,6 +370,10 @@ class BackstageServiceProvider extends PackageServiceProvider
             'tenant_ownership_relationship_name' => 'tenant',
             'tenant_relationship' => 'site',
             'tenant_model' => Site::class,
+
+            'fields' => [
+                // 
+            ],
         ];
     }
 
