@@ -2,13 +2,13 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Vormkracht10\Fields\Models\Field;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Fields\Models\Field;
 
 class Setting extends Model
 {

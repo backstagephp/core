@@ -2,22 +2,22 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Set;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Vormkracht10\Backstage\Models\Site;
-use Filament\Forms\Components\TextInput;
-use Vormkracht10\Backstage\Models\Setting;
+use Locale;
 use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Setting;
+use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\SettingResource\Pages;
 use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
@@ -79,14 +79,14 @@ class SettingResource extends Resource
                         ->groupBy(function ($language) {
                             return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                         })
-                        ->mapWithKeys(fn($languages, $countryName) => [
-                            $countryName => $languages->mapWithKeys(fn($language) => [
+                        ->mapWithKeys(fn ($languages, $countryName) => [
+                            $countryName => $languages->mapWithKeys(fn ($language) => [
                                 $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                             ])->toArray(),
                         ])
                 )
                 ->allowHtml()
-                ->visible(fn() => Language::where('active', 1)->count() > 1),
+                ->visible(fn () => Language::where('active', 1)->count() > 1),
         ];
     }
 

@@ -41,7 +41,6 @@ class EditSetting extends EditRecord
         });
     }
 
-
     public function form(Form $form): Form
     {
         return $form
