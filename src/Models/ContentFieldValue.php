@@ -2,11 +2,11 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Vormkracht10\Fields\Models\Field;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Fields\Models\Field;
 
 class ContentFieldValue extends Pivot
 {
