@@ -366,7 +366,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'tenant_model' => Site::class,
 
             'fields' => [
-                // 
+                //
             ],
 
             'resources' => [
