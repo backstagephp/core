@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Fields\Concerns\HasFieldsMapper;
+use Filament\Forms\Components\Grid;
 
 class BlocksRelationManager extends RelationManager
 {
@@ -60,9 +61,13 @@ class BlocksRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn (AttachAction $action): array => [
+                    ->form(fn(AttachAction $action): array => [
                         $action->getRecordSelect()
+                            ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
+                                // Initialize with empty schema
+                                $set('fields', []);
+
                                 if (! $state) {
                                     return;
                                 }
@@ -75,17 +80,37 @@ class BlocksRelationManager extends RelationManager
 
                                 $customFields = $this->resolveCustomFields();
 
+                                // Create a serializable array of field definitions
+                                $schema = [];
                                 foreach ($block->fields as $field) {
-                                    dd($this->resolveFieldInput($field, $customFields));
+                                    $resolvedField = $this->resolveFieldInput($field, $customFields);
+                                    if ($resolvedField) {
+                                        // Convert the field component to a serializable array
+                                        $schema[] = [
+                                            'type' => get_class($resolvedField),
+                                            'name' => $resolvedField->getName(),
+                                            'label' => $resolvedField->getLabel(),
+                                            // Add other necessary properties you want to preserve
+                                        ];
+                                    }
                                 }
 
-                                dd($block->fields);
-                                // // Here you might want to do something with the fields
-                                // // For example, you could set them in the form state
-                                // foreach ($block->fields as $field) {
-                                //     $set("field_{$field->id}", $field->default_value ?? null);
-                                // }
+                                $set('fields', $schema);
                             }),
+                        Grid::make()
+                            ->columns(1)
+                            ->schema(function ($get) {
+                                $fieldDefinitions = $get('fields') ?? [];
+
+                                // Reconstruct form components from the serialized data
+                                return collect($fieldDefinitions)->map(function ($definition) {
+                                    $componentClass = $definition['type'];
+                                    return $componentClass::make($definition['name'])
+                                        ->label($definition['label']);
+                                })->toArray();
+                            })
+                            ->statePath('fields')
+                            ->reactive(),
                     ]),
             ])
             ->actions([
