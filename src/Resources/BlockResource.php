@@ -2,22 +2,22 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Facades\Backstage;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Vormkracht10\Backstage\Models\Block;
+use Filament\Forms\Components\ToggleButtons;
+use Vormkracht10\Backstage\Facades\Backstage;
 use Vormkracht10\Backstage\Resources\BlockResource\Pages;
-use Vormkracht10\Backstage\Resources\BlockResource\RelationManagers\FieldsRelationManager;
+use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class BlockResource extends Resource
 {

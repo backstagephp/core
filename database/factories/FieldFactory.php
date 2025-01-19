@@ -3,7 +3,7 @@
 namespace Vormkracht10\Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Fields\Models\Field;
 
 class FieldFactory extends Factory
 {

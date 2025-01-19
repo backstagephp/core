@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Fields\Models\Field;
 
 class ContentFieldValue extends Pivot
 {

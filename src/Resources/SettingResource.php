@@ -19,7 +19,7 @@ use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Setting;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Resources\SettingResource\Pages;
-use Vormkracht10\Backstage\Resources\SettingResource\RelationManagers\FieldsRelationManager;
+use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class SettingResource extends Resource
 {

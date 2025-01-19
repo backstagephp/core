@@ -28,10 +28,12 @@ use Vormkracht10\Backstage\Models\Template;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
+use Vormkracht10\Backstage\Resources\ContentResource;
 use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Vormkracht10\Backstage\View\Components\Page;
+use Vormkracht10\Fields\Fields\Builder;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
@@ -55,6 +57,9 @@ class BackstageServiceProvider extends PackageServiceProvider
                             $command->comment('Lights, camera, action! Setting up for the show...');
 
                             $command->comment('Preparing stage...');
+
+                            $this->runFilamentFieldsCommand($command);
+
                             $command->callSilently('vendor:publish', [
                                 '--tag' => 'backstage-migrations',
                                 '--force' => true,
@@ -159,7 +164,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'block' => 'Vormkracht10\Backstage\Models\Block',
             'content' => 'Vormkracht10\Backstage\Models\Content',
             'domain' => 'Vormkracht10\Backstage\Models\Domain',
-            'field' => 'Vormkracht10\Backstage\Models\Field',
+            'field' => 'Vormkracht10\Fields\Models\Field',
             'form' => 'Vormkracht10\Backstage\Models\Form',
             'language' => 'Vormkracht10\Backstage\Models\Language',
             'menu' => 'Vormkracht10\Backstage\Models\Menu',
@@ -201,11 +206,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
                 Backstage::registerComponent($component);
-            });
-
-        collect($this->app['config']['backstage']['fields'] ?? [])
-            ->each(function ($field) {
-                Backstage::registerField($field);
             });
 
         Blade::component('blocks', Blocks::class);
@@ -272,7 +272,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             '01_create_languages_table',
             '02_create_sites_table',
             '03_create_types_table',
-            '04_create_fields_table',
             '05_create_settings_table',
             '06_create_content_table',
             '07_create_templates_table',
@@ -326,6 +325,60 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'navigation_sort' => null,
                 'navigation_count_badge' => false,
                 'resource' => MediaResource::class,
+            ],
+        ];
+    }
+
+    private function runFilamentFieldsCommand(InstallCommand $command): void
+    {
+        $command->callSilently('vendor:publish', [
+            '--tag' => 'filament-fields-config',
+            '--force' => true,
+        ]);
+
+        $this->writeFilamentFieldsConfig();
+
+        $command->callSilently('vendor:publish', [
+            '--tag' => 'filament-fields-migrations',
+            '--force' => true,
+        ]);
+    }
+
+    private function writeFilamentFieldsConfig(?string $path = null): void
+    {
+        $path ??= config_path('fields.php');
+
+        // Ensure directory exists
+        $directory = dirname($path);
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Generate the config file content
+        $configContent = "<?php\n\n";
+        $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
+        $configContent .= "use Vormkracht10\Fields\Fields\Builder;\n";
+
+        // Custom export function to create more readable output
+        $configContent .= 'return ' . $this->customVarExport($this->generateFilamentFieldsConfig()) . ";\n";
+
+        file_put_contents($path, $configContent);
+    }
+
+    private function generateFilamentFieldsConfig(): array
+    {
+        return [
+            'is_tenant_aware' => true,
+            'tenant_ownership_relationship_name' => 'tenant',
+            'tenant_relationship' => 'site',
+            'tenant_model' => Site::class,
+
+            'fields' => [
+                Builder::class,
+            ],
+
+            'resources' => [
+                ContentResource::class,
             ],
         ];
     }

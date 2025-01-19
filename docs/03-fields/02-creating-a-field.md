@@ -10,7 +10,7 @@ Each field in Filament has some default configuration options. You can override 
 
 ```php
 use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Fields\FieldBase;
+use Vormkracht10\Fields\Fields\FieldBase;
 
 class Color extends FieldBase implements FieldContract
 {

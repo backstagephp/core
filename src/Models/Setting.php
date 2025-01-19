@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Fields\Models\Field;
 
 class Setting extends Model
 {

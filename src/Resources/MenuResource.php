@@ -14,11 +14,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Locale;
-use Vormkracht10\Backstage\Fields\Select;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Resources\MenuResource\Pages;
 use Vormkracht10\Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
+use Vormkracht10\Fields\Fields\Select;
 
 class MenuResource extends Resource
 {

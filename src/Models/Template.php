@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Fields\Models\Field;
 
 class Template extends Model
 {
