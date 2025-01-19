@@ -7,8 +7,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Fields\Models\Field;
 use Vormkracht10\Backstage\Resources\FieldResource\Pages;
+use Vormkracht10\Fields\Models\Field;
 
 class FieldResource extends Resource
 {
