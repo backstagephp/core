@@ -27,6 +27,7 @@ use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
+use Vormkracht10\Backstage\Resources\ContentResource;
 use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
@@ -373,6 +374,10 @@ class BackstageServiceProvider extends PackageServiceProvider
 
             'fields' => [
                 // 
+            ],
+
+            'resources' => [
+                ContentResource::class,
             ],
         ];
     }
