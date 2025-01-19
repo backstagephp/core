@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Vormkracht10\Fields\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
