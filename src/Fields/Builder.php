@@ -3,17 +3,17 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Vormkracht10\Fields\Fields\Base;
-use Vormkracht10\Fields\Fields\Text;
-use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\Fields\Fields\Select;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Fields\Fields\Checkbox;
-use Vormkracht10\Fields\Fields\Textarea;
-use Vormkracht10\Fields\Fields\RichEditor;
 use Filament\Forms\Components\Builder as Input;
-use Vormkracht10\Backstage\Contracts\FieldContract;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
+use Vormkracht10\Backstage\Contracts\FieldContract;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Fields\Fields\Base;
+use Vormkracht10\Fields\Fields\Checkbox;
+use Vormkracht10\Fields\Fields\RichEditor;
+use Vormkracht10\Fields\Fields\Select;
+use Vormkracht10\Fields\Fields\Text;
+use Vormkracht10\Fields\Fields\Textarea;
+use Vormkracht10\Fields\Models\Field;
 
 class Builder extends Base implements FieldContract
 {
