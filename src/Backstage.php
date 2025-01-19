@@ -9,8 +9,6 @@ class Backstage
 {
     private static array $components = [];
 
-    private static array $fields = [];
-
     private static array $cachedBlocks = [
         'default' => '\Vormkracht10\Backstage\View\Components\DefaultBlock',
     ];
@@ -25,27 +23,15 @@ class Backstage
         static::$components[$name] = $component;
     }
 
-    public static function registerField(string $className): void
-    {
-        $name = Str::kebab(class_basename($className));
-
-        static::$fields[$name] = $className;
-    }
-
     public static function getComponents(): array
     {
         return static::$components;
     }
 
-    public static function getFields(): array
-    {
-        return static::$fields;
-    }
-
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 
@@ -62,10 +48,5 @@ class Backstage
         }
 
         return self::$cachedBlocks[$slug] = static::$components[$block->component] ?? static::$cachedBlocks['default'];
-    }
-
-    public static function resolveField($slug)
-    {
-        return static::$fields[$slug] ?? null;
     }
 }

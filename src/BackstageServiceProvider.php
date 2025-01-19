@@ -56,9 +56,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
                             $command->comment('Preparing stage...');
 
-                            // Fields
                             $this->runFilamentFieldsCommand($command);
-                            // End Fields
 
                             $command->callSilently('vendor:publish', [
                                 '--tag' => 'backstage-migrations',
@@ -201,11 +199,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
                 Backstage::registerComponent($component);
-            });
-
-        collect($this->app['config']['backstage']['fields'] ?? [])
-            ->each(function ($field) {
-                Backstage::registerField($field);
             });
 
         Blade::component('blocks', Blocks::class);

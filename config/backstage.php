@@ -38,8 +38,4 @@ return [
             Vormkracht10\Backstage\View\Components\Form::class,
         ],
     ],
-
-    'fields' => [
-        // App\Backstage\Fields\CustomField::class;
-    ],
 ];
