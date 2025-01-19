@@ -7,7 +7,7 @@ use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Fields\Models\Field;
 
 class Builder extends FieldBase implements FieldContract
 {

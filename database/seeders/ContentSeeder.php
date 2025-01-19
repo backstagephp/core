@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Backstage\Models\ContentFieldValue;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Fields\Models\Field;
 
 class ContentSeeder extends Seeder
 {

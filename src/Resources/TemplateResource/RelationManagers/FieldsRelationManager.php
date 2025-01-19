@@ -10,7 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Fields\Models\Field;
 
 class FieldsRelationManager extends RelationManager
 {
@@ -40,7 +40,7 @@ class FieldsRelationManager extends RelationManager
                     ->required()
                     ->placeholder(__('Name'))
                     ->live(debounce: 250)
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->readonly(),
                 TextInput::make('field_type')

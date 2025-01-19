@@ -39,7 +39,7 @@ use Vormkracht10\Fields\Fields\Select;
 use Vormkracht10\Fields\Fields\Text;
 use Vormkracht10\Fields\Fields\Textarea;
 use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Field;
+use Vormkracht10\Fields\Models\Field;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Tag;
 use Vormkracht10\Backstage\Models\Type;
