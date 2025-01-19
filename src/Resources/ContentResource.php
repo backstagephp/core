@@ -31,6 +31,13 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Locale;
 use Vormkracht10\Backstage\Fields\Builder;
+use Vormkracht10\Backstage\Models\Content;
+use Vormkracht10\Backstage\Models\Language;
+use Vormkracht10\Backstage\Models\Tag;
+use Vormkracht10\Backstage\Models\Type;
+use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Vormkracht10\Backstage\View\Components\Filament\Badge;
+use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 use Vormkracht10\Fields\Fields\Checkbox;
 use Vormkracht10\Fields\Fields\CheckboxList;
 use Vormkracht10\Fields\Fields\KeyValue;
@@ -38,14 +45,7 @@ use Vormkracht10\Fields\Fields\RichEditor;
 use Vormkracht10\Fields\Fields\Select;
 use Vormkracht10\Fields\Fields\Text;
 use Vormkracht10\Fields\Fields\Textarea;
-use Vormkracht10\Backstage\Models\Content;
 use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
-use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 use Vormkracht10\MediaPicker\Components\MediaPicker;
 
 class ContentResource extends Resource

@@ -40,7 +40,7 @@ class FieldsRelationManager extends RelationManager
                     ->required()
                     ->placeholder(__('Name'))
                     ->live(debounce: 250)
-                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->readonly(),
                 TextInput::make('field_type')
