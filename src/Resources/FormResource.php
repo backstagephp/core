@@ -2,21 +2,21 @@
 
 namespace Vormkracht10\Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Vormkracht10\Backstage\Models\Form as FormModel;
 use Vormkracht10\Backstage\Resources\FormResource\Pages;
-use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
+use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class FormResource extends Resource
 {
