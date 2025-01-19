@@ -24,23 +24,6 @@ class EditSetting extends EditRecord
         ];
     }
 
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        if ($this->record->fields->isEmpty()) {
-            return $data;
-        }
-
-        return $this->mutateFormData($data, function ($field, $fieldConfig, $fieldInstance, $data) {
-            if (! empty($fieldConfig['methods']['mutateFormDataCallback'])) {
-                return $fieldInstance->mutateFormDataCallback($this->record, $field, $data);
-            }
-
-            $data['setting'][$field->slug] = $this->record->values[$field->slug] ?? null;
-
-            return $data;
-        });
-    }
-
     public function form(Form $form): Form
     {
         return $form
