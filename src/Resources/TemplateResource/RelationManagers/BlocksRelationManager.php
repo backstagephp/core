@@ -2,15 +2,15 @@
 
 namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
 
-use Filament\Tables;
-use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Block;
-use Filament\Tables\Actions\AttachAction;
 use Vormkracht10\Fields\Concerns\HasFieldsMapper;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class BlocksRelationManager extends RelationManager
 {
@@ -60,16 +60,16 @@ class BlocksRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn(AttachAction $action): array => [
+                    ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect()
                             ->afterStateUpdated(function (Set $set, $state) {
-                                if (!$state) {
+                                if (! $state) {
                                     return;
                                 }
 
                                 $block = Block::with('fields')->find($state);
 
-                                if (!$block) {
+                                if (! $block) {
                                     return;
                                 }
 
@@ -85,8 +85,8 @@ class BlocksRelationManager extends RelationManager
                                 // foreach ($block->fields as $field) {
                                 //     $set("field_{$field->id}", $field->default_value ?? null);
                                 // }
-                            })
-                    ])
+                            }),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),
