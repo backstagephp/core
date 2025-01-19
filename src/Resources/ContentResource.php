@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Locale;
-use Vormkracht10\Fields\Fields\Builder;
+use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\Fields\Fields\Checkbox;
 use Vormkracht10\Fields\Fields\CheckboxList;
 use Vormkracht10\Fields\Fields\KeyValue;

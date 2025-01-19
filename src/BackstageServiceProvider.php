@@ -2,37 +2,38 @@
 
 namespace Vormkracht10\Backstage;
 
-use Filament\Forms\Components\Select;
+use Illuminate\Support\Str;
 use Filament\Support\Assets\Asset;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Forms\Components\Select;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
-use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Media;
 use Vormkracht10\Backstage\Models\Menu;
 use Vormkracht10\Backstage\Models\Site;
 use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
+use Vormkracht10\Fields\Fields\Builder;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Backstage\Models\Media;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Livewire\Features\SupportTesting\Testable;
+use Vormkracht10\Backstage\Events\FormSubmitted;
+use Vormkracht10\Backstage\View\Components\Page;
 use Vormkracht10\Backstage\Observers\MenuObserver;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
-use Vormkracht10\Backstage\View\Components\Page;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Vormkracht10\Backstage\Contracts\FieldInspector;
+use Vormkracht10\Backstage\Resources\ContentResource;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
+use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
+use Vormkracht10\Backstage\Services\FieldInspectionService;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -265,7 +266,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             '01_create_languages_table',
             '02_create_sites_table',
             '03_create_types_table',
-            // '04_create_fields_table',
             '05_create_settings_table',
             '06_create_content_table',
             '07_create_templates_table',
@@ -350,6 +350,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         // Generate the config file content
         $configContent = "<?php\n\n";
         $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
+        $configContent .= "use Vormkracht10\Fields\Fields\Builder;\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateFilamentFieldsConfig()) . ";\n";
@@ -366,7 +367,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'tenant_model' => Site::class,
 
             'fields' => [
-                //
+                Builder::class,
             ],
 
             'resources' => [
