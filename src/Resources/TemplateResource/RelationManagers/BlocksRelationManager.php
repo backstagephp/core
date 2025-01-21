@@ -2,6 +2,7 @@
 
 namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
 
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -11,7 +12,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
-use Filament\Forms\Components\Grid;
 
 class BlocksRelationManager extends RelationManager
 {
@@ -105,6 +105,7 @@ class BlocksRelationManager extends RelationManager
                                 // Reconstruct form components from the serialized data
                                 return collect($fieldDefinitions)->map(function ($definition) {
                                     $componentClass = $definition['type'];
+
                                     return $componentClass::make($definition['name'])
                                         ->label($definition['label']);
                                 })->toArray();
