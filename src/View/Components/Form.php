@@ -15,7 +15,12 @@ class Form extends Component
         $this->slug = $slug;
         $this->form = ModelsForm::where('slug', $this->slug)
             ->with('fields')
-            ->firstOrFail();
+            ->first();
+    }
+
+    public function shouldRender()
+    {
+        return $this->form !== null;
     }
 
     public function render()
