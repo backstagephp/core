@@ -5,6 +5,7 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
+use Vormkracht10\MediaPicker\Components\MediaPicker;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Field;
@@ -59,6 +60,9 @@ class Builder extends FieldBase implements FieldContract
                                 ->options($field->config['options'] ?? null),
                             'builder' => Builder::make($field->slug, $field)
                                 ->label($field->name),
+                            'media' => MediaPicker::make($field->slug)
+                                ->label($field->name),
+                            'key-value' => KeyValue::make($field->slug, $field),
                             default => Text::make($field->slug, $field)
                                 ->label($field->name),
                         };
