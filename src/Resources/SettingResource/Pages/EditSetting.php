@@ -9,13 +9,13 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Vormkracht10\Backstage\Resources\SettingResource;
-use Vormkracht10\Fields\Concerns\HasFieldsMapper;
+use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
 
 class EditSetting extends EditRecord
 {
     protected static string $resource = SettingResource::class;
 
-    use HasFieldsMapper;
+    use CanMapDynamicFields;
 
     protected function getHeaderActions(): array
     {
