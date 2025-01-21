@@ -26,9 +26,9 @@ The `$content` variable is always available. This is the current requested conte
 <x-page>
     {{ $content->field('body') }}
     
-    @foreach ($content->field('authors') as $content)
+    @foreach ($content->field('authors') as $author)
 
-        {{ $content->field('name') }}<br />
+        {{ $author->field('name') }}<br />
 
     @endforeach
 
