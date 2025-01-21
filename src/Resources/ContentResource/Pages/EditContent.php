@@ -71,15 +71,10 @@ class EditContent extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
-            if ($value->field->field_type == 'builder') {
-                $value->value = json_decode($value->value, true);
-            }
+
+            $value->value = json_decode($value->value, true) ?? $value->value;
 
             return [$value->field->ulid => $value->value];
-        })->toArray();
-
-        $data['media'] = $this->getRecord()->media->map(function ($media) {
-            return 'media/' . $media->filename;
         })->toArray();
 
         return $data;

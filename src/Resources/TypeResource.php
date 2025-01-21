@@ -59,7 +59,7 @@ class TypeResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->rules([
                         fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
-                            if (in_array(strtolower($value), ['content', 'advanced'])) {
+                            if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
                                 $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                             }
                         },

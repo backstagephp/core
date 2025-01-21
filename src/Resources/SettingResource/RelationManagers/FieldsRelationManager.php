@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Vormkracht10\Backstage\Concerns\HasConfigurableFields;
 use Vormkracht10\Backstage\Concerns\HasFieldTypeResolver;
@@ -46,7 +47,10 @@ class FieldsRelationManager extends RelationManager
                                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 TextInput::make('slug')
-                                    ->readonly(),
+                                    ->readonly()
+                                    ->rules([
+                                        Rule::notIn(['default']),
+                                    ]),
 
                                 Select::make('field_type')
                                     ->searchable()
