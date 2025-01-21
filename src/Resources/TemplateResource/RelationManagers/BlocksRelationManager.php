@@ -10,12 +10,12 @@ use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Fields\Concerns\HasFieldsMapper;
+use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
 use Filament\Forms\Components\Grid;
 
 class BlocksRelationManager extends RelationManager
 {
-    use HasFieldsMapper;
+    use CanMapDynamicFields;
 
     protected static string $relationship = 'blocks';
 
