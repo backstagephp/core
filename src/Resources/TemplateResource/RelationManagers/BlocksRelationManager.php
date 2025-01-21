@@ -65,7 +65,6 @@ class BlocksRelationManager extends RelationManager
                         $action->getRecordSelect()
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
-                                // Initialize with empty schema
                                 $set('fields', []);
 
                                 if (! $state) {
@@ -80,17 +79,15 @@ class BlocksRelationManager extends RelationManager
 
                                 $customFields = $this->resolveCustomFields();
 
-                                // Create a serializable array of field definitions
                                 $schema = [];
+
                                 foreach ($block->fields as $field) {
                                     $resolvedField = $this->resolveFieldInput($field, $customFields);
                                     if ($resolvedField) {
-                                        // Convert the field component to a serializable array
                                         $schema[] = [
                                             'type' => get_class($resolvedField),
                                             'name' => $resolvedField->getName(),
                                             'label' => $resolvedField->getLabel(),
-                                            // Add other necessary properties you want to preserve
                                         ];
                                     }
                                 }
