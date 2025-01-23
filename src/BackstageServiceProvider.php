@@ -28,11 +28,10 @@ use Vormkracht10\Backstage\Models\Type;
 use Vormkracht10\Backstage\Models\User;
 use Vormkracht10\Backstage\Observers\MenuObserver;
 use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Services\FieldInspectionService;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Vormkracht10\Backstage\View\Components\Page;
-use Vormkracht10\Fields\Fields\Builder;
+use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
@@ -194,8 +193,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
 
-        $this->app->bind(FieldInspector::class, FieldInspectionService::class);
-
         collect($this->app['config']['backstage']['components']['blocks'] ?? [])
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
@@ -350,7 +347,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         // Generate the config file content
         $configContent = "<?php\n\n";
         $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
-        $configContent .= "use Vormkracht10\Fields\Fields\Builder;\n";
+        $configContent .= "use Vormkracht10\Backstage\Fields\Builder;\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateFilamentFieldsConfig()) . ";\n";
