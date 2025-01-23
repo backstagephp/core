@@ -83,7 +83,7 @@ class ContentResource extends Resource
                 ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
-                    'tableFilters[type_slug][values]' => ['page'],
+                    'tableFilters[type_slug][values]' => [$type->slug],
                 ]));
         })->toArray();
 
@@ -114,15 +114,14 @@ class ContentResource extends Resource
 
         return $form
             ->schema([
-                TextInput::make('values.' . self::$type->fields->where('slug', self::$type->name_field)->first()->ulid)
+                TextInput::make('name')
                     ->hiddenLabel()
-                    ->placeholder(self::$type->fields->where('slug', self::$type->name_field)->first()->name)
+                    ->placeholder(__('Name'))
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(debounce: 250)
                     ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
-                        $set('name', $state);
                         $set('meta_tags.title', $state);
                         $set('slug', Str::slug($state));
 
@@ -174,7 +173,6 @@ class ContentResource extends Resource
                                     ->schema([
                                         Hidden::make('type_slug')
                                             ->default(self::$type->slug),
-                                        Hidden::make('name'),
                                         Grid::make()
                                             ->columns(1)
                                             ->schema(self::getTypeInputs()),
@@ -269,6 +267,7 @@ class ContentResource extends Resource
 
     public static function getTypeInputs()
     {
+
         return self::$type->fields->map(function (Field $field) {
             $fieldName = 'values.' . $field->ulid;
 
@@ -285,8 +284,7 @@ class ContentResource extends Resource
                 'textarea' => Textarea::make($fieldName, $field)
                     ->label($field->name),
                 'select' => Select::make($fieldName, $field)
-                    ->label($field->name)
-                    ->options($field->config['options']),
+                    ->label($field->name),
                 'builder' => Builder::make($fieldName, $field)
                     ->label($field->name),
                 'media' => MediaPicker::make($fieldName)
