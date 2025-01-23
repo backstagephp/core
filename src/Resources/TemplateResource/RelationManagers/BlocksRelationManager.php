@@ -86,7 +86,7 @@ class BlocksRelationManager extends RelationManager
                                     if ($resolvedField) {
                                         $schema[] = [
                                             'type' => get_class($resolvedField),
-                                            'name' => $resolvedField->getName(),
+                                            'name' => $field->name,
                                             'label' => $resolvedField->getLabel(),
                                         ];
                                     }
@@ -104,12 +104,19 @@ class BlocksRelationManager extends RelationManager
                                     $componentClass = $definition['type'];
 
                                     return $componentClass::make($definition['name'])
-                                        ->label($definition['label']);
+                                        ->label($definition['label'])
+                                        ->statePath('values.' . $definition['name']);
                                 })->toArray();
                             })
                             ->statePath('fields')
                             ->reactive(),
-                    ]),
+                    ])->using(function (array $data): array {
+                        dd($data);
+                        return [
+                            'fields' => json_encode($data['fields'] ?? []),
+                            // Include any other fields you want to save in the pivot table
+                        ];
+                    }),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),
