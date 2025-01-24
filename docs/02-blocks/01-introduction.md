@@ -6,47 +6,14 @@ title: Getting started
 
 Blocks are collections of fields that are rendered in blade components.
 
-## Setup
+## Default usage
 
-Create a component.
+When creating blocks, components and views are automaticly be loaded if exists.
 
-```bash
-php artisan make:component CallToAction
-```
+To gain more control of components see advanced setup.
 
-Add field you may use for this component
-```php
-public function __construct(public string $url, public string $text = 'Click me')
-{
-}
-```
+### Components without fields
 
-Next, if you wanna have this component available in the blocks register them (e.g. AppServiceProvider):
-
-```php
-use Vormkracht10\Backstage\Facades\Backstage;
-
-Backstage::registerComponent(CallToAction::class);
-```
-
-You can also add this component to `config/backstage.php`.
-
-```php
-return [
-    // ...
-    'components' => [
-        'blocks' => [
-            Vormkracht10\Backstage\View\Components\Blocks\Heading::class,
-            Vormkracht10\Backstage\View\Components\Blocks\Paragraph::class,
-            App\View\Components\CallToAction::class
-        ],
-    ];
-];
-```
-
-Then this component should be available in Backstage. You should add the required fields to the block.
-
-### Anonymous components
 You can create blocks that do not contain any fields but still wanna add this as option in the block builder. You can do the following:
 
 1. Create a block in Backstage, for example: Name: "Promotion Banner" and slug: "promotion-banner".
@@ -58,7 +25,8 @@ You can create blocks that do not contain any fields but still wanna add this as
 
 ![afbeelding](https://github.com/user-attachments/assets/3d3f9c6b-8778-4627-ace2-8c6bed0beca6)
 
-### Automatic components
+### Components with fields
+
 When creating blocks, a component can also automaticly be loaded. Useful when having fields and (may) need some custom logic.
 
 1. Create a block in Backstage, for example: Name "Call to Action", and slug: "call-to-action".
@@ -99,3 +67,43 @@ class CallToAction extends Component
     <a href="{{ $url }}">{{$urlText}}</a>
 </div>
 ```
+
+## Advanced setup
+
+Create a component:
+
+```bash
+php artisan make:component CallToAction
+```
+
+Add field you may use for this component
+```php
+public function __construct(public string $url, public string $text = 'Click me')
+{
+}
+```
+
+Next, if you wanna have this component available in the blocks register them (e.g. AppServiceProvider):
+
+```php
+use Vormkracht10\Backstage\Facades\Backstage;
+
+Backstage::registerComponent(CallToAction::class);
+```
+
+You can also add this component to `config/backstage.php`.
+
+```php
+return [
+    // ...
+    'components' => [
+        'blocks' => [
+            Vormkracht10\Backstage\View\Components\Blocks\Heading::class,
+            Vormkracht10\Backstage\View\Components\Blocks\Paragraph::class,
+            App\View\Components\CallToAction::class
+        ],
+    ];
+];
+```
+
+Then this component should be available in Backstage. You should add the required fields to the block.
