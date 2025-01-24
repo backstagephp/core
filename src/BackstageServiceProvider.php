@@ -50,56 +50,57 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
                         $command->comment('Let\'s get started!');
 
-                        if ($command->confirm('Would you like us to install Backstage for you?', true)) {
-                            $command->comment('Lights, camera, action! Setting up for the show...');
+                        // if ($command->confirm('Would you like us to install Backstage for you?', true)) {
+                        $command->comment('Lights, camera, action! Setting up for the show...');
 
-                            $command->comment('Preparing stage...');
+                        $command->comment('Preparing stage...');
 
-                            $this->runFilamentFieldsCommand($command);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'backstage-migrations',
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'backstage-migrations',
+                            '--force' => true,
+                        ]);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'backstage-config',
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'backstage-config',
+                            '--force' => true,
+                        ]);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'redirects-migrations',
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'redirects-migrations',
+                            '--force' => true,
+                        ]);
 
-                            $this->writeMediaPickerConfig();
+                        $this->runFilamentFieldsCommand($command);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'media-picker-migrations',
-                                '--force' => true,
-                            ]);
+                        $this->writeMediaPickerConfig();
 
-                            $command->comment('Clean the decor...');
-                            $command->callSilently('migrate:fresh', [
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'media-picker-migrations',
+                            '--force' => true,
+                        ]);
 
-                            $command->comment('Hanging up lights...');
-                            $command->callSilently('backstage:seed', [
-                                '--force' => true,
-                            ]);
+                        $command->comment('Clean the decor...');
+                        $command->callSilently('migrate:fresh', [
+                            '--force' => true,
+                        ]);
 
-                            $command->comment('Plugin wires...');
-                            $command->callSilently('filament:assets');
+                        $command->comment('Hanging up lights...');
+                        $command->callSilently('backstage:seed', [
+                            '--force' => true,
+                        ]);
 
-                            $command->comment('Turn on the lights...');
-                            $key = 'AUTH_MODEL';
-                            $value = '\Vormkracht10\Backstage\Models\User';
-                            $path = app()->environmentFilePath();
-                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
+                        $command->comment('Plugin wires...');
+                        $command->callSilently('filament:assets');
 
-                            $command->comment('Raise the curtain...');
-                        }
+                        $command->comment('Turn on the lights...');
+                        $key = 'AUTH_MODEL';
+                        $value = '\Vormkracht10\Backstage\Models\User';
+                        $path = app()->environmentFilePath();
+                        file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
+
+                        $command->comment('Raise the curtain...');
+                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
                         $command->info('The stage is cleared for a fresh start');
@@ -337,12 +338,16 @@ class BackstageServiceProvider extends PackageServiceProvider
         ]);
 
         $migrationsPath = database_path('migrations');
-        $files = glob($migrationsPath . '/*_create_fields_table.php');
 
-        $date = now()->addSeconds(2)->format('Y_m_d_His');
+        // Specifically look for the fields migration file
+        $fieldsMigrationFiles = glob($migrationsPath . '/*_create_fields_table.php');
 
-        if (!empty($files)) {
-            $oldName = $files[0];
+        // Get timestamp from create_sites_table migration
+        $sitesMigrationFiles = glob($migrationsPath . '/*_create_sites_table.php');
+        $date = substr(basename($sitesMigrationFiles[0]), 0, 17);
+
+        if (!empty($fieldsMigrationFiles)) {
+            $oldName = $fieldsMigrationFiles[0];
             $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
             rename($oldName, $newName);
         }
