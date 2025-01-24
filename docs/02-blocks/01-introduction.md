@@ -50,8 +50,13 @@ Then this component should be available in Backstage. You should add the require
 You can create blocks that do not contain any fields but still wanna add this as option in the block builder. You can do the following:
 
 1. Create a block in Backstage, for example: Name: "Promotion Banner" and slug: "promotion-banner".
-2. Create a view in: /resources/views/blocks/promotion-banner.blade.php
-3. When adding a new block to the builder you can select this block and the view will be rendered.
+
+![afbeelding](https://github.com/user-attachments/assets/ad526b50-799d-4f87-9b71-d9aa963db4c8)
+
+3. Create a view in: /resources/views/blocks/promotion-banner.blade.php
+4. When adding a new block to the builder you can select this block and the view will be rendered.
+
+![afbeelding](https://github.com/user-attachments/assets/3d3f9c6b-8778-4627-ace2-8c6bed0beca6)
 
 ### Automatic components
 When creating blocks, a component can also automaticly be loaded. Useful when having fields and (may) need some custom logic.
