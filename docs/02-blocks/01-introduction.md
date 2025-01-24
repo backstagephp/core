@@ -38,10 +38,59 @@ return [
         'blocks' => [
             Vormkracht10\Backstage\View\Components\Blocks\Heading::class,
             Vormkracht10\Backstage\View\Components\Blocks\Paragraph::class,
-            CallToAction::class
+            App\View\Components\CallToAction::class
         ],
     ];
 ];
 ```
 
 Then this component should be available in Backstage. You should add the required fields to the block.
+
+### Anonymous components
+You can create blocks that do not contain any fields but still wanna add this as option in the block builder. You can do the following:
+
+1. Create a block in Backstage, for example: Name: "Promotion Banner" and slug: "promotion-banner".
+2. Create a view in: /resources/views/blocks/promotion-banner.blade.php
+3. When adding a new block to the builder you can select this block and the view will be rendered.
+
+### Automatic components
+When creating blocks, a component can also automaticly be loaded. Useful when having fields and (may) need some custom logic.
+
+1. Create a block in Backstage, for example: Name "Call to Action", and slug: "call-to-action".
+2. Create a component in /app/View/Components/CallToAction.php
+3. Add the fields in the constructor:
+```php
+<?php
+// /app/View/Components/CallToAction.php
+namespace App\View\Components;
+
+use Closure;
+use Illuminate\Contracts\View\View;
+use Illuminate\View\Component;
+
+class CallToAction extends Component
+{
+    /**
+     * Create a new component instance.
+     */
+    public function __construct(public $text = '', public $url = '', public $urlText = '')
+    {
+        //
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     */
+    public function render(): View|Closure|string
+    {
+        return view('components.call-to-action');
+    }
+}
+```
+4. Create the file /resources/views/components/call-to-action.blade.php
+```html
+<div>
+    {{ $text }}<br />
+    <a href="{{ $url }}">{{$urlText}}</a>
+</div>
+```
