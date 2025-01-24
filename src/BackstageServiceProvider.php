@@ -262,27 +262,27 @@ class BackstageServiceProvider extends PackageServiceProvider
             '01_create_languages_table',
             '02_create_sites_table',
             '03_create_types_table',
-            '05_create_settings_table',
-            '06_create_content_table',
-            '07_create_templates_table',
-            '08_create_content_field_values_table',
-            '09_create_blocks_table',
-            '10_create_menus_table',
-            '11_create_menu_items_table',
-            '12_create_domains_table',
-            '13_create_forms_table',
-            '14_create_form_actions_table',
-            '15_create_form_submissions_table',
-            '16_create_form_submission_values_table',
-            '17_create_tags_tables',
-            '18_create_notifications_table',
-            '19_add_columns_to_users_table',
+            '04_create_settings_table',
+            '05_create_content_table',
+            '06_create_templates_table',
+            '07_create_content_field_values_table',
+            '08_create_blocks_table',
+            '09_create_menus_table',
+            '10_create_menu_items_table',
+            '11_create_domains_table',
+            '12_create_forms_table',
+            '13_create_form_actions_table',
+            '14_create_form_submissions_table',
+            '15_create_form_submission_values_table',
+            '16_create_tags_tables',
+            '17_create_notifications_table',
+            '18_add_columns_to_users_table',
         ];
     }
 
     private function generateMediaPickerConfig(): array
     {
-        return [
+        $config = [
             'accepted_file_types' => [
                 'image/jpeg',
                 'image/png',
@@ -316,6 +316,10 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'resource' => MediaResource::class,
             ],
         ];
+
+        config(['media-picker' => $config]);
+
+        return $config;
     }
 
     private function runFilamentFieldsCommand(InstallCommand $command): void
@@ -331,6 +335,17 @@ class BackstageServiceProvider extends PackageServiceProvider
             '--tag' => 'filament-fields-migrations',
             '--force' => true,
         ]);
+
+        $migrationsPath = database_path('migrations');
+        $files = glob($migrationsPath . '/*_create_fields_table.php');
+
+        $date = now()->addSeconds(2)->format('Y_m_d_His');
+
+        if (!empty($files)) {
+            $oldName = $files[0];
+            $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
+            rename($oldName, $newName);
+        }
     }
 
     private function writeFilamentFieldsConfig(?string $path = null): void
@@ -357,12 +372,12 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     private function generateFilamentFieldsConfig(): array
     {
-        return [
+        $config = [
 
             'tenancy' => [
                 'is_tenant_aware' => true,
-                'relationship' => 'tenant',
-                'key' => 'id',
+                'relationship' => 'sites',
+                'key' => 'ulid',
                 'model' => Site::class,
             ],
 
@@ -374,6 +389,10 @@ class BackstageServiceProvider extends PackageServiceProvider
                 ContentResource::class,
             ],
         ];
+
+        config(['fields' => $config]);
+
+        return $config;
     }
 
     private function writeMediaPickerConfig(?string $path = null): void
