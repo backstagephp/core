@@ -61,7 +61,7 @@ class BlocksRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn(AttachAction $action): array => [
+                    ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect()
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
@@ -112,6 +112,7 @@ class BlocksRelationManager extends RelationManager
                             ->reactive(),
                     ])->using(function (array $data): array {
                         dd($data);
+
                         return [
                             'fields' => json_encode($data['fields'] ?? []),
                             // Include any other fields you want to save in the pivot table

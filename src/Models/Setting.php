@@ -11,9 +11,9 @@ use Vormkracht10\Fields\Concerns\HasFields;
 
 class Setting extends Model
 {
+    use HasFields;
     use HasPackageFactory;
     use HasUlids;
-    use HasFields;
 
     protected $primaryKey = 'ulid';
 
