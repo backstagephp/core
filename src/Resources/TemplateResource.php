@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\Backstage\Models\Template;
 use Vormkracht10\Backstage\Resources\TemplateResource\Pages;
 use Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
@@ -62,6 +63,8 @@ class TemplateResource extends Resource
                             ->label(__('Slug'))
                             ->required()
                             ->unique(ignoreRecord: true),
+                        Builder::make('blocks')
+                            ->label(__('Blocks')),
                     ]),
             ]);
     }
