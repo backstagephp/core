@@ -1,23 +1,45 @@
 <div {{ $attributes }}>
     @if (config('app.debug'))
         <div class="border border-black p-4 bg-white text-black">
-            This is the default component when no component is found. See <a href="https://github.com/vormkracht10/backstage" target="_blank">documentation</a>.<br />
-            To quickstart, add one of the following files to edit this file:<br />
-            <code>
-            - resources/views/components/blocks/{{ $_type }}.blade.php<br />
-            - resources/views/components/default.blade.php
-            </code>
+            This is the default component when no component is found. See <a href="https://github.com/vormkracht10/backstage/tree/main/docs" target="_blank">documentation</a>.<br />
+            If this block doesn't have any parameters add the following view.<br />
+<?php
+echo Illuminate\Support\Str::markdown('```php
+// resources/views/components/blocks/'. $_type .'.blade.php
+<div>
+    This is my component.
+</div>
+```');
+?>
 
-            To add a custom component you can register like this. In AppServiceProvider for example:<br />
-            <code>
-                @php ($classType = \Illuminate\Support\Str::studly($_type))
-                {!! \Illuminate\Support\Str::markdown("```php
-use Vormkracht10\Backstage\Facades\Backstage;
+            If this block requires parameters add the following files.<br />
+<?php
+echo Illuminate\Support\Str::markdown("
+```php
+<?php
+// app/View/Components/" . \Illuminate\Support\Str::studly($_type) .".php
 
-Backstage::registerComponent(\App\View\Components\\$classType::class);
-                    "
-                )!!}
-            </code>
+namespace App\View\Components;
+
+use Closure;
+use Illuminate\Contracts\View\View;
+use Illuminate\View\Component;
+
+class ANewAwesome extends Component
+{
+
+    public function __construct(public string \$text = '', public string \$description = '')
+    {
+        //
+    }
+
+    public function render(): View|Closure|string
+    {
+        return view('components.a-new-awesome');
+    }
+}
+```");
+?>
         </div>
     @endif
 </div>
