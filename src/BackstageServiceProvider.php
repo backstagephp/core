@@ -347,6 +347,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $configContent = "<?php\n\n";
         $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
         $configContent .= "use Vormkracht10\Backstage\Fields\Builder;\n";
+        $configContent .= "use Vormkracht10\Backstage\Resources\ContentResource;\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateFilamentFieldsConfig()) . ";\n";
@@ -357,16 +358,19 @@ class BackstageServiceProvider extends PackageServiceProvider
     private function generateFilamentFieldsConfig(): array
     {
         return [
-            'is_tenant_aware' => true,
-            'tenant_ownership_relationship_name' => 'tenant',
-            'tenant_relationship' => 'site',
-            'tenant_model' => Site::class,
 
-            'fields' => [
+            'tenancy' => [
+                'is_tenant_aware' => true,
+                'relationship' => 'tenant',
+                'key' => 'id',
+                'model' => Site::class,
+            ],
+
+            'custom_fields' => [
                 Builder::class,
             ],
 
-            'resources' => [
+            'selectable_resources' => [
                 ContentResource::class,
             ],
         ];
