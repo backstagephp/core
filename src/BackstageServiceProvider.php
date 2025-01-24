@@ -341,7 +341,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         $date = now()->addSeconds(2)->format('Y_m_d_His');
 
-        if (!empty($files)) {
+        if (! empty($files)) {
             $oldName = $files[0];
             $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
             rename($oldName, $newName);
