@@ -14,6 +14,7 @@ use Vormkracht10\Fields\Fields\Select;
 use Vormkracht10\Fields\Fields\Text;
 use Vormkracht10\Fields\Fields\Textarea;
 use Vormkracht10\Fields\Models\Field;
+use Vormkracht10\MediaPicker\Components\MediaPicker;
 
 class Builder extends Base implements FieldContract
 {
@@ -65,6 +66,9 @@ class Builder extends Base implements FieldContract
                                 ->options($field->config['options'] ?? null),
                             'builder' => Builder::make($field->slug, $field)
                                 ->label($field->name),
+                            'media' => MediaPicker::make($field->slug)
+                                ->label($field->name),
+                            'key-value' => KeyValue::make($field->slug, $field),
                             default => Text::make($field->slug, $field)
                                 ->label($field->name),
                         };
