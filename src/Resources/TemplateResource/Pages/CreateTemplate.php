@@ -3,8 +3,8 @@
 namespace Vormkracht10\Backstage\Resources\TemplateResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Vormkracht10\Backstage\Resources\TemplateResource;
 use Illuminate\Database\Eloquent\Model;
+use Vormkracht10\Backstage\Resources\TemplateResource;
 
 class CreateTemplate extends CreateRecord
 {
@@ -18,6 +18,7 @@ class CreateTemplate extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         dd($data);
+
         return static::getModel()::create($data);
     }
 }
