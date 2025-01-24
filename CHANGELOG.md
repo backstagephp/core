@@ -2,6 +2,9 @@
 
 All notable changes to `backstage` will be documented in this file.
 
+## v0.0.8 - 2025-01-24
+- Components and views are now automaticly loaded for blocks.
+
 ## v0.0.7 - 2025-01-21
 
 - $content->field(...) can now return relations.
