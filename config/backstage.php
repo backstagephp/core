@@ -6,6 +6,7 @@ return [
 
         'plugins' => [
             Vormkracht10\FilamentRedirects\RedirectsPlugin::make(),
+            Vormkracht10\Fields\FieldsPlugin::make(),
         ],
 
         'resources' => [
