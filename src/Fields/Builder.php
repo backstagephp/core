@@ -5,7 +5,6 @@ namespace Vormkracht10\Backstage\Fields;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Fields\Fields\Base;
@@ -15,6 +14,7 @@ use Vormkracht10\Fields\Fields\Select;
 use Vormkracht10\Fields\Fields\Text;
 use Vormkracht10\Fields\Fields\Textarea;
 use Vormkracht10\Fields\Models\Field;
+use Vormkracht10\MediaPicker\Components\MediaPicker;
 
 class Builder extends Base implements FieldContract
 {

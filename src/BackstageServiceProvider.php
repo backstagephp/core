@@ -17,8 +17,8 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
 use Vormkracht10\Backstage\Events\FormSubmitted;
+use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Backstage\Models\Media;
@@ -31,7 +31,6 @@ use Vormkracht10\Backstage\Resources\ContentResource;
 use Vormkracht10\Backstage\Testing\TestsBackstage;
 use Vormkracht10\Backstage\View\Components\Blocks;
 use Vormkracht10\Backstage\View\Components\Page;
-use Vormkracht10\Backstage\Fields\Builder;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
