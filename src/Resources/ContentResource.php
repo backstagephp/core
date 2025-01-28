@@ -146,8 +146,7 @@ class ContentResource extends Resource
                                 name: 'parent',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
-                                    $query->where('type_slug', self::$type->slug)
-                                        ->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                    $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
                                             $query->where('language_code', $languageCode);
                                         });
                                 },
