@@ -139,7 +139,7 @@ class ContentResource extends Resource
                             ->preload()
                             ->columnSpan(['xl' => 1])
                             ->rules([
-                                Rule::exists('content', 'ulid')->where('type_slug', self::$type->slug)
+                                Rule::exists('content', 'ulid')
                                     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                             ])
                             ->relationship(
