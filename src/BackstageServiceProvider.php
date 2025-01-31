@@ -345,7 +345,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $sitesMigrationFiles = glob($migrationsPath . '/*_create_sites_table.php');
         $date = substr(basename($sitesMigrationFiles[0]), 0, 17);
 
-        if (!empty($fieldsMigrationFiles)) {
+        if (! empty($fieldsMigrationFiles)) {
             $oldName = $fieldsMigrationFiles[0];
             $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
             rename($oldName, $newName);
