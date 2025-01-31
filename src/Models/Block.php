@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Vormkracht10\Fields\Concerns\HasFields;
 use Vormkracht10\Fields\Models\Field;
 
 class Block extends Model
 {
     use HasPackageFactory;
+    use HasFields;
 
     protected $primaryKey = 'slug';
 
@@ -25,12 +27,6 @@ class Block extends Model
     protected function casts(): array
     {
         return [];
-    }
-
-    public function fields(): MorphMany
-    {
-        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug')
-            ->orderBy('position');
     }
 
     public function sites(): BelongsToMany
