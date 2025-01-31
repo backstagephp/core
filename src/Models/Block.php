@@ -4,17 +4,15 @@ namespace Vormkracht10\Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Vormkracht10\Fields\Concerns\HasFields;
-use Vormkracht10\Fields\Models\Field;
 
 class Block extends Model
 {
-    use HasPackageFactory;
     use HasFields;
+    use HasPackageFactory;
 
     protected $primaryKey = 'slug';
 
