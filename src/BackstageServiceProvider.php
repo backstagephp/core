@@ -380,10 +380,10 @@ class BackstageServiceProvider extends PackageServiceProvider
         $config = [
 
             'tenancy' => [
-                'is_tenant_aware' => true,
-                'relationship' => 'sites',
-                'key' => 'ulid',
-                'model' => Site::class,
+                'is_tenant_aware' => false,
+                'relationship' => 'tenant',
+                'key' => 'id',
+                // 'model' => \App\Models\Tenant::class,
             ],
 
             'custom_fields' => [
