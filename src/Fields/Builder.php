@@ -3,23 +3,21 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
+use Vormkracht10\Fields\Fields;
+use Illuminate\Support\Collection;
 use Vormkracht10\Fields\Fields\Base;
-use Vormkracht10\Fields\Fields\Text;
 use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\Fields\Fields\Select;
+use Illuminate\Database\Eloquent\Model;
 use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Fields\Fields\Checkbox;
-use Vormkracht10\Fields\Fields\KeyValue;
-use Vormkracht10\Fields\Fields\Textarea;
-use Vormkracht10\Fields\Fields\RichEditor;
-use Vormkracht10\UploadcareField\Uploadcare;
 use Filament\Forms\Components\Builder as Input;
 use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
+use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
 
 class Builder extends Base implements FieldContract
 {
+    use CanMapDynamicFields;
+
     public static function getDefaultConfig(): array
     {
         return [
@@ -46,37 +44,13 @@ class Builder extends Base implements FieldContract
     private static function getBlockOptions()
     {
         $blocks = Block::with('fields')->get();
-
         $options = [];
 
         foreach ($blocks as $block) {
             $options[] = BuilderBlock::make($block->slug)
                 ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
                 ->schema(
-                    $block->fields->map(function ($field) {
-                        return match ($field->field_type) {
-                            'uploadcare' => Uploadcare::make($field->slug, $field)
-                                ->label($field->name),
-                            'text' => Text::make($field->slug, $field)
-                                ->label($field->name),
-                            'checkbox' => Checkbox::make($field->slug, $field)
-                                ->label($field->name),
-                            'rich-editor' => RichEditor::make($field->slug, $field)
-                                ->label($field->name),
-                            'textarea' => Textarea::make($field->slug, $field)
-                                ->label($field->name),
-                            'select' => Select::make($field->slug, $field)
-                                ->label($field->name)
-                                ->options($field->config['options'] ?? null),
-                            'builder' => Builder::make($field->slug, $field)
-                                ->label($field->name),
-                            'media' => MediaPicker::make($field->slug)
-                                ->label($field->name),
-                            'key-value' => KeyValue::make($field->slug, $field),
-                            default => Text::make($field->slug, $field)
-                                ->label($field->name),
-                        };
-                    })->toArray()
+                    self::resolveFormFields($block)
                 );
         }
 
@@ -95,5 +69,46 @@ class Builder extends Base implements FieldContract
                         ]),
                 ])->columnSpanFull(),
         ];
+    }
+
+    // TODO: Get this from the package
+    private static function resolveFormFields(mixed $record = null): array
+    {
+        if (! isset($record->fields) || $record->fields->isEmpty()) {
+            return [];
+        }
+
+        $customFields = self::resolveCustomFields();
+
+        return $record->fields
+            ->map(fn($field) => self::resolveFieldInput($field, $customFields, $record))
+        ->filter()
+            ->values()
+            ->all();
+    }
+
+    // TODO: Get this from the package
+    private static function resolveCustomFields(): Collection
+    {
+        return collect(Fields::getFields())
+            ->map(fn($fieldClass) => new $fieldClass);
+    }
+
+    // TODO: Get this from the package
+    private static function resolveFieldInput(Model $field, Collection $customFields, Model $record): ?object
+    {
+        $inputName = "{$record->valueColumn}.{$field->ulid}";
+
+        // Try to resolve from standard field type map
+        if ($fieldClass = self::FIELD_TYPE_MAP[$field->field_type] ?? null) {
+            return $fieldClass::make(name: $inputName, field: $field);
+        }
+
+        // Try to resolve from custom fields
+        if ($customField = $customFields->get($field->field_type)) {
+            return $customField::make($inputName, $field);
+        }
+
+        return null;
     }
 }
