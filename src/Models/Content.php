@@ -2,20 +2,22 @@
 
 namespace Vormkracht10\Backstage\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\View;
+use Vormkracht10\Fields\Models\Field;
 use Illuminate\Database\Eloquent\Model;
+use Vormkracht10\Backstage\Shared\HasTags;
+use Illuminate\Database\Eloquent\Collection;
+use Vormkracht10\MediaPicker\Concerns\HasMedia;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Vormkracht10\Backstage\Casts\ContentPathCast;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Vormkracht10\Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
-use Vormkracht10\Backstage\Casts\ContentPathCast;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Backstage\Shared\HasTags;
-use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
 /**
  * Vormkracht10\Backstage\Models\Content
@@ -76,6 +78,18 @@ class Content extends Model
     {
         return $this->hasMany(ContentFieldValue::class)
             ->with('field');
+    }
+
+    public function fields(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Field::class,
+            Type::class,
+            'slug',     
+            'model_key',
+            'type_slug',
+            'slug'     
+        )->where('model_type', 'type');
     }
 
     /**

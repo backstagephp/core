@@ -12,10 +12,13 @@ use Vormkracht10\Backstage\Actions\Content\DuplicateContentAction;
 use Vormkracht10\Backstage\Models\Language;
 use Vormkracht10\Backstage\Models\Tag;
 use Vormkracht10\Backstage\Resources\ContentResource;
+use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
 
 class EditContent extends EditRecord
 {
     protected static string $resource = ContentResource::class;
+
+    use CanMapDynamicFields;
 
     protected function getHeaderActions(): array
     {
@@ -92,6 +95,7 @@ class EditContent extends EditRecord
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
 
+
         collect($this->data['values'] ?? [])
             ->each(function ($value, $field) {
                 $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
@@ -120,8 +124,10 @@ class EditContent extends EditRecord
         $this->getRecord()->authors()->syncWithoutDetaching(auth()->id());
     }
 
+    // TODO: Before create ook werkend maken? In CreateContent
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $data = parent::mutateFormDataBeforeSave($data);
 
         unset($data['tags']);
         unset($data['values']);
