@@ -95,7 +95,6 @@ class EditContent extends EditRecord
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
 
-
         collect($this->data['values'] ?? [])
             ->each(function ($value, $field) {
                 $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;

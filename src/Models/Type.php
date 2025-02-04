@@ -9,8 +9,8 @@ use Vormkracht10\Fields\Concerns\HasFields;
 
 class Type extends Model
 {
-    use HasPackageFactory;
     use HasFields;
+    use HasPackageFactory;
 
     protected $primaryKey = 'slug';
 
