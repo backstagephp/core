@@ -3,16 +3,16 @@
 namespace Vormkracht10\Backstage\Fields;
 
 use Filament\Forms;
-use Vormkracht10\Fields\Fields;
+use Filament\Forms\Components\Builder as Input;
+use Filament\Forms\Components\Builder\Block as BuilderBlock;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Vormkracht10\Backstage\Contracts\FieldContract;
+use Vormkracht10\Backstage\Models\Block;
+use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
+use Vormkracht10\Fields\Fields;
 use Vormkracht10\Fields\Fields\Base;
 use Vormkracht10\Fields\Models\Field;
-use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Models\Block;
-use Filament\Forms\Components\Builder as Input;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
-use Filament\Forms\Components\Builder\Block as BuilderBlock;
 
 class Builder extends Base implements FieldContract
 {
@@ -81,8 +81,8 @@ class Builder extends Base implements FieldContract
         $customFields = self::resolveCustomFields();
 
         return $record->fields
-            ->map(fn($field) => self::resolveFieldInput($field, $customFields, $record))
-        ->filter()
+            ->map(fn ($field) => self::resolveFieldInput($field, $customFields, $record))
+            ->filter()
             ->values()
             ->all();
     }
@@ -91,7 +91,7 @@ class Builder extends Base implements FieldContract
     private static function resolveCustomFields(): Collection
     {
         return collect(Fields::getFields())
-            ->map(fn($fieldClass) => new $fieldClass);
+            ->map(fn ($fieldClass) => new $fieldClass);
     }
 
     // TODO: Get this from the package
