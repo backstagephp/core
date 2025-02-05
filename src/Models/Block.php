@@ -14,7 +14,7 @@ class Block extends Model
     use HasFields;
     use HasPackageFactory;
 
-    protected $primaryKey = 'slug';
+    protected $primaryKey = 'ulid';
 
     public $incrementing = false;
 

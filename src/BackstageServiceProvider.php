@@ -277,6 +277,8 @@ class BackstageServiceProvider extends PackageServiceProvider
             '16_create_tags_tables',
             '17_create_notifications_table',
             '18_add_columns_to_users_table',
+            '19_add_ulid_column_to_blocks_table',
+            '20_modify_primary_keys_for_blocks_table',
         ];
     }
 
