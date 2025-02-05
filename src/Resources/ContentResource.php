@@ -148,8 +148,8 @@ class ContentResource extends Resource
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
                                     $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
-                                            $query->where('language_code', $languageCode);
-                                        });
+                                        $query->where('language_code', $languageCode);
+                                    });
                                 },
                                 ignoreRecord: true,
                             ),
