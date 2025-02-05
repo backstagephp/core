@@ -10,7 +10,6 @@ use Illuminate\Support\Collection;
 use Vormkracht10\Backstage\Contracts\FieldContract;
 use Vormkracht10\Backstage\Models\Block;
 use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
-use Vormkracht10\Fields\Fields;
 use Vormkracht10\Fields\Fields\Base;
 use Vormkracht10\Fields\Models\Field;
 
@@ -78,21 +77,24 @@ class Builder extends Base implements FieldContract
     private static function resolveFormFields(mixed $record = null): array
     {
         // Create an instance of the class to call the non-static trait method
-        $instance = new static();
+        $instance = new static;
+
         return $instance->traitResolveFormFields(record: $record);
     }
 
     private static function resolveCustomFields(): Collection
     {
         // Create an instance of the class to call the non-static trait method
-        $instance = new static();
+        $instance = new static;
+
         return $instance->traitResolveCustomFields();
     }
 
     private static function resolveFieldInput(Model $field, Collection $customFields, mixed $record = null): ?object
     {
         // Create an instance of the class to call the non-static trait method
-        $instance = new static();
+        $instance = new static;
+
         return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record);
     }
 }
