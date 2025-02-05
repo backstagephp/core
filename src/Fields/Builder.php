@@ -16,7 +16,11 @@ use Vormkracht10\Fields\Models\Field;
 
 class Builder extends Base implements FieldContract
 {
-    use CanMapDynamicFields;
+    use CanMapDynamicFields {
+        resolveFormFields as private traitResolveFormFields;
+        resolveCustomFields as private traitResolveCustomFields;
+        resolveFieldInput as private traitResolveFieldInput;
+    }
 
     public static function getDefaultConfig(): array
     {
@@ -71,44 +75,24 @@ class Builder extends Base implements FieldContract
         ];
     }
 
-    // TODO: Get this from the package
     private static function resolveFormFields(mixed $record = null): array
     {
-        if (! isset($record->fields) || $record->fields->isEmpty()) {
-            return [];
-        }
-
-        $customFields = self::resolveCustomFields();
-
-        return $record->fields
-            ->map(fn ($field) => self::resolveFieldInput($field, $customFields, $record))
-            ->filter()
-            ->values()
-            ->all();
+        // Create an instance of the class to call the non-static trait method
+        $instance = new static();
+        return $instance->traitResolveFormFields(record: $record);
     }
 
-    // TODO: Get this from the package
     private static function resolveCustomFields(): Collection
     {
-        return collect(Fields::getFields())
-            ->map(fn ($fieldClass) => new $fieldClass);
+        // Create an instance of the class to call the non-static trait method
+        $instance = new static();
+        return $instance->traitResolveCustomFields();
     }
 
-    // TODO: Get this from the package
-    private static function resolveFieldInput(Model $field, Collection $customFields, Model $record): ?object
+    private static function resolveFieldInput(Model $field, Collection $customFields, mixed $record = null): ?object
     {
-        $inputName = "{$record->valueColumn}.{$field->ulid}";
-
-        // Try to resolve from standard field type map
-        if ($fieldClass = self::FIELD_TYPE_MAP[$field->field_type] ?? null) {
-            return $fieldClass::make(name: $inputName, field: $field);
-        }
-
-        // Try to resolve from custom fields
-        if ($customField = $customFields->get($field->field_type)) {
-            return $customField::make($inputName, $field);
-        }
-
-        return null;
+        // Create an instance of the class to call the non-static trait method
+        $instance = new static();
+        return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record);
     }
 }
