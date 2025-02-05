@@ -140,15 +140,14 @@ class ContentResource extends Resource
                             ->preload()
                             ->columnSpan(['xl' => 1])
                             ->rules([
-                                Rule::exists('content', 'ulid')->where('type_slug', self::$type->slug)
+                                Rule::exists('content', 'ulid')
                                     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                             ])
                             ->relationship(
                                 name: 'parent',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
-                                    $query->where('type_slug', self::$type->slug)
-                                        ->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                    $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
                                             $query->where('language_code', $languageCode);
                                         });
                                 },
