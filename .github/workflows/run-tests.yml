@@ -48,9 +48,7 @@ jobs:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
         run: |
           composer config minimum-stability ${{ matrix.stability }}
-          composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
-          composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
-          composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
+          composer config repositories.backstage vcs git@github.com:backstagephp/cms.git
           composer install --no-interaction --dev
 
       - name: Execute tests
