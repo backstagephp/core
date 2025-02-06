@@ -79,7 +79,6 @@ class BackstagePanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->sidebarCollapsibleOnDesktop()
-            ->spa()
             ->unsavedChangesAlerts()
             ->default(config('backstage.panel.default'))
             ->plugins(config('backstage.panel.plugins'))
@@ -119,6 +118,8 @@ class BackstagePanelProvider extends PanelProvider
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
-            ], isPersistent: true);
+            ], isPersistent: true)
+            // enable spa mode for browsers except Safari
+            ->spa(fn () => !( str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
     }
 }
