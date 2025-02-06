@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
+namespace Backstage\Resources\ContentResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Resources\ContentResource;
+use Backstage\Models\Tag;
+use Backstage\Resources\ContentResource;
 
 class CreateContent extends CreateRecord
 {
@@ -44,16 +44,16 @@ class CreateContent extends CreateRecord
     protected function afterCreate(): void
     {
         collect($this->data['tags'] ?? [])
-            ->filter(fn ($tag) => filled($tag))
-            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
+            ->filter(fn($tag) => filled($tag))
+            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
                 'name' => $tag,
                 'slug' => Str::slug($tag),
             ]))
-            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
+            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         collect($this->data['values'] ?? [])
-            ->filter(fn (string | array | null $value) => filled($value))
-            ->each(fn (string | array $value, $field) => $this->record->values()->create([
+            ->filter(fn(string | array | null $value) => filled($value))
+            ->each(fn(string | array $value, $field) => $this->record->values()->create([
                 'field_ulid' => $field,
                 'value' => is_array($value) ? json_encode($value) : $value,
             ]));

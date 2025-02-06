@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Backstage;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;

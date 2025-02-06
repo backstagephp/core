@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\User;
+use Backstage\Models\Site;
+use Backstage\Models\User;
 
 class UserSeeder extends Seeder
 {

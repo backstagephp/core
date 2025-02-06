@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Type;
+use Backstage\Models\Field;
+use Backstage\Models\Type;
 
 class TypeSeeder extends Seeder
 {

@@ -17,7 +17,7 @@ The blade file that is being rendered is based on the following conditions:
 
 ### Variables inside blade
 
-The `$content` variable is always available. This is the current requested content. This is by default a `Vormkracht10\Backstage\Models\Content` model.
+The `$content` variable is always available. This is the current requested content. This is by default a `Backstage\Models\Content` model.
 
 
 ### Blade file example

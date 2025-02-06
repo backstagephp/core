@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker as Input;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Enums\ColorFormat;
-use Vormkracht10\Backstage\Models\Field;
+use Backstage\Contracts\FieldContract;
+use Backstage\Enums\ColorFormat;
+use Backstage\Models\Field;
 
 /**
  * For validation regex patterns, check the Filament documentation.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Backstage;
 
 use Filament\Forms\Components\Select;
 use Filament\Support\Assets\Asset;
@@ -16,21 +16,21 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
-use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Media;
-use Vormkracht10\Backstage\Models\Menu;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
-use Vormkracht10\Backstage\Observers\MenuObserver;
-use Vormkracht10\Backstage\Services\FieldInspectionService;
-use Vormkracht10\Backstage\Testing\TestsBackstage;
-use Vormkracht10\Backstage\View\Components\Blocks;
-use Vormkracht10\Backstage\View\Components\Page;
+use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Contracts\FieldInspector;
+use Backstage\Events\FormSubmitted;
+use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Models\Block;
+use Backstage\Models\Media;
+use Backstage\Models\Menu;
+use Backstage\Models\Site;
+use Backstage\Models\Type;
+use Backstage\Models\User;
+use Backstage\Observers\MenuObserver;
+use Backstage\Services\FieldInspectionService;
+use Backstage\Testing\TestsBackstage;
+use Backstage\View\Components\Blocks;
+use Backstage\View\Components\Page;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
@@ -42,6 +42,13 @@ class BackstageServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name(static::$name)
+            ->hasConfigFile([
+                'backstage/cms',
+                'backstage/media-picker',
+            ])
+            ->hasMigrations($this->getMigrations())
+            ->hasTranslations()
+            ->hasViews(static::$viewNamespace)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
@@ -91,7 +98,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
                             $command->comment('Turn on the lights...');
                             $key = 'AUTH_MODEL';
-                            $value = '\Vormkracht10\Backstage\Models\User';
+                            $value = '\Backstage\Models\User';
                             $path = app()->environmentFilePath();
                             file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
@@ -102,26 +109,8 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->info('The stage is cleared for a fresh start');
                         $command->comment('You can now go on stage and start creating!');
                     })
-                    ->askToStarRepoOnGitHub('vormkracht10/backstage');
+                    ->askToStarRepoOnGitHub('backstage/cms');
             });
-
-        $configFileName = $package->shortName();
-
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
-            $package->hasConfigFile();
-        }
-
-        if (file_exists($package->basePath('/../database/migrations'))) {
-            $package->hasMigrations($this->getMigrations());
-        }
-
-        if (file_exists($package->basePath('/../resources/lang'))) {
-            $package->hasTranslations();
-        }
-
-        if (file_exists($package->basePath('/../resources/views'))) {
-            $package->hasViews(static::$viewNamespace);
-        }
     }
 
     public function packageRegistered(): void {}
@@ -155,18 +144,18 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
-            'block' => 'Vormkracht10\Backstage\Models\Block',
-            'content' => 'Vormkracht10\Backstage\Models\Content',
-            'domain' => 'Vormkracht10\Backstage\Models\Domain',
-            'field' => 'Vormkracht10\Backstage\Models\Field',
-            'form' => 'Vormkracht10\Backstage\Models\Form',
-            'language' => 'Vormkracht10\Backstage\Models\Language',
-            'menu' => 'Vormkracht10\Backstage\Models\Menu',
-            'setting' => 'Vormkracht10\Backstage\Models\Setting',
-            'site' => 'Vormkracht10\Backstage\Models\Site',
-            'tag' => 'Vormkracht10\Backstage\Models\Tag',
-            'type' => 'Vormkracht10\Backstage\Models\Type',
-            'user' => 'Vormkracht10\Backstage\Models\User',
+            'block' => 'Backstage\Models\Block',
+            'content' => 'Backstage\Models\Content',
+            'domain' => 'Backstage\Models\Domain',
+            'field' => 'Backstage\Models\Field',
+            'form' => 'Backstage\Models\Form',
+            'language' => 'Backstage\Models\Language',
+            'menu' => 'Backstage\Models\Menu',
+            'setting' => 'Backstage\Models\Setting',
+            'site' => 'Backstage\Models\Site',
+            'tag' => 'Backstage\Models\Tag',
+            'type' => 'Backstage\Models\Type',
+            'user' => 'Backstage\Models\User',
         ]);
 
         Route::bind('type', function (string $slug) {
@@ -208,7 +197,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'vormkracht10/backstage';
+        return 'backstage/cms';
     }
 
     /**
@@ -325,7 +314,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     private function writeMediaPickerConfig(?string $path = null): void
     {
-        $path ??= config_path('media-picker.php');
+        $path ??= config_path('backstage/media-picker.php');
 
         // Ensure directory exists
         $directory = dirname($path);
@@ -335,8 +324,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Generate the config file content
         $configContent = "<?php\n\n";
-        $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
-        $configContent .= "use Vormkracht10\Backstage\Models\User;\n";
+        $configContent .= "use Backstage\Models\Site;\n";
+        $configContent .= "use Backstage\Models\User;\n";
         $configContent .= "use Vormkracht10\MediaPicker\Models\Media;\n\n";
         $configContent .= "use Vormkracht10\MediaPicker\Resources\MediaResource;\n\n";
 

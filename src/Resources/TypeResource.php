@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -12,9 +12,9 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
-use Vormkracht10\Backstage\Resources\TypeResource\Pages;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource\RelationManagers\FieldsRelationManager;
+use Backstage\Resources\TypeResource\Pages;
 
 class TypeResource extends Resource
 {
@@ -58,7 +58,7 @@ class TypeResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->rules([
-                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                        fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
                             if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
                                 $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                             }
@@ -91,7 +91,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(1)
-                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

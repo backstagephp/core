@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Events;
+namespace Backstage\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Vormkracht10\Backstage\Models\FormSubmission;
+use Backstage\Models\FormSubmission;
 
 class FormSubmitted
 {

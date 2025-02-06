@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Http\Controllers;
+namespace Backstage\Http\Controllers;
 
 use Illuminate\Http\Request;
 

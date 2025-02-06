@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
+namespace Backstage\Resources\TemplateResource\RelationManagers;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -10,7 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Field;
+use Backstage\Models\Field;
 
 class FieldsRelationManager extends RelationManager
 {
@@ -40,7 +40,7 @@ class FieldsRelationManager extends RelationManager
                     ->required()
                     ->placeholder(__('Name'))
                     ->live(debounce: 250)
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->readonly(),
                 TextInput::make('field_type')

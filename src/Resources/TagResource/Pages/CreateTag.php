@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\TagResource\Pages;
+namespace Backstage\Resources\TagResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Vormkracht10\Backstage\Resources\TagResource;
+use Backstage\Resources\TagResource;
 
 class CreateTag extends CreateRecord
 {

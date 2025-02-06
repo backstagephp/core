@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
+namespace Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
@@ -10,25 +10,25 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
-use Vormkracht10\Backstage\Backstage;
-use Vormkracht10\Backstage\Contracts\FieldInspector;
-use Vormkracht10\Backstage\Enums\Field;
-use Vormkracht10\Backstage\Fields\Checkbox;
-use Vormkracht10\Backstage\Fields\CheckboxList;
-use Vormkracht10\Backstage\Fields\Color;
-use Vormkracht10\Backstage\Fields\DateTime;
-use Vormkracht10\Backstage\Fields\KeyValue;
-use Vormkracht10\Backstage\Fields\Media;
-use Vormkracht10\Backstage\Fields\Radio;
-use Vormkracht10\Backstage\Fields\Repeater;
-use Vormkracht10\Backstage\Fields\RichEditor;
-use Vormkracht10\Backstage\Fields\Select as FieldsSelect;
-use Vormkracht10\Backstage\Fields\Tags;
-use Vormkracht10\Backstage\Fields\Text;
-use Vormkracht10\Backstage\Fields\Textarea;
-use Vormkracht10\Backstage\Fields\Toggle;
-use Vormkracht10\Backstage\Models\Field as FieldsModel;
-use Vormkracht10\Backstage\Resources\SettingResource;
+use Backstage\Backstage;
+use Backstage\Contracts\FieldInspector;
+use Backstage\Enums\Field;
+use Backstage\Fields\Checkbox;
+use Backstage\Fields\CheckboxList;
+use Backstage\Fields\Color;
+use Backstage\Fields\DateTime;
+use Backstage\Fields\KeyValue;
+use Backstage\Fields\Media;
+use Backstage\Fields\Radio;
+use Backstage\Fields\Repeater;
+use Backstage\Fields\RichEditor;
+use Backstage\Fields\Select as FieldsSelect;
+use Backstage\Fields\Tags;
+use Backstage\Fields\Text;
+use Backstage\Fields\Textarea;
+use Backstage\Fields\Toggle;
+use Backstage\Models\Field as FieldsModel;
+use Backstage\Resources\SettingResource;
 
 class EditSetting extends EditRecord
 {
@@ -156,7 +156,7 @@ class EditSetting extends EditRecord
         $customFields = $this->resolveCustomFields();
 
         return $this->record->fields
-            ->map(fn ($field) => $this->resolveFieldInput($field, $customFields))
+            ->map(fn($field) => $this->resolveFieldInput($field, $customFields))
             ->filter()
             ->values()
             ->all();
@@ -165,7 +165,7 @@ class EditSetting extends EditRecord
     private function resolveCustomFields(): Collection
     {
         return collect(Backstage::getFields())
-            ->map(fn ($fieldClass) => new $fieldClass);
+            ->map(fn($fieldClass) => new $fieldClass);
     }
 
     private function resolveFieldInput(FieldsModel $field, Collection $customFields): ?object

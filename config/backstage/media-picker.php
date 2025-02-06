@@ -1,8 +1,8 @@
 <?php
 
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\User;
+use Backstage\Models\Content;
+use Backstage\Models\Site;
+use Backstage\Models\User;
 
 return [
     /*

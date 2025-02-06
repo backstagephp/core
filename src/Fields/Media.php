@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Models\Field;
-use Vormkracht10\Backstage\Models\Media as MediaModel;
+use Backstage\Contracts\FieldContract;
+use Backstage\Models\Field;
+use Backstage\Models\Media as MediaModel;
 use Vormkracht10\MediaPicker\Components\MediaPicker as Input;
 use Vormkracht10\MediaPicker\MediaPicker;
 

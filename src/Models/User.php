@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Backstage\Shared\HasPackageFactory;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {

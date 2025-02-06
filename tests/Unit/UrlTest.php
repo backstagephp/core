@@ -1,7 +1,7 @@
 <?php
 
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Site;
+use Backstage\Models\Content;
+use Backstage\Models\Site;
 
 test('confirm home url works', function () {
     $content = Content::factory()->create([

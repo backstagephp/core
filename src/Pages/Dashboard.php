@@ -1,5 +1,5 @@
 <?php
 
-namespace Vormkracht10\Backstage\Pages;
+namespace Backstage\Pages;
 
 class Dashboard extends \Filament\Pages\Dashboard {}

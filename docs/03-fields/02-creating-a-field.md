@@ -9,8 +9,8 @@ You can create a field by extending the `FieldBase` class and implementing the `
 Each field in Filament has some default configuration options. You can override these options by creating a `getDefaultConfig` method in your field class. The `getDefaultConfig` method should return an array with the default configuration options for your field. In this example we will add a `color` and `regex` configuration option to a color field.
 
 ```php
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Fields\FieldBase;
+use Backstage\Contracts\FieldContract;
+use Backstage\Fields\FieldBase;
 
 class Color extends FieldBase implements FieldContract
 {

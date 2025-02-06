@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Backstage;
 
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -21,10 +21,10 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Pages\Dashboard;
-use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
+use Backstage\Http\Middleware\Filament\ScopedBySite;
+use Backstage\Models\Site;
+use Backstage\Pages\Dashboard;
+use Backstage\Resources\SiteResource\RegisterSite;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -32,7 +32,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn (): string => Blade::render(
+            fn(): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -80,14 +80,12 @@ class BackstagePanelProvider extends PanelProvider
             ->passwordReset()
             ->sidebarCollapsibleOnDesktop()
             ->unsavedChangesAlerts()
-            ->default(config('backstage.panel.default'))
-            ->plugins(config('backstage.panel.plugins'))
-            ->resources(config('backstage.panel.resources'))
-            ->widgets(config('backstage.panel.widgets'))
-            ->pages([
-                Dashboard::class,
-            ])
-            ->colors(fn () => [
+            ->default(config('backstage.cms.panel.default', true))
+            ->plugins(config('backstage.cms.panel.plugins', []))
+            ->resources(config('backstage.cms.panel.resources', []))
+            ->widgets(config('backstage.cms.panel.widgets', []))
+            ->pages(config('backstage.cms.panel.pages', []))
+            ->colors(fn() => [
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->middleware([
@@ -120,6 +118,6 @@ class BackstagePanelProvider extends PanelProvider
                 ScopedBySite::class,
             ], isPersistent: true)
             // enable spa mode for browsers except Safari
-            ->spa(fn () => !( str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
+            ->spa(fn() => !(str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Casts;
+namespace Backstage\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;

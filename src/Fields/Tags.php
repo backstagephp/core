@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\TagsInput as Input;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Models\Field;
+use Backstage\Contracts\FieldContract;
+use Backstage\Models\Field;
 
 class Tags extends FieldBase implements FieldContract
 {

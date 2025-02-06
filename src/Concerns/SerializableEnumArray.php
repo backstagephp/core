@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Concerns;
+namespace Backstage\Concerns;
 
 trait SerializableEnumArray
 {

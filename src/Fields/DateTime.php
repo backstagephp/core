@@ -1,13 +1,13 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Baspa\Timezones\Facades\Timezones;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker as Input;
-use Vormkracht10\Backstage\Concerns\HasAffixes;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Models\Field;
+use Backstage\Concerns\HasAffixes;
+use Backstage\Contracts\FieldContract;
+use Backstage\Models\Field;
 
 class DateTime extends FieldBase implements FieldContract
 {

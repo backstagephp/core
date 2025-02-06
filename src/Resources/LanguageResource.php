@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -12,8 +12,8 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Resources\LanguageResource\Pages;
+use Backstage\Models\Language;
+use Backstage\Resources\LanguageResource\Pages;
 
 class LanguageResource extends Resource
 {
@@ -74,7 +74,7 @@ class LanguageResource extends Resource
                     ->label('')
                     ->width(20)
                     ->height(15)
-                    ->getStateUsing(fn (Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . $record->code . '.svg'))))
+                    ->getStateUsing(fn(Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . $record->code . '.svg'))))
                     ->verticallyAlignCenter()
                     ->searchable(),
                 TextColumn::make('name')

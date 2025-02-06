@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Tests;
+namespace Backstage\Tests;
 
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
@@ -17,7 +17,7 @@ use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use Vormkracht10\Backstage\BackstageServiceProvider;
+use Backstage\BackstageServiceProvider;
 
 #[WithMigration]
 class TestCase extends Orchestra
@@ -55,7 +55,6 @@ class TestCase extends Orchestra
     public function defineDatabaseMigrations()
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-
     }
 
     public function getEnvironmentSetUp($app)

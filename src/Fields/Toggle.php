@@ -1,13 +1,13 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\Toggle as Input;
 use Filament\Support\Facades\FilamentColor;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Enums\ToggleColor;
-use Vormkracht10\Backstage\Models\Field;
+use Backstage\Contracts\FieldContract;
+use Backstage\Enums\ToggleColor;
+use Backstage\Models\Field;
 
 class Toggle extends FieldBase implements FieldContract
 {

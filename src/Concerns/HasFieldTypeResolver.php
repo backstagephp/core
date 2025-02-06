@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Concerns;
+namespace Backstage\Concerns;
 
 use Exception;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Enums\Field as EnumsField;
-use Vormkracht10\Backstage\Facades\Backstage;
+use Backstage\Enums\Field as EnumsField;
+use Backstage\Facades\Backstage;
 
 trait HasFieldTypeResolver
 {
@@ -32,7 +32,7 @@ trait HasFieldTypeResolver
     protected static function resolveFieldTypeClassName(string $fieldType): ?string
     {
         if (EnumsField::tryFrom($fieldType)) {
-            return sprintf('Vormkracht10\\Backstage\\Fields\\%s', Str::studly($fieldType));
+            return sprintf('Backstage\CMS\\Fields\\%s', Str::studly($fieldType));
         }
 
         return Backstage::getFields()[$fieldType] ?? null;

@@ -1,13 +1,13 @@
 <?php
 
-namespace Vormkracht10\Backstage\Concerns;
+namespace Backstage\Concerns;
 
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Type;
+use Backstage\Models\Content;
+use Backstage\Models\Type;
 
 trait HasOptions
 {
@@ -79,8 +79,8 @@ trait HasOptions
                         Forms\Components\KeyValue::make('config.options')
                             ->label(__('Options'))
                             ->columnSpanFull()
-                            ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'array')
-                            ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'array'),
+                            ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'array')
+                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'array'),
                         // Relationship options
                         Repeater::make('config.relations')
                             ->label(__('Relations'))
@@ -102,24 +102,24 @@ trait HasOptions
 
                                                 $set('relationValue', $type->name_field ?? null);
                                             })
-                                            ->options(fn () => Type::all()->pluck('name', 'slug'))
+                                            ->options(fn() => Type::all()->pluck('name', 'slug'))
                                             ->noSearchResultsMessage(__('No types found'))
-                                            ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                         Forms\Components\Hidden::make('relationKey')
                                             ->default('ulid')
                                             ->label(__('Key'))
-                                            ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                         Forms\Components\Select::make('relationValue')
                                             ->options([
                                                 'slug' => __('Slug'),
                                                 'name' => __('Name'),
                                             ])
-                                            ->disabled(fn (Forms\Get $get): bool => ! $get('contentType'))
+                                            ->disabled(fn(Forms\Get $get): bool => ! $get('contentType'))
                                             ->label(__('Label'))
-                                            ->required(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
+                                            ->required(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship'),
                                     ]),
                             ])
-                            ->visible(fn (Forms\Get $get): bool => $get('config.optionType') == 'relationship')
+                            ->visible(fn(Forms\Get $get): bool => $get('config.optionType') == 'relationship')
                             ->columnSpanFull(),
                     ]),
             ]);

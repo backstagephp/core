@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\View\Components\Filament;
+namespace Backstage\View\Components\Filament;
 
 use Closure;
 use Filament\Tables\Columns\TextColumn;

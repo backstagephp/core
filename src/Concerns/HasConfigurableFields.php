@@ -1,16 +1,16 @@
 <?php
 
-namespace Vormkracht10\Backstage\Concerns;
+namespace Backstage\Concerns;
 
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Backstage;
+use Backstage\Backstage;
 
 trait HasConfigurableFields
 {
     private function initializeConfig(string $fieldType): array
     {
         $className = Backstage::getFields()[$fieldType] ??
-            'Vormkracht10\\Backstage\\Fields\\' . Str::studly($fieldType);
+            'Backstage\CMS\\Fields\\' . Str::studly($fieldType);
 
         if (! class_exists($className)) {
             return [];

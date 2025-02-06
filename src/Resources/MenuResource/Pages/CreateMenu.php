@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\MenuResource\Pages;
+namespace Backstage\Resources\MenuResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Vormkracht10\Backstage\Resources\MenuResource;
+use Backstage\Resources\MenuResource;
 
 class CreateMenu extends CreateRecord
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
 use Vormkracht10\MediaPicker\Components\MediaPicker;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Field;
+use Backstage\Contracts\FieldContract;
+use Backstage\Models\Block;
+use Backstage\Models\Field;
 
 class Builder extends FieldBase implements FieldContract
 {
