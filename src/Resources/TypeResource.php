@@ -90,7 +90,7 @@ class TypeResource extends Resource
             ->columns([
                 IconColumn::make('icon')
                     ->label('')
-                    ->width(0)
+                    ->width(1)
                     ->icon(fn (string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
