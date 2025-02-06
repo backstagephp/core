@@ -193,7 +193,7 @@ class SiteResource extends Resource
                     ->sortable(),
                 IconColumn::make('default')
                     ->label('Default')
-                    ->width(0)
+                    ->width(1)
                     ->boolean(),
             ])
             ->filters([
