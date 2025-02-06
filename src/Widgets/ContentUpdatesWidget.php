@@ -17,11 +17,6 @@ class ContentUpdatesWidget extends BaseWidget
     {
         return $table
             ->heading('Recently updated content')
-            ->query(
-                Content::query()
-                    ->where('site_ulid', Filament::getTenant()->getKey())
-                    ->latest()
-            )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
@@ -41,6 +36,12 @@ class ContentUpdatesWidget extends BaseWidget
                     ->alignRight()
                     ->url(fn (Content $content) => route('filament.backstage.resources.content.edit', ['tenant' => Filament::getTenant(), 'record' => $content])),
             ])
+            ->query(
+                Content::query()
+                    ->with('authors')
+                    ->where('site_ulid', Filament::getTenant()->getKey())
+                    ->latest()
+            )
             ->defaultPaginationPageOption(5);
     }
 }
