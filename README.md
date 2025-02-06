@@ -2,11 +2,11 @@
 ## CMS done the Laravel way
 *Enter backstage, to be in front*
 
-![Test](https://github.com/backstagephp/cms/actions/workflows/run-tests.yml/badge.svg)
-![Fresh Laravel install](https://github.com/backstagephp/cms/actions/workflows/setup-in-laravel.yml/badge.svg)
-![PHPStan](https://github.com/backstagephp/cms/actions/workflows/phpstan.yml/badge.svg)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/backstagephp/backstage.svg?style=flat-square)](https://packagist.org/packages/backstagephp/backstage)
-[![Total Downloads](https://img.shields.io/packagist/dt/backstagephp/backstage.svg?style=flat-square)](https://packagist.org/packages/backstagephp/backstage)
+![Test](https://github.com/backstagephp/core/actions/workflows/run-tests.yml/badge.svg)
+![Fresh Laravel install](https://github.com/backstagephp/core/actions/workflows/setup-in-laravel.yml/badge.svg)
+![PHPStan](https://github.com/backstagephp/core/actions/workflows/phpstan.yml/badge.svg)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/backstagephp/core.svg?style=flat-square)](https://packagist.org/packages/backstagephp/core)
+[![Total Downloads](https://img.shields.io/packagist/dt/backstagephp/core.svg?style=flat-square)](https://packagist.org/packages/backstagephp/core)
 
 Backstage is the CMS for building the modern web. Made with Laravel and Filament.
 
