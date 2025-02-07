@@ -33,6 +33,10 @@ return new class extends Migration
 
         Schema::table('block_site', function (Blueprint $table) {
             $table->dropIndex(['site_ulid', 'block_slug']);
+            $table->dropForeign(['block_slug']);
+        });
+
+        Schema::table('block_site', function (Blueprint $table) {
             $table->dropColumn('block_slug');
         });
 
