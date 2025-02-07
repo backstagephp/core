@@ -54,7 +54,7 @@ class TestCase extends Orchestra
 
     }
 
-    protected function defineDatabaseMigrations() 
+    protected function defineDatabaseMigrations()
     {
         $this->artisan('migrate:fresh');
     }
