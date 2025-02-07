@@ -2,13 +2,13 @@
 
 namespace Backstage\Models;
 
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Blade;
-use Backstage\Shared\HasPackageFactory;
-use Illuminate\Database\Eloquent\Model;
 use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 /**
  * @property string $ulid
@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Block extends Model
 {
     use HasFields;
-    use HasUlids;
     use HasPackageFactory;
+    use HasUlids;
 
     protected $primaryKey = 'ulid';
 
