@@ -33,25 +33,26 @@ return new class extends Migration
 
         Schema::table('block_site', function (Blueprint $table) {
             $table->dropIndex(['site_ulid', 'block_slug']);
-            $table->dropForeign(['block_slug']);
         });
 
         Schema::table('block_site', function (Blueprint $table) {
             $table->dropColumn('block_slug');
         });
 
-        $fields = DB::table('fields')
-            ->where('model_type', 'block')
-            ->get();
+        if (Schema::hasTable('fields')) {
+            $fields = DB::table('fields')
+                ->where('model_type', 'block')
+                ->get();
 
-        foreach ($fields as $field) {
-            $block = DB::table('blocks')
-                ->where('slug', $field->model_key)
-                ->first();
+            foreach ($fields as $field) {
+                $block = DB::table('blocks')
+                    ->where('slug', $field->model_key)
+                    ->first();
 
-            DB::table('fields')
-                ->where('ulid', $field->ulid)
-                ->update(['model_key' => $block->ulid]);
+                DB::table('fields')
+                    ->where('ulid', $field->ulid)
+                    ->update(['model_key' => $block->ulid]);
+            }
         }
     }
 };
