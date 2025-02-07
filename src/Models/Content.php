@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\HtmlString;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 use Backstage\Casts\ContentPathCast;
+use Backstage\Media\Concerns\HasMedia;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
-use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
 /**
  * Backstage\Models\Content
