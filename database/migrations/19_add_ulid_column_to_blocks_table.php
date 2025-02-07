@@ -38,8 +38,6 @@ return new class extends Migration
             $table->dropColumn('block_slug');
         });
 
-        // All 'fields' where 'model_type' = 'block' should change model_key to 'ulid'
-
         $fields = DB::table('fields')
             ->where('model_type', 'block')
             ->get();
@@ -50,7 +48,7 @@ return new class extends Migration
                 ->first();
 
             DB::table('fields')
-                ->where('id', $field->id)
+                ->where('ulid', $field->ulid)
                 ->update(['model_key' => $block->ulid]);
         }
     }
