@@ -1,6 +1,6 @@
 <?php
 
-namespace Backstage\Fields;
+namespace Backstage\CustomFields;
 
 use Backstage\Contracts\FieldContract;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
@@ -10,7 +10,6 @@ use Backstage\Models\Block;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class Builder extends Base implements FieldContract
@@ -32,6 +31,7 @@ class Builder extends Base implements FieldContract
     {
         $input = self::applyDefaultSettings(
             Input::make($name)
+                ->label($field->name)
                 ->blocks(
                     self::getBlockOptions()
                 ),
@@ -90,7 +90,7 @@ class Builder extends Base implements FieldContract
         return $instance->traitResolveCustomFields();
     }
 
-    private static function resolveFieldInput(Model $field, Collection $customFields, mixed $record = null): ?object
+    private static function resolveFieldInput(Field $field, Collection $customFields, mixed $record = null): ?object
     {
         // Create an instance of the class to call the non-static trait method
         $instance = new static;

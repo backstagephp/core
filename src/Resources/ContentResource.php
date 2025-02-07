@@ -2,21 +2,16 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Builder;
-use Backstage\Fields\Checkbox;
-use Backstage\Fields\CheckboxList;
-use Backstage\Fields\KeyValue;
-use Backstage\Fields\RichEditor;
-use Backstage\Fields\Select as FieldSelect;
-use Backstage\Fields\Text;
-use Backstage\Fields\Textarea;
-use Backstage\Media\Fields\Media;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Fields\Fields;
 use Backstage\Models\Content;
-use Backstage\Models\Field;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Models\Type;
-use Backstage\Resources\ContentResource\Pages;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Facades\Filament;
@@ -45,12 +40,18 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Locale;
 
 class ContentResource extends Resource
 {
+    use CanMapDynamicFields {
+        resolveFormFields as private traitResolveFormFields;
+        resolveFieldInput as private traitResolveFieldInput;
+    }
+
     protected static ?string $model = Content::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
@@ -265,38 +266,28 @@ class ContentResource extends Resource
             ]);
     }
 
+    private static function resolveFormFields(mixed $record = null): array
+    {
+        $instance = new static;
+
+        return $instance->traitResolveFormFields($record);
+    }
+
+    private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null): ?object
+    {
+        $instance = new static;
+
+        return $instance->traitResolveFieldInput($field, $customFields, $record);
+    }
+
     public static function getTypeInputs()
     {
-        return self::$type->fields->map(function (Field $field) {
-            $fieldName = 'values.' . $field->ulid;
-
-            $field->input = match ($field->field_type) {
-                'text' => Text::make($fieldName, $field)
-                    ->label($field->name),
-                'checkbox' => Checkbox::make($fieldName, $field)
-                    ->label($field->name),
-                'checkbox-list' => CheckboxList::make($fieldName, $field)
-                    ->label($field->name)
-                    ->options($field->config['options']),
-                'rich-editor' => RichEditor::make($fieldName, $field)
-                    ->label($field->name),
-                'textarea' => Textarea::make($fieldName, $field)
-                    ->label($field->name),
-                'select' => FieldSelect::make($fieldName, $field)
-                    ->label($field->name),
-                'builder' => Builder::make($fieldName, $field)
-                    ->label($field->name),
-                'media' => Media::make($fieldName, $field)
-                    ->label($field->name),
-                'key-value' => KeyValue::make($fieldName, $field),
-                default => Text::make($fieldName, $field)
-                    ->label($field->name),
-            };
-
-            return $field;
-        })
+        return collect(self::$type->fields)
             ->filter(fn ($field) => self::$type->name_field !== $field->slug)
-            ->map(fn ($field) => $field->input)
+            ->map(function ($field) {
+                return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
+            })
+            ->filter()
             ->toArray();
     }
 
@@ -441,10 +432,10 @@ class ContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContent::route('/'),
-            'create' => Pages\CreateContent::route('/create/{type}'),
-            'edit' => Pages\EditContent::route('/{record}/edit'),
-            'meta_tags' => Pages\ListContentMetaTags::route('/meta-tags'),
+            'index' => ListContent::route('/'),
+            'create' => CreateContent::route('/create/{type}'),
+            'edit' => EditContent::route('/{record}/edit'),
+            'meta_tags' => ListContentMetaTags::route('/meta-tags'),
         ];
     }
 }

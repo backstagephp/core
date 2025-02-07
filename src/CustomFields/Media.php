@@ -1,6 +1,6 @@
 <?php
 
-namespace Backstage\Fields;
+namespace Backstage\CustomFields;
 
 use Backstage\Contracts\FieldContract;
 use Backstage\Media\Fields\Media as MediaInput;
