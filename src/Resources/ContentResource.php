@@ -16,39 +16,38 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
-use Vormkracht10\Fields\Fields\Text;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\Backstage\Models\Tag;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Vormkracht10\Fields\Fields\Checkbox;
-use Vormkracht10\Fields\Fields\KeyValue;
-use Vormkracht10\Fields\Fields\Textarea;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Fields\Fields\RichEditor;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Fields\Fields\CheckboxList;
-use Vormkracht10\UploadcareField\Uploadcare;
 use Filament\Forms\Components\DateTimePicker;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
-use Vormkracht10\Fields\Fields\Select as FieldSelect;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Fields\Builder;
+use Backstage\Fields\Checkbox;
+use Backstage\Fields\CheckboxList;
+use Backstage\Fields\KeyValue;
+use Backstage\Fields\RichEditor;
+use Backstage\Fields\Select as FieldSelect;
+use Backstage\Fields\Text;
+use Backstage\Fields\Textarea;
+use Backstage\Models\Content;
+use Backstage\Models\Field;
+use Backstage\Models\Language;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource\Pages;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Media\Fields\Media;
 
 class ContentResource extends Resource
 {
@@ -272,8 +271,6 @@ class ContentResource extends Resource
             $fieldName = 'values.' . $field->ulid;
 
             $field->input = match ($field->field_type) {
-                'uploadcare' => Uploadcare::make($fieldName, $field)
-                    ->label($field->name),
                 'text' => Text::make($fieldName, $field)
                     ->label($field->name),
                 'checkbox' => Checkbox::make($fieldName, $field)
@@ -289,7 +286,7 @@ class ContentResource extends Resource
                     ->label($field->name),
                 'builder' => Builder::make($fieldName, $field)
                     ->label($field->name),
-                'media' => MediaPicker::make($fieldName)
+                'media' => Media::make($fieldName, $field)
                     ->label($field->name),
                 'key-value' => KeyValue::make($fieldName, $field),
                 default => Text::make($fieldName, $field)
