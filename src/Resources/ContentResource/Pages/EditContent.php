@@ -75,6 +75,10 @@ class EditContent extends EditRecord
     {
         $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
 
+            if (!$value->field) {
+                return [];
+            }
+
             $value->value = json_decode($value->value, true) ?? $value->value;
 
             return [$value->field->ulid => $value->value];

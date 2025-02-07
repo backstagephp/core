@@ -2,6 +2,7 @@
 
 namespace Backstage;
 
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Block;
 use Illuminate\Support\Str;
 
@@ -52,5 +53,44 @@ class Backstage
         }
 
         return self::$cachedBlocks[$slug] = static::$components[$block->component] ?? static::$cachedBlocks['default'];
+    }
+
+    /**
+     * Convert
+     * [
+     *      "type" => "text"
+     *      "data" => [
+     *          "values" => [
+     *              "01jkgc3d2ms3749x8swc3pvg2p" => "<p>testaaaa</p>"
+     *          ]
+     *      ]
+     *  ]
+     * to
+     * [
+     *    '_type' => 'text',
+     *    'body' => '<p>testaaaa</p>'
+     * ]
+     */
+    public static function mapParams($block) {
+
+        if (! $block['type'] || !$block['data']['values']) {
+            return [];
+        }
+        $values = collect($block['data']['values']);
+
+        $fields = Field::select('ulid', 'slug')
+            ->whereIn('ulid', $values->keys())
+            ->pluck('slug', 'ulid')
+            ->toArray();
+
+        $params = [
+            '_type' => $block['type']
+        ];
+
+        foreach ($values as $key => $value) {
+            $params[$fields[$key]] = $value;
+        }
+
+        return $params;
     }
 }
