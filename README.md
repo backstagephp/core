@@ -29,6 +29,14 @@ Note: For now you may have to update composer.json to:
             "type": "vcs",
             "url": "git@github.com:vormkracht10/filament-redirects.git"
         },
+        "backstage/media": {
+            "type": "vcs",
+            "url": "git@github.com:backstagephp/media.git"
+        },
+        "backstage/fields": {
+            "type": "vcs",
+            "url": "git@github.com:backstagephp/fields.git"
+        },
         "backstage": {
             "type": "vcs",
             "url": "git@github.com:backstagephp/core.git"
