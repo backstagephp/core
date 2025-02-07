@@ -71,9 +71,10 @@ class Backstage
      *    'body' => '<p>testaaaa</p>'
      * ]
      */
-    public static function mapParams($block) {
+    public static function mapParams($block)
+    {
 
-        if (! $block['type'] || !$block['data']['values']) {
+        if (! $block['type'] || ! $block['data']['values']) {
             return [];
         }
         $values = collect($block['data']['values']);
@@ -84,7 +85,7 @@ class Backstage
             ->toArray();
 
         $params = [
-            '_type' => $block['type']
+            '_type' => $block['type'],
         ];
 
         foreach ($values as $key => $value) {
