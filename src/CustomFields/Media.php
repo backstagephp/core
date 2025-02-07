@@ -3,7 +3,7 @@
 namespace Backstage\CustomFields;
 
 use Filament\Forms;
-use Backstage\Fields\Base;
+use Backstage\Fields\Fields\Base;
 use Backstage\Models\Field;
 use Backstage\Contracts\FieldContract;
 use Illuminate\Database\Eloquent\Model;
