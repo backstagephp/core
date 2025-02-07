@@ -291,7 +291,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'should_register_navigation' => true,
             'visibility' => 'public',
             'is_tenant_aware' => true,
-            'tenant_ownership_relationship_name' => 'tenant',
+            'tenant_ownership_relationship_name' => 'site',
             'tenant_relationship' => 'site',
             'tenant_model' => Site::class,
             'model' => Media::class,
@@ -404,7 +404,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $configContent = "<?php\n\n";
         $configContent .= "use Backstage\Models\Site;\n";
         $configContent .= "use Backstage\Models\User;\n";
-        $configContent .= "use Backstage\Media\Models\Media;\n\n";
+        $configContent .= "use Backstage\Models\Media;\n\n";
         $configContent .= "use Backstage\Media\Resources\MediaResource;\n\n";
 
         // Custom export function to create more readable output

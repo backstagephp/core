@@ -36,7 +36,7 @@ return [
     |
     */
     'is_tenant_aware' => true,
-    'tenant_ownership_relationship_name' => 'tenant',
+    'tenant_ownership_relationship_name' => 'site',
     'tenant_relationship' => 'site',
     'tenant_model' => Site::class,
 

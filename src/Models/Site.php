@@ -78,4 +78,9 @@ class Site extends Model
     {
         return $this->hasMany(Form::class);
     }
+
+    public function media(): HasMany
+    {
+        return $this->hasMany(Media::class);
+    }
 }

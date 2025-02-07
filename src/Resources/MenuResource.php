@@ -2,12 +2,12 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Select;
 use Backstage\Models\Language;
 use Backstage\Models\Menu;
 use Backstage\Resources\MenuResource\Pages;
 use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;

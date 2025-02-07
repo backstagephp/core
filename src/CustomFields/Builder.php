@@ -76,24 +76,21 @@ class Builder extends Base implements FieldContract
 
     private static function resolveFormFields(mixed $record = null): array
     {
-        // Create an instance of the class to call the non-static trait method
-        $instance = new static;
+        $instance = new self;
 
         return $instance->traitResolveFormFields(record: $record);
     }
 
     private static function resolveCustomFields(): Collection
     {
-        // Create an instance of the class to call the non-static trait method
-        $instance = new static;
+        $instance = new self;
 
         return $instance->traitResolveCustomFields();
     }
 
     private static function resolveFieldInput(Field $field, Collection $customFields, mixed $record = null): ?object
     {
-        // Create an instance of the class to call the non-static trait method
-        $instance = new static;
+        $instance = new self;
 
         return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record);
     }

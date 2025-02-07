@@ -127,7 +127,6 @@ class EditContent extends EditRecord
         $this->getRecord()->authors()->syncWithoutDetaching(auth()->id());
     }
 
-    // TODO: Before create ook werkend maken? In CreateContent
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = parent::mutateFormDataBeforeSave($data);
