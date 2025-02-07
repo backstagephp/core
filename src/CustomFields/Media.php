@@ -2,14 +2,15 @@
 
 namespace Backstage\CustomFields;
 
-use Backstage\Contracts\FieldContract;
-use Backstage\Media\Fields\Media as MediaInput;
-use Backstage\Models\Field;
-use Backstage\Models\Media as MediaModel;
 use Filament\Forms;
+use Backstage\Fields\Base;
+use Backstage\Models\Field;
+use Backstage\Contracts\FieldContract;
 use Illuminate\Database\Eloquent\Model;
+use Backstage\Models\Media as MediaModel;
+use Backstage\Media\Fields\Media as MediaInput;
 
-class Media extends FieldBase implements FieldContract
+class Media extends Base implements FieldContract
 {
     public static function getDefaultConfig(): array
     {

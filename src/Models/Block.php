@@ -10,6 +10,14 @@ use Backstage\Fields\Concerns\HasFields;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property string $ulid
+ * @property string $slug
+ * @property string $name
+ * @property string $name_field
+ * @property string $icon
+ * @property string $component
+*/
 class Block extends Model
 {
     use HasFields;
