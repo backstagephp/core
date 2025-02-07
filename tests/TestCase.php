@@ -50,6 +50,13 @@ class TestCase extends Orchestra
         foreach (glob(__DIR__ . '/../config/*.php') as $filename) {
             $app['config']->set(pathinfo($filename)['filename'], require $filename);
         }
+
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
+
     }
 
     public function defineDatabaseMigrations()
