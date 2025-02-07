@@ -54,6 +54,11 @@ class TestCase extends Orchestra
 
     }
 
+    protected function defineDatabaseMigrations() 
+    {
+        $this->artisan('migrate:fresh');
+    }
+
     // protected function refreshApplication()
     // {
     //     parent::refreshApplication();
