@@ -17,17 +17,17 @@
     "authors": [
         {
             "name": "Mark van Eijk",
-            "email": "mark@backstagephp.com",
+            "email": "mark@vormkracht10.nl",
             "role": "Developer"
         },
         {
             "name": "Mathieu de Ruiter",
-            "email": "mathieu@backstagephp.com",
+            "email": "mathieu@vormkracht10.nl",
             "role": "Developer"
         },
         {
             "name": "Bas van Dinther",
-            "email": "bas@backstagephp.com",
+            "email": "bas@vormkracht10.nl",
             "role": "Developer"
         }
     ],
@@ -45,7 +45,7 @@
         "staudenmeir/laravel-adjacency-list": "^1.0",
         "vormkracht10/filament-media-picker": "dev-main",
         "vormkracht10/filament-redirects": "dev-main",
-        "vormkracht10/filament-fields": "@dev"
+        "backstage/fields": "@dev"
     },
     "require-dev": {
         "larastan/larastan": "^2.0.1",
@@ -98,10 +98,12 @@
             "aliases": {
                 "Backstage": "Backstage\\Facades\\Backstage"
             }
-        },
-        "filament-fields": {
+        }
+    },
+    "repositories": {
+        "fields": {
             "type": "path",
-            "url": "/var/www/filament-fields",
+            "url": "/var/www/fields",
             "options": {
                 "symlink": true
             }
