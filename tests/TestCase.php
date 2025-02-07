@@ -45,8 +45,6 @@ class TestCase extends Orchestra
 
     /**
      * Setup the test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -56,7 +54,7 @@ class TestCase extends Orchestra
         $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
-        
+
     }
 
     public function defineEnvironment($app)
