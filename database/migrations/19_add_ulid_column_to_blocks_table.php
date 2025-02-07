@@ -29,9 +29,7 @@ return new class extends Migration
             $table->ulid('block_ulid')->nullable();
         });
 
-        DB::table('block_site')
-            ->join('blocks', 'blocks.slug', '=', 'block_site.block_slug')
-            ->update(['block_site.block_ulid' => DB::raw('blocks.ulid')]);
+        DB::statement('UPDATE block_site SET block_ulid = (SELECT ulid FROM blocks WHERE blocks.slug = block_site.block_slug)');
 
         Schema::table('block_site', function (Blueprint $table) {
             $table->dropForeign(['block_slug']);
