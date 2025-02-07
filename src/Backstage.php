@@ -73,10 +73,10 @@ class Backstage
      */
     public static function mapParams($block) {
 
-        if (! $block['type'] || !$block['data']['values']) {
+        if (! $block['type'] || !$block['data']) {
             return [];
         }
-        $values = collect($block['data']['values']);
+        $values = collect($block['data']['values'] ?? $block['data']);
 
         $fields = Field::select('ulid', 'slug')
             ->whereIn('ulid', $values->keys())
@@ -88,7 +88,7 @@ class Backstage
         ];
 
         foreach ($values as $key => $value) {
-            $params[$fields[$key]] = $value;
+            $params[$fields[$key] ?? $key] = $value;
         }
 
         return $params;
