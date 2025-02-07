@@ -5,6 +5,7 @@ namespace Backstage;
 use Backstage\Commands\BackstageSeedCommand;
 use Backstage\Events\FormSubmitted;
 use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
@@ -29,7 +30,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Backstage\Media\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {

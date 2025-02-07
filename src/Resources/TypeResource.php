@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Models\Type;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Type;
 use Backstage\Resources\TypeResource\Pages;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -58,7 +58,7 @@ class TypeResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->rules([
-                        fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
+                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                             if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
                                 $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                             }
@@ -91,7 +91,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(1)
-                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
