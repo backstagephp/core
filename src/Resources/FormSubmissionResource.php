@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -17,8 +17,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\FormSubmission;
-use Vormkracht10\Backstage\Resources\FormSubmissionResource\Pages;
+use Backstage\Models\FormSubmission;
+use Backstage\Resources\FormSubmissionResource\Pages;
 
 class FormSubmissionResource extends Resource
 {

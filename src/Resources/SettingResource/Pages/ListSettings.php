@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\SettingResource\Pages;
+namespace Backstage\Resources\SettingResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\SettingResource;
+use Backstage\Resources\SettingResource;
 
 class ListSettings extends ListRecords
 {

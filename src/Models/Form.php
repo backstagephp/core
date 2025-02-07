@@ -1,13 +1,13 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Fields\Models\Field;
+use Backstage\Fields\Models\Field;
+use Backstage\Shared\HasPackageFactory;
 
 class Form extends Model
 {

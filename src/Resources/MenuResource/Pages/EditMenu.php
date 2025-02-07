@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\MenuResource\Pages;
+namespace Backstage\Resources\MenuResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Resources\MenuResource;
+use Backstage\Resources\MenuResource;
 
 class EditMenu extends EditRecord
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Http\Controllers;
+namespace Backstage\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Form;
+use Backstage\Events\FormSubmitted;
+use Backstage\Models\Content;
+use Backstage\Models\Form;
 
 class FormController
 {

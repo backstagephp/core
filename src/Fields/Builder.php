@@ -1,17 +1,17 @@
 <?php
 
-namespace Vormkracht10\Backstage\Fields;
+namespace Backstage\Fields;
 
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Vormkracht10\Backstage\Contracts\FieldContract;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
-use Vormkracht10\Fields\Fields\Base;
-use Vormkracht10\Fields\Models\Field;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Fields\Fields\Base;
+use Backstage\Fields\Models\Field;
+use Backstage\Contracts\FieldContract;
+use Backstage\Models\Block;
 
 class Builder extends Base implements FieldContract
 {

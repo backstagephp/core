@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\ContentFieldValue;
 use Vormkracht10\Fields\Models\Field;
+use Backstage\Models\Content;
+use Backstage\Models\ContentFieldValue;
 
 class ContentSeeder extends Seeder
 {

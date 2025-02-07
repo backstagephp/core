@@ -1,13 +1,13 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Fields\Concerns\HasFields;
+use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
 
 class Block extends Model
 {

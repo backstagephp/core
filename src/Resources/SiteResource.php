@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
 use DateTimeZone;
 use Filament\Forms\Components\FileUpload;
@@ -19,8 +19,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Resources\SiteResource\Pages;
+use Backstage\Models\Site;
+use Backstage\Resources\SiteResource\Pages;
 
 class SiteResource extends Resource
 {
@@ -106,7 +106,7 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn ($color, $name) => [
+                                                ->mapWithKeys(fn($color, $name) => [
                                                     sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
                                                 ])
                                                 ->put('#000000', 'Black')
@@ -156,7 +156,7 @@ class SiteResource extends Resource
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
                                             ])->map(function ($code) {
-                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
                                             })
                                         )
                                         ->default(config('app.timezone'))
@@ -193,7 +193,7 @@ class SiteResource extends Resource
                     ->sortable(),
                 IconColumn::make('default')
                     ->label('Default')
-                    ->width(0)
+                    ->width(1)
                     ->boolean(),
             ])
             ->filters([

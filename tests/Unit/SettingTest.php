@@ -1,6 +1,6 @@
 <?php
 
-use Vormkracht10\Backstage\Models\Setting;
+use Backstage\Models\Setting;
 
 test('confirm setting returns correct value', function () {
     Setting::factory()->create([
@@ -30,7 +30,6 @@ test('confirm setting returns array on setting', function () {
         'street' => $street,
         'city' => $city,
     ]);
-
 });
 
 test('confirm setting returns default value', function () {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Listeners;
+namespace Backstage\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Vormkracht10\Backstage\Events\FormSubmitted;
+use Backstage\Events\FormSubmitted;
 
 class ExecuteFormActions implements ShouldQueue
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -15,11 +15,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Locale;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Setting;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Resources\SettingResource\Pages;
-use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Language;
+use Backstage\Models\Setting;
+use Backstage\Models\Site;
+use Backstage\Resources\SettingResource\Pages;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class SettingResource extends Resource
 {
@@ -79,14 +79,14 @@ class SettingResource extends Resource
                         ->groupBy(function ($language) {
                             return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                         })
-                        ->mapWithKeys(fn ($languages, $countryName) => [
-                            $countryName => $languages->mapWithKeys(fn ($language) => [
-                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                        ->mapWithKeys(fn($languages, $countryName) => [
+                            $countryName => $languages->mapWithKeys(fn($language) => [
+                                $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                             ])->toArray(),
                         ])
                 )
                 ->allowHtml()
-                ->visible(fn () => Language::where('active', 1)->count() > 1),
+                ->visible(fn() => Language::where('active', 1)->count() > 1),
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Concerns;
+namespace Backstage\Concerns;
 
 trait HasEnumNames
 {
@@ -8,6 +8,6 @@ trait HasEnumNames
 
     public static function names(): array
     {
-        return array_map(fn ($enum) => $enum->name, static::cases());
+        return array_map(fn($enum) => $enum->name, static::cases());
     }
 }

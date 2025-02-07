@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\DomainResource\Pages;
+namespace Backstage\Resources\DomainResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Vormkracht10\Backstage\Resources\DomainResource;
+use Backstage\Resources\DomainResource;
 
 class CreateDomain extends CreateRecord
 {

@@ -1,20 +1,20 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\ContentFieldValue;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\Form;
-use Vormkracht10\Backstage\Models\FormAction;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
+use Backstage\Models\Block;
+use Backstage\Models\Content;
+use Backstage\Models\ContentFieldValue;
+use Backstage\Models\Domain;
 use Vormkracht10\Fields\Models\Field;
+use Backstage\Models\Form;
+use Backstage\Models\FormAction;
+use Backstage\Models\Language;
+use Backstage\Models\Site;
+use Backstage\Models\Type;
+use Backstage\Models\User;
 
 class BackstageSeeder extends Seeder
 {

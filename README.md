@@ -2,11 +2,11 @@
 ## CMS done the Laravel way
 *Enter backstage, to be in front*
 
-![Test](https://github.com/vormkracht10/backstage/actions/workflows/run-tests.yml/badge.svg)
-![Fresh Laravel install](https://github.com/vormkracht10/backstage/actions/workflows/setup-in-laravel.yml/badge.svg)
-![PHPStan](https://github.com/vormkracht10/backstage/actions/workflows/phpstan.yml/badge.svg)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
-[![Total Downloads](https://img.shields.io/packagist/dt/vormkracht10/backstage.svg?style=flat-square)](https://packagist.org/packages/vormkracht10/backstage)
+![Test](https://github.com/backstagephp/core/actions/workflows/run-tests.yml/badge.svg)
+![Fresh Laravel install](https://github.com/backstagephp/core/actions/workflows/setup-in-laravel.yml/badge.svg)
+![PHPStan](https://github.com/backstagephp/core/actions/workflows/phpstan.yml/badge.svg)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/backstagephp/core.svg?style=flat-square)](https://packagist.org/packages/backstagephp/core)
+[![Total Downloads](https://img.shields.io/packagist/dt/backstagephp/core.svg?style=flat-square)](https://packagist.org/packages/backstagephp/core)
 
 Backstage is the CMS for building the modern web. Made with Laravel and Filament.
 
@@ -15,7 +15,7 @@ Backstage is the CMS for building the modern web. Made with Laravel and Filament
 You can install the package via composer in your (new) [Laravel app](https://laravel.com/docs/11.x#creating-a-laravel-project):
 
 ```bash
-composer require vormkracht10/backstage
+composer require backstagephp/backstage
 ```
 
 Note: For now you may have to update composer.json to:
@@ -23,15 +23,15 @@ Note: For now you may have to update composer.json to:
     "repositories": {
         "laravel-redirects": {
             "type": "vcs",
-            "url": "git@github.com:vormkracht10/laravel-redirects.git"
+            "url": "git@github.com:backstagephp/laravel-redirects.git"
         },
         "filament-redirects": {
             "type": "vcs",
-            "url": "git@github.com:vormkracht10/filament-redirects.git"
+            "url": "git@github.com:backstagephp/filament-redirects.git"
         },
         "backstage": {
             "type": "vcs",
-            "url": "git@github.com:vormkracht10/backstage.git"
+            "url": "git@github.com:backstagephp/backstage.git"
         }
     }
     "minimum-stability": "dev",

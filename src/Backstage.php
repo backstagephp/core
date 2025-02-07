@@ -1,16 +1,16 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Backstage;
 
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Block;
+use Backstage\Models\Block;
 
 class Backstage
 {
     private static array $components = [];
 
     private static array $cachedBlocks = [
-        'default' => '\Vormkracht10\Backstage\View\Components\DefaultBlock',
+        'default' => '\Backstage\View\Components\DefaultBlock',
     ];
 
     public static function registerComponent(string $name, ?string $component = null): void
@@ -31,7 +31,7 @@ class Backstage
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 

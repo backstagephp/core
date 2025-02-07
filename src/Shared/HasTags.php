@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Shared;
+namespace Backstage\Shared;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Vormkracht10\Backstage\Models\Tag;
+use Backstage\Models\Tag;
 
 trait HasTags
 {

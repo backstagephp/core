@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Widgets;
+namespace Backstage\Widgets;
 
 use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Vormkracht10\Backstage\Models\FormSubmission;
+use Backstage\Models\FormSubmission;
 
 class FormSubmissionsWidget extends BaseWidget
 {

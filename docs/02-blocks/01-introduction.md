@@ -86,7 +86,7 @@ public function __construct(public string $url, public string $text = 'Click me'
 Next, if you wanna have this component available in the blocks register them (e.g. AppServiceProvider):
 
 ```php
-use Vormkracht10\Backstage\Facades\Backstage;
+use Backstage\Facades\Backstage;
 
 Backstage::registerComponent(CallToAction::class);
 ```
@@ -98,8 +98,8 @@ return [
     // ...
     'components' => [
         'blocks' => [
-            Vormkracht10\Backstage\View\Components\Blocks\Heading::class,
-            Vormkracht10\Backstage\View\Components\Blocks\Paragraph::class,
+            Backstage\View\Components\Blocks\Heading::class,
+            Backstage\View\Components\Blocks\Paragraph::class,
             App\View\Components\CallToAction::class
         ],
     ];

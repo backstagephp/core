@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
+use Backstage\Shared\HasPackageFactory;
 
 class Domain extends Model
 {

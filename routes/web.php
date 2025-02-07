@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Vormkracht10\Backstage\Http\Controllers\FormController;
+use Backstage\Http\Controllers\FormController;
 
 Route::fallback(function (Request $request) {
 

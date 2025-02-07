@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,14 +13,14 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\HtmlString;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
-use Vormkracht10\Backstage\Casts\ContentPathCast;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Backstage\Shared\HasTags;
-use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\MediaPicker\Concerns\HasMedia;
+use Backstage\Fields\Models\Field;
+use Backstage\Casts\ContentPathCast;
+use Backstage\Shared\HasPackageFactory;
+use Backstage\Shared\HasTags;
+use Backstage\MediaPicker\Concerns\HasMedia;
 
 /**
- * Vormkracht10\Backstage\Models\Content
+ * Backstage\Models\Content
  *
  * @property string $path
  * @property string $url
@@ -103,7 +103,7 @@ class Content extends Model
         }
 
         return Attribute::make(
-            get: fn () => $url,
+            get: fn() => $url,
         );
     }
 
@@ -113,7 +113,7 @@ class Content extends Model
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -145,7 +145,8 @@ class Content extends Model
             'languages' => function ($query) {
                 $query->where('code', $this->language_code);
                 $query->limit(1);
-            }])
+            }
+        ])
             ->first();
 
         if ($domain) {
@@ -159,7 +160,7 @@ class Content extends Model
         $url .= '/';
 
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $url,
+            get: fn(?string $value, array $attributes) => $url,
         );
     }
 

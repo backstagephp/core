@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\DomainResource\RelationManagers;
+namespace Backstage\Resources\DomainResource\RelationManagers;
 
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Locale;
-use Vormkracht10\Backstage\Models\Language;
+use Backstage\Models\Language;
 
 class LanguagesRelationManager extends RelationManager
 {
@@ -59,9 +59,9 @@ class LanguagesRelationManager extends RelationManager
                                             ->groupBy(function ($language) {
                                                 return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                             })
-                                            ->mapWithKeys(fn ($languages, $countryName) => [
-                                                $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                            ->mapWithKeys(fn($languages, $countryName) => [
+                                                $countryName => $languages->mapWithKeys(fn($language) => [
+                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
                                     )
@@ -81,11 +81,11 @@ class LanguagesRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('language_code')
                     ->label('Language')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[0])
+                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
+                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))

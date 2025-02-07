@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Factories;
+namespace Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Vormkracht10\Backstage\Models\ContentFieldValue;
+use Backstage\Models\ContentFieldValue;
 
 class ContentFieldValueFactory extends Factory
 {

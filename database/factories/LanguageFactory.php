@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Factories;
+namespace Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Vormkracht10\Backstage\Models\Language;
+use Backstage\Models\Language;
 
 class LanguageFactory extends Factory
 {

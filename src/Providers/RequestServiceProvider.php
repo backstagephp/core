@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Providers;
+namespace Backstage\Providers;
 
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Domain;
+use Backstage\Models\Content;
+use Backstage\Models\Domain;
 
 class RequestServiceProvider extends ServiceProvider
 {
@@ -42,15 +42,15 @@ class RequestServiceProvider extends ServiceProvider
         });
 
         Request::macro('domain', function () {
-            return once(fn () => Domain::whereRaw("REPLACE('www.', '', name)", str_replace('www.', '', $this->getHost()))->first());
+            return once(fn() => Domain::whereRaw("REPLACE('www.', '', name)", str_replace('www.', '', $this->getHost()))->first());
         });
 
         Request::macro('language', function () {
-            return once(fn () => $this->content()->language);
+            return once(fn() => $this->content()->language);
         });
 
         Request::macro('site', function () {
-            return once(fn () => $this->domain()->site);
+            return once(fn() => $this->domain()->site);
         });
     }
 }
