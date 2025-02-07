@@ -2,58 +2,48 @@
 
 namespace Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Filament\Facades\Filament;
-use Illuminate\Validation\Rule;
-use Filament\Resources\Resource;
-use Backstage\Fields\Fields\Text;
-use Backstage\Fields\Models\Field;
-use Illuminate\Support\Collection;
-use Backstage\CustomFields\Builder;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Backstage\Fields\Fields\Checkbox;
-use Backstage\Fields\Fields\KeyValue;
-use Backstage\Fields\Fields\Textarea;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Backstage\Fields\Fields\RichEditor;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Navigation\NavigationItem;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ViewColumn;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Backstage\Fields\Fields\CheckboxList;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-use Backstage\View\Components\Filament\Badge;
-use Filament\Forms\Components\DateTimePicker;
-use Backstage\MediaPicker\Components\MediaPicker;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Fields\Fields\Select as FieldSelect;
-use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Navigation\NavigationItem;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Locale;
 
 class ContentResource extends Resource
 {
@@ -293,8 +283,8 @@ class ContentResource extends Resource
     public static function getTypeInputs()
     {
         return collect(self::$type->fields)
-            ->filter(fn($field) => self::$type->name_field !== $field->slug)
-            ->map(function($field) {
+            ->filter(fn ($field) => self::$type->name_field !== $field->slug)
+            ->map(function ($field) {
                 return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
             })
             ->filter()

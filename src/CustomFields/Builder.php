@@ -10,7 +10,6 @@ use Backstage\Models\Block;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as Input;
 use Filament\Forms\Components\Builder\Block as BuilderBlock;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class Builder extends Base implements FieldContract
