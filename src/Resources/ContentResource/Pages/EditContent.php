@@ -75,7 +75,7 @@ class EditContent extends EditRecord
     {
         $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
 
-            if (!$value->field) {
+            if (! $value->field) {
                 return [];
             }
 
