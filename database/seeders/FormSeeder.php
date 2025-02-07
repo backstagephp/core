@@ -6,7 +6,7 @@ use Backstage\Models\Form;
 use Backstage\Models\FormAction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Fields\Models\Field;
+use Backstage\Fields\Models\Field;
 
 class FormSeeder extends Seeder
 {

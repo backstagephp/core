@@ -5,7 +5,7 @@ namespace Backstage\Database\Seeders;
 use Backstage\Models\Type;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Fields\Models\Field;
+use Backstage\Fields\Models\Field;
 
 class TypeSeeder extends Seeder
 {

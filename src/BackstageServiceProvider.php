@@ -29,7 +29,7 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\MediaPicker\Resources\MediaResource;
+use Backstage\Media\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -99,7 +99,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
                         $command->comment('Turn on the lights...');
                         $key = 'AUTH_MODEL';
-                        $value = '\Vormkracht10\Backstage\Models\User';
+                        $value = '\Backstage\Models\User';
                         $path = app()->environmentFilePath();
                         file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
@@ -353,9 +353,9 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Generate the config file content
         $configContent = "<?php\n\n";
-        $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
-        $configContent .= "use Vormkracht10\Backstage\Fields\Builder;\n";
-        $configContent .= "use Vormkracht10\Backstage\Resources\ContentResource;\n";
+        $configContent .= "use Backstage\Models\Site;\n";
+        $configContent .= "use Backstage\Fields\Builder;\n";
+        $configContent .= "use Backstage\Resources\ContentResource;\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateFilamentFieldsConfig()) . ";\n";
@@ -390,7 +390,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     private function writeMediaPickerConfig(?string $path = null): void
     {
-        $path ??= config_path('backstage/media-picker.php');
+        $path ??= config_path('backstage/media.php');
 
         // Ensure directory exists
         $directory = dirname($path);
@@ -402,8 +402,8 @@ class BackstageServiceProvider extends PackageServiceProvider
         $configContent = "<?php\n\n";
         $configContent .= "use Backstage\Models\Site;\n";
         $configContent .= "use Backstage\Models\User;\n";
-        $configContent .= "use Vormkracht10\MediaPicker\Models\Media;\n\n";
-        $configContent .= "use Vormkracht10\MediaPicker\Resources\MediaResource;\n\n";
+        $configContent .= "use Backstage\Media\Models\Media;\n\n";
+        $configContent .= "use Backstage\Media\Resources\MediaResource;\n\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateMediaPickerConfig()) . ";\n";

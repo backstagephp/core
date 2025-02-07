@@ -43,9 +43,9 @@
         "spatie/once": "^3.1",
         "spatie/schema-org": "^3.23",
         "staudenmeir/laravel-adjacency-list": "^1.0",
-        "vormkracht10/filament-media-picker": "dev-main",
+        "backstage/media": "dev-main",
         "vormkracht10/filament-redirects": "dev-main",
-        "backstage/fields": "@dev"
+        "backstage/fields": "dev-main"
     },
     "require-dev": {
         "larastan/larastan": "^2.0.1",
@@ -102,11 +102,12 @@
     },
     "repositories": {
         "fields": {
-            "type": "path",
-            "url": "/var/www/fields",
-            "options": {
-                "symlink": true
-            }
+            "type": "git",
+            "url": "git@github.com:backstagephp/fields.git"
+        },
+        "media": {
+            "type": "git",
+            "url": "git@github.com:backstagephp/media.git"
         }
     },
     "minimum-stability": "dev",

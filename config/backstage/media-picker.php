@@ -46,7 +46,7 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'model' => \Vormkracht10\MediaPicker\Models\Media::class,
+    'model' => \Backstage\Media\Models\Media::class,
 
     'user_model' => User::class,
 
@@ -58,7 +58,7 @@ return [
         'navigation_icon' => 'heroicon-o-photo',
         'navigation_sort' => null,
         'navigation_count_badge' => false,
-        'resource' => \Vormkracht10\MediaPicker\Resources\MediaResource::class,
+        'resource' => \Backstage\Media\Resources\MediaResource::class,
     ],
 
     'file_upload' => [

@@ -5,7 +5,7 @@ namespace Backstage\Models;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Vormkracht10\Fields\Concerns\HasFields;
+use Backstage\Fields\Concerns\HasFields;
 
 class Type extends Model
 {

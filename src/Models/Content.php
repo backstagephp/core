@@ -4,7 +4,7 @@ namespace Backstage\Models;
 
 use Backstage\Casts\ContentPathCast;
 use Backstage\Fields\Models\Field;
-use Backstage\MediaPicker\Concerns\HasMedia;
+use Backstage\Media\Concerns\HasMedia;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Casts\Attribute;

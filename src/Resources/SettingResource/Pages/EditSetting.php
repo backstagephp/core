@@ -2,7 +2,7 @@
 
 namespace Backstage\Resources\SettingResource\Pages;
 
-use Backstage\Backstage\Resources\SettingResource;
+use Backstage\Resources\SettingResource;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
