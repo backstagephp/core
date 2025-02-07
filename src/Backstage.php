@@ -74,10 +74,10 @@ class Backstage
     public static function mapParams($block)
     {
 
-        if (! $block['type'] || !$block['data']) {
+        if (! $block['type'] || ! $block['data']) {
             return [];
         }
-        
+
         $values = collect($block['data']['values'] ?? $block['data']);
 
         $fields = Field::select('ulid', 'slug')
