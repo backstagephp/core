@@ -31,7 +31,7 @@ use Backstage\Services\FieldInspectionService;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
 use Backstage\View\Components\Page;
-use Vormkracht10\MediaPicker\Resources\MediaResource;
+use Backstage\Media\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {

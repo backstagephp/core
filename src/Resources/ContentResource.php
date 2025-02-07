@@ -46,7 +46,7 @@ use Backstage\Models\Type;
 use Backstage\Resources\ContentResource\Pages;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
+use Backstage\Media\Fields\Media;
 
 class ContentResource extends Resource
 {
@@ -286,7 +286,7 @@ class ContentResource extends Resource
                     ->label($field->name),
                 'builder' => Builder::make($fieldName, $field)
                     ->label($field->name),
-                'media' => MediaPicker::make($fieldName)
+                'media' => Media::make($fieldName, $field)
                     ->label($field->name),
                 'key-value' => KeyValue::make($fieldName, $field),
                 default => Text::make($fieldName, $field)

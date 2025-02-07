@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Backstage\Contracts\FieldContract;
 use Backstage\Models\Field;
 use Backstage\Models\Media as MediaModel;
-use Vormkracht10\MediaPicker\Components\MediaPicker as Input;
-use Vormkracht10\MediaPicker\MediaPicker;
+use Backstage\Media\Fields\Media as MediaInput;
 
 class Media extends FieldBase implements FieldContract
 {
@@ -21,9 +20,9 @@ class Media extends FieldBase implements FieldContract
         ];
     }
 
-    public static function make(string $name, Field $field): Input
+    public static function make(string $name, Field $field): MediaInput
     {
-        $input = self::applyDefaultSettings(Input::make($name), $field);
+        $input = self::applyDefaultSettings(MediaInput::make($name, $field), $field);
 
         if (! empty($field->config['acceptedFileTypes']) && ! is_array($field->config['acceptedFileTypes'])) {
             $field->config['acceptedFileTypes'] = [$field->config['acceptedFileTypes']];
@@ -94,7 +93,7 @@ class Media extends FieldBase implements FieldContract
             return $data;
         }
 
-        $media = MediaPicker::create($data['setting'][$field->slug]);
+        $media = MediaInput::make($data['setting'][$field->slug], $field);
 
         $data['setting'][$field->slug] = collect($media)->map(function ($media) {
             return $media->ulid;

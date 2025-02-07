@@ -26,16 +26,16 @@ return [
         ],
 
         'widgets' => [
-            Backstage\Core\Widgets\ContentUpdatesWidget::class,
-            Backstage\Core\Widgets\FormSubmissionsWidget::class,
+            Backstage\Widgets\ContentUpdatesWidget::class,
+            Backstage\Widgets\FormSubmissionsWidget::class,
         ],
     ],
 
     'components' => [
         'blocks' => [
-            Backstage\Core\View\Components\Blocks\Heading::class,
-            Backstage\Core\View\Components\Blocks\Paragraph::class,
-            Backstage\Core\View\Components\Form::class,
+            Backstage\View\Components\Blocks\Heading::class,
+            Backstage\View\Components\Blocks\Paragraph::class,
+            Backstage\View\Components\Form::class,
         ],
     ],
 
