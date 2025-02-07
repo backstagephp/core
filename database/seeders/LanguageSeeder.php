@@ -2,8 +2,8 @@
 
 namespace Backstage\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Backstage\Models\Language;
+use Illuminate\Database\Seeder;
 
 class LanguageSeeder extends Seeder
 {

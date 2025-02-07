@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\FormActionResource\Pages;
 
+use Backstage\Resources\FormResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\FormResource;
 
 class ListFormActions extends ListRecords
 {

@@ -2,9 +2,9 @@
 
 namespace Backstage\Database\Seeders;
 
+use Backstage\Models\Site;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Backstage\Models\Site;
 
 class SiteSeeder extends Seeder
 {

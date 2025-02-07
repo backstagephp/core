@@ -2,6 +2,11 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Fields\Select;
+use Backstage\Models\Language;
+use Backstage\Models\Menu;
+use Backstage\Resources\MenuResource\Pages;
+use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -14,11 +19,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Locale;
-use Backstage\Fields\Select;
-use Backstage\Models\Language;
-use Backstage\Models\Menu;
-use Backstage\Resources\MenuResource\Pages;
-use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 
 class MenuResource extends Resource
 {
@@ -65,14 +65,14 @@ class MenuResource extends Resource
                                                     ->groupBy(function ($language) {
                                                         return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                                     })
-                                                    ->mapWithKeys(fn($languages, $countryName) => [
-                                                        $countryName => $languages->mapWithKeys(fn($language) => [
+                                                    ->mapWithKeys(fn ($languages, $countryName) => [
+                                                        $countryName => $languages->mapWithKeys(fn ($language) => [
                                                             $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
                                             ->allowHtml()
-                                            ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                            ->visible(fn () => Language::where('active', 1)->count() > 1),
 
                                         TextInput::make('name')
                                             ->required()

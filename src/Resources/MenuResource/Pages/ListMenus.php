@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\MenuResource\Pages;
 
+use Backstage\Resources\MenuResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\MenuResource;
 
 class ListMenus extends ListRecords
 {

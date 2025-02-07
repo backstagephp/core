@@ -2,6 +2,7 @@
 
 namespace Backstage\Tests;
 
+use Backstage\BackstageServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
@@ -17,7 +18,6 @@ use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use Backstage\BackstageServiceProvider;
 
 #[WithMigration]
 class TestCase extends Orchestra

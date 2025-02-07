@@ -1,8 +1,8 @@
 <?php
 
+use Backstage\Http\Controllers\FormController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Backstage\Http\Controllers\FormController;
 
 Route::fallback(function (Request $request) {
 

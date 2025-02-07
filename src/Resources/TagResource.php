@@ -2,6 +2,10 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\Tag;
+use Backstage\Resources\TagResource\Pages;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -10,10 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Backstage\Models\Tag;
-use Backstage\Resources\TagResource\Pages;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
 
 class TagResource extends Resource
 {
@@ -57,13 +57,13 @@ class TagResource extends Resource
         return $table
             ->columns([
                 BadgeableColumn::make('name')
-                    ->formatStateUsing(fn() => '')
+                    ->formatStateUsing(fn () => '')
                     ->searchable()
                     ->sortable()
                     ->separator('')
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn(Tag $record) => '#' . $record->name)
+                            ->label(fn (Tag $record) => '#' . $record->name)
                             ->color('gray'),
                     ]),
                 TextColumn::make('content_count')

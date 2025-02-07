@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\TypeResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\TypeResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateType extends CreateRecord
 {

@@ -2,9 +2,9 @@
 
 namespace Backstage\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TypeFactory extends Factory
 {

@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\SettingResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\SettingResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateSetting extends CreateRecord
 {

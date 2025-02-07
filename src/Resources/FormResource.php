@@ -2,6 +2,10 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Form as FormModel;
+use Backstage\Resources\FormResource\Pages;
+use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -13,10 +17,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Backstage\Models\Form as FormModel;
-use Backstage\Resources\FormResource\Pages;
-use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class FormResource extends Resource
 {
@@ -74,7 +74,7 @@ class FormResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->url(fn($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
+                    ->url(fn ($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
             ])
             ->filters([
                 //

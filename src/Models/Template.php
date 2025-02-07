@@ -2,12 +2,12 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Backstage\Fields\Models\Field;
-use Backstage\Shared\HasPackageFactory;
 
 class Template extends Model
 {

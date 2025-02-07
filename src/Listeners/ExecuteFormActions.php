@@ -2,9 +2,9 @@
 
 namespace Backstage\Listeners;
 
+use Backstage\Events\FormSubmitted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Backstage\Events\FormSubmitted;
 
 class ExecuteFormActions implements ShouldQueue
 {

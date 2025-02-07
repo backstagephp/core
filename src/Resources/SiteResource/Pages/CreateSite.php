@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\SiteResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\SiteResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateSite extends CreateRecord
 {

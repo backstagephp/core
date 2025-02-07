@@ -2,10 +2,10 @@
 
 namespace Backstage\Models;
 
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
-use Backstage\Shared\HasPackageFactory;
 
 class Language extends Model
 {

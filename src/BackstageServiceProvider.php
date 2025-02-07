@@ -2,6 +2,19 @@
 
 namespace Backstage;
 
+use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Events\FormSubmitted;
+use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Models\Block;
+use Backstage\Models\Media;
+use Backstage\Models\Menu;
+use Backstage\Models\Site;
+use Backstage\Models\Type;
+use Backstage\Models\User;
+use Backstage\Observers\MenuObserver;
+use Backstage\Testing\TestsBackstage;
+use Backstage\View\Components\Blocks;
+use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
@@ -16,19 +29,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Backstage\Commands\BackstageSeedCommand;
-use Backstage\Events\FormSubmitted;
-use Backstage\Listeners\ExecuteFormActions;
-use Backstage\Models\Block;
-use Backstage\Models\Media;
-use Backstage\Models\Menu;
-use Backstage\Models\Site;
-use Backstage\Models\Type;
-use Backstage\Models\User;
-use Backstage\Observers\MenuObserver;
-use Backstage\Testing\TestsBackstage;
-use Backstage\View\Components\Blocks;
-use Backstage\View\Components\Page;
 use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
