@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\UserResource\Pages;
 
+use Backstage\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\UserResource;
 
 class ListUsers extends ListRecords
 {

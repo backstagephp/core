@@ -2,13 +2,13 @@
 
 namespace Backstage\Resources\BlockResource\Pages;
 
+use Backstage\Models\Block;
+use Backstage\Resources\BlockResource;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Artisan;
-use Backstage\Models\Block;
-use Backstage\Resources\BlockResource;
 
 class EditBlock extends EditRecord
 {
@@ -22,10 +22,10 @@ class EditBlock extends EditRecord
             ->action(function (Block $record) {
                 Artisan::call('make:component', ['name' => \Illuminate\Support\Str::studly($record->slug)]);
 
-                if (file_exists(app_path("View/Components/" . \Illuminate\Support\Str::studly($this->record->slug) . ".php"))) {
+                if (file_exists(app_path('View/Components/' . \Illuminate\Support\Str::studly($this->record->slug) . '.php'))) {
 
                     // Replace __construct with params
-                    $component = file_get_contents(app_path("View/Components/" . \Illuminate\Support\Str::studly($this->record->slug) . ".php"));
+                    $component = file_get_contents(app_path('View/Components/' . \Illuminate\Support\Str::studly($this->record->slug) . '.php'));
                     $params = '';
                     foreach ($this->record->fields as $field) {
                         $type = 'string';
@@ -35,7 +35,7 @@ class EditBlock extends EditRecord
                             $defaultValue = '[]';
                         }
                         $params .= 'public ' . $type . ' $' . $field->slug . '';
-                        if (!$field->config['required']) {
+                        if (! $field->config['required']) {
                             $params .= ' = ' . $defaultValue . ', ';
                         } else {
                             $params .= ', ';
@@ -43,10 +43,10 @@ class EditBlock extends EditRecord
                     }
                     $params = rtrim($params, ', ');
                     $component = str_replace('__construct()', '__construct(' . $params . ')', $component);
-                    file_put_contents(app_path("View/Components/" . \Illuminate\Support\Str::studly($this->record->slug) . ".php"), $component);
+                    file_put_contents(app_path('View/Components/' . \Illuminate\Support\Str::studly($this->record->slug) . '.php'), $component);
                 }
                 Notification::make()
-                    ->title(__('Component created at :location', ['location' => app_path("View/Components/" . \Illuminate\Support\Str::studly($this->record->slug) . ".php")]))
+                    ->title(__('Component created at :location', ['location' => app_path('View/Components/' . \Illuminate\Support\Str::studly($this->record->slug) . '.php')]))
                     ->success()
                     ->send();
 

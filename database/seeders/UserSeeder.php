@@ -2,9 +2,9 @@
 
 namespace Backstage\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Backstage\Models\Site;
 use Backstage\Models\User;
+use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {

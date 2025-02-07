@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\MenuItemResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\MenuResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateMenuItem extends CreateRecord
 {

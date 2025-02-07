@@ -2,8 +2,8 @@
 
 namespace Backstage\Shared;
 
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Backstage\Models\Tag;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasTags
 {

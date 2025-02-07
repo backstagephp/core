@@ -2,11 +2,11 @@
 
 namespace Backstage\Resources\MenuResource\RelationManagers;
 
+use Backstage\Resources\MenuItemResource;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Backstage\Resources\MenuItemResource;
 
 class MenuItemsRelationManager extends RelationManager
 {

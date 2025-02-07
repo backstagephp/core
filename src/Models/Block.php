@@ -2,12 +2,12 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Backstage\Fields\Concerns\HasFields;
-use Backstage\Shared\HasPackageFactory;
 
 class Block extends Model
 {

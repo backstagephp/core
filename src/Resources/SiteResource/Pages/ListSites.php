@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\SiteResource\Pages;
 
+use Backstage\Resources\SiteResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\SiteResource;
 
 class ListSites extends ListRecords
 {

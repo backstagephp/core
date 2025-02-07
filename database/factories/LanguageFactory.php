@@ -2,8 +2,8 @@
 
 namespace Backstage\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Backstage\Models\Language;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LanguageFactory extends Factory
 {

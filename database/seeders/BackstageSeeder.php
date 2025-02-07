@@ -2,19 +2,19 @@
 
 namespace Backstage\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use Backstage\Models\Block;
 use Backstage\Models\Content;
 use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Domain;
-use Vormkracht10\Fields\Models\Field;
 use Backstage\Models\Form;
 use Backstage\Models\FormAction;
 use Backstage\Models\Language;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Vormkracht10\Fields\Models\Field;
 
 class BackstageSeeder extends Seeder
 {

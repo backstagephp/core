@@ -2,12 +2,12 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Backstage\Fields\Concerns\HasFields;
-use Backstage\Shared\HasPackageFactory;
 
 class Setting extends Model
 {

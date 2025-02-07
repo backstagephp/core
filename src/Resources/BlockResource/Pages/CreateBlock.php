@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\BlockResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\BlockResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateBlock extends CreateRecord
 {

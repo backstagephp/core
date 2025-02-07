@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\FormSubmissionResource\Pages;
 
-use Filament\Resources\Pages\ListRecords;
 use Backstage\Resources\FormSubmissionResource;
+use Filament\Resources\Pages\ListRecords;
 
 class ListFormSubmissions extends ListRecords
 {

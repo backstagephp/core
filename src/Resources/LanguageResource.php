@@ -2,6 +2,8 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\Language;
+use Backstage\Resources\LanguageResource\Pages;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -12,8 +14,6 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Backstage\Models\Language;
-use Backstage\Resources\LanguageResource\Pages;
 
 class LanguageResource extends Resource
 {
@@ -74,7 +74,7 @@ class LanguageResource extends Resource
                     ->label('')
                     ->width(20)
                     ->height(15)
-                    ->getStateUsing(fn(Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . $record->code . '.svg'))))
+                    ->getStateUsing(fn (Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . $record->code . '.svg'))))
                     ->verticallyAlignCenter()
                     ->searchable(),
                 TextColumn::make('name')

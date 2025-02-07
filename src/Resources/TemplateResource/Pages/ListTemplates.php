@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\TemplateResource\Pages;
 
-use Filament\Resources\Pages\ListRecords;
 use Backstage\Resources\TemplateResource;
+use Filament\Resources\Pages\ListRecords;
 
 class ListTemplates extends ListRecords
 {

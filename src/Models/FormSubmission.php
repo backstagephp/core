@@ -2,10 +2,10 @@
 
 namespace Backstage\Models;
 
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Backstage\Shared\HasPackageFactory;
 
 class FormSubmission extends Model
 {

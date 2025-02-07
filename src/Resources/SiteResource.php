@@ -2,6 +2,8 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\Site;
+use Backstage\Resources\SiteResource\Pages;
 use DateTimeZone;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
@@ -19,8 +21,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Backstage\Models\Site;
-use Backstage\Resources\SiteResource\Pages;
 
 class SiteResource extends Resource
 {
@@ -106,7 +106,7 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn($color, $name) => [
+                                                ->mapWithKeys(fn ($color, $name) => [
                                                     sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
                                                 ])
                                                 ->put('#000000', 'Black')
@@ -156,7 +156,7 @@ class SiteResource extends Resource
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
                                             ])->map(function ($code) {
-                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn($code) => [$code => $code]);
+                                                return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
                                             })
                                         )
                                         ->default(config('app.timezone'))
