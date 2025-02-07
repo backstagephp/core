@@ -76,19 +76,22 @@ class Builder extends Base implements FieldContract
 
     private static function resolveFormFields(mixed $record = null): array
     {
-        $instance = new self();
+        $instance = new self;
+
         return $instance->traitResolveFormFields(record: $record);
     }
 
     private static function resolveCustomFields(): Collection
     {
-        $instance = new self();
+        $instance = new self;
+
         return $instance->traitResolveCustomFields();
     }
 
     private static function resolveFieldInput(Field $field, Collection $customFields, mixed $record = null): ?object
     {
-        $instance = new self();
+        $instance = new self;
+
         return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record);
     }
 }

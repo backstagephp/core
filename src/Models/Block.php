@@ -17,7 +17,7 @@ use Illuminate\Support\HtmlString;
  * @property string $name_field
  * @property string $icon
  * @property string $component
-*/
+ */
 class Block extends Model
 {
     use HasFields;
