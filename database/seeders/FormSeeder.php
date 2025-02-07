@@ -2,11 +2,11 @@
 
 namespace Backstage\Database\Seeders;
 
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Form;
 use Backstage\Models\FormAction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Backstage\Fields\Models\Field;
 
 class FormSeeder extends Seeder
 {

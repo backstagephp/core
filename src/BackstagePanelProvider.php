@@ -31,7 +31,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
-            fn(): string => Blade::render(
+            fn (): string => Blade::render(
                 <<<'HTML'
                 <script>
                 document.addEventListener('livewire:navigated', () => {
@@ -84,7 +84,7 @@ class BackstagePanelProvider extends PanelProvider
             ->resources(config('backstage.cms.panel.resources', []))
             ->widgets(config('backstage.cms.panel.widgets', []))
             ->pages(config('backstage.cms.panel.pages', []))
-            ->colors(fn() => [
+            ->colors(fn () => [
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->middleware([
@@ -117,6 +117,6 @@ class BackstagePanelProvider extends PanelProvider
                 ScopedBySite::class,
             ], isPersistent: true)
             // enable spa mode for browsers except Safari
-            ->spa(fn() => ! (str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
+            ->spa(fn () => ! (str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
     }
 }
