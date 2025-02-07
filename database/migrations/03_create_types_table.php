@@ -25,7 +25,7 @@ return new class extends Migration
         });
 
         Schema::create('site_type', function (Blueprint $table) {
-            $table->foreignUlid('site_ulid')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('type_slug');
             $table->foreign('type_slug')->references('slug')->on('types')->cascadeOnUpdate()->cascadeOnDelete();
