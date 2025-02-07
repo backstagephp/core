@@ -15,7 +15,7 @@ Backstage is the CMS for building the modern web. Made with Laravel and Filament
 You can install the package via composer in your (new) [Laravel app](https://laravel.com/docs/11.x#creating-a-laravel-project):
 
 ```bash
-composer require backstagephp/backstage
+composer require backstage/cms
 ```
 
 Note: For now you may have to update composer.json to:
@@ -23,17 +23,17 @@ Note: For now you may have to update composer.json to:
     "repositories": {
         "laravel-redirects": {
             "type": "vcs",
-            "url": "git@github.com:backstagephp/laravel-redirects.git"
+            "url": "git@github.com:vormkracht10/laravel-redirects.git"
         },
         "filament-redirects": {
             "type": "vcs",
-            "url": "git@github.com:backstagephp/filament-redirects.git"
+            "url": "git@github.com:vormkracht10/filament-redirects.git"
         },
         "backstage": {
             "type": "vcs",
-            "url": "git@github.com:backstagephp/backstage.git"
+            "url": "git@github.com:backstagephp/core.git"
         }
-    }
+    },
     "minimum-stability": "dev",
 ```
 
