@@ -2,16 +2,18 @@
 
 namespace Backstage\Models;
 
-use Backstage\Fields\Concerns\HasFields;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Blade;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
+use Backstage\Fields\Concerns\HasFields;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
 
 class Block extends Model
 {
     use HasFields;
+    use HasUlids;
     use HasPackageFactory;
 
     protected $primaryKey = 'ulid';
