@@ -43,6 +43,20 @@ class TestCase extends Orchestra
         ];
     }
 
+    /**
+     * Setup the test environment.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
+
+    }
+
     public function defineEnvironment($app)
     {
         $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
@@ -50,6 +64,7 @@ class TestCase extends Orchestra
         foreach (glob(__DIR__ . '/../config/*.php') as $filename) {
             $app['config']->set(pathinfo($filename)['filename'], require $filename);
         }
+
     }
 
     public function defineDatabaseMigrations()

@@ -32,7 +32,11 @@ return new class extends Migration
         DB::statement('UPDATE block_site SET block_ulid = (SELECT ulid FROM blocks WHERE blocks.slug = block_site.block_slug)');
 
         Schema::table('block_site', function (Blueprint $table) {
+            $table->dropIndex(['site_ulid', 'block_slug']);
             $table->dropForeign(['block_slug']);
+        });
+
+        Schema::table('block_site', function (Blueprint $table) {
             $table->dropColumn('block_slug');
         });
 
