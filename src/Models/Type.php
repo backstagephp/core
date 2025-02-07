@@ -2,10 +2,10 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Backstage\Fields\Concerns\HasFields;
 
 class Type extends Model
 {
