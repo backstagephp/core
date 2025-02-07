@@ -112,6 +112,7 @@ class BackstageSeeder extends Seeder
             'slug' => Str::slug($name),
             'icon' => 'document-text',
             'name_field' => null,
+            'ulid' => (string) Str::ulid(),
         ])
             ->has(Field::factory(1, [
                 'name' => 'Body',
@@ -127,6 +128,7 @@ class BackstageSeeder extends Seeder
             'icon' => 'document-text',
             'name_field' => null,
             'component' => 'form',
+            'ulid' => (string) Str::ulid(),
         ])
             ->has(Field::factory(1, [
                 'name' => 'Slug',

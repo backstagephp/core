@@ -42,7 +42,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasConfigFile([
                 'backstage/cms',
-                'backstage/media-picker',
+                'backstage/media',
             ])
             ->hasMigrations($this->getMigrations())
             ->hasTranslations()
@@ -314,14 +314,14 @@ class BackstageServiceProvider extends PackageServiceProvider
     private function runFilamentFieldsCommand(InstallCommand $command): void
     {
         $command->callSilently('vendor:publish', [
-            '--tag' => 'filament-fields-config',
+            '--tag' => 'fields-config',
             '--force' => true,
         ]);
 
         $this->writeFilamentFieldsConfig();
 
         $command->callSilently('vendor:publish', [
-            '--tag' => 'filament-fields-migrations',
+            '--tag' => 'fields-migrations',
             '--force' => true,
         ]);
 
