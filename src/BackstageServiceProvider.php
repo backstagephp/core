@@ -343,7 +343,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     private function writeFilamentFieldsConfig(?string $path = null): void
     {
-        $path ??= config_path('fields.php');
+        $path ??= config_path('backstage/fields.php');
 
         // Ensure directory exists
         $directory = dirname($path);
@@ -354,7 +354,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         // Generate the config file content
         $configContent = "<?php\n\n";
         $configContent .= "use Backstage\Models\Site;\n";
-        $configContent .= "use Backstage\Fields\Builder;\n";
+        $configContent .= "use Backstage\CustomFields\Builder;\n";
         $configContent .= "use Backstage\Resources\ContentResource;\n";
 
         // Custom export function to create more readable output

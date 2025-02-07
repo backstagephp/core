@@ -7,51 +7,61 @@ use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Backstage\Fields\Fields;
+use Backstage\Models\Content;
+use Backstage\Models\Language;
 use Filament\Facades\Filament;
 use Illuminate\Validation\Rule;
 use Filament\Resources\Resource;
+use Backstage\Fields\Fields\Text;
+use Backstage\Fields\Models\Field;
+use Illuminate\Support\Collection;
+use Backstage\CustomFields\Builder;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
-use Vormkracht10\Fields\Fields\Text;
+use Backstage\Fields\Fields\Checkbox;
+use Backstage\Fields\Fields\KeyValue;
+use Backstage\Fields\Fields\Textarea;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\Backstage\Models\Tag;
+use Backstage\Fields\Fields\RichEditor;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
-use Vormkracht10\Backstage\Models\Type;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Vormkracht10\Fields\Fields\Checkbox;
-use Vormkracht10\Fields\Fields\KeyValue;
-use Vormkracht10\Fields\Fields\Textarea;
+use Backstage\Fields\Fields\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Fields\Fields\RichEditor;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Fields\Fields\CheckboxList;
-use Vormkracht10\UploadcareField\Uploadcare;
+use Backstage\View\Components\Filament\Badge;
 use Filament\Forms\Components\DateTimePicker;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
-use Vormkracht10\Fields\Fields\Select as FieldSelect;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
+use Backstage\MediaPicker\Components\MediaPicker;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Fields\Fields\Select as FieldSelect;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
 
 class ContentResource extends Resource
 {
+    use CanMapDynamicFields {
+        resolveFormFields as private traitResolveFormFields;
+        resolveFieldInput as private traitResolveFieldInput;
+    }
+
     protected static ?string $model = Content::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
@@ -266,40 +276,28 @@ class ContentResource extends Resource
             ]);
     }
 
+    private static function resolveFormFields(mixed $record = null): array
+    {
+        $instance = new static;
+
+        return $instance->traitResolveFormFields($record);
+    }
+
+    private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null): ?object
+    {
+        $instance = new static;
+
+        return $instance->traitResolveFieldInput($field, $customFields, $record);
+    }
+
     public static function getTypeInputs()
     {
-        return self::$type->fields->map(function (Field $field) {
-            $fieldName = 'values.' . $field->ulid;
-
-            $field->input = match ($field->field_type) {
-                'uploadcare' => Uploadcare::make($fieldName, $field)
-                    ->label($field->name),
-                'text' => Text::make($fieldName, $field)
-                    ->label($field->name),
-                'checkbox' => Checkbox::make($fieldName, $field)
-                    ->label($field->name),
-                'checkbox-list' => CheckboxList::make($fieldName, $field)
-                    ->label($field->name)
-                    ->options($field->config['options']),
-                'rich-editor' => RichEditor::make($fieldName, $field)
-                    ->label($field->name),
-                'textarea' => Textarea::make($fieldName, $field)
-                    ->label($field->name),
-                'select' => FieldSelect::make($fieldName, $field)
-                    ->label($field->name),
-                'builder' => Builder::make($fieldName, $field)
-                    ->label($field->name),
-                'media' => MediaPicker::make($fieldName)
-                    ->label($field->name),
-                'key-value' => KeyValue::make($fieldName, $field),
-                default => Text::make($fieldName, $field)
-                    ->label($field->name),
-            };
-
-            return $field;
-        })
+        return collect(self::$type->fields)
             ->filter(fn($field) => self::$type->name_field !== $field->slug)
-            ->map(fn($field) => $field->input)
+            ->map(function($field) {
+                return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
+            })
+            ->filter()
             ->toArray();
     }
 
@@ -444,10 +442,10 @@ class ContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContent::route('/'),
-            'create' => Pages\CreateContent::route('/create/{type}'),
-            'edit' => Pages\EditContent::route('/{record}/edit'),
-            'meta_tags' => Pages\ListContentMetaTags::route('/meta-tags'),
+            'index' => ListContent::route('/'),
+            'create' => CreateContent::route('/create/{type}'),
+            'edit' => EditContent::route('/{record}/edit'),
+            'meta_tags' => ListContentMetaTags::route('/meta-tags'),
         ];
     }
 }
