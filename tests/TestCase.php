@@ -43,22 +43,9 @@ class TestCase extends Orchestra
         ];
     }
 
-    /**
-     * Setup the test environment.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
-
-    }
-
     public function defineEnvironment($app)
     {
+
         $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
 
         foreach (glob(__DIR__ . '/../config/*.php') as $filename) {
@@ -69,7 +56,19 @@ class TestCase extends Orchestra
 
     public function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->artisan('migrate:fresh');
+        // $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+    }
+
+    protected function refreshApplication()
+    {
+        parent::refreshApplication();
+
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
     }
 
     public function getEnvironmentSetUp($app)
