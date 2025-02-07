@@ -6,9 +6,9 @@ use Filament\Forms;
 use Backstage\Fields\Fields\Base;
 use Backstage\Fields\Models\Field;
 use Backstage\Contracts\FieldContract;
-use Illuminate\Database\Eloquent\Model;
-use Backstage\Models\Media as MediaModel;
 use Backstage\Media\Fields\Media as MediaInput;
+use Backstage\Models\Media as MediaModel;
+use Illuminate\Database\Eloquent\Model;
 
 class Media extends Base implements FieldContract
 {

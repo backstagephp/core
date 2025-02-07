@@ -268,13 +268,15 @@ class ContentResource extends Resource
 
     private static function resolveFormFields(mixed $record = null): array
     {
-        $instance = new self();
+        $instance = new self;
+
         return $instance->traitResolveFormFields($record);
     }
 
     private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null): ?object
     {
-        $instance = new self();
+        $instance = new self;
+
         return $instance->traitResolveFieldInput($field, $customFields, $record);
     }
 
