@@ -53,7 +53,7 @@ class Builder extends Base implements FieldContract
             $options[] = BuilderBlock::make($block->slug)
                 ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
                 ->schema(
-                    self::resolveFormFields($block)
+                    self::resolveFormFields(record: $block, isNested: true)
                 );
         }
 
@@ -74,11 +74,13 @@ class Builder extends Base implements FieldContract
         ];
     }
 
-    private static function resolveFormFields(mixed $record = null): array
+    private static function resolveFormFields(mixed $record = null, bool $isNested = false): array
     {
         $instance = new self;
 
-        return $instance->traitResolveFormFields(record: $record);
+        $isNested = true; // Builder fields are always nested
+
+        return $instance->traitResolveFormFields(record: $record, isNested: $isNested);
     }
 
     private static function resolveCustomFields(): Collection
@@ -88,10 +90,12 @@ class Builder extends Base implements FieldContract
         return $instance->traitResolveCustomFields();
     }
 
-    private static function resolveFieldInput(Field $field, Collection $customFields, mixed $record = null): ?object
+    private static function resolveFieldInput(Field $field, Collection $customFields, mixed $record = null, bool $isNested = false): ?object
     {
         $instance = new self;
 
-        return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record);
+        $isNested = true; // Builder fields are always nested
+
+        return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record, isNested: $isNested);
     }
 }

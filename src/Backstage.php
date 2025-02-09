@@ -60,9 +60,7 @@ class Backstage
      * [
      *      "type" => "text"
      *      "data" => [
-     *          "values" => [
-     *              "01jkgc3d2ms3749x8swc3pvg2p" => "<p>testaaaa</p>"
-     *          ]
+     *          "01jkgc3d2ms3749x8swc3pvg2p" => "<p>testaaaa</p>"
      *      ]
      *  ]
      * to
@@ -73,12 +71,11 @@ class Backstage
      */
     public static function mapParams($block)
     {
-
         if (! $block['type'] || ! $block['data']) {
             return [];
         }
 
-        $values = collect($block['data']['values'] ?? $block['data']);
+        $values = collect($block['data']);
 
         $fields = Field::select('ulid', 'slug')
             ->whereIn('ulid', $values->keys())

@@ -273,11 +273,11 @@ class ContentResource extends Resource
         return $instance->traitResolveFormFields($record);
     }
 
-    private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null): ?object
+    private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null, bool $isNested = false): ?object
     {
         $instance = new self;
 
-        return $instance->traitResolveFieldInput($field, $customFields, $record);
+        return $instance->traitResolveFieldInput($field, $customFields, $record, $isNested);
     }
 
     public static function getTypeInputs()
