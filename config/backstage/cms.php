@@ -42,8 +42,4 @@ return [
             Backstage\View\Components\Form::class,
         ],
     ],
-
-    'fields' => [
-        // App\Backstage\Core\Fields\CustomField::class;
-    ],
 ];
