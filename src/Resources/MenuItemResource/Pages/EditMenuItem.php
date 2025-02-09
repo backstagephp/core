@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\MenuItemResource\Pages;
 
+use Backstage\Resources\MenuResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Resources\MenuResource;
 
 class EditMenuItem extends EditRecord
 {

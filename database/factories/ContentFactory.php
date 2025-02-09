@@ -2,11 +2,11 @@
 
 namespace Backstage\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ContentFactory extends Factory
 {

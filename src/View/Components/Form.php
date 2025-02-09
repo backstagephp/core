@@ -2,9 +2,9 @@
 
 namespace Backstage\View\Components;
 
+use Backstage\Models\Form as ModelsForm;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\Component;
-use Backstage\Models\Form as ModelsForm;
 
 class Form extends Component
 {

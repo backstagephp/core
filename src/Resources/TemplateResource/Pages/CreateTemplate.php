@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\TemplateResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\TemplateResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateTemplate extends CreateRecord
 {

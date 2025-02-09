@@ -2,11 +2,11 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Models\Type;
-use Backstage\Resources\ContentResource;
 
 class ListContent extends ListRecords
 {
@@ -17,8 +17,8 @@ class ListContent extends ListRecords
         return [
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn($type) => Actions\Action::make(__($type->name))
-                        ->url(fn(): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
+                    fn ($type) => Actions\Action::make(__($type->name))
+                        ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
                         ->slideOver()
                         ->modalWidth('6xl')
                         ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')

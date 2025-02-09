@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\TagResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\TagResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateTag extends CreateRecord
 {

@@ -2,6 +2,8 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\MenuItem;
+use Backstage\Resources\MenuItemResource\Pages;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
@@ -14,8 +16,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Backstage\Models\MenuItem;
-use Backstage\Resources\MenuItemResource\Pages;
 
 class MenuItemResource extends Resource
 {

@@ -2,11 +2,11 @@
 
 namespace Backstage\Database\Factories;
 
+use Backstage\Models\Site;
+use Backstage\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Backstage\Models\Site;
-use Backstage\Models\User;
 
 class UserFactory extends Factory
 {
@@ -38,7 +38,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

@@ -2,10 +2,10 @@
 
 namespace Backstage\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use Backstage\Models\Domain;
 use Backstage\Models\Site;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class SiteFactory extends Factory
 {

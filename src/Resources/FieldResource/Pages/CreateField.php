@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\FieldResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\FieldResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateField extends CreateRecord
 {

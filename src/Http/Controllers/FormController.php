@@ -2,10 +2,10 @@
 
 namespace Backstage\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Backstage\Events\FormSubmitted;
 use Backstage\Models\Content;
 use Backstage\Models\Form;
+use Illuminate\Http\Request;
 
 class FormController
 {

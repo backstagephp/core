@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        stability: [dev] # "dev"| "alpha"| "beta"| "RC" | "stable" 
+        stability: [dev] # "dev"| "alpha"| "beta"| "RC" | "stable"
         operating-system: [ubuntu-latest] # , windows-latest, macos-latest
         php-versions: ['8.2'] #, '8.3'
 
@@ -45,7 +45,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }'
         run: |
           composer config minimum-stability ${{ matrix.stability }}
           composer config repositories.backstage vcs git@github.com:backstagephp/cms.git

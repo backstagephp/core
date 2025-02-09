@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\UserResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\UserResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
 {

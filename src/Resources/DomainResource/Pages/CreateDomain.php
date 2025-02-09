@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\DomainResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\DomainResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateDomain extends CreateRecord
 {

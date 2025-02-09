@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\FormActionResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use Backstage\Resources\FormResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateFormAction extends CreateRecord
 {

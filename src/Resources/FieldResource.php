@@ -2,13 +2,13 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Resources\FieldResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Backstage\Models\Field;
-use Backstage\Resources\FieldResource\Pages;
 
 class FieldResource extends Resource
 {

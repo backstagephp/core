@@ -2,15 +2,16 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Backstage\Shared\HasPackageFactory;
 
 class Setting extends Model
 {
+    use HasFields;
     use HasPackageFactory;
     use HasUlids;
 
@@ -19,13 +20,6 @@ class Setting extends Model
     protected $table = 'settings';
 
     protected $guarded = [];
-
-    protected function casts(): array
-    {
-        return [
-            'values' => 'array',
-        ];
-    }
 
     public function language(): BelongsTo
     {
@@ -45,10 +39,5 @@ class Setting extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function fields(): MorphMany
-    {
-        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug');
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Backstage\Database\Seeders;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Models\Type;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Backstage\Models\Field;
-use Backstage\Models\Type;
 
 class TypeSeeder extends Seeder
 {

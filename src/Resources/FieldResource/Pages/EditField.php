@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\FieldResource\Pages;
 
+use Backstage\Resources\FieldResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Resources\FieldResource;
 
 class EditField extends EditRecord
 {

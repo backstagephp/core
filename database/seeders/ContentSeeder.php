@@ -2,11 +2,11 @@
 
 namespace Backstage\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Content;
 use Backstage\Models\ContentFieldValue;
-use Backstage\Models\Field;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ContentSeeder extends Seeder
 {

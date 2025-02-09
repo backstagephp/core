@@ -2,6 +2,9 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\Domain;
+use Backstage\Resources\DomainResource\Pages;
+use Backstage\Resources\DomainResource\RelationManagers\LanguagesRelationManager;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -11,9 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Backstage\Models\Domain;
-use Backstage\Resources\DomainResource\Pages;
-use Backstage\Resources\DomainResource\RelationManagers\LanguagesRelationManager;
 
 class DomainResource extends Resource
 {
@@ -52,7 +52,7 @@ class DomainResource extends Resource
                                 TextInput::make('name')
                                     ->label('Domain name')
                                     ->columnSpanFull()
-                                    ->afterStateUpdated(fn(string $state): string => preg_replace('/^(http)(s)?:\/\//i', '', $state))
+                                    ->afterStateUpdated(fn (string $state): string => preg_replace('/^(http)(s)?:\/\//i', '', $state))
                                     ->required(),
                                 Select::make('environment')
                                     ->label('Environment')
@@ -77,7 +77,7 @@ class DomainResource extends Resource
                     ->sortable(),
                 TextColumn::make('environment')
                     ->badge()
-                    ->color(fn(Domain $domain) => match ($domain->environment) {
+                    ->color(fn (Domain $domain) => match ($domain->environment) {
                         'production' => 'success',
                         'staging' => 'warning',
                         'local' => 'red',

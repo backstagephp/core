@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\DomainResource\Pages;
 
+use Backstage\Resources\DomainResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Resources\DomainResource;
 
 class EditDomain extends EditRecord
 {

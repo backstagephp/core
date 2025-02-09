@@ -2,19 +2,19 @@
 
 namespace Backstage\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Block;
 use Backstage\Models\Content;
 use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Domain;
-use Backstage\Models\Field;
 use Backstage\Models\Form;
 use Backstage\Models\FormAction;
 use Backstage\Models\Language;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class BackstageSeeder extends Seeder
 {
@@ -112,6 +112,7 @@ class BackstageSeeder extends Seeder
             'slug' => Str::slug($name),
             'icon' => 'document-text',
             'name_field' => null,
+            'ulid' => (string) Str::ulid(),
         ])
             ->has(Field::factory(1, [
                 'name' => 'Body',
@@ -127,6 +128,7 @@ class BackstageSeeder extends Seeder
             'icon' => 'document-text',
             'name_field' => null,
             'component' => 'form',
+            'ulid' => (string) Str::ulid(),
         ])
             ->has(Field::factory(1, [
                 'name' => 'Slug',

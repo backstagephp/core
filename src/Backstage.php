@@ -2,14 +2,13 @@
 
 namespace Backstage;
 
-use Illuminate\Support\Str;
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Block;
+use Illuminate\Support\Str;
 
 class Backstage
 {
     private static array $components = [];
-
-    private static array $fields = [];
 
     private static array $cachedBlocks = [
         'default' => '\Backstage\View\Components\DefaultBlock',
@@ -25,27 +24,15 @@ class Backstage
         static::$components[$name] = $component;
     }
 
-    public static function registerField(string $className): void
-    {
-        $name = Str::kebab(class_basename($className));
-
-        static::$fields[$name] = $className;
-    }
-
     public static function getComponents(): array
     {
         return static::$components;
     }
 
-    public static function getFields(): array
-    {
-        return static::$fields;
-    }
-
     public static function getComponentOptions()
     {
         return collect(static::$components)
-            ->mapWithKeys(fn($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
+            ->mapWithKeys(fn ($component, $name) => [$name => Str::headline(last(explode('\\', $component)))])
             ->sort();
     }
 
@@ -68,8 +55,41 @@ class Backstage
         return self::$cachedBlocks[$slug] = static::$components[$block->component] ?? static::$cachedBlocks['default'];
     }
 
-    public static function resolveField($slug)
+    /**
+     * Convert
+     * [
+     *      "type" => "text"
+     *      "data" => [
+     *          "01jkgc3d2ms3749x8swc3pvg2p" => "<p>testaaaa</p>"
+     *      ]
+     *  ]
+     * to
+     * [
+     *    '_type' => 'text',
+     *    'body' => '<p>testaaaa</p>'
+     * ]
+     */
+    public static function mapParams($block)
     {
-        return static::$fields[$slug] ?? null;
+        if (! $block['type'] || ! $block['data']) {
+            return [];
+        }
+
+        $values = collect($block['data']);
+
+        $fields = Field::select('ulid', 'slug')
+            ->whereIn('ulid', $values->keys())
+            ->pluck('slug', 'ulid')
+            ->toArray();
+
+        $params = [
+            '_type' => $block['type'],
+        ];
+
+        foreach ($values as $key => $value) {
+            $params[$fields[$key] ?? $key] = $value;
+        }
+
+        return $params;
     }
 }

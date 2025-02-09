@@ -2,13 +2,13 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\User;
+use Backstage\Resources\UserResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Backstage\Models\User;
-use Backstage\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {

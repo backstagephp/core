@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\LanguageResource\Pages;
 
+use Backstage\Resources\LanguageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\LanguageResource;
 
 class ListLanguages extends ListRecords
 {

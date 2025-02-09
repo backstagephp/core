@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\TagResource\Pages;
 
+use Backstage\Resources\TagResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Resources\TagResource;
 
 class EditTag extends EditRecord
 {

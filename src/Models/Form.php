@@ -2,11 +2,12 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Backstage\Shared\HasPackageFactory;
 
 class Form extends Model
 {

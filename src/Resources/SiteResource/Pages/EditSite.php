@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\SiteResource\Pages;
 
+use Backstage\Resources\SiteResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Resources\SiteResource;
 
 class EditSite extends EditRecord
 {

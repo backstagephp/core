@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\FormResource\Pages;
 
+use Backstage\Resources\FormResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Resources\FormResource;
 
 class EditForm extends EditRecord
 {

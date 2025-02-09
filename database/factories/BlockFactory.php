@@ -2,9 +2,9 @@
 
 namespace Backstage\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Backstage\Models\Block;
 use Backstage\Models\Site;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlockFactory extends Factory
 {

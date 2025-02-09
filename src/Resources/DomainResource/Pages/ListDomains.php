@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\DomainResource\Pages;
 
+use Backstage\Resources\DomainResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\DomainResource;
 
 class ListDomains extends ListRecords
 {

@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\FieldResource\Pages;
 
+use Backstage\Resources\FieldResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Backstage\Resources\FieldResource;
 
 class ListFields extends ListRecords
 {

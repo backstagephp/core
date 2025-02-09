@@ -2,7 +2,7 @@
 
 namespace Backstage\Contracts;
 
-use Backstage\Models\Field;
+use Backstage\Fields\Models\Field;
 
 interface FieldContract
 {

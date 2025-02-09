@@ -1,11 +1,14 @@
 <?php
 
+use Backstage\Media\MediaPlugin;
+
 return [
     'panel' => [
         'default' => true,
 
         'plugins' => [
             // Vormkracht10\FilamentRedirects\RedirectsPlugin::make(),
+            MediaPlugin::make(), // TODO: Deze toevoegen in ServiceProvider
         ],
 
         'resources' => [
@@ -20,6 +23,7 @@ return [
             Backstage\Resources\SettingResource::class,
             Backstage\Resources\SiteResource::class,
             Backstage\Resources\TagResource::class,
+            Backstage\Media\Resources\MediaResource::class, // TODO: Deze toevoegen in ServiceProvider
             // Backstage\Resources\TemplateResource::class,
             Backstage\Resources\TypeResource::class,
             Backstage\Resources\UserResource::class,
