@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\UserResource\Pages;
+namespace Backstage\Resources\UserResource\Pages;
 
+use Backstage\Resources\UserResource;
 use Filament\Resources\Pages\CreateRecord;
-use Vormkracht10\Backstage\Resources\UserResource;
 
 class CreateUser extends CreateRecord
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\SiteResource;
+namespace Backstage\Resources\SiteResource;
 
+use Backstage\Models\Site;
+use Backstage\Resources\SiteResource;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Resources\SiteResource;
 
 class RegisterSite extends RegisterTenant
 {

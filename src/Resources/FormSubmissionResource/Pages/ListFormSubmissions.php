@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\FormSubmissionResource\Pages;
+namespace Backstage\Resources\FormSubmissionResource\Pages;
 
+use Backstage\Resources\FormSubmissionResource;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\FormSubmissionResource;
 
 class ListFormSubmissions extends ListRecords
 {

@@ -1,23 +1,23 @@
 <?php
 
-namespace Vormkracht10\Backstage\Http\Middleware\Filament;
+namespace Backstage\Http\Middleware\Filament;
 
+use Backstage\Models\Block;
+use Backstage\Models\Content;
+use Backstage\Models\Domain;
+use Backstage\Models\Form;
+use Backstage\Models\Language;
+use Backstage\Models\Media;
+use Backstage\Models\Menu;
+use Backstage\Models\Setting;
+use Backstage\Models\Tag;
+use Backstage\Models\Template;
+use Backstage\Models\Type;
+use Backstage\Models\User;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\Form;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Media;
-use Vormkracht10\Backstage\Models\Menu;
-use Vormkracht10\Backstage\Models\Setting;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Models\Template;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
 
 class ScopedBySite
 {

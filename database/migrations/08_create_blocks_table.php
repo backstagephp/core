@@ -23,11 +23,9 @@ return new class extends Migration
         });
 
         Schema::create('block_site', function (Blueprint $table) {
-            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('site_ulid');
 
             $table->string('block_slug');
-
-            $table->foreign('block_slug')->references('slug')->on('blocks')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->index(['site_ulid', 'block_slug']);
         });

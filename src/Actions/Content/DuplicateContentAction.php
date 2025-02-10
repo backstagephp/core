@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Actions\Content;
+namespace Backstage\Actions\Content;
 
 use Filament\Actions\ReplicateAction;
 use Filament\Facades\Filament;

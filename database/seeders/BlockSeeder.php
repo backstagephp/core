@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Models\Block;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Fields\Models\Field;
 
 class BlockSeeder extends Seeder
 {

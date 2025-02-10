@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Contracts;
+namespace Backstage\Contracts;
 
 interface FieldInspector
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Commands;
+namespace Backstage\Commands;
 
 use Illuminate\Console\Command;
 
@@ -16,7 +16,7 @@ class BackstageSeedCommand extends Command
             $this->option('force') ||
             $this->confirm('Do you really want to seed the database with sample Backstage data?')
         ) {
-            $this->call('db:seed', ['--class' => 'Vormkracht10\Backstage\Database\Seeders\BackstageSeeder']);
+            $this->call('db:seed', ['--class' => 'Backstage\Database\Seeders\BackstageSeeder']);
         }
 
         return self::SUCCESS;

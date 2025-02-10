@@ -1,14 +1,14 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Models\User;
+use Backstage\Resources\UserResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\User;
-use Vormkracht10\Backstage\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {

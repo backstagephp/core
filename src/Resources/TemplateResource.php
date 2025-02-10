@@ -1,9 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Backstage\Models\Template;
+use Backstage\Resources\TemplateResource\Pages;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -11,10 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Models\Template;
-use Vormkracht10\Backstage\Resources\TemplateResource\Pages;
-use Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
+use Backstage\Fields\Builder;
+use Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
 
 class TemplateResource extends Resource
 {

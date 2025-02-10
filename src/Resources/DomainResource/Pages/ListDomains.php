@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\DomainResource\Pages;
+namespace Backstage\Resources\DomainResource\Pages;
 
+use Backstage\Resources\DomainResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\DomainResource;
 
 class ListDomains extends ListRecords
 {

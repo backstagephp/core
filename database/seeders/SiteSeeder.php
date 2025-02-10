@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
+use Backstage\Models\Site;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Site;
 
 class SiteSeeder extends Seeder
 {

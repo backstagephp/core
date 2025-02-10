@@ -1,7 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Models\Tag;
+use Backstage\Resources\TagResource\Pages;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -10,10 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Resources\TagResource\Pages;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
-use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
 
 class TagResource extends Resource
 {

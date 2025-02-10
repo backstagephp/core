@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\View\Components;
+namespace Backstage\View\Components;
 
+use Backstage\Models\Form as ModelsForm;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\Component;
-use Vormkracht10\Backstage\Models\Form as ModelsForm;
 
 class Form extends Component
 {

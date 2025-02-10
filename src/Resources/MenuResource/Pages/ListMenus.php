@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\MenuResource\Pages;
+namespace Backstage\Resources\MenuResource\Pages;
 
+use Backstage\Resources\MenuResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\MenuResource;
 
 class ListMenus extends ListRecords
 {

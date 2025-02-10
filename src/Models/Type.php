@@ -1,16 +1,16 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Fields\Models\Field;
 
 class Type extends Model
 {
+    use HasFields;
     use HasPackageFactory;
 
     protected $primaryKey = 'slug';
@@ -24,12 +24,6 @@ class Type extends Model
     protected function casts(): array
     {
         return [];
-    }
-
-    public function fields(): MorphMany
-    {
-        return $this->morphMany(Field::class, 'slug', 'model_type', 'model_key')
-            ->orderBy('position');
     }
 
     public function sites(): BelongsToMany

@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\TypeResource\Pages;
+namespace Backstage\Resources\TypeResource\Pages;
 
+use Backstage\Resources\TypeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Resources\TypeResource;
 
 class EditType extends EditRecord
 {

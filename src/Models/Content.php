@@ -1,7 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
+use Backstage\Casts\ContentPathCast;
+use Backstage\Fields\Models\Field;
+use Backstage\Media\Concerns\HasMedia;
+use Backstage\Shared\HasPackageFactory;
+use Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -9,16 +14,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\HtmlString;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
-use Vormkracht10\Backstage\Casts\ContentPathCast;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Backstage\Shared\HasTags;
-use Vormkracht10\MediaPicker\Concerns\HasMedia;
 
 /**
- * Vormkracht10\Backstage\Models\Content
+ * Backstage\Models\Content
  *
  * @property string $path
  * @property string $url
@@ -78,6 +80,18 @@ class Content extends Model
             ->with('field');
     }
 
+    public function fields(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Field::class,
+            Type::class,
+            'slug',
+            'model_key',
+            'type_slug',
+            'slug'
+        )->where('model_type', 'type');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
      */
@@ -131,7 +145,8 @@ class Content extends Model
             'languages' => function ($query) {
                 $query->where('code', $this->language_code);
                 $query->limit(1);
-            }])
+            },
+        ])
             ->first();
 
         if ($domain) {

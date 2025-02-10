@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Factories;
+namespace Backstage\Database\Factories;
 
+use Backstage\Models\Domain;
+use Backstage\Models\Site;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\Site;
 
 class SiteFactory extends Factory
 {

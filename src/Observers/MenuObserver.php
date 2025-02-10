@@ -1,5 +1,5 @@
 <?php
 
-namespace Vormkracht10\Backstage\Observers;
+namespace Backstage\Observers;
 
 class MenuObserver {}

@@ -37,15 +37,14 @@ jobs:
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-
       - name: Prepare and install backstage
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }' # [tl! **]
         run: |
           cd theater
           composer config minimum-stability dev
-          composer config repositories.backstage vcs git@github.com:vormkracht10/backstage.git
-          composer config repositories.filament-redirects vcs git@github.com:vormkracht10/filament-redirects.git
-          composer config repositories.laravel-redirects vcs git@github.com:vormkracht10/laravel-redirects.git
-          composer require vormkracht10/backstage:dev-${{ steps.extract_branch.outputs.branch }}
+          composer config repositories.backstage vcs git@github.com:backstagephp/core.git
+          composer config repositories.fields vcs git@github.com:backstagephp/fields.git
+          composer config repositories.media vcs git@github.com:backstagephp/media.git
+          composer require backstage/cms:dev-${{ steps.extract_branch.outputs.branch }}
           php artisan backstage:install

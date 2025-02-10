@@ -1,7 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Backstage;
 
+use Backstage\Http\Middleware\Filament\ScopedBySite;
+use Backstage\Models\Site;
+use Backstage\Resources\SiteResource\RegisterSite;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -21,10 +24,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Vormkracht10\Backstage\Http\Middleware\Filament\ScopedBySite;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Pages\Dashboard;
-use Vormkracht10\Backstage\Resources\SiteResource\RegisterSite;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -69,8 +68,8 @@ class BackstagePanelProvider extends PanelProvider
         );
 
         FilamentAsset::register([
-            Css::make('filament-media-picker', base_path('vendor/vormkracht10/filament-media-picker/resources/dist/filament-media-picker.css')),
-        ], package: 'vormkracht10/filament-media-picker');
+            Css::make('media', base_path('vendor/backstage/media/resources/dist/media.css')),
+        ], package: 'backstage/media');
 
         return $panel
             ->id('backstage')
@@ -79,15 +78,12 @@ class BackstagePanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->sidebarCollapsibleOnDesktop()
-            ->spa()
             ->unsavedChangesAlerts()
-            ->default(config('backstage.panel.default'))
-            ->plugins(config('backstage.panel.plugins'))
-            ->resources(config('backstage.panel.resources'))
-            ->widgets(config('backstage.panel.widgets'))
-            ->pages([
-                Dashboard::class,
-            ])
+            ->default(config('backstage.cms.panel.default', true))
+            ->plugins(config('backstage.cms.panel.plugins', []))
+            ->resources(config('backstage.cms.panel.resources', []))
+            ->widgets(config('backstage.cms.panel.widgets', []))
+            ->pages(config('backstage.cms.panel.pages', []))
             ->colors(fn () => [
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
@@ -119,6 +115,8 @@ class BackstagePanelProvider extends PanelProvider
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
-            ], isPersistent: true);
+            ], isPersistent: true)
+            // enable spa mode for browsers except Safari
+            ->spa(fn () => ! (str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
     }
 }

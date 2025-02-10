@@ -1,7 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Models\Site;
+use Backstage\Resources\SiteResource\Pages;
 use DateTimeZone;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
@@ -19,8 +21,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Resources\SiteResource\Pages;
 
 class SiteResource extends Resource
 {
@@ -193,7 +193,7 @@ class SiteResource extends Resource
                     ->sortable(),
                 IconColumn::make('default')
                     ->label('Default')
-                    ->width(0)
+                    ->width(1)
                     ->boolean(),
             ])
             ->filters([

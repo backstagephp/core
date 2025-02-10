@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\FieldResource\Pages;
+namespace Backstage\Resources\FieldResource\Pages;
 
+use Backstage\Resources\FieldResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\FieldResource;
 
 class ListFields extends ListRecords
 {

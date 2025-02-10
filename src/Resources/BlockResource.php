@@ -1,7 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Facades\Backstage;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Block;
+use Backstage\Resources\BlockResource\Pages;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -14,10 +18,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Facades\Backstage;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Resources\BlockResource\Pages;
-use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class BlockResource extends Resource
 {

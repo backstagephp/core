@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\MenuResource\RelationManagers;
+namespace Backstage\Resources\MenuResource\RelationManagers;
 
+use Backstage\Resources\MenuItemResource;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Resources\MenuItemResource;
 
 class MenuItemsRelationManager extends RelationManager
 {

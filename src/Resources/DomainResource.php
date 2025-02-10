@@ -1,7 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Models\Domain;
+use Backstage\Resources\DomainResource\Pages;
+use Backstage\Resources\DomainResource\RelationManagers\LanguagesRelationManager;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -11,9 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Resources\DomainResource\Pages;
-use Vormkracht10\Backstage\Resources\DomainResource\RelationManagers\LanguagesRelationManager;
 
 class DomainResource extends Resource
 {

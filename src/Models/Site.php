@@ -1,14 +1,14 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
+use Backstage\Shared\HasPackageFactory;
+use Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Backstage\Shared\HasTags;
 
 class Site extends Model
 {
@@ -82,5 +82,10 @@ class Site extends Model
     public function templates(): BelongsToMany
     {
         return $this->belongsToMany(Template::class);
+    }
+    
+    public function media(): HasMany
+    {
+        return $this->hasMany(Media::class);
     }
 }

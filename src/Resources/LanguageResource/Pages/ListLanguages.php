@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\LanguageResource\Pages;
+namespace Backstage\Resources\LanguageResource\Pages;
 
+use Backstage\Resources\LanguageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Vormkracht10\Backstage\Resources\LanguageResource;
 
 class ListLanguages extends ListRecords
 {

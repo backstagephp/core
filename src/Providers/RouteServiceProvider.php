@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Providers;
+namespace Backstage\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Router;

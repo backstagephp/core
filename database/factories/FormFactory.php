@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Factories;
+namespace Backstage\Database\Factories;
 
+use Backstage\Models\Form;
+use Backstage\Models\Site;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Vormkracht10\Backstage\Models\Form;
-use Vormkracht10\Backstage\Models\Site;
 
 class FormFactory extends Factory
 {

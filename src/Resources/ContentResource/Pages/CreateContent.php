@@ -1,15 +1,18 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
+namespace Backstage\Resources\ContentResource\Pages;
 
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Models\Tag;
+use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Resources\ContentResource;
 
 class CreateContent extends CreateRecord
 {
     protected static string $resource = ContentResource::class;
+
+    use CanMapDynamicFields;
 
     protected static ?string $slug = 'content/create/{type}';
 
@@ -35,8 +38,6 @@ class CreateContent extends CreateRecord
         unset($data['values']);
 
         unset($data['media']);
-
-        // Get
 
         return $data;
     }

@@ -1,20 +1,30 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
+use Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Fields\Models\Field;
 
+/**
+ * @property string $ulid
+ * @property string $slug
+ * @property string $name
+ * @property string $name_field
+ * @property string $icon
+ * @property string $component
+ */
 class Block extends Model
 {
+    use HasFields;
     use HasPackageFactory;
+    use HasUlids;
 
-    protected $primaryKey = 'slug';
+    protected $primaryKey = 'ulid';
 
     public $incrementing = false;
 
@@ -25,12 +35,6 @@ class Block extends Model
     protected function casts(): array
     {
         return [];
-    }
-
-    public function fields(): MorphMany
-    {
-        return $this->morphMany(Field::class, 'model', 'model_type', 'model_key', 'slug')
-            ->orderBy('position');
     }
 
     public function sites(): BelongsToMany

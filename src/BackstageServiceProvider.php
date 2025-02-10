@@ -1,7 +1,23 @@
 <?php
 
-namespace Vormkracht10\Backstage;
+namespace Backstage;
 
+use Backstage\Commands\BackstageSeedCommand;
+use Backstage\CustomFields\Builder;
+use Backstage\Events\FormSubmitted;
+use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Media\Resources\MediaResource;
+use Backstage\Models\Block;
+use Backstage\Models\Media;
+use Backstage\Models\Menu;
+use Backstage\Models\Site;
+use Backstage\Models\Type;
+use Backstage\Models\User;
+use Backstage\Observers\MenuObserver;
+use Backstage\Resources\ContentResource;
+use Backstage\Testing\TestsBackstage;
+use Backstage\View\Components\Blocks;
+use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
@@ -16,23 +32,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vormkracht10\Backstage\Commands\BackstageSeedCommand;
-use Vormkracht10\Backstage\Events\FormSubmitted;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Listeners\ExecuteFormActions;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Media;
-use Vormkracht10\Backstage\Models\Menu;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Template;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
-use Vormkracht10\Backstage\Observers\MenuObserver;
-use Vormkracht10\Backstage\Resources\ContentResource;
-use Vormkracht10\Backstage\Testing\TestsBackstage;
-use Vormkracht10\Backstage\View\Components\Blocks;
-use Vormkracht10\Backstage\View\Components\Page;
-use Vormkracht10\MediaPicker\Resources\MediaResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -43,6 +42,13 @@ class BackstageServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name(static::$name)
+            ->hasConfigFile([
+                'backstage/cms',
+                'backstage/media',
+            ])
+            ->hasMigrations($this->getMigrations())
+            ->hasTranslations()
+            ->hasViews(static::$viewNamespace)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
@@ -51,81 +57,63 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
                         $command->comment('Let\'s get started!');
 
-                        if ($command->confirm('Would you like us to install Backstage for you?', true)) {
-                            $command->comment('Lights, camera, action! Setting up for the show...');
+                        // if ($command->confirm('Would you like us to install Backstage for you?', true)) {
+                        $command->comment('Lights, camera, action! Setting up for the show...');
 
-                            $command->comment('Preparing stage...');
+                        $command->comment('Preparing stage...');
 
-                            $this->runFilamentFieldsCommand($command);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'backstage-migrations',
+                            '--force' => true,
+                        ]);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'backstage-migrations',
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'backstage-config',
+                            '--force' => true,
+                        ]);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'backstage-config',
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'redirects-migrations',
+                            '--force' => true,
+                        ]);
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'redirects-migrations',
-                                '--force' => true,
-                            ]);
+                        $this->runFilamentFieldsCommand($command);
 
-                            $this->writeMediaPickerConfig();
+                        $this->writeMediaPickerConfig();
 
-                            $command->callSilently('vendor:publish', [
-                                '--tag' => 'media-picker-migrations',
-                                '--force' => true,
-                            ]);
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'media-picker-migrations',
+                            '--force' => true,
+                        ]);
 
-                            $command->comment('Clean the decor...');
-                            $command->callSilently('migrate:fresh', [
-                                '--force' => true,
-                            ]);
+                        $command->comment('Clean the decor...');
+                        $command->callSilently('migrate:fresh', [
+                            '--force' => true,
+                        ]);
 
-                            $command->comment('Hanging up lights...');
-                            $command->callSilently('backstage:seed', [
-                                '--force' => true,
-                            ]);
+                        $command->comment('Hanging up lights...');
+                        $command->callSilently('backstage:seed', [
+                            '--force' => true,
+                        ]);
 
-                            $command->comment('Plugin wires...');
-                            $command->callSilently('filament:assets');
+                        $command->comment('Plugin wires...');
+                        $command->callSilently('filament:assets');
 
-                            $command->comment('Turn on the lights...');
-                            $key = 'AUTH_MODEL';
-                            $value = '\Vormkracht10\Backstage\Models\User';
-                            $path = app()->environmentFilePath();
-                            file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
+                        $command->comment('Turn on the lights...');
+                        $key = 'AUTH_MODEL';
+                        $value = '\Backstage\Models\User';
+                        $path = app()->environmentFilePath();
+                        file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
-                            $command->comment('Raise the curtain...');
-                        }
+                        $command->comment('Raise the curtain...');
+                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
                         $command->info('The stage is cleared for a fresh start');
                         $command->comment('You can now go on stage and start creating!');
                     })
-                    ->askToStarRepoOnGitHub('vormkracht10/backstage');
+                    ->askToStarRepoOnGitHub('backstage/cms');
             });
-
-        $configFileName = $package->shortName();
-
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
-            $package->hasConfigFile();
-        }
-
-        if (file_exists($package->basePath('/../database/migrations'))) {
-            $package->hasMigrations($this->getMigrations());
-        }
-
-        if (file_exists($package->basePath('/../resources/lang'))) {
-            $package->hasTranslations();
-        }
-
-        if (file_exists($package->basePath('/../resources/views'))) {
-            $package->hasViews(static::$viewNamespace);
-        }
     }
 
     public function packageRegistered(): void {}
@@ -159,19 +147,19 @@ class BackstageServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBackstage);
 
         Relation::enforceMorphMap([
-            'block' => 'Vormkracht10\Backstage\Models\Block',
-            'content' => 'Vormkracht10\Backstage\Models\Content',
-            'domain' => 'Vormkracht10\Backstage\Models\Domain',
-            'field' => 'Vormkracht10\Fields\Models\Field',
-            'form' => 'Vormkracht10\Backstage\Models\Form',
-            'language' => 'Vormkracht10\Backstage\Models\Language',
-            'menu' => 'Vormkracht10\Backstage\Models\Menu',
-            'setting' => 'Vormkracht10\Backstage\Models\Setting',
-            'site' => 'Vormkracht10\Backstage\Models\Site',
-            'tag' => 'Vormkracht10\Backstage\Models\Tag',
-            'type' => 'Vormkracht10\Backstage\Models\Type',
-            'user' => 'Vormkracht10\Backstage\Models\User',
-            'template' => 'Vormkracht10\Backstage\Models\Template',
+            'block' => 'Backstage\Models\Block',
+            'content' => 'Backstage\Models\Content',
+            'domain' => 'Backstage\Models\Domain',
+            'field' => 'Backstage\Fields\Models\Field',
+            'form' => 'Backstage\Models\Form',
+            'language' => 'Backstage\Models\Language',
+            'menu' => 'Backstage\Models\Menu',
+            'setting' => 'Backstage\Models\Setting',
+            'site' => 'Backstage\Models\Site',
+            'tag' => 'Backstage\Models\Tag',
+            'type' => 'Backstage\Models\Type',
+            'template' => 'Backstage\Models\Template',
+            'user' => 'Backstage\Models\User',
         ]);
 
         Route::bind('type', function (string $slug) {
@@ -210,7 +198,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'vormkracht10/backstage';
+        return 'backstage/cms';
     }
 
     /**
@@ -268,28 +256,29 @@ class BackstageServiceProvider extends PackageServiceProvider
             '01_create_languages_table',
             '02_create_sites_table',
             '03_create_types_table',
-            '05_create_settings_table',
-            '06_create_content_table',
-            '07_create_templates_table',
-            '08_create_content_field_values_table',
-            '09_create_blocks_table',
-            '10_create_menus_table',
-            '11_create_menu_items_table',
-            '12_create_domains_table',
-            '13_create_forms_table',
-            '14_create_form_actions_table',
-            '15_create_form_submissions_table',
-            '16_create_form_submission_values_table',
-            '17_create_tags_tables',
-            '18_create_notifications_table',
-            '19_add_columns_to_users_table',
-            '20_create_block_template_table',
+            '04_create_settings_table',
+            '05_create_content_table',
+            '06_create_templates_table',
+            '07_create_content_field_values_table',
+            '08_create_blocks_table',
+            '09_create_menus_table',
+            '10_create_menu_items_table',
+            '11_create_domains_table',
+            '12_create_forms_table',
+            '13_create_form_actions_table',
+            '14_create_form_submissions_table',
+            '15_create_form_submission_values_table',
+            '16_create_tags_tables',
+            '17_create_notifications_table',
+            '18_add_columns_to_users_table',
+            '19_add_ulid_column_to_blocks_table',
+            '20_modify_primary_keys_for_blocks_table',
         ];
     }
 
     private function generateMediaPickerConfig(): array
     {
-        return [
+        $config = [
             'accepted_file_types' => [
                 'image/jpeg',
                 'image/png',
@@ -307,7 +296,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'should_register_navigation' => true,
             'visibility' => 'public',
             'is_tenant_aware' => true,
-            'tenant_ownership_relationship_name' => 'tenant',
+            'tenant_ownership_relationship_name' => 'site',
             'tenant_relationship' => 'site',
             'tenant_model' => Site::class,
             'model' => Media::class,
@@ -323,26 +312,45 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'resource' => MediaResource::class,
             ],
         ];
+
+        config(['media-picker' => $config]);
+
+        return $config;
     }
 
     private function runFilamentFieldsCommand(InstallCommand $command): void
     {
         $command->callSilently('vendor:publish', [
-            '--tag' => 'filament-fields-config',
+            '--tag' => 'fields-config',
             '--force' => true,
         ]);
 
         $this->writeFilamentFieldsConfig();
 
         $command->callSilently('vendor:publish', [
-            '--tag' => 'filament-fields-migrations',
+            '--tag' => 'fields-migrations',
             '--force' => true,
         ]);
+
+        $migrationsPath = database_path('migrations');
+
+        // Specifically look for the fields migration file
+        $fieldsMigrationFiles = glob($migrationsPath . '/*_create_fields_table.php');
+
+        // Get timestamp from create_sites_table migration
+        $sitesMigrationFiles = glob($migrationsPath . '/*_create_sites_table.php');
+        $date = substr(basename($sitesMigrationFiles[0]), 0, 17);
+
+        if (! empty($fieldsMigrationFiles)) {
+            $oldName = $fieldsMigrationFiles[0];
+            $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
+            rename($oldName, $newName);
+        }
     }
 
     private function writeFilamentFieldsConfig(?string $path = null): void
     {
-        $path ??= config_path('fields.php');
+        $path ??= config_path('backstage/fields.php');
 
         // Ensure directory exists
         $directory = dirname($path);
@@ -352,8 +360,9 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Generate the config file content
         $configContent = "<?php\n\n";
-        $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
-        $configContent .= "use Vormkracht10\Backstage\Fields\Builder;\n";
+        $configContent .= "use Backstage\Models\Site;\n";
+        $configContent .= "use Backstage\CustomFields\Builder;\n";
+        $configContent .= "use Backstage\Resources\ContentResource;\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateFilamentFieldsConfig()) . ";\n";
@@ -363,25 +372,32 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     private function generateFilamentFieldsConfig(): array
     {
-        return [
-            'is_tenant_aware' => true,
-            'tenant_ownership_relationship_name' => 'tenant',
-            'tenant_relationship' => 'site',
-            'tenant_model' => Site::class,
+        $config = [
 
-            'fields' => [
+            'tenancy' => [
+                'is_tenant_aware' => false,
+                'relationship' => 'tenant',
+                'key' => 'id',
+                // 'model' => \App\Models\Tenant::class,
+            ],
+
+            'custom_fields' => [
                 Builder::class,
             ],
 
-            'resources' => [
+            'selectable_resources' => [
                 ContentResource::class,
             ],
         ];
+
+        config(['fields' => $config]);
+
+        return $config;
     }
 
     private function writeMediaPickerConfig(?string $path = null): void
     {
-        $path ??= config_path('media-picker.php');
+        $path ??= config_path('backstage/media.php');
 
         // Ensure directory exists
         $directory = dirname($path);
@@ -391,10 +407,10 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Generate the config file content
         $configContent = "<?php\n\n";
-        $configContent .= "use Vormkracht10\Backstage\Models\Site;\n";
-        $configContent .= "use Vormkracht10\Backstage\Models\User;\n";
-        $configContent .= "use Vormkracht10\MediaPicker\Models\Media;\n\n";
-        $configContent .= "use Vormkracht10\MediaPicker\Resources\MediaResource;\n\n";
+        $configContent .= "use Backstage\Models\Site;\n";
+        $configContent .= "use Backstage\Models\User;\n";
+        $configContent .= "use Backstage\Models\Media;\n\n";
+        $configContent .= "use Backstage\Media\Resources\MediaResource;\n\n";
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateMediaPickerConfig()) . ";\n";

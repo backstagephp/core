@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\View\Components;
+namespace Backstage\View\Components;
 
+use Backstage\Models\Content;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\Component;
-use Vormkracht10\Backstage\Models\Content;
 
 class Blocks extends Component
 {

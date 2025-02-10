@@ -1,10 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\TagResource\Pages;
+namespace Backstage\Resources\TagResource\Pages;
 
+use Backstage\Resources\TagResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Vormkracht10\Backstage\Resources\TagResource;
 
 class EditTag extends EditRecord
 {

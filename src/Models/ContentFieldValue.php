@@ -1,16 +1,16 @@
 <?php
 
-namespace Vormkracht10\Backstage\Models;
+namespace Backstage\Models;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
-use Vormkracht10\Backstage\Shared\HasPackageFactory;
-use Vormkracht10\Fields\Models\Field;
 
 /**
- * Vormkracht10\Backstage\Models\ContentFieldValue
+ * Backstage\Models\ContentFieldValue
  *
  * @property string $value
  */

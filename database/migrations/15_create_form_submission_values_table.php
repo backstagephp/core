@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('form_submission_values', function (Blueprint $table) {
             $table->ulid()->primary();
 
-            $table->foreignUlid('submission_ulid')->nullable()->constrained(table: 'form_submissions', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignUlid('field_ulid')->nullable()->constrained(table: 'fields', column: 'ulid')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('submission_ulid')->nullable()->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('field_ulid')->nullable()->cascadeOnUpdate()->nullOnDelete();
 
             $table->longText('value');
 

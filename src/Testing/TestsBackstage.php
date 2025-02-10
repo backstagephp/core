@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Testing;
+namespace Backstage\Testing;
 
 use Livewire\Features\SupportTesting\Testable;
 

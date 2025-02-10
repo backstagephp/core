@@ -1,21 +1,24 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
+namespace Backstage\Resources\ContentResource\Pages;
 
+use Backstage\Actions\Content\DuplicateContentAction;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Models\Language;
+use Backstage\Models\Tag;
+use Backstage\Resources\ContentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Locale;
-use Vormkracht10\Backstage\Actions\Content\DuplicateContentAction;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Resources\ContentResource;
 
 class EditContent extends EditRecord
 {
     protected static string $resource = ContentResource::class;
+
+    use CanMapDynamicFields;
 
     protected function getHeaderActions(): array
     {
@@ -33,14 +36,14 @@ class EditContent extends EditRecord
                                 $languages->map(function ($language) use ($countryCode) {
                                     return Actions\Action::make($language->code . '-' . $countryCode)
                                         ->label($language->name)
-                                        ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
+                                        ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
                                         ->url('#');
                                 })
                                     ->toArray()
                             )
                                 ->label(Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide')
                                 ->color('gray')
-                                ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
+                                ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
                                 ->iconPosition(IconPosition::After)
                                 ->grouped();
                         })->toArray() :
@@ -48,7 +51,7 @@ class EditContent extends EditRecord
                     Language::orderBy('name')->get()->map(function (Language $language) {
                         return Actions\Action::make($language->code)
                             ->label($language->name)
-                            ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
+                            ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
                             ->url('#');
                     })
                         ->toArray()
@@ -71,6 +74,10 @@ class EditContent extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
+
+            if (! $value->field) {
+                return [];
+            }
 
             $value->value = json_decode($value->value, true) ?? $value->value;
 
@@ -122,6 +129,7 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $data = parent::mutateFormDataBeforeSave($data);
 
         unset($data['tags']);
         unset($data['values']);

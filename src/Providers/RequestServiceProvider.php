@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Providers;
+namespace Backstage\Providers;
 
+use Backstage\Models\Content;
+use Backstage\Models\Domain;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Domain;
 
 class RequestServiceProvider extends ServiceProvider
 {

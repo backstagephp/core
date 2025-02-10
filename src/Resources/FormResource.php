@@ -1,7 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Form as FormModel;
+use Backstage\Resources\FormResource\Pages;
+use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -13,10 +17,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Form as FormModel;
-use Vormkracht10\Backstage\Resources\FormResource\Pages;
-use Vormkracht10\Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
-use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class FormResource extends Resource
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Models\Form;
+use Backstage\Models\FormAction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Form;
-use Vormkracht10\Backstage\Models\FormAction;
-use Vormkracht10\Fields\Models\Field;
 
 class FormSeeder extends Seeder
 {

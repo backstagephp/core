@@ -1,12 +1,12 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Factories;
+namespace Backstage\Database\Factories;
 
+use Backstage\Models\Content;
+use Backstage\Models\Language;
+use Backstage\Models\Site;
+use Backstage\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Type;
 
 class ContentFactory extends Factory
 {

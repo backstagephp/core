@@ -1,10 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\TemplateResource\Pages;
+namespace Backstage\Resources\TemplateResource\Pages;
 
+use Backstage\Resources\TemplateResource;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Resources\TemplateResource;
 
 class CreateTemplate extends CreateRecord
 {

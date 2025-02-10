@@ -1,9 +1,10 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Type;
+use Backstage\Resources\TypeResource\Pages;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -13,9 +14,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\TypeResource\Pages;
-use Vormkracht10\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class TypeResource extends Resource
 {
@@ -86,7 +84,7 @@ class TypeResource extends Resource
             ->columns([
                 IconColumn::make('icon')
                     ->label('')
-                    ->width(0)
+                    ->width(1)
                     ->icon(fn (string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()

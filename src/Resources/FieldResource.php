@@ -1,14 +1,14 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Resources\FieldResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Resources\FieldResource\Pages;
-use Vormkracht10\Fields\Models\Field;
 
 class FieldResource extends Resource
 {

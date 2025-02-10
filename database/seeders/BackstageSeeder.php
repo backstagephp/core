@@ -1,21 +1,20 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Seeders;
+namespace Backstage\Database\Seeders;
 
+use Backstage\Fields\Models\Field;
+use Backstage\Models\Block;
+use Backstage\Models\Content;
+use Backstage\Models\ContentFieldValue;
+use Backstage\Models\Domain;
+use Backstage\Models\Form;
+use Backstage\Models\FormAction;
+use Backstage\Models\Language;
+use Backstage\Models\Site;
+use Backstage\Models\Type;
+use Backstage\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\ContentFieldValue;
-use Vormkracht10\Backstage\Models\Domain;
-use Vormkracht10\Backstage\Models\Form;
-use Vormkracht10\Backstage\Models\FormAction;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Template;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Models\User;
-use Vormkracht10\Fields\Models\Field;
 
 class BackstageSeeder extends Seeder
 {
@@ -113,6 +112,7 @@ class BackstageSeeder extends Seeder
             'slug' => Str::slug($name),
             'icon' => 'document-text',
             'name_field' => null,
+            'ulid' => (string) Str::ulid(),
         ])
             ->has(Field::factory(1, [
                 'name' => 'Body',
@@ -128,6 +128,7 @@ class BackstageSeeder extends Seeder
             'icon' => 'document-text',
             'name_field' => null,
             'component' => 'form',
+            'ulid' => (string) Str::ulid(),
         ])
             ->has(Field::factory(1, [
                 'name' => 'Slug',

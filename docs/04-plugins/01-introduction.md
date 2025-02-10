@@ -4,5 +4,5 @@ To help you get started quickly, we provide a set of plugins and packages that w
 
 ## List of plugins
 
--   [Uploadcare Field](https://github.com/vormkracht10/backstage-uploadcare-field)
--   [Media Field](https://github.com/vormkracht10/backstage-media-field)
+-   [Media Field](https://github.com/backstagephp/backstage-media-field)
+-   [Uploadcare Field](https://github.com/backstagephp/uploadcare-field)

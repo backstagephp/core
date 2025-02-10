@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->ulid()->primary();
             $table->string('slug')->unique();
-            $table->foreignUlid('site_ulid')->nullable()->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('author_id')->nullable()->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('site_ulid')->nullable()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('author_id')->nullable()->cascadeOnUpdate()->nullOnDelete();
             $table->char('language_code', 5)->nullable();
             $table->string('name');
             $table->json('values')->nullable();

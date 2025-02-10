@@ -1,7 +1,9 @@
 <?php
 
-namespace Vormkracht10\Backstage\Mail;
+namespace Backstage\Mail;
 
+use Backstage\Models\FormAction;
+use Backstage\Models\FormSubmission;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -9,8 +11,6 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Vormkracht10\Backstage\Models\FormAction;
-use Vormkracht10\Backstage\Models\FormSubmission;
 
 class FormActionExecute extends Mailable implements ShouldQueue
 {

@@ -1,13 +1,26 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources;
+namespace Backstage\Resources;
 
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Fields\Fields;
+use Backstage\Models\Content;
+use Backstage\Models\Language;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
@@ -27,29 +40,18 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Locale;
-use Vormkracht10\Backstage\Fields\Builder;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Language;
-use Vormkracht10\Backstage\Models\Tag;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource\Pages;
-use Vormkracht10\Backstage\View\Components\Filament\Badge;
-use Vormkracht10\Backstage\View\Components\Filament\BadgeableColumn;
-use Vormkracht10\Fields\Fields\Checkbox;
-use Vormkracht10\Fields\Fields\CheckboxList;
-use Vormkracht10\Fields\Fields\KeyValue;
-use Vormkracht10\Fields\Fields\RichEditor;
-use Vormkracht10\Fields\Fields\Select;
-use Vormkracht10\Fields\Fields\Text;
-use Vormkracht10\Fields\Fields\Textarea;
-use Vormkracht10\Fields\Models\Field;
-use Vormkracht10\MediaPicker\Components\MediaPicker;
 
 class ContentResource extends Resource
 {
+    use CanMapDynamicFields {
+        resolveFormFields as private traitResolveFormFields;
+        resolveFieldInput as private traitResolveFieldInput;
+    }
+
     protected static ?string $model = Content::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
@@ -139,17 +141,16 @@ class ContentResource extends Resource
                             ->preload()
                             ->columnSpan(['xl' => 1])
                             ->rules([
-                                Rule::exists('content', 'ulid')->where('type_slug', self::$type->slug)
+                                Rule::exists('content', 'ulid')
                                     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                             ])
                             ->relationship(
                                 name: 'parent',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
-                                    $query->where('type_slug', self::$type->slug)
-                                        ->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
-                                            $query->where('language_code', $languageCode);
-                                        });
+                                    $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                        $query->where('language_code', $languageCode);
+                                    });
                                 },
                                 ignoreRecord: true,
                             ),
@@ -229,7 +230,7 @@ class ContentResource extends Resource
                                                     })
                                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
@@ -265,39 +266,28 @@ class ContentResource extends Resource
             ]);
     }
 
+    private static function resolveFormFields(mixed $record = null): array
+    {
+        $instance = new self;
+
+        return $instance->traitResolveFormFields($record);
+    }
+
+    private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null, bool $isNested = false): ?object
+    {
+        $instance = new self;
+
+        return $instance->traitResolveFieldInput($field, $customFields, $record, $isNested);
+    }
+
     public static function getTypeInputs()
     {
-
-        return self::$type->fields->map(function (Field $field) {
-            $fieldName = 'values.' . $field->ulid;
-
-            $field->input = match ($field->field_type) {
-                'text' => Text::make($fieldName, $field)
-                    ->label($field->name),
-                'checkbox' => Checkbox::make($fieldName, $field)
-                    ->label($field->name),
-                'checkbox-list' => CheckboxList::make($fieldName, $field)
-                    ->label($field->name)
-                    ->options($field->config['options']),
-                'rich-editor' => RichEditor::make($fieldName, $field)
-                    ->label($field->name),
-                'textarea' => Textarea::make($fieldName, $field)
-                    ->label($field->name),
-                'select' => Select::make($fieldName, $field)
-                    ->label($field->name),
-                'builder' => Builder::make($fieldName, $field)
-                    ->label($field->name),
-                'media' => MediaPicker::make($fieldName)
-                    ->label($field->name),
-                'key-value' => KeyValue::make($fieldName, $field),
-                default => Text::make($fieldName, $field)
-                    ->label($field->name),
-            };
-
-            return $field;
-        })
+        return collect(self::$type->fields)
             ->filter(fn ($field) => self::$type->name_field !== $field->slug)
-            ->map(fn ($field) => $field->input)
+            ->map(function ($field) {
+                return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
+            })
+            ->filter()
             ->toArray();
     }
 
@@ -337,6 +327,7 @@ class ContentResource extends Resource
                     ->alignEnd()
                     ->sortable(),
             ])
+            ->modifyQueryUsing(fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type'))
             ->defaultSort('edited_at', 'desc')
             ->filters([
                 Filter::make('locale')
@@ -354,7 +345,7 @@ class ContentResource extends Resource
                                     })
                                     ->mapWithKeys(fn ($languages, $countryCode) => [
                                         $countryCode => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/vormkracht10/backstage/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($language->country_code ? Locale::getDisplayRegion('-' . $language->country_code, app()->getLocale()) : 'Worldwide') . ')',
+                                            $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($countryCode ? Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) : 'Worldwide') . ')',
                                         ])->toArray(),
                                     ])
                             )
@@ -441,10 +432,10 @@ class ContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContent::route('/'),
-            'create' => Pages\CreateContent::route('/create/{type}'),
-            'edit' => Pages\EditContent::route('/{record}/edit'),
-            'meta_tags' => Pages\ListContentMetaTags::route('/meta-tags'),
+            'index' => ListContent::route('/'),
+            'create' => CreateContent::route('/create/{type}'),
+            'edit' => EditContent::route('/{record}/edit'),
+            'meta_tags' => ListContentMetaTags::route('/meta-tags'),
         ];
     }
 }

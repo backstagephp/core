@@ -1,16 +1,16 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\ContentResource\Pages;
+namespace Backstage\Resources\ContentResource\Pages;
 
+use Backstage\Models\Content;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Vormkracht10\Backstage\Models\Content;
-use Vormkracht10\Backstage\Models\Type;
-use Vormkracht10\Backstage\Resources\ContentResource;
 
 class ListContentMetaTags extends ListRecords
 {

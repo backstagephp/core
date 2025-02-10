@@ -1,7 +1,8 @@
 <?php
 
-namespace Vormkracht10\Backstage\Tests;
+namespace Backstage\Tests;
 
+use Backstage\BackstageServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
@@ -17,7 +18,6 @@ use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use Vormkracht10\Backstage\BackstageServiceProvider;
 
 #[WithMigration]
 class TestCase extends Orchestra
@@ -45,17 +45,30 @@ class TestCase extends Orchestra
 
     public function defineEnvironment($app)
     {
+
         $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
 
         foreach (glob(__DIR__ . '/../config/*.php') as $filename) {
             $app['config']->set(pathinfo($filename)['filename'], require $filename);
         }
+
     }
 
     public function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->artisan('migrate:fresh');
+        // $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+    }
 
+    protected function refreshApplication()
+    {
+        parent::refreshApplication();
+
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
     }
 
     public function getEnvironmentSetUp($app)

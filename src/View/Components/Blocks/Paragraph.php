@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\View\Components\Blocks;
+namespace Backstage\View\Components\Blocks;
 
 use Illuminate\View\Component;
 
