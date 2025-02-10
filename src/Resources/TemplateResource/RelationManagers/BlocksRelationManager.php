@@ -2,6 +2,8 @@
 
 namespace Backstage\Resources\TemplateResource\RelationManagers;
 
+use Backstage\Models\Block;
+use Fields\Concerns\CanMapDynamicFields;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -10,8 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Backstage\Models\Block;
-use Fields\Concerns\CanMapDynamicFields;
 
 class BlocksRelationManager extends RelationManager
 {
