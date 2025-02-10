@@ -2,8 +2,10 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Fields\Builder;
 use Backstage\Models\Template;
 use Backstage\Resources\TemplateResource\Pages;
+use Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -11,8 +13,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Backstage\Fields\Builder;
-use Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
 
 class TemplateResource extends Resource
 {
