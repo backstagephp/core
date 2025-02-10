@@ -1,6 +1,6 @@
 <?php
 
-namespace Vormkracht10\Backstage\Resources\TemplateResource\RelationManagers;
+namespace Backstage\Resources\TemplateResource\RelationManagers;
 
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
@@ -10,8 +10,8 @@ use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Vormkracht10\Backstage\Models\Block;
-use Vormkracht10\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Models\Block;
+use Fields\Concerns\CanMapDynamicFields;
 
 class BlocksRelationManager extends RelationManager
 {

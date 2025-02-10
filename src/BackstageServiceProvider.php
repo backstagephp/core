@@ -313,7 +313,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['media-picker' => $config]);
+        config(['backstage.media' => $config]);
 
         return $config;
     }
@@ -390,7 +390,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['fields' => $config]);
+        config(['backstage.fields' => $config]);
 
         return $config;
     }

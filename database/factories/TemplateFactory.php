@@ -1,11 +1,11 @@
 <?php
 
-namespace Vormkracht10\Backstage\Database\Factories;
+namespace Backstage\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Vormkracht10\Backstage\Models\Site;
-use Vormkracht10\Backstage\Models\Template;
+use Backstage\Models\Site;
+use Backstage\Models\Template;
 
 class TemplateFactory extends Factory
 {
