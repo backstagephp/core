@@ -158,6 +158,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
+            'template' => 'Backstage\Models\Template',
             'user' => 'Backstage\Models\User',
         ]);
 
@@ -167,6 +168,10 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Route::bind('block', function (string $slug) {
             return Block::where('slug', $slug)->firstOrFail();
+        });
+
+        Route::bind('template', function (string $slug) {
+            return Template::where('slug', $slug)->firstOrFail();
         });
 
         Select::configureUsing(function (Select $select): void {
@@ -308,7 +313,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['media-picker' => $config]);
+        config(['backstage.media' => $config]);
 
         return $config;
     }
@@ -385,7 +390,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['fields' => $config]);
+        config(['backstage.fields' => $config]);
 
         return $config;
     }
