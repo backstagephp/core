@@ -2,20 +2,20 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
+use Backstage\Resources\TypeResource\Pages;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Backstage\Resources\TypeResource\Pages;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class TypeResource extends Resource
 {
