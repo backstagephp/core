@@ -87,7 +87,8 @@ class Backstage
         ];
 
         foreach ($values as $key => $value) {
-            $params[$fields[$key] ?? $key] = $value;
+            $fieldKey = Str::camel($fields[$key] ?? $key);
+            $params[$fieldKey] = $value;
         }
 
         return $params;
