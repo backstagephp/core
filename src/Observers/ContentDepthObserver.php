@@ -10,7 +10,8 @@ class ContentDepthObserver
     {
         if ($content->isDirty('parent_ulid')) {
             dispatch(function () use ($content) {
-                $content->depth = Content::tree()->depthFirst()->get()->where('ulid', $content->parent_ulid)->first()->depth ?: 0;
+                $parentContent = Content::tree()->depthFirst()->where('ulid', $content->parent_ulid)->first();
+                $content->depth = $parentContent ? $parentContent->depth : 0;
                 $content->saveQuietly();
             });
         }
