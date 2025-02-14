@@ -16,9 +16,9 @@ use Locale;
 
 class EditContent extends EditRecord
 {
-    protected static string $resource = ContentResource::class;
-
     use CanMapDynamicFields;
+
+    protected static string $resource = ContentResource::class;
 
     protected function getHeaderActions(): array
     {

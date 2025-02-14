@@ -12,6 +12,7 @@ use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
 use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Facades\Filament;
@@ -30,6 +31,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -55,6 +58,8 @@ class ContentResource extends Resource
     }
 
     protected static ?string $model = Content::class;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
@@ -340,7 +345,9 @@ class ContentResource extends Resource
                     ->alignEnd()
                     ->sortable(),
             ])
-            ->modifyQueryUsing(fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type'))
+            ->modifyQueryUsing(
+                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type')
+            )
             ->defaultSort('edited_at', 'desc')
             ->filters([
                 Filter::make('locale')
@@ -419,11 +426,11 @@ class ContentResource extends Resource
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
                         return $query
                             ->when(
-                                $data['date_from'],
+                                $data['date_from'] ?? null,
                                 fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
                             )
                             ->when(
-                                $data['date_until'],
+                                $data['date_until'] ?? null,
                                 fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
                             );
                     }),
@@ -456,6 +463,15 @@ class ContentResource extends Resource
             'create' => CreateContent::route('/create/{type}'),
             'edit' => EditContent::route('/{record}/edit'),
             'meta_tags' => ListContentMetaTags::route('/meta-tags'),
+            'children' => ManageChildrenContent::route('/{record}/children'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            EditContent::class,
+            ManageChildrenContent::class,
+        ]);
     }
 }
