@@ -2,6 +2,11 @@
 
 All notable changes to `backstage` will be documented in this file.
 
+## v0.0.12 - 2025-02-14
+
+- Changed debounce to onBlur
+- Form actions with mail, template and s3 file upload
+
 ## v0.0.11 - 2025-02-14
 
 - Repeater now uses slugs instead of name as key.
