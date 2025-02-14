@@ -66,11 +66,7 @@ class BlockResource extends Resource
                                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Block $record) {
                                         $currentSlug = $get('slug');
 
-                                        if ($record && $record->slug) {
-                                            return;
-                                        }
-
-                                        if (! $currentSlug || $currentSlug === Str::slug($old)) {
+                                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
                                             $set('slug', Str::slug($state));
                                         }
                                     }),

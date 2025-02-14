@@ -58,11 +58,7 @@ class TypeResource extends Resource
 
                                 $currentSlug = $get('slug');
 
-                                if ($record && $record->slug) {
-                                    return;
-                                }
-
-                                if (! $currentSlug || $currentSlug === Str::slug($old)) {
+                                if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
                                     $set('slug', Str::slug($state));
                                 }
                             }),
@@ -72,7 +68,7 @@ class TypeResource extends Resource
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->rules([
-                                fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
                                     if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
                                         $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                                     }
@@ -106,7 +102,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(1)
-                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

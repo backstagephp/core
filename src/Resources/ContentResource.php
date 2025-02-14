@@ -139,11 +139,7 @@ class ContentResource extends Resource
 
                         $currentSlug = $get('slug');
 
-                        if ($record && $record->slug) {
-                            return;
-                        }
-
-                        if (! $currentSlug || $currentSlug === Str::slug($old)) {
+                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
                             $set('slug', Str::slug($state));
                         }
                     }),
