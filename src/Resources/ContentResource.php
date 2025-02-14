@@ -130,12 +130,17 @@ class ContentResource extends Resource
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(debounce: 250)
-                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-                        $set('slug', Str::slug($state));
 
                         if (blank($get('path'))) {
                             $set('path', Str::slug($state));
+                        }
+
+                        $currentSlug = $get('slug');
+
+                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
+                            $set('slug', Str::slug($state));
                         }
                     }),
 

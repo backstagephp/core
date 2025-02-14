@@ -12,6 +12,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -62,8 +63,12 @@ class BlockResource extends Resource
                                     ->columnSpanFull()
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('slug', Str::slug($state));
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Block $record) {
+                                        $currentSlug = $get('slug');
+
+                                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
+                                            $set('slug', Str::slug($state));
+                                        }
                                     }),
                                 ToggleButtons::make('icon')
                                     ->columnSpanFull()
