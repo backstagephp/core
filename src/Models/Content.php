@@ -97,13 +97,19 @@ class Content extends Model
      */
     protected function url(): Attribute
     {
+        if (! $this->public) {
+            return Attribute::make(
+                get: fn() => null,
+            );
+        }
+
         $url = rtrim($this->pathPrefix . $this->path, '/');
         if ($this->site->trailing_slash) {
             $url .= '/';
         }
 
         return Attribute::make(
-            get: fn () => $url,
+            get: fn() => $url,
         );
     }
 
@@ -113,7 +119,7 @@ class Content extends Model
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -160,7 +166,7 @@ class Content extends Model
         $url .= '/';
 
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $url,
+            get: fn(?string $value, array $attributes) => $url,
         );
     }
 
