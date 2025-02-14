@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -63,6 +64,18 @@ class FormActionExecute extends Mailable implements ShouldQueue
      */
     public function attachments(): array
     {
-        return [];
+        $attachments = [];
+        foreach ($this->formSubmission->values as $value) {
+            if ($value->field->field_type == 'file-upload') {
+                $file = json_decode($value->value, true) ?? $value->value;
+                if (isset($file['path'])) {
+                    $attachments[] = Attachment::fromStorage($file['path']);
+                }
+                else {
+                    $attachments[] = Attachment::fromStorage($value->value);
+                }
+            }
+        }
+        return $attachments;
     }
 }

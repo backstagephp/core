@@ -6,6 +6,7 @@ use Backstage\Events\FormSubmitted;
 use Backstage\Models\Content;
 use Backstage\Models\Form;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class FormController
 {
@@ -26,6 +27,7 @@ class FormController
 
         $content = Content::where('ulid', $request->input('content_ulid'))->first();
 
+
         $submission = $form->submissions()->create([
             'site_ulid' => $content?->site_ulid ?? null,
             'language_code' => $content?->language_code ?? null,
@@ -39,9 +41,19 @@ class FormController
 
         $submission->values()->createMany(
             $form->fields->map(function ($field) use ($request) {
+                $value = $request->input($field->slug);
+                if ($field->field_type == 'file-upload') {
+                    $result = $request->file($field->slug)->store();
+                    $value = json_encode([
+                        'path' => $result,
+                        'name' => $request->file($field->slug)->getClientOriginalName(),
+                        'size' => $request->file($field->slug)->getSize(),
+                        'type' => $request->file($field->slug)->getMimeType(),
+                    ]);
+                }
                 return [
                     'field_ulid' => $field->ulid,
-                    'value' => $request->input($field->slug),
+                    'value' => $value,
                 ];
             })->toArray()
         );

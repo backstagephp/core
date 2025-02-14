@@ -85,6 +85,10 @@ class ActionsRelationManager extends RelationManager
                         Section::make(__('Configuration'))
                             ->columns(3)
                             ->schema([
+                                TextInput::make('config.template')
+                                    ->label(__('Template'))
+                                    ->placeholder('mails.forms.contact')
+                                    ->columnSpan(6),
                                 TextInput::make('config.subject')
                                     ->label(__('Subject'))
                                     ->columnSpan(6),
