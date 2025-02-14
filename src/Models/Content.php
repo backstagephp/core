@@ -23,7 +23,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * Backstage\Models\Content
  *
  * @property string $path
- * @property string $url
+ * @property string|null $url
  * @property string $language_code
  * @property string $type_slug
  */
