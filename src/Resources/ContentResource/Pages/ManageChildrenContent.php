@@ -16,7 +16,7 @@ class ManageChildrenContent extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
         $recordTitle = $this->getRecordTitle();
 
