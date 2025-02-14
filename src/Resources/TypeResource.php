@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -52,9 +53,14 @@ class TypeResource extends Resource
                         TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                $set('slug', Str::slug($state));
+                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Type $record) {
                                 $set('name_plural', Str::plural($state));
+
+                                $currentSlug = $get('slug');
+
+                                if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
+                                    $set('slug', Str::slug($state));
+                                }
                             }),
                         TextInput::make('name_plural')
                             ->required(),

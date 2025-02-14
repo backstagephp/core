@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
+/**
+ * @property string $ulid
+ * @property string $values
+ * @property string $language_code
+ * @property string $site_ulid
+ */
 class Setting extends Model
 {
     use HasFields;
@@ -47,10 +53,10 @@ class Setting extends Model
 
             return collect($this->values)->mapWithKeys(function ($value, $ulid) {
                 $slug = $this->fields->where('ulid', $ulid)->first()?->slug ?? $ulid;
+
                 return [$slug => $value];
             })
-            ->toArray();
-
+                ->toArray();
         }
 
         return $this->values[$this->fields->where('slug', $key)->first()?->ulid] ?? null;
