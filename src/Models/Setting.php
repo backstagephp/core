@@ -47,9 +47,10 @@ class Setting extends Model
 
             return collect($this->values)->mapWithKeys(function ($value, $ulid) {
                 $slug = $this->fields->where('ulid', $ulid)->first()?->slug ?? $ulid;
+
                 return [$slug => $value];
             })
-            ->toArray();
+                ->toArray();
 
         }
 
