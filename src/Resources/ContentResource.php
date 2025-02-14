@@ -25,6 +25,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -82,7 +83,7 @@ class ContentResource extends Resource
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem('Content')
-                ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
+                ->isActiveWhen(fn(NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
                     'tableFilters[type_slug][values]' => [$type->slug],
@@ -95,7 +96,7 @@ class ContentResource extends Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
+                ->isActiveWhen(fn() => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -105,7 +106,7 @@ class ContentResource extends Resource
                 ->label('Meta Tags')
                 ->icon('heroicon-o-code-bracket-square')
                 ->group('SEO')
-                ->isActiveWhen(fn (NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
+                ->isActiveWhen(fn(NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
                 ->url(route('filament.backstage.resources.content.meta_tags', ['tenant' => Filament::getTenant()])),
         ];
     }
@@ -160,7 +161,7 @@ class ContentResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->columnSpan(['xl' => 3])
                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                            ->formatStateUsing(fn(?Content $record) => ltrim($record->path ?? '', '/')),
                     ])
                     ->columns(['xl' => 4]),
 
@@ -195,7 +196,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->reorderable()
                                             ->splitKeys(['Tab', ' ', ','])
-                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
+                                            ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
                         Hidden::make('language_code')
@@ -211,7 +212,7 @@ class ContentResource extends Resource
                                             ->date()
                                             ->default(now()->format('dd/mm/YYYY'))
                                             ->displayFormat('M j, Y - H:i')
-                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
+                                            ->formatStateUsing(fn(?Content $record) => $record ? $record->published_at : now())
                                             ->label('Publication date')
                                             ->helperText('Set a date in past or future to schedule publication.')
                                             ->native(false)
@@ -228,14 +229,14 @@ class ContentResource extends Resource
                                                     ->groupBy(function ($language) {
                                                         return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                                     })
-                                                    ->mapWithKeys(fn ($languages, $countryName) => [
-                                                        $countryName => $languages->mapWithKeys(fn ($language) => [
+                                                    ->mapWithKeys(fn($languages, $countryName) => [
+                                                        $countryName => $languages->mapWithKeys(fn($language) => [
                                                             $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
                                             ->allowHtml()
-                                            ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                            ->visible(fn() => Language::where('active', 1)->count() > 1),
                                         TextInput::make('slug')
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
@@ -246,7 +247,7 @@ class ContentResource extends Resource
                                             ->helperText('Add tags to group content.')
                                             ->tagPrefix('#')
                                             ->reorderable()
-                                            ->formatStateUsing(fn ($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
+                                            ->formatStateUsing(fn($state, ?Content $record) => $state ?: $record?->tags->pluck('name')->toArray() ?: [])
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                                     ]),
@@ -260,6 +261,10 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
+                                        Toggle::make('public')
+                                            ->label('Public')
+                                            ->inline(false)
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
                     ]),
@@ -283,7 +288,7 @@ class ContentResource extends Resource
     public static function getTypeInputs()
     {
         return collect(self::$type->fields)
-            ->filter(fn ($field) => self::$type->name_field !== $field->slug)
+            ->filter(fn($field) => self::$type->name_field !== $field->slug)
             ->map(function ($field) {
                 return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
             })
@@ -300,34 +305,34 @@ class ContentResource extends Resource
                     ->sortable()
                     ->separator('')
                     ->description(
-                        description: fn (Content $record) => $record->ancestors?->implode('name', ' / ') ?? null,
+                        description: fn(Content $record) => $record->ancestors?->implode('name', ' / ') ?? null,
                         position: 'above'
                     )
                     ->suffixBadges([
                         Badge::make('type')
-                            ->label(fn (Content $record) => $record->type->name)
+                            ->label(fn(Content $record) => $record->type->name)
                             ->color('gray'),
                     ]),
                 ImageColumn::make('authors')
                     ->circular()
                     ->stacked()
                     ->ring(2)
-                    ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
+                    ->getStateUsing(fn(Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
                     ->limit(3),
                 ImageColumn::make('language_code')
                     ->label('Language')
-                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
+                    ->getStateUsing(fn(Content $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
+                    ->getStateUsing(fn(Content $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()
                     ->sortable(),
             ])
-            ->modifyQueryUsing(fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type'))
+            ->modifyQueryUsing(fn(EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type'))
             ->defaultSort('edited_at', 'desc')
             ->filters([
                 Filter::make('locale')
@@ -343,8 +348,8 @@ class ContentResource extends Resource
                                     ->groupBy(function ($language) {
                                         return explode('-', $language->code)[1] ?? 'Worldwide';
                                     })
-                                    ->mapWithKeys(fn ($languages, $countryCode) => [
-                                        $countryCode => $languages->mapWithKeys(fn ($language) => [
+                                    ->mapWithKeys(fn($languages, $countryCode) => [
+                                        $countryCode => $languages->mapWithKeys(fn($language) => [
                                             $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($countryCode ? Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) : 'Worldwide') . ')',
                                         ])->toArray(),
                                     ])
@@ -356,7 +361,7 @@ class ContentResource extends Resource
                             return $query->where('language_code', $languageCode);
                         });
                     })
-                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                    ->visible(fn() => Language::where('active', 1)->count() > 1),
                 SelectFilter::make('type_slug')
                     ->label('Type')
                     ->native(false)
@@ -400,11 +405,11 @@ class ContentResource extends Resource
                         return $query
                             ->when(
                                 $data['date_from'],
-                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
                             )
                             ->when(
                                 $data['date_until'],
-                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
+                                fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
                             );
                     }),
             ], layout: FiltersLayout::Modal)
@@ -412,7 +417,7 @@ class ContentResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])->filtersTriggerAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->button()
                     ->label('Filter')
                     ->slideOver(),
