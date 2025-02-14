@@ -5,7 +5,9 @@ namespace Backstage\Resources;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Type;
 use Backstage\Resources\TypeResource\Pages;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -45,42 +47,45 @@ class TypeResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->columnSpanFull()
-                    ->required()
-                    ->live(debounce: 250)
-                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                        $set('slug', Str::slug($state));
-                        $set('name_plural', Str::plural($state));
-                    }),
-                TextInput::make('slug')
-                    ->columnSpanFull()
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->rules([
-                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
-                            if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
-                                $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
-                            }
-                        },
-                    ]),
-                TextInput::make('name_plural')
-                    ->columnSpanFull()
-                    ->required(),
-                ToggleButtons::make('icon')
-                    ->columnSpanFull()
-                    ->default('circle-stack')
-                    ->options([
-                        'circle-stack' => '',
-                        'light-bulb' => '',
-                    ])
-                    ->icons([
-                        'circle-stack' => 'heroicon-o-circle-stack',
-                        'light-bulb' => 'heroicon-o-light-bulb',
-                    ])
-                    ->inline()
-                    ->grouped()
-                    ->required(),
+                Grid::make('Type')
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->live(debounce: 250)
+                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                $set('slug', Str::slug($state));
+                                $set('name_plural', Str::plural($state));
+                            }),
+                        TextInput::make('name_plural')
+                            ->required(),
+                        TextInput::make('slug')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->rules([
+                                fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                    if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
+                                        $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
+                                    }
+                                },
+                            ]),
+                        ToggleButtons::make('icon')
+                            ->default('circle-stack')
+                            ->options([
+                                'circle-stack' => '',
+                                'light-bulb' => '',
+                            ])
+                            ->icons([
+                                'circle-stack' => 'heroicon-o-circle-stack',
+                                'light-bulb' => 'heroicon-o-light-bulb',
+                            ])
+                            ->inline()
+                            ->grouped()
+                            ->required(),
+                        Toggle::make('public')
+                            ->label('Public')
+                            ->inline(false)
+                            ->columnSpanFull(),
+                    ])->columns(2),
             ]);
     }
 

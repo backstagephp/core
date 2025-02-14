@@ -25,6 +25,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -38,6 +39,7 @@ use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Collection;
@@ -157,7 +159,13 @@ class ContentResource extends Resource
 
                         TextInput::make('path')
                             ->hiddenLabel()
-                            ->unique(ignoreRecord: true)
+                            ->rules(function (Get $get, $record) {
+                                if ($get('public') === false && $record) {
+                                    return [];
+                                }
+
+                                return Rule::unique('content', 'path');
+                            })
                             ->columnSpan(['xl' => 3])
                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
@@ -260,6 +268,11 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
+                                        Toggle::make('public')
+                                            ->label('Public')
+                                            ->default(fn () => self::$type->public ?? true)
+                                            ->inline(false)
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
                     ]),
@@ -370,6 +383,13 @@ class ContentResource extends Resource
                     ->options([])
                     ->multiple()
                     ->preload(),
+                TernaryFilter::make('public')
+                    ->label('Public')
+                    ->native(false)
+                    ->options([
+                        'true' => 'Yes',
+                        'false' => 'No',
+                    ]),
                 SelectFilter::make('tags')
                     ->relationship('tags', 'name')
                     ->label('Tags')
