@@ -54,6 +54,6 @@ class ManageChildrenContent extends ManageRelatedRecords
 
     public function table(Table $table): Table
     {
-        return ContentResource::table($table);
+        return ContentResource::table($table)->reorderable('position');
     }
 }
