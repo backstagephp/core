@@ -2,24 +2,24 @@
 
 namespace Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Backstage\Models\Menu;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Backstage\Models\Language;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
+use Backstage\Models\Menu;
 use Backstage\Resources\MenuResource\Pages;
 use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Locale;
 
 class MenuResource extends Resource
 {
@@ -66,14 +66,14 @@ class MenuResource extends Resource
                                                     ->groupBy(function ($language) {
                                                         return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                                     })
-                                                    ->mapWithKeys(fn($languages, $countryName) => [
-                                                        $countryName => $languages->mapWithKeys(fn($language) => [
+                                                    ->mapWithKeys(fn ($languages, $countryName) => [
+                                                        $countryName => $languages->mapWithKeys(fn ($language) => [
                                                             $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
                                             ->allowHtml()
-                                            ->visible(fn() => Language::where('active', 1)->count() > 1),
+                                            ->visible(fn () => Language::where('active', 1)->count() > 1),
 
                                         TextInput::make('name')
                                             ->required()
