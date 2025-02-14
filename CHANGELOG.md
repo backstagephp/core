@@ -2,6 +2,10 @@
 
 All notable changes to `backstage` will be documented in this file.
 
+## v0.0.11 - 2025-02-14
+
+- Repeater now uses slugs instead of name as key.
+
 ## v0.0.10 - 2025-02-14
 
 -   Fixed unique validation for non-public content.
