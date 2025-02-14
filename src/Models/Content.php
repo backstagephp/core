@@ -25,6 +25,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property string $path
  * @property string|null $url
  * @property string $language_code
+ * @property bool $public
  * @property string $type_slug
  */
 class Content extends Model
