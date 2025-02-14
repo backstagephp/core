@@ -2,48 +2,51 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Locale;
+use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Backstage\Fields\Fields;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
+use Illuminate\Validation\Rule;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Navigation\NavigationItem;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
+use Backstage\View\Components\Filament\Badge;
+use Filament\Forms\Components\DateTimePicker;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Locale;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 
 class ContentResource extends Resource
 {
@@ -53,6 +56,8 @@ class ContentResource extends Resource
     }
 
     protected static ?string $model = Content::class;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
@@ -328,7 +333,10 @@ class ContentResource extends Resource
                     ->alignEnd()
                     ->sortable(),
             ])
-            ->modifyQueryUsing(fn(EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type'))
+            ->modifyQueryUsing(
+                fn(EloquentBuilder $query) =>
+                $query->with('ancestors', 'authors', 'type')
+            )
             ->defaultSort('edited_at', 'desc')
             ->filters([
                 Filter::make('locale')
@@ -400,11 +408,11 @@ class ContentResource extends Resource
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
                         return $query
                             ->when(
-                                $data['date_from'],
+                                $data['date_from'] ?? null,
                                 fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '>=', $date),
                             )
                             ->when(
-                                $data['date_until'],
+                                $data['date_until'] ?? null,
                                 fn(EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate($data['date_column'], '<=', $date),
                             );
                     }),
@@ -437,6 +445,15 @@ class ContentResource extends Resource
             'create' => CreateContent::route('/create/{type}'),
             'edit' => EditContent::route('/{record}/edit'),
             'meta_tags' => ListContentMetaTags::route('/meta-tags'),
+            'children' => ManageChildrenContent::route('/{record}/children'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            EditContent::class,
+            ManageChildrenContent::class,
+        ]);
     }
 }
