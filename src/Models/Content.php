@@ -99,7 +99,7 @@ class Content extends Model
     {
         if (! $this->public) {
             return Attribute::make(
-                get: fn() => null,
+                get: fn () => null,
             );
         }
 
@@ -109,7 +109,7 @@ class Content extends Model
         }
 
         return Attribute::make(
-            get: fn() => $url,
+            get: fn () => $url,
         );
     }
 
@@ -119,7 +119,7 @@ class Content extends Model
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -166,7 +166,7 @@ class Content extends Model
         $url .= '/';
 
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $url,
+            get: fn (?string $value, array $attributes) => $url,
         );
     }
 
