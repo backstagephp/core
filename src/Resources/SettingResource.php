@@ -50,7 +50,7 @@ class SettingResource extends Resource
             TextInput::make('name')
                 ->label(__('Name'))
                 ->required()
-                ->live(debounce: 250)
+                ->live(onBlur: true)
                 ->afterStateUpdated(function (Set $set, ?string $state) {
                     $set('slug', Str::slug($state));
                 }),

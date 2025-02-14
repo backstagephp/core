@@ -129,7 +129,7 @@ class ContentResource extends Resource
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
-                    ->live(debounce: 250)
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
                         $set('meta_tags.title', $state);
                         $set('slug', Str::slug($state));

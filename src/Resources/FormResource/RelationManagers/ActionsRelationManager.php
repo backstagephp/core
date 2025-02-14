@@ -6,6 +6,7 @@ use Backstage\Models\FormAction;
 use Backstage\Models\Language;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -47,6 +48,8 @@ class ActionsRelationManager extends RelationManager
                 Grid::make()
                     ->columns(3)
                     ->schema([
+                        Hidden::make('language_code')
+                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
                         Section::make(__('Action'))
                             ->columns(3)
                             ->schema([
