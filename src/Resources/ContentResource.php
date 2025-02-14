@@ -2,50 +2,50 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Locale;
+use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Backstage\Fields\Fields;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
+use Illuminate\Validation\Rule;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Navigation\NavigationItem;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Table;
+use Backstage\View\Components\Filament\Badge;
+use Filament\Forms\Components\DateTimePicker;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Locale;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
 
 class ContentResource extends Resource
 {
@@ -159,7 +159,13 @@ class ContentResource extends Resource
 
                         TextInput::make('path')
                             ->hiddenLabel()
-                            ->unique(ignoreRecord: true)
+                            ->rules(function (Get $get, $record) {
+                                if ($get('public') === false && $record) {
+                                    return [];
+                                }
+
+                                return Rule::unique('content', 'path');
+                            })
                             ->columnSpan(['xl' => 3])
                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
                             ->formatStateUsing(fn(?Content $record) => ltrim($record->path ?? '', '/')),
