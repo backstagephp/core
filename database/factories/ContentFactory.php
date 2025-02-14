@@ -29,6 +29,7 @@ class ContentFactory extends Factory
             'meta_tags' => ['title' => 'Home'],
             'published_at' => now(),
             'edited_at' => now(),
+            'public' => true,
         ];
     }
 }

@@ -25,8 +25,9 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * Backstage\Models\Content
  *
  * @property string $path
- * @property string $url
+ * @property string|null $url
  * @property string $language_code
+ * @property bool $public
  * @property string $type_slug
  */
 #[ObservedBy(ContentDepthObserver::class)]
@@ -100,6 +101,12 @@ class Content extends Model
      */
     protected function url(): Attribute
     {
+        if (! $this->public) {
+            return Attribute::make(
+                get: fn () => null,
+            );
+        }
+
         $url = rtrim($this->pathPrefix . $this->path, '/');
         if ($this->site->trailing_slash) {
             $url .= '/';
