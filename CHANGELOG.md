@@ -2,6 +2,12 @@
 
 All notable changes to `backstage` will be documented in this file.
 
+## v0.0.10 - 2025-02-14
+
+-   Fixed unique validation for non-public content.
+-   Reorder children content within the content edit page.
+-   Content that is non-public now doesn't have a url.
+
 ## v0.0.9 - 2025-02-09
 
 -   Added ulid to blocks table.

@@ -5,8 +5,10 @@ namespace Backstage\Models;
 use Backstage\Casts\ContentPathCast;
 use Backstage\Fields\Models\Field;
 use Backstage\Media\Concerns\HasMedia;
+use Backstage\Observers\ContentDepthObserver;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -28,6 +30,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property bool $public
  * @property string $type_slug
  */
+#[ObservedBy(ContentDepthObserver::class)]
 class Content extends Model
 {
     use HasMedia;
@@ -137,6 +140,16 @@ class Content extends Model
     public function getPathName()
     {
         return 'parent_path';
+    }
+
+    /**
+     * Custom depth column name.
+     *
+     * @see https://github.com/staudenmeir/laravel-adjacency-list/issues/87
+     */
+    public function getDepthName(): string
+    {
+        return 'backstage_depth';
     }
 
     /**
