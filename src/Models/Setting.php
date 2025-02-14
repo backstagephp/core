@@ -40,4 +40,19 @@ class Setting extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function setting($key = null)
+    {
+        if (! $key) {
+
+            return collect($this->values)->mapWithKeys(function ($value, $ulid) {
+                $slug = $this->fields->where('ulid', $ulid)->first()?->slug ?? $ulid;
+                return [$slug => $value];
+            })
+            ->toArray();
+
+        }
+
+        return $this->values[$this->fields->where('slug', $key)->first()?->ulid] ?? null;
+    }
 }
