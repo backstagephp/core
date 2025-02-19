@@ -145,44 +145,40 @@ class ContentResource extends Resource
                         }
                     }),
 
-                Grid::make('Content')
-                    ->schema([
-                        SelectTree::make('parent_ulid')
-                            ->placeholder('Parent')
-                            ->hiddenLabel()
-                            ->searchable()
-                            ->withCount()
-                            ->columnSpan(['xl' => 1])
-                            ->rules([
-                                Rule::exists('content', 'ulid')
-                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
-                            ])
-                            ->relationship(
-                                relationship: 'parent',
-                                titleAttribute: 'name',
-                                parentAttribute: 'parent_ulid',
-                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
-                                    return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
-                                        $query->where('language_code', $languageCode);
-                                    });
-                                },
-                            )
-                            ->disabledOptions(fn ($record) => [$record?->getKey()]),
-
-                        TextInput::make('path')
-                            ->hiddenLabel()
-                            ->rules(function (Get $get, $record) {
-                                if ($get('public') === false && $record) {
-                                    return [];
-                                }
-
-                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
-                            })
-                            ->columnSpan(['xl' => 3])
-                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                SelectTree::make('parent_ulid')
+                    ->placeholder('Parent')
+                    ->hiddenLabel()
+                    ->searchable()
+                    ->withCount()
+                    ->columnSpanFull()
+                    ->rules([
+                        Rule::exists('content', 'ulid')
+                            ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                     ])
-                    ->columns(['xl' => 4]),
+                    ->relationship(
+                        relationship: 'parent',
+                        titleAttribute: 'name',
+                        parentAttribute: 'parent_ulid',
+                        modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
+                            return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                $query->where('language_code', $languageCode);
+                            });
+                        },
+                    )
+                    ->disabledOptions(fn ($record) => [$record?->getKey()]),
+
+                TextInput::make('path')
+                    ->hiddenLabel()
+                    ->columnSpanFull()
+                    ->rules(function (Get $get, $record) {
+                        if ($get('public') === false && $record) {
+                            return [];
+                        }
+
+                        return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                    })
+                    ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
+                    ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
 
                 Grid::make(12)
                     ->schema([
