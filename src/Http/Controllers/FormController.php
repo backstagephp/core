@@ -6,7 +6,6 @@ use Backstage\Events\FormSubmitted;
 use Backstage\Models\Content;
 use Backstage\Models\Form;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 
 class FormController
 {
@@ -26,7 +25,6 @@ class FormController
         );
 
         $content = Content::where('ulid', $request->input('content_ulid'))->first();
-
 
         $submission = $form->submissions()->create([
             'site_ulid' => $content?->site_ulid ?? null,
@@ -51,6 +49,7 @@ class FormController
                         'type' => $request->file($field->slug)->getMimeType(),
                     ]);
                 }
+
                 return [
                     'field_ulid' => $field->ulid,
                     'value' => $value,

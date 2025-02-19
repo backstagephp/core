@@ -178,21 +178,36 @@ class BackstageSeeder extends Seeder
             'name' => 'Mark',
             'email' => 'mark@vk10.nl',
             'password' => 'mark@vk10.nl',
-        ])
-            ->create();
+        ])->create();
 
         User::factory([
             'name' => 'Mathieu',
             'email' => 'mathieu@vk10.nl',
             'password' => 'mathieu@vk10.nl',
-        ])
-            ->create();
+        ])->create();
 
         User::factory([
             'name' => 'Bas',
             'email' => 'bas@vk10.nl',
             'password' => 'bas@vk10.nl',
-        ])
-            ->create();
+        ])->create();
+
+        User::factory([
+            'name' => 'Yoni',
+            'email' => 'yoni@vk10.nl',
+            'password' => 'yoni@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Patrick',
+            'email' => 'patrick@vk10.nl',
+            'password' => 'patrick@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Sandro',
+            'email' => 'sandro@vk10.nl',
+            'password' => 'sandro@vk10.nl',
+        ])->create();
     }
 }

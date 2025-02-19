@@ -70,12 +70,12 @@ class FormActionExecute extends Mailable implements ShouldQueue
                 $file = json_decode($value->value, true) ?? $value->value;
                 if (isset($file['path'])) {
                     $attachments[] = Attachment::fromStorage($file['path']);
-                }
-                else {
+                } else {
                     $attachments[] = Attachment::fromStorage($value->value);
                 }
             }
         }
+
         return $attachments;
     }
 }

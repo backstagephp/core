@@ -174,7 +174,7 @@ class ContentResource extends Resource
                                     return [];
                                 }
 
-                                return Rule::unique('content', 'path');
+                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
                             })
                             ->columnSpan(['xl' => 3])
                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
