@@ -2,53 +2,54 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Locale;
+use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Backstage\Fields\Fields;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
-use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
+use Illuminate\Validation\Rule;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Table;
+use Backstage\View\Components\Filament\Badge;
+use Filament\Forms\Components\DateTimePicker;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Locale;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 
 class ContentResource extends Resource
 {
@@ -146,26 +147,27 @@ class ContentResource extends Resource
 
                 Grid::make('Content')
                     ->schema([
-                        Select::make('parent_ulid')
+                        SelectTree::make('parent_ulid')
                             ->placeholder('Parent')
                             ->hiddenLabel()
                             ->searchable()
-                            ->preload()
+                            ->withCount()
                             ->columnSpan(['xl' => 1])
                             ->rules([
                                 Rule::exists('content', 'ulid')
                                     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                             ])
                             ->relationship(
-                                name: 'parent',
+                                relationship: 'parent',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: function (EloquentBuilder $query) use ($form) {
-                                    $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                parentAttribute: 'parent_ulid',
+                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
+                                    return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
                                         $query->where('language_code', $languageCode);
                                     });
                                 },
-                                ignoreRecord: true,
-                            ),
+                            )
+                            ->disabledOptions(fn ($record) => [$record?->getKey()]),
 
                         TextInput::make('path')
                             ->hiddenLabel()
@@ -248,7 +250,7 @@ class ContentResource extends Resource
                                                     })
                                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
@@ -370,7 +372,7 @@ class ContentResource extends Resource
                                     })
                                     ->mapWithKeys(fn ($languages, $countryCode) => [
                                         $countryCode => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($countryCode ? Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) : 'Worldwide') . ')',
+                                            $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($countryCode ? Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) : 'Worldwide') . ')',
                                         ])->toArray(),
                                     ])
                             )
