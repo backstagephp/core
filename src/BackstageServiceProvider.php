@@ -63,22 +63,22 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Preparing stage...');
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'backstage-migrations',
-                            '--force' => true,
-                        ]);
-
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'backstage-config',
-                            '--force' => true,
-                        ]);
-
-                        $command->callSilently('vendor:publish', [
                             '--tag' => 'translations-migrations',
                             '--force' => true,
                         ]);
                         
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'translations-config',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'backstage-migrations',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'backstage-config',
                             '--force' => true,
                         ]);
 
