@@ -424,12 +424,13 @@ class ContentResource extends Resource
                     ->multiple()
                     ->preload(),
                 TernaryFilter::make('public')
+                    ->placeholder('Public and private')
                     ->label('Public')
-                    ->native(false)
-                    ->options([
-                        'true' => 'Yes',
-                        'false' => 'No',
-                    ]),
+                    ->native(false),
+                TernaryFilter::make('pin')
+                    ->label('Pinned')
+                    ->placeholder('Pinned and unpinned')
+                    ->native(false),
                 SelectFilter::make('tags')
                     ->relationship('tags', 'name')
                     ->label('Tags')
