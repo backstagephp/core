@@ -203,7 +203,7 @@ class ContentResource extends Resource
                             ]),
                             
                         Hidden::make('language_code')
-                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                            ->default(Language::active()->count() === 1 ? Language::active()->first()->code : Language::active()->where('default', true)->first()?->code),
                             
                         Tabs::make()
                             ->columnSpan(4)
@@ -237,20 +237,20 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->placeholder(__('Select Language'))
                                             ->options(
-                                                Language::where('active', 1)
+                                                Language::active()
                                                     ->get()
                                                     ->sort()
                                                     ->groupBy(function ($language) {
-                                                        return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                                        return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : 'Worldwide';
                                                     })
                                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
                                             ->allowHtml()
-                                            ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                            ->visible(fn () => Language::active()->count() > 1),
 
                                         TextInput::make('slug')
                                             ->columnSpanFull()
@@ -392,12 +392,12 @@ class ContentResource extends Resource
                     ->label('Language')
                     ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column')
-                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                    ->visible(fn () => Language::active()->count() > 1),
                 ViewColumn::make('country_code')
                     ->label('Country')
                     ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1] ?? 'Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column')
-                    ->visible(fn () => Language::where('active', 1)->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
+                    ->visible(fn () => Language::active()->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()
@@ -415,15 +415,15 @@ class ContentResource extends Resource
                             ->columnSpanFull()
                             ->placeholder(__('Select Language'))
                             ->options(
-                                Language::where('active', 1)
+                                Language::active()
                                     ->get()
                                     ->sort()
                                     ->groupBy(function ($language) {
-                                        return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                        return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : 'Worldwide';
                                     })
                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' .$countryName. ')',
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' .$countryName. ')',
                                         ])->toArray(),
                                     ])
                             )
@@ -434,7 +434,7 @@ class ContentResource extends Resource
                             return $query->where('language_code', $languageCode);
                         });
                     })
-                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                    ->visible(fn () => Language::active()->count() > 1),
                 SelectFilter::make('type_slug')
                     ->label('Type')
                     ->native(false)

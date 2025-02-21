@@ -41,7 +41,7 @@ class EditContent extends EditRecord
                             })
                                 ->toArray()
                         )
-                            ->label(Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide')
+                            ->label(getLocalizedCountryName($countryCode) ?: 'Worldwide')
                             ->color('gray')
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
                             ->iconPosition(IconPosition::After)
@@ -61,7 +61,7 @@ class EditContent extends EditRecord
                 ->iconPosition(IconPosition::Before)
                 ->color('gray')
                 ->button()
-                ->visible(fn() => Language::where('active', 1)->count() > 1),
+                ->visible(fn() => Language::active()->count() > 1),
             Actions\Action::make('Preview')
                 ->color('gray')
                 ->icon('heroicon-o-eye')
