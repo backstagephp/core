@@ -368,7 +368,7 @@ class ContentResource extends Resource
             ->modifyQueryUsing(
                 fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type')
             )
-            ->defaultSort('edited_at', 'desc')
+            ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
                 Filter::make('locale')
                     ->form([
