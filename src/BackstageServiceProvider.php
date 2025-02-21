@@ -73,6 +73,16 @@ class BackstageServiceProvider extends PackageServiceProvider
                         ]);
 
                         $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-migrations',
+                            '--force' => true,
+                        ]);
+                        
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-config',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
                             '--tag' => 'redirects-migrations',
                             '--force' => true,
                         ]);
@@ -82,7 +92,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $this->writeMediaPickerConfig();
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'media-picker-migrations',
+                            '--tag' => 'media-migrations',
                             '--force' => true,
                         ]);
 
@@ -130,9 +140,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             $this->getScriptData(),
             $this->getAssetPackageName()
         );
-
-        // Icon Registration
-        FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
         if (app()->runningInConsole()) {
@@ -216,14 +223,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         return [
             BackstageSeedCommand::class,
         ];
-    }
-
-    /**
-     * @return array<string>
-     */
-    protected function getIcons(): array
-    {
-        return [];
     }
 
     /**
