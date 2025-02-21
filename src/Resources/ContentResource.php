@@ -30,6 +30,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Navigation\NavigationItem;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Forms\Components\TagsInput;
@@ -344,6 +345,23 @@ class ContentResource extends Resource
     {
         return $table
             ->columns([
+                IconColumn::make('published')
+                    ->label('')
+                    ->width(1)
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil-square',
+                        'published' => 'heroicon-o-check-circle',
+                        'scheduled' => 'heroicon-o-calendar-days',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'warning',
+                        'published' => 'success',
+                        'scheduled' => 'info',
+                        default => 'gray',
+                    })
+                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
+                    
                 BadgeableColumn::make('name')
                     ->searchable()
                     ->sortable()
