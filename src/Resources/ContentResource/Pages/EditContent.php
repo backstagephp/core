@@ -13,6 +13,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Actions\Content\DuplicateContentAction;
+use Backstage\Translations\Laravel\Managers\TranslatorManager;
 
 class EditContent extends EditRecord
 {
@@ -41,7 +42,7 @@ class EditContent extends EditRecord
                             })
                                 ->toArray()
                         )
-                            ->label(getLocalizedCountryName($countryCode) ?: 'Worldwide')
+                            ->label(getLocalizedCountryName($countryCode) ?: __('Worldwide'))
                             ->color('gray')
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
                             ->iconPosition(IconPosition::After)
@@ -52,7 +53,13 @@ class EditContent extends EditRecord
                         return Actions\Action::make($language->code)
                             ->label($language->name)
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                            ->url('#');
+                            ->action(function () {
+                                $state = $this->form->getState();
+                                
+                                $this->form->fill(array_replace_recursive($state, [
+                                    'meta_tags' => ['title' => TranslatorManager::translate($state['meta_tags']['title'], 'nl')]
+                                ]));
+                            });
                     })
                     ->toArray()
             )

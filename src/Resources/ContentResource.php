@@ -2,7 +2,6 @@
 
 namespace Backstage\Resources;
 
-use Locale;
 use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -241,7 +240,7 @@ class ContentResource extends Resource
                                                     ->get()
                                                     ->sort()
                                                     ->groupBy(function ($language) {
-                                                        return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : 'Worldwide';
+                                                        return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
                                                     })
                                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                                         $countryName => $languages->mapWithKeys(fn ($language) => [
@@ -377,11 +376,12 @@ class ContentResource extends Resource
                             ->label(fn (Content $record) => $record->type->name)
                             ->color('gray'),
                             
-                        Badge::make('type')
+                        Badge::make('pin')
                             ->label(fn (Content $record) => $record->pin ? __('Pinned') : '')
                             ->color('info')
                             ->visible(fn (Content $record) => (bool) $record->pin),
                     ]),
+                    
                 ImageColumn::make('authors')
                     ->circular()
                     ->stacked()
@@ -395,9 +395,9 @@ class ContentResource extends Resource
                     ->visible(fn () => Language::active()->count() > 1),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1] ?? 'Worldwide'))
+                    ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1]) ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column')
-                    ->visible(fn () => Language::active()->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
+                    ->visible(fn () => Language::active()->where('code', 'LIKE', '%-%')->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()
@@ -419,7 +419,7 @@ class ContentResource extends Resource
                                     ->get()
                                     ->sort()
                                     ->groupBy(function ($language) {
-                                        return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : 'Worldwide';
+                                        return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
                                     })
                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                         $countryName => $languages->mapWithKeys(fn ($language) => [

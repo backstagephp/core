@@ -77,7 +77,7 @@ class SettingResource extends Resource
                         ->get()
                         ->sort()
                         ->groupBy(function ($language) {
-                            return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : 'Worldwide';
+                            return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
                         })
                         ->mapWithKeys(fn ($languages, $countryName) => [
                             $countryName => $languages->mapWithKeys(fn ($language) => [

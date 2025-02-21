@@ -57,7 +57,7 @@ class LanguagesRelationManager extends RelationManager
                                             ->get()
                                             ->sort()
                                             ->groupBy(function ($language) {
-                                                return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : 'Worldwide';
+                                                return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
                                             })
                                             ->mapWithKeys(fn ($languages, $countryName) => [
                                                 $countryName => $languages->mapWithKeys(fn ($language) => [
@@ -85,7 +85,7 @@ class LanguagesRelationManager extends RelationManager
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
+                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))
