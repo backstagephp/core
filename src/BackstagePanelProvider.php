@@ -109,7 +109,7 @@ class BackstagePanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Users'),
                 NavigationGroup::make()
-                    ->label('Setup'),
+                    ->label('Manage'),
             ])
             ->tenant(Site::class)
             ->tenantRegistration(RegisterSite::class)
