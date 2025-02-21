@@ -2,14 +2,18 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\Content;
 use Backstage\Models\MenuItem;
 use Backstage\Resources\MenuItemResource\Pages;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -51,21 +55,50 @@ class MenuItemResource extends Resource
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
-                                        TextInput::make('name')
-                                            ->columnSpan(1)
-                                            ->required()
-                                            ->live(onBlur: true)
-                                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                                $set('slug', Str::slug($state));
-                                            }),
 
-                                        TextInput::make('slug')
-                                            ->columnSpan(1)
-                                            ->required()
-                                            ->unique(ignoreRecord: true),
+                                        SelectTree::make('parent_ulid')
+                                            ->label(__('Parent'))
+                                            ->searchable()
+                                            ->withCount()
+                                            ->enableBranchNode()
+                                            ->columnSpanFull()
+                                            ->relationship(
+                                                relationship: 'parent',
+                                                titleAttribute: 'name',
+                                                parentAttribute: 'parent_ulid',
+                                                modifyQueryUsing: fn ($query) => $query->where('menu_slug', $form->getLivewire()?->getOwnerRecord()?->slug),
+                                            ),
+
+                                        SelectTree::make('content_ulid')
+                                            ->label(__('Content'))
+                                            ->searchable()
+                                            ->withCount()
+                                            ->columnSpanFull()
+                                            ->enableBranchNode()
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old) {
+                                                $set('name', Content::find($state)->name);
+                                            })
+                                            ->relationship(
+                                                relationship: 'content',
+                                                titleAttribute: 'name',
+                                                parentAttribute: 'parent_ulid',
+                                            ),
+
+                                        Toggle::make('include_children')
+                                            ->label(__('Automaticly include children'))
+                                            ->columnSpanFull()
+                                            ->live()
+                                            ->visible(fn (Get $get): bool => !empty($get('content_ulid'))),
+
+                                        TextInput::make('name')
+                                            ->requiredWithout('content_ulid')
+                                            ->live(onBlur: true)
+                                            ->columnSpanFull(),
 
                                         TextInput::make('url')
                                             ->label('URL')
+                                            ->columnSpanFull()
                                             ->suffixAction(
                                                 Action::make('content')
                                                     ->icon('heroicon-o-link')
@@ -73,8 +106,24 @@ class MenuItemResource extends Resource
                                                     ->modalHeading('Select Content')
                                             )
                                             ->url()
-                                            ->columnSpan(2)
-                                            ->required(),
+                                            ->visible(fn (Get $get): bool => empty($get('content_ulid'))),
+                                    ]),
+                            ]),
+                        Tab::make('Advanced')
+                            ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        TextInput::make('title')
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('target')
+                                            ->label(__('Target'))
+                                            ->columnSpanFull(),
+
+                                        Toggle::make('active')
+                                            ->label(__('Active'))
+                                            ->columnSpanFull()
+                                            ->default(true),
                                     ]),
                             ]),
                     ]),
@@ -87,7 +136,11 @@ class MenuItemResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->description(
+                        description: fn (MenuItem $record) => $record->ancestors?->implode('name', ' / ') ?? null,
+                        position: 'above'
+                    ),
             ])
             ->filters([
                 //

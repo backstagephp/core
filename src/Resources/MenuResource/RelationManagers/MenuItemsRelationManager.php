@@ -2,10 +2,12 @@
 
 namespace Backstage\Resources\MenuResource\RelationManagers;
 
+use Backstage\Models\MenuItem;
 use Backstage\Resources\MenuItemResource;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class MenuItemsRelationManager extends RelationManager
@@ -20,10 +22,10 @@ class MenuItemsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                TextColumn::make('name')
             ])
+            ->defaultSort('position')
             ->filters([
                 //
             ])
@@ -38,6 +40,8 @@ class MenuItemsRelationManager extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultGroup('parent.name')
+            ->reorderable('position');
     }
 }
