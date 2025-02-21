@@ -152,7 +152,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'domain' => 'Backstage\Models\Domain',
             'field' => 'Backstage\Fields\Models\Field',
             'form' => 'Backstage\Models\Form',
-            'language' => 'Backstage\Models\Language',
+            'language' => 'Backstage\Translations\Laravel\Models\Language',
             'menu' => 'Backstage\Models\Menu',
             'setting' => 'Backstage\Models\Setting',
             'site' => 'Backstage\Models\Site',

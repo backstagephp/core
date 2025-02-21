@@ -9,7 +9,7 @@ use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Domain;
 use Backstage\Models\Form;
 use Backstage\Models\FormAction;
-use Backstage\Models\Language;
+use Backstage\Translations\Laravel\Models\Language;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;

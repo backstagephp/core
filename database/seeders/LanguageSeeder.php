@@ -2,7 +2,7 @@
 
 namespace Backstage\Database\Seeders;
 
-use Backstage\Models\Language;
+use Backstage\Translations\Laravel\Models\Language;
 use Illuminate\Database\Seeder;
 
 class LanguageSeeder extends Seeder

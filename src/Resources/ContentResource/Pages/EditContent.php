@@ -6,7 +6,7 @@ use Locale;
 use Filament\Actions;
 use Backstage\Models\Tag;
 use Illuminate\Support\Str;
-use Backstage\Models\Language;
+use Backstage\Translations\Laravel\Models\Language;
 use Illuminate\Support\HtmlString;
 use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\EditRecord;

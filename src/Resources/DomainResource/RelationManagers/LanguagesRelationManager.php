@@ -2,7 +2,7 @@
 
 namespace Backstage\Resources\DomainResource\RelationManagers;
 
-use Backstage\Models\Language;
+use Backstage\Translations\Laravel\Models\Language;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;

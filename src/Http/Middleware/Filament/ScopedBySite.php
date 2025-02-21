@@ -6,7 +6,7 @@ use Backstage\Models\Block;
 use Backstage\Models\Content;
 use Backstage\Models\Domain;
 use Backstage\Models\Form;
-use Backstage\Models\Language;
+use Backstage\Translations\Laravel\Models\Language;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
 use Backstage\Models\Setting;
