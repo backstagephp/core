@@ -251,6 +251,8 @@ class ContentResource extends Resource
                                         Toggle::make('pin')
                                             ->label('Pin')
                                             ->inline(false)
+                                            ->onIcon('heroicon-s-check')
+                                            ->offIcon('heroicon-s-x-mark')
                                             ->helperText('Pin content to the top of lists.')
                                             ->columnSpanFull(),
                                             
@@ -293,6 +295,8 @@ class ContentResource extends Resource
                                         Toggle::make('public')
                                             ->label('Public')
                                             ->default(fn () => self::$type->public ?? true)
+                                            ->onIcon('heroicon-s-check')
+                                            ->offIcon('heroicon-s-x-mark')
                                             ->inline(false)
                                             ->helperText(__('Make content publicly accessible on path.'))
                                             ->columnSpanFull(),
