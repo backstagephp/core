@@ -2,10 +2,11 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Models\Type;
-use Backstage\Resources\ContentResource;
 use Filament\Actions;
+use Backstage\Models\Type;
+use Filament\Tables\Table;
 use Filament\Facades\Filament;
+use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListContent extends ListRecords
@@ -17,8 +18,8 @@ class ListContent extends ListRecords
         return [
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
+                    fn($type) => Actions\Action::make(__($type->name))
+                        ->url(fn(): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
                         ->slideOver()
                         ->modalWidth('6xl')
                         ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
@@ -30,5 +31,29 @@ class ListContent extends ListRecords
                 ->iconPosition('after')
                 ->button(),
         ];
+    }
+
+    public function table(Table $table): Table
+    {
+        $table = ContentResource::table($table);
+
+        if ($this->shouldBeReorderable()) {
+            return $table->reorderable('position');
+        }
+
+        return $table;
+    }
+
+    protected function handleTableFilterUpdates(): void
+    {
+        parent::handleTableFilterUpdates();
+        
+        $this->table = $this->table($this->makeTable());
+    }
+
+    protected function shouldBeReorderable(): bool 
+    {
+        return isset($this->tableFilters['parent_ulid']['value']) && 
+            $this->tableFilters['parent_ulid']['value'] === '0';
     }
 }

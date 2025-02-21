@@ -85,7 +85,6 @@ class ContentResource extends Resource
 
     public static function getNavigationItems(): array
     {
-
         $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) {
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
@@ -406,6 +405,19 @@ class ContentResource extends Resource
                     ->native(false)
                     ->preload()
                     ->multiple(),
+                TernaryFilter::make('parent_ulid')
+                    ->nullable()
+                    ->label('Parent')
+                    ->trueLabel('Has parent')
+                    ->falseLabel('No parent')
+                    ->queries(
+                        true: function (EloquentBuilder $query): EloquentBuilder {
+                            return $query->whereNotNull('parent_ulid');
+                        },
+                        false: function (EloquentBuilder $query): EloquentBuilder {
+                            return $query->whereNull('parent_ulid');
+                        },
+                    ),
                 Filter::make('date')
                     ->form([
                         Fieldset::make('Date')
