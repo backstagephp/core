@@ -367,11 +367,11 @@ class ContentResource extends Resource
                                     ->get()
                                     ->sort()
                                     ->groupBy(function ($language) {
-                                        return explode('-', $language->code)[1] ?? 'Worldwide';
+                                        return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
                                     })
-                                    ->mapWithKeys(fn ($languages, $countryCode) => [
-                                        $countryCode => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code . '-' . $countryCode => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . ($countryCode ? Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) : 'Worldwide') . ')',
+                                    ->mapWithKeys(fn ($languages, $countryName) => [
+                                        $countryName => $languages->mapWithKeys(fn ($language) => [
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' .$countryName. ')',
                                         ])->toArray(),
                                     ])
                             )
