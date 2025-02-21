@@ -146,41 +146,6 @@ class ContentResource extends Resource
                         }
                     }),
 
-                SelectTree::make('parent_ulid')
-                    ->placeholder('Parent')
-                    ->hiddenLabel()
-                    ->searchable()
-                    ->withCount()
-                    ->columnSpanFull()
-                    ->rules([
-                        Rule::exists('content', 'ulid')
-                            ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
-                    ])
-                    ->relationship(
-                        relationship: 'parent',
-                        titleAttribute: 'name',
-                        parentAttribute: 'parent_ulid',
-                        modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
-                            return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
-                                $query->where('language_code', $languageCode);
-                            });
-                        },
-                    )
-                    ->disabledOptions(fn ($record) => [$record?->getKey()]),
-
-                TextInput::make('path')
-                    ->hiddenLabel()
-                    ->columnSpanFull()
-                    ->rules(function (Get $get, $record) {
-                        if ($get('public') === false && $record) {
-                            return [];
-                        }
-
-                        return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
-                    })
-                    ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                    ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
-
                 Grid::make(12)
                     ->schema([
                         Tabs::make('Tabs')
@@ -215,25 +180,49 @@ class ContentResource extends Resource
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
+                            
                         Hidden::make('language_code')
                             ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                            
                         Tabs::make()
                             ->columnSpan(4)
                             ->tabs([
-                                Tab::make('publication')
-                                    ->label('Publication')
+                                Tab::make('content')
+                                    ->label('Content')
                                     ->schema([
-                                        DateTimePicker::make('published_at')
+                                        SelectTree::make('parent_ulid')
+                                            ->label(__('Parent'))
+                                            ->placeholder(__('Select parent content'))
+                                            ->searchable()
+                                            ->withCount()
+                                            ->rules([
+                                                Rule::exists('content', 'ulid')
+                                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
+                                            ])
+                                            ->relationship(
+                                                relationship: 'parent',
+                                                titleAttribute: 'name',
+                                                parentAttribute: 'parent_ulid',
+                                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
+                                                    return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+                                                        $query->where('language_code', $languageCode);
+                                                    });
+                                                },
+                                            )
+                                            ->disabledOptions(fn ($record) => [$record?->getKey()]),
+                                            
+                                        TextInput::make('path')
                                             ->columnSpanFull()
-                                            ->date()
-                                            ->default(now()->format('dd/mm/YYYY'))
-                                            ->displayFormat('M j, Y - H:i')
-                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
-                                            ->label('Publication date')
-                                            ->helperText('Set a date in past or future to schedule publication.')
-                                            ->native(false)
-                                            ->prefixIcon('heroicon-o-calendar-days')
-                                            ->seconds(false),
+                                            ->rules(function (Get $get, $record) {
+                                                if ($get('public') === false && $record) {
+                                                    return [];
+                                                }
+                        
+                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                            })
+                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
@@ -253,10 +242,18 @@ class ContentResource extends Resource
                                             )
                                             ->allowHtml()
                                             ->visible(fn () => Language::where('active', 1)->count() > 1),
+
                                         TextInput::make('slug')
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
                                             ->required(),
+                                            
+                                        Toggle::make('pin')
+                                            ->label('Pin')
+                                            ->inline(false)
+                                            ->helperText('Pin content to the top of lists.')
+                                            ->columnSpanFull(),
+                                            
                                         TagsInput::make('tags')
                                             ->color('gray')
                                             ->columnSpanFull()
@@ -267,9 +264,21 @@ class ContentResource extends Resource
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                                     ]),
-                                Tab::make('advanced')
-                                    ->label('Advanced')
+                                Tab::make('publication')
+                                    ->label('Publication')
                                     ->schema([
+                                        DateTimePicker::make('published_at')
+                                            ->columnSpanFull()
+                                            ->date()
+                                            ->default(now()->format('dd/mm/YYYY'))
+                                            ->displayFormat('M j, Y - H:i')
+                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
+                                            ->label('Publication date')
+                                            ->helperText('Set a date in past or future to schedule publication.')
+                                            ->native(false)
+                                            ->prefixIcon('heroicon-o-calendar-days')
+                                            ->seconds(false),
+                                            
                                         DateTimePicker::make('expired_at')
                                             ->label('Expiration date')
                                             ->date()
@@ -277,10 +286,15 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
+                                    ]),
+                                Tab::make('advanced')
+                                    ->label('Advanced')
+                                    ->schema([
                                         Toggle::make('public')
                                             ->label('Public')
                                             ->default(fn () => self::$type->public ?? true)
                                             ->inline(false)
+                                            ->helperText(__('Make content publicly accessible on path.'))
                                             ->columnSpanFull(),
                                     ]),
                             ]),
