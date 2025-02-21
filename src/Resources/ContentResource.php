@@ -350,11 +350,13 @@ class ContentResource extends Resource
                     ->width(1)
                     ->icon(fn (string $state): string => match ($state) {
                         'draft' => 'heroicon-o-pencil-square',
+                        'expired' => 'heroicon-o-x-mark-circle',
                         'published' => 'heroicon-o-check-circle',
                         'scheduled' => 'heroicon-o-calendar-days',
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'warning',
+                        'expired' => 'danger',
                         'published' => 'success',
                         'scheduled' => 'info',
                         default => 'gray',
@@ -438,7 +440,12 @@ class ContentResource extends Resource
                 SelectFilter::make('status')
                     ->label('Status')
                     ->native(false)
-                    ->options([])
+                    ->options([
+                        'draft' => __('Draft'),
+                        'expired' => __('Expired'),
+                        'published' => __('Published'),
+                        'scheduled' => __('Scheduled'),
+                    ])
                     ->multiple()
                     ->preload(),
                 TernaryFilter::make('public')
