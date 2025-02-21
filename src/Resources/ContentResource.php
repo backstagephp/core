@@ -376,6 +376,11 @@ class ContentResource extends Resource
                         Badge::make('type')
                             ->label(fn (Content $record) => $record->type->name)
                             ->color('gray'),
+                            
+                        Badge::make('type')
+                            ->label(fn (Content $record) => $record->pin ? __('Pinned') : '')
+                            ->color('info')
+                            ->visible(fn (Content $record) => (bool) $record->pin),
                     ]),
                 ImageColumn::make('authors')
                     ->circular()
