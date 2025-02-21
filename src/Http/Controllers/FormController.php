@@ -39,9 +39,20 @@ class FormController
 
         $submission->values()->createMany(
             $form->fields->map(function ($field) use ($request) {
+                $value = $request->input($field->slug);
+                if ($field->field_type == 'file-upload') {
+                    $result = $request->file($field->slug)->store();
+                    $value = json_encode([
+                        'path' => $result,
+                        'name' => $request->file($field->slug)->getClientOriginalName(),
+                        'size' => $request->file($field->slug)->getSize(),
+                        'type' => $request->file($field->slug)->getMimeType(),
+                    ]);
+                }
+
                 return [
                     'field_ulid' => $field->ulid,
-                    'value' => $request->input($field->slug),
+                    'value' => $value,
                 ];
             })->toArray()
         );

@@ -43,7 +43,7 @@ class FormAction extends Model
      */
     public function execute(FormSubmission $submission)
     {
-        switch ($this->get('type')) {
+        switch ($this->type) {
             case 'email':
                 Mail::to($submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'])
                     ->send(new FormActionExecute($this, $submission));

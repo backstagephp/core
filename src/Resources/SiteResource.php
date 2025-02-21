@@ -63,7 +63,7 @@ class SiteResource extends Resource
                                         ->label('Name')
                                         ->columnSpan($fullWidth ? 12 : 6)
                                         ->helperText('The name of the site, used internally in the back-end only.')
-                                        ->live(debounce: 250)
+                                        ->live(onBlur: true)
                                         ->afterStateUpdated(function (Set $set, ?string $state) {
                                             $set('slug', Str::slug($state));
                                             $set('name_plural', Str::plural($state));

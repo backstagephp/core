@@ -52,7 +52,7 @@ class TypeResource extends Resource
                     ->schema([
                         TextInput::make('name')
                             ->required()
-                            ->live(debounce: 250)
+                            ->live(onBlur: true)
                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Type $record) {
                                 $set('name_plural', Str::plural($state));
 

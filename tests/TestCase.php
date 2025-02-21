@@ -3,7 +3,6 @@
 namespace Backstage\Tests;
 
 use Backstage\BackstageServiceProvider;
-use Backstage\Fields\FieldsServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;

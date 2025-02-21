@@ -77,7 +77,7 @@ class MenuResource extends Resource
 
                                         TextInput::make('name')
                                             ->required()
-                                            ->live(debounce: 250)
+                                            ->live(onBlur: true)
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Menu $record) {
                                                 $currentSlug = $get('slug');
 
