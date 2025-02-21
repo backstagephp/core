@@ -5,14 +5,17 @@ namespace Backstage\Resources\ContentResource\Pages;
 use Locale;
 use Filament\Actions;
 use Backstage\Models\Tag;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Backstage\Models\Language;
 use Illuminate\Support\HtmlString;
 use Backstage\Resources\ContentResource;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Actions\Content\DuplicateContentAction;
+use Backstage\Translations\Laravel\Facades\Translator;
 use Backstage\Translations\Laravel\Managers\TranslatorManager;
 
 class EditContent extends EditRecord
@@ -53,12 +56,63 @@ class EditContent extends EditRecord
                         return Actions\Action::make($language->code)
                             ->label($language->name)
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                            ->action(function () {
+                            ->action(function () use ($language) {
                                 $state = $this->form->getState();
+
+                                $values = collect($state['values'])->map(function ($value, $key) use ($language) {
+                                    if (is_array($value)) {
+                                        return collect($value)->map(function ($item) use ($language) {
+                                            if(is_array($item)) {
+                                                return collect($item)->map(function ($item) use ($language) {
+                                                    if (isset($item['data'])) {
+                                                        $item['data'] = collect($item['data'])->mapWithKeys(function ($text, $key) use ($language) {
+                                                            return [$key => Translator::translate($text, $language->code)];
+                                                        })->toArray();
+                                                    }
+
+                                                    if(is_array($item)) {
+                                                        return collect($item)->mapWithKeys(function ($value, $key) use ($language) {
+                                                            if(is_array($value) || is_null($value)) {
+                                                                return $value;
+                                                            }
+                        
+                                                            return [$key => Translator::translate($value, $language->code)];
+                                                        })->toArray();
+                                                    }
+
+                                                    return $item;
+                                                })->toArray();
+                                            }
+                                            
+                                            return $item;
+                                        })->toArray();
+                                    }
+
+                                    if(is_null($value)) {
+                                        return $value;
+                                    }
+                                    
+                                    return Translator::translate($value, $language->code);
+                                })->toArray();
                                 
-                                $this->form->fill(array_replace_recursive($state, [
-                                    'meta_tags' => ['title' => TranslatorManager::translate($state['meta_tags']['title'], 'nl')]
-                                ]));
+                                $metaTags = collect($state['meta_tags'])->mapWithKeys(function ($value, $key) use ($language) {
+                                    if(is_array($value) || is_null($value)) {
+                                        return $value;
+                                    }
+
+                                    return [$key => Translator::translate($value, $language->code)];
+                                })->toArray();
+
+                                $state['values'] = $values;
+                                $state['meta_tags'] = $metaTags;
+                                $state['name'] = Translator::translate($state['name'], $language->code);
+
+                                $this->form->fill($state);
+
+                                Notification::make()
+                                    ->title(__('Translated'))
+                                    ->body(__('The content has been translated to ' . $language->name))
+                                    ->send();
                             });
                     })
                     ->toArray()
