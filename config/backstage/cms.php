@@ -1,6 +1,7 @@
 <?php
 
 use Backstage\Media\MediaPlugin;
+use Backstage\Translations\Filament\TranslationsPlugin;
 
 return [
     'panel' => [
@@ -8,7 +9,8 @@ return [
 
         'plugins' => [
             // Vormkracht10\FilamentRedirects\RedirectsPlugin::make(),
-            MediaPlugin::make(), // TODO: Deze toevoegen in ServiceProvider
+            MediaPlugin::make(),
+            TranslationsPlugin::make(),
         ],
 
         'resources' => [
@@ -23,7 +25,7 @@ return [
             Backstage\Resources\SettingResource::class,
             Backstage\Resources\SiteResource::class,
             Backstage\Resources\TagResource::class,
-            Backstage\Media\Resources\MediaResource::class, // TODO: Deze toevoegen in ServiceProvider
+            Backstage\Media\Resources\MediaResource::class,
             // Backstage\Resources\TemplateResource::class,
             Backstage\Resources\TypeResource::class,
             Backstage\Resources\UserResource::class,

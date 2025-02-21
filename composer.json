@@ -35,7 +35,7 @@
         "php": "^8.2",
         "backstage/fields": "dev-main",
         "backstage/media": "dev-main",
-        "backstage/translations": "dev-main",
+        "backstage/translations": "@dev",
         "baspa/laravel-timezones": "^1.2",
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^3.2",
