@@ -4,7 +4,7 @@ namespace Backstage\Models;
 
 use Backstage\Models\Domain;
 
-class Language extends \Backstage\Translations\Models\Language
+class Language extends \Backstage\Translations\Laravel\Models\Language
 {
     public function domains(): BelongsToMany
     {
