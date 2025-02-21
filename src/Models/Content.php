@@ -3,6 +3,7 @@
 namespace Backstage\Models;
 
 use Backstage\Casts\ContentPathCast;
+use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
 use Backstage\Media\Concerns\HasMedia;
 use Backstage\Observers\ContentDepthObserver;
@@ -38,6 +39,7 @@ class Content extends Model
     use HasRecursiveRelationships;
     use HasTags;
     use HasUlids;
+    use HasFields;
 
     protected $primaryKey = 'ulid';
 
@@ -103,7 +105,7 @@ class Content extends Model
     {
         if (! $this->public) {
             return Attribute::make(
-                get: fn () => null,
+                get: fn() => null,
             );
         }
 
@@ -113,7 +115,7 @@ class Content extends Model
         }
 
         return Attribute::make(
-            get: fn () => $url,
+            get: fn() => $url,
         );
     }
 
@@ -123,7 +125,7 @@ class Content extends Model
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -180,7 +182,7 @@ class Content extends Model
         $url .= '/';
 
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $url,
+            get: fn(?string $value, array $attributes) => $url,
         );
     }
 

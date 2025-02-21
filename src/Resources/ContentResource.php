@@ -134,8 +134,8 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-
-                        if (blank($get('path'))) {
+                        
+                        if (!$record || blank($get('path'))) {
                             $set('path', Str::slug($state));
                         }
 
