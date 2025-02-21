@@ -74,7 +74,7 @@ class LanguageResource extends Resource
                     ->label('')
                     ->width(20)
                     ->height(15)
-                    ->getStateUsing(fn (Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . $record->code . '.svg'))))
+                    ->getStateUsing(fn (Language $record) => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $record->code)[0] . '.svg'))))
                     ->verticallyAlignCenter()
                     ->searchable(),
                 TextColumn::make('name')

@@ -30,6 +30,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Navigation\NavigationItem;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Forms\Components\TagsInput;
@@ -344,6 +345,25 @@ class ContentResource extends Resource
     {
         return $table
             ->columns([
+                IconColumn::make('published')
+                    ->label('')
+                    ->width(1)
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil-square',
+                        'expired' => 'heroicon-o-x-mark-circle',
+                        'published' => 'heroicon-o-check-circle',
+                        'scheduled' => 'heroicon-o-calendar-days',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'warning',
+                        'expired' => 'danger',
+                        'published' => 'success',
+                        'scheduled' => 'info',
+                        default => 'gray',
+                    })
+                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
+                    
                 BadgeableColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -356,6 +376,11 @@ class ContentResource extends Resource
                         Badge::make('type')
                             ->label(fn (Content $record) => $record->type->name)
                             ->color('gray'),
+                            
+                        Badge::make('type')
+                            ->label(fn (Content $record) => $record->pin ? __('Pinned') : '')
+                            ->color('info')
+                            ->visible(fn (Content $record) => (bool) $record->pin),
                     ]),
                 ImageColumn::make('authors')
                     ->circular()
@@ -420,16 +445,22 @@ class ContentResource extends Resource
                 SelectFilter::make('status')
                     ->label('Status')
                     ->native(false)
-                    ->options([])
+                    ->options([
+                        'draft' => __('Draft'),
+                        'expired' => __('Expired'),
+                        'published' => __('Published'),
+                        'scheduled' => __('Scheduled'),
+                    ])
                     ->multiple()
                     ->preload(),
                 TernaryFilter::make('public')
+                    ->placeholder('Public and private')
                     ->label('Public')
-                    ->native(false)
-                    ->options([
-                        'true' => 'Yes',
-                        'false' => 'No',
-                    ]),
+                    ->native(false),
+                TernaryFilter::make('pin')
+                    ->label('Pinned')
+                    ->placeholder('Pinned and unpinned')
+                    ->native(false),
                 SelectFilter::make('tags')
                     ->relationship('tags', 'name')
                     ->label('Tags')

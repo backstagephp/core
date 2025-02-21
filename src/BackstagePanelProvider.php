@@ -116,10 +116,5 @@ class BackstagePanelProvider extends PanelProvider
             ->tenantMiddleware([
                 ScopedBySite::class,
             ], isPersistent: true);
-
-        // completely disabled spa mode for now (too many issues with it)
-        //
-        // enable spa mode for browsers except Safari
-        // ->spa(fn () => ! (str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
     }
 }
