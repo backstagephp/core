@@ -63,24 +63,24 @@ class EditContent extends EditRecord
                                     if (is_array($value)) {
                                         return collect($value)->map(function ($item) use ($language) {
                                             if(is_array($item)) {
-                                                return collect($item)->map(function ($item) use ($language) {
-                                                    if (isset($item['data'])) {
-                                                        $item['data'] = collect($item['data'])->mapWithKeys(function ($text, $key) use ($language) {
+                                                return collect($item)->map(function ($i) use ($language) {
+                                                    if (isset($i['data'])) {
+                                                        $i['data'] = collect($i['data'])->mapWithKeys(function ($text, $key) use ($language) {
                                                             return [$key => Translator::translate($text, $language->code)];
                                                         })->toArray();
                                                     }
 
-                                                    if(is_array($item)) {
-                                                        return collect($item)->mapWithKeys(function ($value, $key) use ($language) {
+                                                    if(is_array($i)) {
+                                                        return collect($i ?? [])->mapWithKeys(function ($value, $key) use ($language) {
                                                             if(is_array($value) || is_null($value)) {
-                                                                return $value;
+                                                                return [$key => $value];
                                                             }
                         
                                                             return [$key => Translator::translate($value, $language->code)];
                                                         })->toArray();
                                                     }
 
-                                                    return $item;
+                                                    return $i;
                                                 })->toArray();
                                             }
                                             
@@ -97,7 +97,7 @@ class EditContent extends EditRecord
                                 
                                 $metaTags = collect($state['meta_tags'])->mapWithKeys(function ($value, $key) use ($language) {
                                     if(is_array($value) || is_null($value)) {
-                                        return $value;
+                                        return [$key => $value];
                                     }
 
                                     return [$key => Translator::translate($value, $language->code)];
