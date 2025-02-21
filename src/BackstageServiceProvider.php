@@ -97,6 +97,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         ]);
 
                         $command->comment('Clean the decor...');
+                        
                         $command->callSilently('migrate:fresh', [
                             '--force' => true,
                         ]);
