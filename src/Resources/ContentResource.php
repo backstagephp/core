@@ -14,7 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Backstage\Fields\Fields;
 use Backstage\Models\Content;
-use Backstage\Translations\Laravel\Models\Language;
+use Backstage\Models\Language;
 use Filament\Facades\Filament;
 use Illuminate\Validation\Rule;
 use Filament\Resources\Resource;

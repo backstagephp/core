@@ -3,7 +3,7 @@
 namespace Backstage\Database\Factories;
 
 use Backstage\Models\FormAction;
-use Backstage\Translations\Laravel\Models\Language;
+use Backstage\Models\Language;
 use Backstage\Models\Site;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

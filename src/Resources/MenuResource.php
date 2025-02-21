@@ -10,7 +10,7 @@ use Filament\Forms\Form;
 use Backstage\Models\Menu;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Backstage\Translations\Laravel\Models\Language;
+use Backstage\Models\Language;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;

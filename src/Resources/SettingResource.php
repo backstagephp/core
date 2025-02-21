@@ -3,7 +3,7 @@
 namespace Backstage\Resources;
 
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
-use Backstage\Translations\Laravel\Models\Language;
+use Backstage\Models\Language;
 use Backstage\Models\Setting;
 use Backstage\Models\Site;
 use Backstage\Resources\SettingResource\Pages;

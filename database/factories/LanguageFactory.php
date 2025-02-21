@@ -2,7 +2,7 @@
 
 namespace Backstage\Database\Factories;
 
-use Backstage\Translations\Laravel\Models\Language;
+use Backstage\Models\Language;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LanguageFactory extends Factory

@@ -3,7 +3,7 @@
 namespace Backstage\Resources\FormResource\RelationManagers;
 
 use Backstage\Models\FormAction;
-use Backstage\Translations\Laravel\Models\Language;
+use Backstage\Models\Language;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
