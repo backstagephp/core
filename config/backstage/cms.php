@@ -19,6 +19,7 @@ return [
             Backstage\Resources\FormResource::class,
             Backstage\Resources\FormSubmissionResource::class,
             Backstage\Resources\MenuResource::class,
+            Backstage\Resources\LanguageResource::class,
             Backstage\Resources\SettingResource::class,
             Backstage\Resources\SiteResource::class,
             Backstage\Resources\TagResource::class,
@@ -27,7 +28,6 @@ return [
             Backstage\Resources\TypeResource::class,
             Backstage\Resources\UserResource::class,
 
-            Backstage\Translations\Filament\Resources\LanguageResource::class,
             Backstage\Translations\Filament\Resources\TranslationResource::class,
         ],
 
