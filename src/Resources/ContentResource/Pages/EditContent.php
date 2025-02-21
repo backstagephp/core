@@ -25,9 +25,9 @@ class EditContent extends EditRecord
         return [
             DuplicateContentAction::make('duplicate'),
             Actions\ActionGroup::make(
-                Language::pluck('code')->map(fn($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
+                Language::active()->pluck('code')->map(fn($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
                     // multiple countries
-                    Language::orderBy('name')
+                    Language::active()->orderBy('name')
                     ->get()
                     ->groupBy(function ($language) {
                         return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
@@ -48,7 +48,7 @@ class EditContent extends EditRecord
                             ->grouped();
                     })->toArray() :
                     // one country
-                    Language::orderBy('name')->get()->map(function (Language $language) {
+                    Language::active()->orderBy('name')->get()->map(function (Language $language) {
                         return Actions\Action::make($language->code)
                             ->label($language->name)
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
