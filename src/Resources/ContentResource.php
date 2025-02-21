@@ -183,6 +183,12 @@ class ContentResource extends Resource
                                             ->label('Description')
                                             ->helperText('Meta description for search engines.')
                                             ->columnSpanFull(),
+
+                                        Select::make('meta_tags.robots')
+                                            ->label('Robots')
+                                            ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
+                                            ->multiple()
+                                            ->columnSpanFull(),
                                             
                                         TagsInput::make('meta_tags.keywords')
                                             ->label('Keywords')
