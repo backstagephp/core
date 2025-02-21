@@ -163,13 +163,27 @@ class ContentResource extends Resource
                                 Tab::make('seo')
                                     ->label('SEO')
                                     ->schema([
+                                        TextInput::make('path')
+                                            ->columnSpanFull()
+                                            ->rules(function (Get $get, $record) {
+                                                if ($get('public') === false && $record) {
+                                                    return [];
+                                                }
+                        
+                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                            })
+                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                                            
                                         TextInput::make('meta_tags.title')
                                             ->label('Page Title')
                                             ->columnSpanFull(),
+
                                         TextInput::make('meta_tags.description')
                                             ->label('Description')
                                             ->helperText('Meta description for search engines.')
                                             ->columnSpanFull(),
+                                            
                                         TagsInput::make('meta_tags.keywords')
                                             ->label('Keywords')
                                             ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords.')
@@ -210,18 +224,6 @@ class ContentResource extends Resource
                                                 },
                                             )
                                             ->disabledOptions(fn ($record) => [$record?->getKey()]),
-                                            
-                                        TextInput::make('path')
-                                            ->columnSpanFull()
-                                            ->rules(function (Get $get, $record) {
-                                                if ($get('public') === false && $record) {
-                                                    return [];
-                                                }
-                        
-                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
-                                            })
-                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
 
                                         Select::make('language_code')
                                             ->label(__('Language'))
@@ -289,6 +291,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
                                     ]),
+                                    
                                 Tab::make('advanced')
                                     ->label('Advanced')
                                     ->schema([
