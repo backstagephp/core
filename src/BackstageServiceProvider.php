@@ -269,6 +269,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             '19_add_ulid_column_to_blocks_table',
             '20_modify_primary_keys_for_blocks_table',
             '21_add_adjacency_columns_to_content_table',
+            '22_add_sortable_columns_to_types_table',
         ];
     }
 
