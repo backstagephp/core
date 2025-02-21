@@ -19,6 +19,7 @@ use Filament\Facades\Filament;
 use Illuminate\Validation\Rule;
 use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Tables\Actions\Action;
@@ -338,11 +339,13 @@ class ContentResource extends Resource
                 ImageColumn::make('language_code')
                     ->label('Language')
                     ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
-                    ->view('backstage::filament.tables.columns.language-flag-column'),
+                    ->view('backstage::filament.tables.columns.language-flag-column')
+                    ->visible(fn () => Language::where('active', 1)->count() > 1),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
-                    ->view('backstage::filament.tables.columns.country-flag-column'),
+                    ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1] ?? 'Worldwide'))
+                    ->view('backstage::filament.tables.columns.country-flag-column')
+                    ->visible(fn () => Language::where('active', 1)->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()

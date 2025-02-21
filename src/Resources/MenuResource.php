@@ -2,24 +2,25 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Models\Language;
-use Backstage\Models\Menu;
-use Backstage\Resources\MenuResource\Pages;
-use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Locale;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
+use Backstage\Models\Menu;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Locale;
+use Backstage\Models\Language;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Backstage\Resources\MenuResource\Pages;
+use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
 
 class MenuResource extends Resource
 {
@@ -55,6 +56,9 @@ class MenuResource extends Resource
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
+                                        Hidden::make('language_code')
+                                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()?->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                                            
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
@@ -68,7 +72,7 @@ class MenuResource extends Resource
                                                     })
                                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                                         ])->toArray(),
                                                     ])
                                             )
