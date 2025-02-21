@@ -3,6 +3,7 @@
 namespace Backstage\Models;
 
 use Backstage\Models\Domain;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Language extends \Backstage\Translations\Laravel\Models\Language
 {
