@@ -160,8 +160,8 @@ class ContentResource extends Resource
                                             ->columns(1)
                                             ->schema(self::getTypeInputs()),
                                     ]),
-                                Tab::make('seo')
-                                    ->label('SEO')
+                                Tab::make('meta')
+                                    ->label('Meta')
                                     ->schema([
                                         TextInput::make('path')
                                             ->columnSpanFull()
@@ -199,6 +199,14 @@ class ContentResource extends Resource
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
+                                    Tab::make('open-graph')
+                                        ->label('Open Graph')
+                                        ->schema([
+                                        ]),
+                                    Tab::make('microdata')
+                                        ->label('Microdata')
+                                        ->schema([
+                                        ]),
                             ]),
                             
                         Hidden::make('language_code')
@@ -207,8 +215,8 @@ class ContentResource extends Resource
                         Tabs::make()
                             ->columnSpan(4)
                             ->tabs([
-                                Tab::make('content')
-                                    ->label('Content')
+                                Tab::make('details')
+                                    ->label(__('Details'))
                                     ->schema([
                                         SelectTree::make('parent_ulid')
                                             ->label(__('Parent'))
@@ -299,7 +307,7 @@ class ContentResource extends Resource
                                     ]),
                                     
                                 Tab::make('advanced')
-                                    ->label('Advanced')
+                                    ->label(__('Options'))
                                     ->schema([
                                         Toggle::make('public')
                                             ->label('Public')
