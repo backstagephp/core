@@ -207,6 +207,10 @@ class ContentResource extends Resource
                                         ->label('Microdata')
                                         ->schema([
                                         ]),
+                                    Tab::make('template')
+                                        ->label('Template')
+                                        ->schema([
+                                        ]),
                             ]),
                             
                         Hidden::make('language_code')
