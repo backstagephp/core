@@ -2,13 +2,14 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Models\User;
-use Backstage\Resources\UserResource\Pages;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
+use Backstage\Models\User;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Backstage\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {
@@ -47,6 +48,12 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('avatar_url')
+                    ->label('')
+                    ->width(40)
+                    ->circular()
+                    ->ring(2),
+
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

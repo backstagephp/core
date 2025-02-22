@@ -216,7 +216,9 @@ class ContentResource extends Resource
                                         ->icon('heroicon-o-clipboard')
                                         ->schema([
                                         ]),
-                            ]),
+                            ])
+                            ->id('content')
+                            ->persistTabInQueryString(),
                             
                         Hidden::make('language_code')
                             ->default(Language::active()->count() === 1 ? Language::active()->first()->code : Language::active()->where('default', true)->first()?->code),
