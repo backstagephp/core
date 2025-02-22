@@ -111,7 +111,7 @@ class ContentResource extends Resource
                 ->url(static::getNavigationUrl()),
             ...$contentTypes,
             NavigationItem::make('meta_tags')
-                ->label('Meta Tags')
+                ->label(__('Meta Tags'))
                 ->icon('heroicon-o-code-bracket-square')
                 ->group('SEO')
                 ->isActiveWhen(fn (NavigationItem $item) => request()->routeIs('filament.backstage.resources.content.meta_tags'))
@@ -162,7 +162,7 @@ class ContentResource extends Resource
                                             ->schema(self::getTypeInputs()),
                                     ]),
                                 Tab::make('meta')
-                                    ->label('Meta')
+                                    ->label(__('Meta'))
                                     ->icon('heroicon-o-magnifying-glass')
                                     ->schema([
                                         TextInput::make('path')
@@ -178,22 +178,22 @@ class ContentResource extends Resource
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
                                             
                                         TextInput::make('meta_tags.title')
-                                            ->label('Page Title')
+                                            ->label(__('Page Title'))
                                             ->columnSpanFull(),
 
                                         TextInput::make('meta_tags.description')
-                                            ->label('Description')
+                                            ->label(__('Description'))
                                             ->helperText('Meta description for search engines.')
                                             ->columnSpanFull(),
 
                                         Select::make('meta_tags.robots')
-                                            ->label('Robots')
+                                            ->label(__('Robots'))
                                             ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
                                             ->multiple()
                                             ->columnSpanFull(),
                                             
                                         TagsInput::make('meta_tags.keywords')
-                                            ->label('Keywords')
+                                            ->label(__('Keywords'))
                                             ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords.')
                                             ->color('gray')
                                             ->columnSpanFull()
@@ -202,17 +202,17 @@ class ContentResource extends Resource
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                                     Tab::make('open-graph')
-                                        ->label('Open Graph')
+                                        ->label(__('Open Graph'))
                                         ->icon('heroicon-o-photo')
                                         ->schema([
                                         ]),
                                     Tab::make('microdata')
-                                        ->label('Microdata')
+                                        ->label(__('Microdata'))
                                         ->icon('heroicon-o-code-bracket-square')
                                         ->schema([
                                         ]),
                                     Tab::make('template')
-                                        ->label('Template')
+                                        ->label(__('Template'))
                                         ->icon('heroicon-o-clipboard')
                                         ->schema([
                                         ]),
@@ -274,7 +274,7 @@ class ContentResource extends Resource
                                             ->required(),
                                             
                                         Toggle::make('pin')
-                                            ->label('Pin')
+                                            ->label(__('Pin'))
                                             ->inline(false)
                                             ->onIcon('heroicon-s-check')
                                             ->offIcon('heroicon-s-x-mark')
@@ -292,7 +292,7 @@ class ContentResource extends Resource
                                             ->suggestions(Tag::orderBy('updated_at', 'desc')->take(25)->pluck('name')),
                                     ]),
                                 Tab::make('publication')
-                                    ->label('Publication')
+                                    ->label(__('Publication'))
                                     ->schema([
                                         DateTimePicker::make('published_at')
                                             ->columnSpanFull()
@@ -300,14 +300,14 @@ class ContentResource extends Resource
                                             ->default(now()->format('dd/mm/YYYY'))
                                             ->displayFormat('M j, Y - H:i')
                                             ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
-                                            ->label('Publication date')
+                                            ->label(__('Publication date'))
                                             ->helperText('Set a date in past or future to schedule publication.')
                                             ->native(false)
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->seconds(false),
                                             
                                         DateTimePicker::make('expired_at')
-                                            ->label('Expiration date')
+                                            ->label(__('Expiration date'))
                                             ->date()
                                             ->prefixIcon('heroicon-o-calendar')
                                             ->native(false)
@@ -319,7 +319,7 @@ class ContentResource extends Resource
                                     ->label(__('Options'))
                                     ->schema([
                                         Toggle::make('public')
-                                            ->label('Public')
+                                            ->label(__('Public'))
                                             ->default(fn () => self::$type->public ?? true)
                                             ->onIcon('heroicon-s-check')
                                             ->offIcon('heroicon-s-x-mark')
@@ -362,7 +362,7 @@ class ContentResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('published')
-                    ->label('')
+                    ->label(__(''))
                     ->width(1)
                     ->icon(fn (string $state): string => match ($state) {
                         'draft' => 'heroicon-o-pencil-square',
@@ -407,14 +407,14 @@ class ContentResource extends Resource
                     ->limit(3),
                     
                 ImageColumn::make('language_code')
-                    ->label('Language')
+                    ->label(__('Language'))
                     ->width(1)
                     ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column')
                     ->visible(fn () => Language::active()->count() > 1),
                     
                 ViewColumn::make('country_code')
-                    ->label('Country')
+                    ->label(__('Country'))
                     ->width(1)
                     ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1]) ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column')
@@ -458,14 +458,14 @@ class ContentResource extends Resource
                     })
                     ->visible(fn () => Language::active()->count() > 1),
                 SelectFilter::make('type_slug')
-                    ->label('Type')
+                    ->label(__('Type'))
                     ->native(false)
                     ->searchable()
                     ->multiple()
                     ->preload()
                     ->relationship('type', 'name'),
                 SelectFilter::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->native(false)
                     ->options([
                         'draft' => __('Draft'),
@@ -477,15 +477,15 @@ class ContentResource extends Resource
                     ->preload(),
                 TernaryFilter::make('public')
                     ->placeholder('Public and private')
-                    ->label('Public')
+                    ->label(__('Public'))
                     ->native(false),
                 TernaryFilter::make('pin')
-                    ->label('Pinned')
+                    ->label(__('Pinned'))
                     ->placeholder('Pinned and unpinned')
                     ->native(false),
                 SelectFilter::make('tags')
                     ->relationship('tags', 'name')
-                    ->label('Tags')
+                    ->label(__('Tags'))
                     ->native(false)
                     ->preload()
                     ->multiple(),
@@ -527,7 +527,7 @@ class ContentResource extends Resource
             ])->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
-                    ->label('Filter')
+                    ->label(__('Filter'))
                     ->slideOver(),
             )
             ->bulkActions([
