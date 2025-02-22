@@ -152,6 +152,7 @@ class ContentResource extends Resource
                             ->columnSpan(8)
                             ->tabs([
                                 Tab::make(self::$type->slug)
+                                    ->icon('heroicon-o-'.self::$type->icon)
                                     ->label(__(self::$type->name))
                                     ->schema([
                                         Hidden::make('type_slug')
@@ -162,6 +163,7 @@ class ContentResource extends Resource
                                     ]),
                                 Tab::make('meta')
                                     ->label('Meta')
+                                    ->icon('heroicon-o-magnifying-glass')
                                     ->schema([
                                         TextInput::make('path')
                                             ->columnSpanFull()
@@ -201,14 +203,17 @@ class ContentResource extends Resource
                                     ]),
                                     Tab::make('open-graph')
                                         ->label('Open Graph')
+                                        ->icon('heroicon-o-photo')
                                         ->schema([
                                         ]),
                                     Tab::make('microdata')
                                         ->label('Microdata')
+                                        ->icon('heroicon-o-code-bracket-square')
                                         ->schema([
                                         ]),
                                     Tab::make('template')
                                         ->label('Template')
+                                        ->icon('heroicon-o-clipboard')
                                         ->schema([
                                         ]),
                             ]),
