@@ -2,55 +2,59 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
+use Backstage\Fields\Fields\RichEditor;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Filament\Facades\Filament;
-use Illuminate\Validation\Rule;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Navigation\NavigationItem;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ViewColumn;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Forms\Components\DatePicker;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
-use Backstage\View\Components\Filament\Badge;
-use Filament\Forms\Components\DateTimePicker;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
 use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ContentResource extends Resource
 {
@@ -134,8 +138,8 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-                        
-                        if (!$record || blank($get('path'))) {
+
+                        if (! $record || blank($get('path'))) {
                             $set('path', Str::slug($state));
                         }
 
@@ -152,7 +156,7 @@ class ContentResource extends Resource
                             ->columnSpan(8)
                             ->tabs([
                                 Tab::make(self::$type->slug)
-                                    ->icon('heroicon-o-'.self::$type->icon)
+                                    ->icon('heroicon-o-' . self::$type->icon)
                                     ->label(__(self::$type->name))
                                     ->schema([
                                         Hidden::make('type_slug')
@@ -171,12 +175,12 @@ class ContentResource extends Resource
                                                 if ($get('public') === false && $record) {
                                                     return [];
                                                 }
-                        
+
                                                 return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
                                             })
                                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
-                                            
+
                                         TextInput::make('meta_tags.title')
                                             ->label(__('Page Title'))
                                             ->columnSpanFull(),
@@ -191,7 +195,7 @@ class ContentResource extends Resource
                                             ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
                                             ->multiple()
                                             ->columnSpanFull(),
-                                            
+
                                         TagsInput::make('meta_tags.keywords')
                                             ->label(__('Keywords'))
                                             ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords.')
@@ -201,28 +205,28 @@ class ContentResource extends Resource
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
-                                    Tab::make('open-graph')
-                                        ->label(__('Open Graph'))
-                                        ->icon('heroicon-o-photo')
-                                        ->schema([
-                                        ]),
-                                    Tab::make('microdata')
-                                        ->label(__('Microdata'))
-                                        ->icon('heroicon-o-code-bracket-square')
-                                        ->schema([
-                                        ]),
-                                    Tab::make('template')
-                                        ->label(__('Template'))
-                                        ->icon('heroicon-o-clipboard')
-                                        ->schema([
-                                        ]),
+                                Tab::make('open-graph')
+                                    ->label(__('Open Graph'))
+                                    ->icon('heroicon-o-photo')
+                                    ->schema([
+                                    ]),
+                                Tab::make('microdata')
+                                    ->label(__('Microdata'))
+                                    ->icon('heroicon-o-code-bracket-square')
+                                    ->schema([
+                                    ]),
+                                Tab::make('template')
+                                    ->label(__('Template'))
+                                    ->icon('heroicon-o-clipboard')
+                                    ->schema([
+                                    ]),
                             ])
                             ->id('content')
                             ->persistTabInQueryString(),
-                            
+
                         Hidden::make('language_code')
                             ->default(Language::active()->count() === 1 ? Language::active()->first()->code : Language::active()->where('default', true)->first()?->code),
-                            
+
                         Tabs::make()
                             ->columnSpan(4)
                             ->tabs([
@@ -274,7 +278,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
                                             ->required(),
-                                            
+
                                         Toggle::make('pin')
                                             ->label(__('Pin'))
                                             ->inline(false)
@@ -282,7 +286,7 @@ class ContentResource extends Resource
                                             ->offIcon('heroicon-s-x-mark')
                                             ->helperText('Pin content to the top of lists.')
                                             ->columnSpanFull(),
-                                            
+
                                         TagsInput::make('tags')
                                             ->color('gray')
                                             ->columnSpanFull()
@@ -307,7 +311,7 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->seconds(false),
-                                            
+
                                         DateTimePicker::make('expired_at')
                                             ->label(__('Expiration date'))
                                             ->date()
@@ -316,7 +320,7 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
                                     ]),
-                                    
+
                                 Tab::make('advanced')
                                     ->label(__('Options'))
                                     ->schema([
@@ -359,6 +363,114 @@ class ContentResource extends Resource
             ->toArray();
     }
 
+    public static function table2(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IconColumn::make('published')
+                    ->label(__(''))
+                    ->width(1)
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil-square',
+                        'expired' => 'heroicon-o-x-mark-circle',
+                        'published' => 'heroicon-o-check-circle',
+                        'scheduled' => 'heroicon-o-calendar-days',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'warning',
+                        'expired' => 'danger',
+                        'published' => 'success',
+                        'scheduled' => 'info',
+                        default => 'gray',
+                    })
+                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
+
+                ImageColumn::make('language_code')
+                    ->label('')
+                    ->width(50)
+                    ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
+                    ->view('backstage::filament.tables.columns.language-flag-column')
+                    ->visible(fn () => Language::active()->count() > 1),
+
+                ViewColumn::make('country_code')
+                    ->label('')
+                    ->width(50)
+                    ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1]) ?? __('Worldwide'))
+                    ->view('backstage::filament.tables.columns.country-flag-column')
+                    ->visible(fn () => Language::active()->where('code', 'LIKE', '%-%')->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
+
+                ...Type::first()
+                    ->fields
+                    ->whereIn('field_type', ['text', 'select'])
+                    ->map(function ($field) {
+                        if ($field->field_type === 'text') {
+                            return TextInputColumn::make($field->slug)->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value);
+                        } elseif ($field->field_type === 'select') {
+                            return SelectColumn::make($field->slug)->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value);
+                        }
+                    })
+                    ->toArray(),
+            ])
+            ->modifyQueryUsing(
+                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')
+            )
+            ->defaultSort('edited_at', 'desc')
+            ->filters([], layout: FiltersLayout::Modal)
+            ->filtersFormWidth('md')
+            ->actions([
+                ...Type::first()
+                    ->fields
+                    ->where('field_type', '!=', 'text')
+                    ->where('field_type', '!=', 'select')
+                    ->map(
+                        fn ($field) => Action::make($field->slug)
+                            ->label(__('Edit :name', ['name' => $field->name]))
+                            ->modal()
+                            ->form(function () use ($field) {
+                                if ($field->field_type === 'builder') {
+                                    return [
+                                        Builder::make('value')
+                                            ->label($field->name),
+                                    ];
+                                } elseif ($field->field_type === 'rich-editor') {
+                                    return [
+                                        RichEditor::make('value')
+                                            ->label($field->name),
+                                    ];
+                                } else {
+                                    return [
+                                        TextInput::make('value')
+                                            ->label($field->name)
+                                            ->required()
+                                            ->default(fn () => $field->default ?? null),
+                                    ];
+                                }
+                            })
+                            ->icon(fn () => match ($field->field_type) {
+                                'builder' => 'heroicon-o-squares-plus',
+                                'rich-editor' => 'heroicon-o-code-bracket',
+                                default => 'heroicon-o-pencil-square',
+                            })
+                            ->color('gray')
+                            ->button()
+                    )
+                    ->toArray(),
+
+                Tables\Actions\EditAction::make(),
+            ])->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label(__('Filter'))
+                    ->slideOver(),
+            )
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -381,7 +493,7 @@ class ContentResource extends Resource
                     })
                     ->size(IconColumn\IconColumnSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
-                    
+
                 BadgeableColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -394,34 +506,34 @@ class ContentResource extends Resource
                         Badge::make('type')
                             ->label(fn (Content $record) => $record->type->name)
                             ->color('gray'),
-                            
+
                         Badge::make('pin')
                             ->label(fn (Content $record) => $record->pin ? __('Pinned') : '')
                             ->color('info')
                             ->visible(fn (Content $record) => (bool) $record->pin),
                     ]),
-                    
+
                 ImageColumn::make('authors')
                     ->circular()
                     ->stacked()
                     ->ring(2)
                     ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
                     ->limit(3),
-                    
+
                 ImageColumn::make('language_code')
                     ->label(__('Language'))
                     ->width(1)
                     ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column')
                     ->visible(fn () => Language::active()->count() > 1),
-                    
+
                 ViewColumn::make('country_code')
                     ->label(__('Country'))
                     ->width(1)
                     ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1]) ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column')
                     ->visible(fn () => Language::active()->where('code', 'LIKE', '%-%')->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
-                    
+
                 TextColumn::make('edited_at')
                     ->since()
                     ->alignEnd()
@@ -447,7 +559,7 @@ class ContentResource extends Resource
                                     })
                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' .$countryName. ')',
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' . $countryName . ')',
                                         ])->toArray(),
                                     ])
                             )

@@ -2,25 +2,24 @@
 
 namespace Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Backstage\Models\Menu;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Backstage\Models\Language;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
+use Backstage\Models\Menu;
 use Backstage\Resources\MenuResource\Pages;
 use Backstage\Resources\MenuResource\RelationManagers\MenuItemsRelationManager;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class MenuResource extends Resource
 {
@@ -58,7 +57,7 @@ class MenuResource extends Resource
                                     ->schema([
                                         Hidden::make('language_code')
                                             ->default(Language::active()->count() === 1 ? Language::active()->first()?->code : Language::active()->where('default', true)->first()?->code),
-                                            
+
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()

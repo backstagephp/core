@@ -2,24 +2,24 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables;
+use Backstage\Facades\Backstage;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Block;
+use Backstage\Resources\BlockResource\Pages;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Backstage\Models\Block;
-use Illuminate\Support\Str;
-use Backstage\Facades\Backstage;
 use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Backstage\Resources\BlockResource\Pages;
-use Filament\Forms\Components\ToggleButtons;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class BlockResource extends Resource
 {
@@ -117,9 +117,9 @@ class BlockResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                    ->before(function (Collection $records) {
-                        $records->each(fn (Block $record) => $record->sites()->detach());
-                    }),
+                        ->before(function (Collection $records) {
+                            $records->each(fn (Block $record) => $record->sites()->detach());
+                        }),
                 ]),
             ]);
     }

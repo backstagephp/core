@@ -21,7 +21,6 @@ use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -66,7 +65,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                             '--tag' => 'translations-migrations',
                             '--force' => true,
                         ]);
-                        
+
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'translations-config',
                             '--force' => true,
@@ -97,7 +96,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         ]);
 
                         $command->comment('Clean the decor...');
-                        
+
                         $command->callSilently('migrate:fresh', [
                             '--force' => true,
                         ]);
