@@ -2,18 +2,19 @@
 
 namespace Backstage\Resources;
 
+use Filament\Tables;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Backstage\Models\Tag;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Backstage\Resources\TagResource\Pages;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
 
 class TagResource extends Resource
 {
@@ -65,10 +66,18 @@ class TagResource extends Resource
                         Badge::make('type')
                             ->label(fn (Tag $record) => '#' . $record->name)
                             ->color('gray'),
-                    ]),
+                    ])
+                    ->url(fn (Tag $record) => route('filament.backstage.resources.content.index', [
+                        'tenant' => Filament::getTenant(),
+                        'tableFilters[tags][values]' => [$record->getKey()],
+                    ])),
                 TextColumn::make('content_count')
                     ->label('Times used')
-                    ->counts('content'),
+                    ->counts('content')
+                    ->url(fn (Tag $record) => route('filament.backstage.resources.content.index', [
+                        'tenant' => Filament::getTenant(),
+                        'tableFilters[tags][values]' => [$record->getKey()],
+                    ])),
             ])
             ->filters([
                 //
