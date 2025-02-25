@@ -130,9 +130,10 @@ class ContentResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->hiddenLabel()
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
+                    ->withAI(hint: true)
+                    ->canTranslate(hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(onBlur: true)
@@ -363,7 +364,7 @@ class ContentResource extends Resource
             ->toArray();
     }
 
-    public static function table2(Table $table): Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -471,7 +472,7 @@ class ContentResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table3(Table $table): Table
     {
         return $table
             ->columns([
