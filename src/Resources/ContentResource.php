@@ -132,7 +132,7 @@ class ContentResource extends Resource
                 TextInput::make('name')
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
-                    ->withAI(hint: true)
+                    // ->withAI(hint: true)
                     ->canTranslate(hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
