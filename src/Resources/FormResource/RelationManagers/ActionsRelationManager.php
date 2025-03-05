@@ -114,7 +114,7 @@ class ActionsRelationManager extends RelationManager
                                     ->searchDebounce(250)
                                     ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
                                 Select::make('config.to_email')
-                                    ->label(__('Name email'))
+                                    ->label(__('Email to'))
                                     ->columnSpan(6)
                                     ->options($fields)
                                     ->searchable()
