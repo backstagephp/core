@@ -56,7 +56,7 @@ class ActionsRelationManager extends RelationManager
                                     ->label(__('Type'))
                                     ->columnSpan(6)
                                     ->options([
-                                        'email' => __('Sent email'),
+                                        'email' => __('Send email'),
                                         // 'webhook' => __('Call webhook'), // Future - M
                                     ])
                                     ->default('email')
