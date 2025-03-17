@@ -2,55 +2,55 @@
 
 namespace Backstage\Resources;
 
-use Locale;
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Filament\Facades\Filament;
-use Illuminate\Validation\Rule;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Navigation\NavigationItem;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ViewColumn;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Forms\Components\DatePicker;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
-use Backstage\View\Components\Filament\Badge;
-use Filament\Forms\Components\DateTimePicker;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
 use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Locale;
 
 class ContentResource extends Resource
 {
@@ -134,8 +134,8 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-                        
-                        if (!$record || blank($get('path'))) {
+
+                        if (! $record || blank($get('path'))) {
                             $set('path', Str::slug($state));
                         }
 
@@ -180,10 +180,10 @@ class ContentResource extends Resource
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                             ]),
-                            
+
                         Hidden::make('language_code')
                             ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
-                            
+
                         Tabs::make()
                             ->columnSpan(4)
                             ->tabs([
@@ -210,14 +210,14 @@ class ContentResource extends Resource
                                                 },
                                             )
                                             ->disabledOptions(fn ($record) => [$record?->getKey()]),
-                                            
+
                                         TextInput::make('path')
                                             ->columnSpanFull()
                                             ->rules(function (Get $get, $record) {
                                                 if ($get('public') === false && $record) {
                                                     return [];
                                                 }
-                        
+
                                                 return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
                                             })
                                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
@@ -247,13 +247,13 @@ class ContentResource extends Resource
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
                                             ->required(),
-                                            
+
                                         Toggle::make('pin')
                                             ->label('Pin')
                                             ->inline(false)
                                             ->helperText('Pin content to the top of lists.')
                                             ->columnSpanFull(),
-                                            
+
                                         TagsInput::make('tags')
                                             ->color('gray')
                                             ->columnSpanFull()
@@ -278,7 +278,7 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->prefixIcon('heroicon-o-calendar-days')
                                             ->seconds(false),
-                                            
+
                                         DateTimePicker::make('expired_at')
                                             ->label('Expiration date')
                                             ->date()
@@ -385,7 +385,7 @@ class ContentResource extends Resource
                                     })
                                     ->mapWithKeys(fn ($languages, $countryName) => [
                                         $countryName => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' .$countryName. ')',
+                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
                                         ])->toArray(),
                                     ])
                             )

@@ -2,23 +2,23 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
+use Backstage\Resources\TypeResource\Pages;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Backstage\Resources\TypeResource\Pages;
-use Filament\Forms\Components\ToggleButtons;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class TypeResource extends Resource
 {
@@ -77,26 +77,26 @@ class TypeResource extends Resource
                             ]),
                         Grid::make(2)
                             ->schema([
-                        Select::make('sort_column')
-                            ->searchable()
-                            ->preload()
-                            ->options([
-                                'approved_at' => 'Approved At',
-                                'created_at' => 'Created At',
-                                'edited_at' => 'Edited At',
-                                'name' => 'Name',
-                                'pinned_at' => 'Pinned At',
-                                'position' => 'Position',
-                                'published_at' => 'Published At',
-                                'refreshed_at' => 'Refreshed At',
-                                'updated_at' => 'Updated At',
-                            ]),
-                        Select::make('sort_direction')
-                            ->options([
-                                'asc' => 'Ascending',
-                                'desc' => 'Descending',
-                            ]),
-                        ])->columns(2),
+                                Select::make('sort_column')
+                                    ->searchable()
+                                    ->preload()
+                                    ->options([
+                                        'approved_at' => 'Approved At',
+                                        'created_at' => 'Created At',
+                                        'edited_at' => 'Edited At',
+                                        'name' => 'Name',
+                                        'pinned_at' => 'Pinned At',
+                                        'position' => 'Position',
+                                        'published_at' => 'Published At',
+                                        'refreshed_at' => 'Refreshed At',
+                                        'updated_at' => 'Updated At',
+                                    ]),
+                                Select::make('sort_direction')
+                                    ->options([
+                                        'asc' => 'Ascending',
+                                        'desc' => 'Descending',
+                                    ]),
+                            ])->columns(2),
                         ToggleButtons::make('icon')
                             ->default('circle-stack')
                             ->options([
