@@ -27,7 +27,7 @@ class DomainResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Setup');
+        return __('Manage');
     }
 
     public static function getModelLabel(): string

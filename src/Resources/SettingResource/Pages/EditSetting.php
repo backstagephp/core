@@ -50,4 +50,18 @@ class EditSetting extends EditRecord
                     ]),
             ]);
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data = $this->mutateBeforeFill($data);
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data = $this->mutateBeforeSave($data);
+
+        return $data;
+    }
 }

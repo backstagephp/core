@@ -18,7 +18,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use Locale;
 
 class ActionsRelationManager extends RelationManager
 {
@@ -49,7 +48,7 @@ class ActionsRelationManager extends RelationManager
                     ->columns(3)
                     ->schema([
                         Hidden::make('language_code')
-                            ->default(Language::where('active', 1)->count() === 1 ? Language::where('active', 1)->first()->code : Language::where('active', 1)->where('default', true)->first()?->code),
+                            ->default(Language::active()->count() === 1 ? Language::active()->first()->code : Language::active()->where('default', true)->first()?->code),
                         Section::make(__('Action'))
                             ->columns(3)
                             ->schema([
@@ -57,7 +56,7 @@ class ActionsRelationManager extends RelationManager
                                     ->label(__('Type'))
                                     ->columnSpan(6)
                                     ->options([
-                                        'email' => __('Sent email'),
+                                        'email' => __('Send email'),
                                         // 'webhook' => __('Call webhook'), // Future - M
                                     ])
                                     ->default('email')
@@ -67,20 +66,20 @@ class ActionsRelationManager extends RelationManager
                                     ->columnSpanFull()
                                     ->placeholder(__('Select Language'))
                                     ->options(
-                                        Language::where('active', 1)
+                                        Language::active()
                                             ->get()
                                             ->sort()
                                             ->groupBy(function ($language) {
-                                                return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                                return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
                                             })
                                             ->mapWithKeys(fn ($languages, $countryName) => [
                                                 $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
                                     )
                                     ->allowHtml()
-                                    ->visible(fn () => Language::where('active', 1)->count() > 1),
+                                    ->visible(fn () => Language::active()->count() > 1),
                             ]),
                         Section::make(__('Configuration'))
                             ->columns(3)
@@ -115,7 +114,7 @@ class ActionsRelationManager extends RelationManager
                                     ->searchDebounce(250)
                                     ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
                                 Select::make('config.to_email')
-                                    ->label(__('Name email'))
+                                    ->label(__('Email to'))
                                     ->columnSpan(6)
                                     ->options($fields)
                                     ->searchable()

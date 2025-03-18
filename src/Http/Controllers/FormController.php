@@ -49,6 +49,9 @@ class FormController
                         'type' => $request->file($field->slug)->getMimeType(),
                     ]);
                 }
+                else if (is_array($value)) {
+                    $value = json_encode($value);
+                }
 
                 return [
                     'field_ulid' => $field->ulid,

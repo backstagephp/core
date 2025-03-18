@@ -7,12 +7,13 @@ use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
+use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Locale;
 
 class EditContent extends EditRecord
 {
@@ -25,9 +26,9 @@ class EditContent extends EditRecord
         return [
             DuplicateContentAction::make('duplicate'),
             Actions\ActionGroup::make(
-                Language::pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
+                Language::active()->pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
                     // multiple countries
-                    Language::orderBy('name')
+                    Language::active()->orderBy('name')
                         ->get()
                         ->groupBy(function ($language) {
                             return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
@@ -37,31 +38,30 @@ class EditContent extends EditRecord
                                     return Actions\Action::make($language->code . '-' . $countryCode)
                                         ->label($language->name)
                                         ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                                        ->url('#');
+                                        ->action(fn () => $this->translate($language));
                                 })
                                     ->toArray()
                             )
-                                ->label(Locale::getDisplayRegion('-' . $countryCode, app()->getLocale()) ?: 'Worldwide')
+                                ->label(getLocalizedCountryName($countryCode) ?: __('Worldwide'))
                                 ->color('gray')
                                 ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
                                 ->iconPosition(IconPosition::After)
                                 ->grouped();
                         })->toArray() :
                     // one country
-                    Language::orderBy('name')->get()->map(function (Language $language) {
+                    Language::active()->orderBy('name')->get()->map(function (Language $language) {
                         return Actions\Action::make($language->code)
                             ->label($language->name)
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                            ->url('#');
-                    })
-                        ->toArray()
+                            ->action(fn () => $this->translate($language));
+                    })->toArray()
             )
                 ->label('Translate')
                 ->icon('heroicon-o-language')
                 ->iconPosition(IconPosition::Before)
                 ->color('gray')
                 ->button()
-                ->visible(fn () => Language::where('active', 1)->count() > 1),
+                ->visible(fn () => Language::active()->count() > 1),
             Actions\Action::make('Preview')
                 ->color('gray')
                 ->icon('heroicon-o-eye')
@@ -69,6 +69,66 @@ class EditContent extends EditRecord
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];
+    }
+
+    public function translate($language)
+    {
+        $state = $this->form->getState();
+
+        $values = collect($state['values'])->map(function ($value, $key) use ($language) {
+            if (is_array($value)) {
+                return collect($value)->map(function ($item) use ($language) {
+                    if (is_array($item)) {
+                        return collect($item)->map(function ($i) use ($language) {
+                            if (isset($i['data'])) {
+                                $i['data'] = collect($i['data'])->mapWithKeys(function ($text, $key) use ($language) {
+                                    return [$key => Translator::translate($text, $language->code)];
+                                })->toArray();
+                            }
+
+                            if (is_array($i)) {
+                                return collect($i ?? [])->mapWithKeys(function ($value, $key) use ($language) {
+                                    if (is_array($value) || is_null($value)) {
+                                        return [$key => $value];
+                                    }
+
+                                    return [$key => Translator::translate($value, $language->code)];
+                                })->toArray();
+                            }
+
+                            return $i;
+                        })->toArray();
+                    }
+
+                    return $item;
+                })->toArray();
+            }
+
+            if (is_null($value)) {
+                return $value;
+            }
+
+            return Translator::translate($value, $language->code);
+        })->toArray();
+
+        $metaTags = collect($state['meta_tags'])->mapWithKeys(function ($value, $key) use ($language) {
+            if (is_array($value) || is_null($value)) {
+                return [$key => $value];
+            }
+
+            return [$key => Translator::translate($value, $language->code)];
+        })->toArray();
+
+        $state['values'] = $values;
+        $state['meta_tags'] = $metaTags;
+        $state['name'] = Translator::translate($state['name'], $language->code);
+
+        $this->form->fill($state);
+
+        Notification::make()
+            ->title(__('Translated'))
+            ->body(__('The content has been translated to ' . $language->name))
+            ->send();
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
