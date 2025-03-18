@@ -55,7 +55,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Locale;
 
 class ContentResource extends Resource
 {
