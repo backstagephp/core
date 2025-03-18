@@ -422,7 +422,15 @@ class ContentResource extends Resource
                 fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')
             )
             ->defaultSort('edited_at', 'desc')
-            ->filters([], layout: FiltersLayout::Modal)
+            ->filters([
+                SelectFilter::make('type_slug')
+                    ->label(__('Type'))
+                    ->native(false)
+                    ->searchable()
+                    ->multiple()
+                    ->preload()
+                    ->relationship('type', 'name'),
+            ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
             ->actions([
                 ...Type::first()
