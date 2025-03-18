@@ -254,6 +254,18 @@ class ContentResource extends Resource
                                             )
                                             ->disabledOptions(fn ($record) => [$record?->getKey()]),
 
+                                        TextInput::make('path')
+                                            ->columnSpanFull()
+                                            ->rules(function (Get $get, $record) {
+                                                if ($get('public') === false && $record) {
+                                                    return [];
+                                                }
+
+                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                            })
+                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
@@ -568,7 +580,7 @@ class ContentResource extends Resource
             ->modifyQueryUsing(
                 fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type')
             )
-            ->defaultSort('edited_at', 'desc')
+            ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
                 Filter::make('locale')
                     ->form([
