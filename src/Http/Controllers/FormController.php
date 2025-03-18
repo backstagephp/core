@@ -48,8 +48,7 @@ class FormController
                         'size' => $request->file($field->slug)->getSize(),
                         'type' => $request->file($field->slug)->getMimeType(),
                     ]);
-                }
-                else if (is_array($value)) {
+                } elseif (is_array($value)) {
                     $value = json_encode($value);
                 }
 
