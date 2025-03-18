@@ -429,6 +429,19 @@ class ContentResource extends Resource
                     ->multiple()
                     ->preload()
                     ->relationship('type', 'name'),
+                TernaryFilter::make('parent_ulid')
+                    ->nullable()
+                    ->label('Parent')
+                    ->trueLabel('Has parent')
+                    ->falseLabel('No parent')
+                    ->queries(
+                        true: function (EloquentBuilder $query): EloquentBuilder {
+                            return $query->whereNotNull('parent_ulid');
+                        },
+                        false: function (EloquentBuilder $query): EloquentBuilder {
+                            return $query->whereNull('parent_ulid');
+                        },
+                    ),
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
             ->actions([
