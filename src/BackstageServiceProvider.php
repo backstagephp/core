@@ -21,7 +21,6 @@ use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -63,6 +62,16 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Preparing stage...');
 
                         $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-migrations',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-config',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-migrations',
                             '--force' => true,
                         ]);
@@ -82,11 +91,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $this->writeMediaPickerConfig();
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'media-picker-migrations',
+                            '--tag' => 'media-migrations',
                             '--force' => true,
                         ]);
 
                         $command->comment('Clean the decor...');
+
                         $command->callSilently('migrate:fresh', [
                             '--force' => true,
                         ]);
@@ -130,9 +140,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             $this->getScriptData(),
             $this->getAssetPackageName()
         );
-
-        // Icon Registration
-        FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
         if (app()->runningInConsole()) {
@@ -221,14 +228,6 @@ class BackstageServiceProvider extends PackageServiceProvider
     /**
      * @return array<string>
      */
-    protected function getIcons(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<string>
-     */
     protected function getRoutes(): array
     {
         return [];
@@ -248,7 +247,6 @@ class BackstageServiceProvider extends PackageServiceProvider
     public function getMigrations(): array
     {
         return [
-            '01_create_languages_table',
             '02_create_sites_table',
             '03_create_types_table',
             '04_create_settings_table',

@@ -7,6 +7,7 @@ use Backstage\Resources\UserResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -24,7 +25,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Setup');
+        return __('Manage');
     }
 
     public static function getModelLabel(): string
@@ -47,6 +48,12 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('avatar_url')
+                    ->label('')
+                    ->width(40)
+                    ->circular()
+                    ->ring(2),
+
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

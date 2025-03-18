@@ -16,7 +16,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use Locale;
 
 class LanguagesRelationManager extends RelationManager
 {
@@ -57,11 +56,11 @@ class LanguagesRelationManager extends RelationManager
                                             ->get()
                                             ->sort()
                                             ->groupBy(function ($language) {
-                                                return Str::contains($language->code, '-') ? Locale::getDisplayRegion('-' . strtolower(explode('-', $language->code)[1]), app()->getLocale()) : 'Worldwide';
+                                                return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
                                             })
                                             ->mapWithKeys(fn ($languages, $countryName) => [
                                                 $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="w-5 inline-block relative" style="top: -1px; margin-right: 3px;"> ' . Locale::getDisplayLanguage(explode('-', $language->code)[0], app()->getLocale()) . ' (' . $countryName . ')',
+                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
                                     )
@@ -85,7 +84,7 @@ class LanguagesRelationManager extends RelationManager
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? 'Worldwide')
+                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))

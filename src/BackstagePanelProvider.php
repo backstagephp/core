@@ -109,17 +109,12 @@ class BackstagePanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Users'),
                 NavigationGroup::make()
-                    ->label('Setup'),
+                    ->label('Manage'),
             ])
             ->tenant(Site::class)
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
             ], isPersistent: true);
-
-        // completely disabled spa mode for now (too many issues with it)
-        //
-        // enable spa mode for browsers except Safari
-        // ->spa(fn () => ! (str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
     }
 }
