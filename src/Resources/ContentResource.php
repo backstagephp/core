@@ -387,6 +387,11 @@ class ContentResource extends Resource
                     ->size(IconColumn\IconColumnSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
+                TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->searchable()
+                    ->sortable(),
+
                 ImageColumn::make('language_code')
                     ->label('')
                     ->width(50)
