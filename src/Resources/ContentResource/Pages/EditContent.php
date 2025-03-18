@@ -87,7 +87,7 @@ class EditContent extends EditRecord
                             }
 
                             if (is_array($i)) {
-                                return collect($i ?? [])->mapWithKeys(function ($value, $key) use ($language) {
+                                return collect($i)->mapWithKeys(function ($value, $key) use ($language) {
                                     if (is_array($value) || is_null($value)) {
                                         return [$key => $value];
                                     }

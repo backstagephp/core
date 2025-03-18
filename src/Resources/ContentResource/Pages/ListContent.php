@@ -7,6 +7,7 @@ use Backstage\Resources\ContentResource;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Table;
 
 class ListContent extends ListRecords
 {
@@ -70,5 +71,29 @@ class ListContent extends ListRecords
                 ->iconPosition('after')
                 ->button(),
         ];
+    }
+
+    public function table(Table $table): Table
+    {
+        $table = ContentResource::table($table);
+
+        if ($this->shouldBeReorderable()) {
+            return $table->reorderable('position');
+        }
+
+        return $table;
+    }
+
+    protected function handleTableFilterUpdates(): void
+    {
+        parent::handleTableFilterUpdates();
+
+        $this->table = $this->table($this->makeTable());
+    }
+
+    protected function shouldBeReorderable(): bool
+    {
+        return isset($this->tableFilters['parent_ulid']['value']) &&
+            $this->tableFilters['parent_ulid']['value'] === '0';
     }
 }
