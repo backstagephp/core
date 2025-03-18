@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * @property string $type
+ */
 class FormAction extends Model
 {
     use HasPackageFactory;
