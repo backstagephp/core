@@ -31,6 +31,7 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use SplFileInfo;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -244,31 +245,13 @@ class BackstageServiceProvider extends PackageServiceProvider
     /**
      * @return array<string>
      */
-    public function getMigrations(): array
+    protected function getMigrations(): array
     {
-        return [
-            '02_create_sites_table',
-            '03_create_types_table',
-            '04_create_settings_table',
-            '05_create_content_table',
-            '06_create_templates_table',
-            '07_create_content_field_values_table',
-            '08_create_blocks_table',
-            '09_create_menus_table',
-            '10_create_menu_items_table',
-            '11_create_domains_table',
-            '12_create_forms_table',
-            '13_create_form_actions_table',
-            '14_create_form_submissions_table',
-            '15_create_form_submission_values_table',
-            '16_create_tags_tables',
-            '17_create_notifications_table',
-            '18_add_columns_to_users_table',
-            '19_add_ulid_column_to_blocks_table',
-            '20_modify_primary_keys_for_blocks_table',
-            '21_add_adjacency_columns_to_content_table',
-            '22_add_sortable_columns_to_types_table',
-        ];
+        return collect(app(Filesystem::class)->files(__DIR__ . '/../database/migrations'))
+            ->map(fn (SplFileInfo $file) => str_replace('.php', '', $file->getBasename()))
+            ->sortBy(fn ($filename) => (int) explode('_', $filename)[0])
+            ->values()
+            ->toArray();
     }
 
     private function generateMediaPickerConfig(): array
