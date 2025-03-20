@@ -56,11 +56,11 @@ class LanguagesRelationManager extends RelationManager
                                             ->get()
                                             ->sort()
                                             ->groupBy(function ($language) {
-                                                return Str::contains($language->code, '-') ? getLocalizedCountryName($language->code) : __('Worldwide');
+                                                return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
                                             })
                                             ->mapWithKeys(fn ($languages, $countryName) => [
                                                 $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . getLocalizedLanguageName($language->code) . ' (' . $countryName . ')',
+                                                    $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
                                     )

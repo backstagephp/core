@@ -42,7 +42,7 @@ class EditContent extends EditRecord
                                 })
                                     ->toArray()
                             )
-                                ->label(getLocalizedCountryName($countryCode) ?: __('Worldwide'))
+                                ->label(localized_country_name($countryCode) ?: __('Worldwide'))
                                 ->color('gray')
                                 ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
                                 ->iconPosition(IconPosition::After)
