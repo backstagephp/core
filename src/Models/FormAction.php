@@ -48,7 +48,11 @@ class FormAction extends Model
     {
         switch ($this->type) {
             case 'email':
-                Mail::to($submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'])
+                $to = $submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'];
+                if (filter_var($to, FILTER_VALIDATE_EMAIL) === false) {
+                    return;
+                }
+                Mail::to($to)
                     ->send(new FormActionExecute($this, $submission));
 
                 break;
