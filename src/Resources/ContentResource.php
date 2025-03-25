@@ -242,6 +242,7 @@ class ContentResource extends Resource
                                                 Rule::exists('content', 'ulid')
                                                     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                                             ])
+                                            ->enableBranchNode()
                                             ->relationship(
                                                 relationship: 'parent',
                                                 titleAttribute: 'name',
