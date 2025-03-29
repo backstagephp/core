@@ -14,10 +14,10 @@ class FormController
         $request->validate(
             $form->fields->mapWithKeys(function ($field) {
                 if ($field->config['required'] ?? false) {
-                    $field->rules = ['required'];
+                    $rules[] = 'required';
                 }
 
-                return [$field->slug => $field->rules];
+                return [$field->slug => $rules];
             })
                 ->filter()
                 ->merge(['content_ulid' => ['nullable', 'exists:content,ulid']])
