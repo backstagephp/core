@@ -140,7 +140,9 @@ class ContentResource extends Resource
                         $set('meta_tags.title', $state);
 
                         if (! $record || blank($get('path'))) {
-                            $set('path', Str::slug($state));
+                            $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
+
+                            $set('path', $path);
                         }
 
                         $currentSlug = $get('slug');
@@ -250,6 +252,16 @@ class ContentResource extends Resource
                                                     });
                                                 },
                                             )
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
+                                                if ($state) {
+                                                    $parent = Content::find($state);
+
+                                                    if ($parent->path && $get('path')) {
+                                                        $set('path', $parent->path . '/' . $get('path'));
+                                                    }
+                                                }
+                                            })
+                                            ->live()
                                             ->disabledOptions(fn($record) => [$record?->getKey()]),
 
                                         TextInput::make('path')
