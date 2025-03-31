@@ -26,8 +26,6 @@ class FormSubmissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
-    public static ?string $recordTitleAttribute = 'name';
-
     public static function getModelLabel(): string
     {
         return __('Submission');
