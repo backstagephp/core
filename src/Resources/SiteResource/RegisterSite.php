@@ -2,13 +2,16 @@
 
 namespace Backstage\Resources\SiteResource;
 
-use Backstage\Models\Site;
-use Backstage\Resources\SiteResource;
 use Filament\Forms\Form;
+use Backstage\Models\Site;
+use Filament\Actions\Action;
+use Backstage\Resources\SiteResource;
 use Filament\Pages\Tenancy\RegisterTenant;
 
 class RegisterSite extends RegisterTenant
 {
+    protected static string $view = 'backstage::filament.sites.register';
+
     public static function getLabel(): string
     {
         return 'Add new Site';
@@ -32,5 +35,15 @@ class RegisterSite extends RegisterTenant
         $site->users()->attach(auth()->user());
 
         return $site;
+    }
+
+    public function getGoBackAction(): Action
+    {
+        return Action::make('goBack')
+            ->label(__('Go back'))
+            ->link()
+            ->icon('heroicon-s-arrow-left')
+            ->color('gray')
+            ->url(url()->previous());
     }
 }
