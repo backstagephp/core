@@ -53,7 +53,10 @@ class EditBlock extends EditRecord
                 return $record;
             });
 
-        $actions[] = Actions\DeleteAction::make();
+        $actions[] = Actions\DeleteAction::make()
+            ->before(function (Block $record) {
+                $record->sites()->detach();
+            });
 
         return $actions;
     }
