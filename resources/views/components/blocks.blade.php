@@ -1,5 +1,6 @@
 @if ($blocks)
     <div {{ $attributes }}>
+        {{ $before ?? '' }}
         @foreach($blocks as $block)
             @php($className = \Backstage\Facades\Backstage::resolveComponent($block['type']))
             @php($params = \Backstage\Facades\Backstage::mapParams($block))
@@ -8,5 +9,6 @@
             {!! \Illuminate\Support\Facades\Blade::renderComponent($component) !!}
             @endif
         @endforeach
+        {{ $after ?? '' }}
     </div>
 @endif
