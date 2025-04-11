@@ -8,7 +8,7 @@ return [
         'default' => true,
 
         'plugins' => [
-            // Vormkracht10\FilamentRedirects\RedirectsPlugin::make(),
+            Backstage\Redirects\Filament\RedirectsPlugin::make(),
             MediaPlugin::make(),
             TranslationsPlugin::make(),
         ],

@@ -83,4 +83,9 @@ class Site extends Model
     {
         return $this->hasMany(Media::class);
     }
+
+    public function redirects(): HasMany
+    {
+        return $this->hasMany(Redirect::class);
+    }
 }
