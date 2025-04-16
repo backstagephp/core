@@ -138,13 +138,10 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-
-                        if (! $record || blank($get('path'))) {
-                            $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
-
-                            $set('path', $path);
-                        }
-
+          
+                        $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
+                        $set('path', $path);
+                        
                         $currentSlug = $get('slug');
 
                         if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
