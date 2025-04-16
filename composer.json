@@ -110,14 +110,11 @@
             "url": "git@github.com:backstagephp/media.git"
         },
         "backstage/redirects": {
-            "type": "path",
-            "url": "../redirects",
-            "options": {
-                "symlink": true
-            }
+            "type": "git",
+            "url": "git@github.com:backstagephp/redirects.git"
         },
         "backstage/laravel-redirects": {
-            "type": "vcs",
+            "type": "git",
             "url": "git@github.com:backstagephp/laravel-redirects.git"
         }
     },
