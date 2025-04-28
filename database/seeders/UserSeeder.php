@@ -19,6 +19,12 @@ class UserSeeder extends Seeder
             'password' => 'mark@vk10.nl',
         ])->create();
 
+        User::factory([
+            'name' => 'Rob',
+            'email' => 'rob@vk10.nl',
+            'password' => 'rob@vk10.nl',
+        ])->create();
+
         User::factory()->state([
             'name' => 'Mathieu',
             'email' => 'mathieu@vk10.nl',
