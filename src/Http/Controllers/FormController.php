@@ -13,6 +13,7 @@ class FormController
     {
         $request->validate(
             $form->fields->mapWithKeys(function ($field) {
+                $rules = [];
                 if ($field->config['required'] ?? false) {
                     $rules[] = 'required';
                 }
