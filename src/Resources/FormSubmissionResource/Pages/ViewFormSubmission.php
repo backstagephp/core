@@ -2,10 +2,9 @@
 
 namespace Backstage\Resources\FormSubmissionResource\Pages;
 
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ViewRecord;
 use Backstage\Resources\FormSubmissionResource;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewFormSubmission extends ViewRecord
 {
