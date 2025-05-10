@@ -21,6 +21,8 @@ class FormSubmissionValue extends Model
 
     protected $guarded = [];
 
+    protected $with = ['field'];
+
     protected function casts(): array
     {
         return [];
