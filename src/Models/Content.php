@@ -2,25 +2,25 @@
 
 namespace Backstage\Models;
 
-use Backstage\Shared\HasTags;
-use Backstage\Fields\Models\Field;
-use Illuminate\Support\HtmlString;
 use Backstage\Casts\ContentPathCast;
-use Illuminate\Support\Facades\View;
-use Backstage\Media\Concerns\HasMedia;
-use Backstage\Shared\HasPackageFactory;
-use Illuminate\Database\Eloquent\Model;
 use Backstage\Fields\Concerns\HasFields;
-use Backstage\Observers\ContentObserver;
-use Illuminate\Database\Eloquent\Collection;
+use Backstage\Fields\Models\Field;
+use Backstage\Media\Concerns\HasMedia;
 use Backstage\Observers\ContentDepthObserver;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Backstage\Observers\ContentObserver;
+use Backstage\Shared\HasPackageFactory;
+use Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\HtmlString;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
@@ -107,7 +107,7 @@ class Content extends Model
     {
         if (! $this->public) {
             return Attribute::make(
-                get: fn() => null,
+                get: fn () => null,
             );
         }
 
@@ -117,7 +117,7 @@ class Content extends Model
         }
 
         return Attribute::make(
-            get: fn() => $url,
+            get: fn () => $url,
         );
     }
 
@@ -127,7 +127,7 @@ class Content extends Model
     protected function templateFile(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
+            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -184,7 +184,7 @@ class Content extends Model
         $url .= '/';
 
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $url,
+            get: fn (?string $value, array $attributes) => $url,
         );
     }
 

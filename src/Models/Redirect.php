@@ -2,9 +2,9 @@
 
 namespace Backstage\Models;
 
+use Backstage\Redirects\Laravel\Models\Redirect as ModelsRedirect;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Backstage\Redirects\Laravel\Models\Redirect as ModelsRedirect;
 
 class Redirect extends ModelsRedirect
 {
@@ -13,7 +13,8 @@ class Redirect extends ModelsRedirect
         return $this->belongsTo(Site::class, 'site_id');
     }
 
-    protected static function boot() {
+    protected static function boot()
+    {
         parent::boot();
 
         static::creating(function ($model) {
