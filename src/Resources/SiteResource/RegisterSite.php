@@ -2,10 +2,10 @@
 
 namespace Backstage\Resources\SiteResource;
 
-use Filament\Forms\Form;
 use Backstage\Models\Site;
-use Filament\Actions\Action;
 use Backstage\Resources\SiteResource;
+use Filament\Actions\Action;
+use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
 
 class RegisterSite extends RegisterTenant
