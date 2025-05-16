@@ -20,6 +20,7 @@ class Domain extends Model
     public function languages(): BelongsToMany
     {
         return $this->belongsToMany(Language::class, 'domain_language', 'domain_ulid', 'language_code')
+            ->orderBy('native')
             ->withPivot('path');
     }
 

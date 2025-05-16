@@ -9,11 +9,15 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -93,11 +97,55 @@ class LanguagesRelationManager extends RelationManager
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->slideOver()
-                    ->after(function (Component $livewire) {
-                        $livewire->dispatch('refreshFields');
-                    }),
+                AttachAction::make()
+                    ->preloadRecordSelect()
+                    ->recordSelectSearchColumns(['name', 'code', 'native'])
+                    ->recordTitleAttribute('native')
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->withoutGlobalScopes())
+                    ->form(fn (AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        // Select::make('recordId')
+                        //     ->label(__('Language'))
+                        //     ->columnSpanFull()
+                        //     ->placeholder(__('Select Language'))
+                        //     ->getOptionLabelUsing(function ($value) use ($table): string {
+                        //         $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                        //         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+                        //         return $this->getRecordTitle($relationshipQuery->find($value));
+                        //     })
+                        //     ->getOptionLabelsUsing(function (array $values) use ($table): array {
+                        //         $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                        //         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+                        //         return $relationshipQuery->find($values)
+                        //             ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
+                        //             ->all();
+                        //     })
+                        //     ->options(
+                        //         Language::withoutGlobalScopes()
+                        //             ->where('active', 1)
+                        //             ->get()
+                        //             ->sort()
+                        //             ->groupBy(function ($language) {
+                        //                 return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
+                        //             })
+                        //             ->mapWithKeys(fn ($languages, $countryName) => [
+                        //                 $countryName => $languages->mapWithKeys(fn ($language) => [
+                        //                     $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
+                        //                 ])->toArray(),
+                        //             ])
+                        //     )
+                        //     ->allowHtml(),
+                        TextInput::make('path'),
+                    ])
+                // Tables\Actions\CreateAction::make()
+                //     ->slideOver()
+                //     ->after(function (Component $livewire) {
+                //         $livewire->dispatch('refreshFields');
+                //     }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
