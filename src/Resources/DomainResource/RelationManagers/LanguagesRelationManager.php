@@ -62,8 +62,8 @@ class LanguagesRelationManager extends RelationManager
                                             ->groupBy(function ($language) {
                                                 return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
                                             })
-                                            ->mapWithKeys(fn ($languages, $countryName) => [
-                                                $countryName => $languages->mapWithKeys(fn ($language) => [
+                                            ->mapWithKeys(fn($languages, $countryName) => [
+                                                $countryName => $languages->mapWithKeys(fn($language) => [
                                                     $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
@@ -84,11 +84,11 @@ class LanguagesRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('language_code')
                     ->label('Language')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[0])
+                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? __('Worldwide'))
+                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[1] ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))
@@ -97,55 +97,38 @@ class LanguagesRelationManager extends RelationManager
             ])
             ->filters([])
             ->headerActions([
-                AttachAction::make()
+                Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['name', 'code', 'native'])
                     ->recordTitleAttribute('native')
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->withoutGlobalScopes())
-                    ->form(fn (AttachAction $action): array => [
+                    ->recordSelectOptionsQuery(fn(Builder $query) => $query->withoutGlobalScopes())
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        // Select::make('recordId')
-                        //     ->label(__('Language'))
-                        //     ->columnSpanFull()
-                        //     ->placeholder(__('Select Language'))
-                        //     ->getOptionLabelUsing(function ($value) use ($table): string {
-                        //         $relationship = Relation::noConstraints(fn () => $table->getRelationship());
-
-                        //         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                        //         return $this->getRecordTitle($relationshipQuery->find($value));
-                        //     })
-                        //     ->getOptionLabelsUsing(function (array $values) use ($table): array {
-                        //         $relationship = Relation::noConstraints(fn () => $table->getRelationship());
-
-                        //         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                        //         return $relationshipQuery->find($values)
-                        //             ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
-                        //             ->all();
-                        //     })
-                        //     ->options(
-                        //         Language::withoutGlobalScopes()
-                        //             ->where('active', 1)
-                        //             ->get()
-                        //             ->sort()
-                        //             ->groupBy(function ($language) {
-                        //                 return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
-                        //             })
-                        //             ->mapWithKeys(fn ($languages, $countryName) => [
-                        //                 $countryName => $languages->mapWithKeys(fn ($language) => [
-                        //                     $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
-                        //                 ])->toArray(),
-                        //             ])
-                        //     )
-                        //     ->allowHtml(),
                         TextInput::make('path'),
                     ])
-                // Tables\Actions\CreateAction::make()
-                //     ->slideOver()
-                //     ->after(function (Component $livewire) {
-                //         $livewire->dispatch('refreshFields');
-                //     }),
+                    ->action(function (array $arguments, array $data, Tables\Actions\AttachAction $action, Table $table) {
+                        $recordId = $data['recordId'];
+                        $path = $data['path'];
+
+                        /**
+                         * @var \Backstage\Models\Domain $language
+                         */
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        $attachment = $ownerRecord->languages()->attach($recordId, [
+                            'path' => $path,
+                        ]);
+
+                        if (! $attachment) {
+                            $action->failureNotificationTitle(__('Failed to attach language'));
+
+                            $action->failure();
+                            return;
+                        }
+
+
+                        $action->success();
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -153,7 +136,7 @@ class LanguagesRelationManager extends RelationManager
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
