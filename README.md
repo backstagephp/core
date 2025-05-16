@@ -23,11 +23,11 @@ Note: For now you may have to update composer.json to:
     "repositories": {
         "laravel-redirects": {
             "type": "vcs",
-            "url": "git@github.com:vormkracht10/laravel-redirects.git"
+            "url": "git@github.com:backstagephp/laravel-redirects.git"
         },
         "filament-redirects": {
             "type": "vcs",
-            "url": "git@github.com:vormkracht10/filament-redirects.git"
+            "url": "git@github.com:backstagephp/redirects.git"
         },
         "backstage/media": {
             "type": "vcs",
