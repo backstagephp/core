@@ -41,7 +41,7 @@
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "3.3.2",
         "nette/php-generator": "^4.1",
-        "saade/filament-adjacency-list": "3.2.1",
+        "saade/filament-adjacency-list": "^3.2",
         "spatie/laravel-package-tools": "^1.18",
         "spatie/once": "^3.1",
         "spatie/schema-org": "^3.23",
