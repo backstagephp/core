@@ -72,7 +72,6 @@ class MenuItemResource extends Resource
                                                     ->modal()
                                                     ->modalHeading('Select Content')
                                             )
-                                            ->url()
                                             ->columnSpan(2)
                                             ->required(),
                                     ]),
