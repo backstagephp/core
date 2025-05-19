@@ -1,8 +1,8 @@
 ---
-title: Getting started 
+title: Blocks
 ---
 
-## Overview
+# Blocks
 
 Blocks are collections of fields that are rendered in blade components.
 

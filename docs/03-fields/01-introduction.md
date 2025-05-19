@@ -1,6 +1,10 @@
-# Introduction
+---
+title: Fields
+---
 
-Fields are configurable (custom) Filament form fields that can be used in Forms and Settings. We provide a set of fields that can be used out of the box, but you can also create your own fields.
+# Fields
+
+Fields are configurable (custom) Filament form fields that can be used in [Content](/01-content/01-introduction), [Forms](/05-forms/01-introduction) and [Settings](/06-settings/01-introduction). We provide a set of fields that can be used out of the box, but you can also create your own fields.
 
 ![field-example](./field-example.png)
 

@@ -12,16 +12,37 @@ export default defineConfig({
 
     sidebar: [
       {
+        text: 'Introduction',
+        items: [
+          { text: 'Quick start', link: '/quick-start' }
+        ]
+      },
+      {
         text: 'Content',
         items: [
-          { text: 'Basic', link: '/01-content' },
-          { text: 'Blocks', link: '/02-blocks/01-introduction' },
+          { text: 'Introduction', link: '/01-content/01-introduction' },
+          { text: 'Types', link: '/02-types/01-introduction' },
+          { text: 'Fields', link: '/03-fields/01-introduction' },
+          { text: 'Blocks', link: '/04-blocks/01-introduction' },
+        ]
+      },
+      {
+        text: 'Forms',
+        items: [
+          { text: 'Introduction', link: '/05-forms/01-introduction' },
+        ]
+      },
+      {
+        text: 'Advanced',
+        items: [
+          { text: 'Settings', link: '/06-settings/01-introduction' },
+          { text: 'Sites & domains', link: '/07-sites/01-introduction' },
         ]
       }
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/backstagephp' }
     ]
   }
 })

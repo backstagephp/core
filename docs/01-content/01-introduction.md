@@ -2,9 +2,9 @@
 title: Content
 ---
 
-## Overview
+# Content
 
-Content is the basic for each page.
+Content is the basic for each page. Each content is a [type](/02-types/01-introduction) that is a set of configurable [fields](/03-fields/01-introduction).
 
 ### Blade file
 The blade file that is being rendered is based on the following conditions:

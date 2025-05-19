@@ -2,7 +2,7 @@
 title: Settings
 ---
 
-## Overview
+# Settings
 
 A setting is a collection of one or more setting values.
 
