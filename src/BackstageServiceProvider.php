@@ -32,6 +32,7 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use SplFileInfo;
 
@@ -191,7 +192,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
 
-        collect($this->app['config']['backstage']['components']['blocks'] ?? [])
+        collect($this->app['config']['backstage']['cms']['components']['blocks'] ?? [])
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
                 Backstage::registerComponent($component);
@@ -202,6 +203,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
 
         Notifications::verticalAlignment(VerticalAlignment::End);
+        Notifications::alignment(Alignment::End);
     }
 
     protected function getAssetPackageName(): ?string
