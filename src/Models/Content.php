@@ -215,11 +215,13 @@ class Content extends Model
 
     public function view($data = [])
     {
+        dd($this->template_file, 'types.' . $this->type_slug);
         return View::first([$this->template_file, 'types.' . $this->type_slug, 'types.default', 'backstage::types.default'], $data);
     }
 
     public function response(int $code = 200)
     {
+        dd($this->template_file, 'types.' . $this->type_slug);
         view()->share([
             'content' => $this,
         ]);

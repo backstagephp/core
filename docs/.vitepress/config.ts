@@ -14,13 +14,18 @@ export default defineConfig({
       {
         text: 'Introduction',
         items: [
-          { text: 'Quick start', link: '/quick-start' }
+          { text: 'Quick start', link: '/quick-start' },
+          { text: 'Installation', link: '/installation' }
         ]
       },
       {
         text: 'Content',
         items: [
-          { text: 'Introduction', link: '/01-content/01-introduction' },
+          { text: 'Introduction', link: '/01-content/01-introduction',
+            items: [
+              { text: 'Urls', link: '/01-content/02-urls' },
+            ]
+           },
           { text: 'Types', link: '/02-types/01-introduction' },
           { text: 'Fields', link: '/03-fields/01-introduction' },
           { text: 'Blocks', link: '/04-blocks/01-introduction' },

@@ -8,16 +8,16 @@ hero:
   tagline: A forever work in progress
   actions:
     - theme: brand
-      text: Quickstart
+      text: Quick start
       link: quick-start
-    # - theme: alt
-    #   text: API Examples
-    #   link: /api-examples
+    - theme: alt
+      text: Installation
+      link: /installation
 
 features:
   - title: Content
     details: The basic of each page
-    link: 01-content
+    link: /01-content/01-introduction
   # - title: Feature B
   #   details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
   # - title: Feature C

@@ -4,78 +4,36 @@ title: Quick start
 
 # Welcome, Backstage
 
-The CMS for Laravel developers.
+The CMS build for Laravel developers.
 
-### Quick install
+## Install
 
-You can install backstage in any (new) Laravel project or start from scratch. If you already have a (Laravel) website running you can skip step 1.
+See [install](/installation) for installing Backstage in your Laravel project.
 
-#### Step 1. (Optional) Create a new Laravel app.
+## Quickstart
 
-```bash
-laravel new my-website
-```
+Backstage is build on top of Filament. 
 
-#### Step 2. Require backstage/cms
+### 1. Create a user
 
 ```bash
-composer require backstage/cms
+php artisan make:filament-user
 ```
 
-Note: For now you may have to update composer.json to:
-```json
-    "repositories": {
-        "laravel-redirects": {
-            "type": "vcs",
-            "url": "git@github.com:backstagephp/laravel-redirects.git"
-        },
-        "filament-redirects": {
-            "type": "vcs",
-            "url": "git@github.com:backstagephp/redirects.git"
-        },
-        "backstage/media": {
-            "type": "vcs",
-            "url": "git@github.com:backstagephp/media.git"
-        },
-        "backstage/fields": {
-            "type": "vcs",
-            "url": "git@github.com:backstagephp/fields.git"
-        },
-        "backstage": {
-            "type": "vcs",
-            "url": "git@github.com:backstagephp/core.git"
-        }
-    },
-    "minimum-stability": "dev",
-```
+### 2. Login
 
-#### Step 3. Run migrations and add default settings and content
+Open /backstage and login.
 
-```bash
-php artisan backstage:install
-```
+### 3. (optional) Create a content type
 
-#### Step 4. (Optional) Remove or comment the default Laravel routes:
+Types / New type
 
-```php
-// routes/web.php
+Create a [type](/02-types/01-introduction) with [fields](03-fields/01-introduction).
 
-// Route::get('/', function () {
-//    return view('welcome');
-//});
-```
+<video controls src="/quickstart/create-type.mp4"></video>
 
-### Advanced setup
+### 4. Create content with the new type
 
-You can publish the migrations with:
+Content / New content / [type]
 
-```bash
-php artisan vendor:publish --tag="backstage-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="backstage-config"
-```
+<video controls src="/quickstart/create-content.mp4"></video>

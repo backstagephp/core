@@ -1,46 +1,45 @@
 ---
-title: Urls
+title: URLs
 ---
 
-## Overview
+# URLs
 
-Explanation of how urls are being generated.
+## URL Structure
 
-The url is based on: content-path, site-path, domain, language-path.
+A URL is built from these parts, in order:
 
-This is the url that is being parsed:
+1. **Domain**: Main site domain.
+2. **Site Path** (optional): Identifies a site instance (e.g., `/blog`).
+3. **Language Path** (optional): Language segment (e.g., `/en`, `/nl`).
+4. **Content Path**: Specific page or content (e.g., `/contact`).
+
+Format:
 
 ```
-http(s)?://(www.)?(domain)/(site_path/)?(language_code_path/)?(content_path)
+http(s)://[www.]domain[/site-path][/language-path]/content-path
 ```
 
-1. Depending if SSL is forced, the user is redirected to https://.
-2. Optional (a future setting) you can choise to either use the www or non-www version of the website.
-3. The domain that is setup for the site.
-4. The path that is setup for the site.
-5. Each domain have one or more languages. Each language of the domain has an optional path.
-6. The path setup in `content`.
+Notes:
+- SSL can be enforced (redirect to `https://`).
+- Optionally choose `www` or non-`www`.
+- Each domain can have multiple languages, each with an optional path.
+- Content path is defined in `content`.
 
-### Examples
+## Examples
 
-Url: `https://example.com/nl/contact` should belong to:
+- `https://example.com/nl/contact`
+    - Domain: `example.com`
+    - Language path: `/nl`
+    - Content path: `/contact`
 
-1. A site with example.com as domain.
-2. A language for that domain with as path `nl` setup.
-3. Content with the same language and as path `/contact`.
+- `https://example.com/blog/de/contact`
+    - Domain: `example.com`
+    - Site path: `/blog`
+    - Language path: `/de`
+    - Content path: `/contact`
 
-Url: `https://example.com/blog/de/contact` should belong to:
+- `https://example.com/contact`
+    - Domain: `example.com`
+    - Content path: `/contact`
 
-1. A site with example.com as domain;
-2. The site with `/blog` as path.
-3. The path language of the domain set to `/de`.
-4. Content with the same language and as path `/contact`.
-
-**Of, course. The most basic usage will work to:**
-
-Url: `https://example.com/contact` should belong to:
-
-1. A site with domain example.com.
-2. A content belonging to that site with as path `/contact`.
-
-For more information see `RequestServiceProvider.php`.
+See `RequestServiceProvider.php` for implementation details.

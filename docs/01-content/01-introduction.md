@@ -4,36 +4,32 @@ title: Content
 
 # Content
 
-Content is the basic for each page. Each content is a [type](/02-types/01-introduction) that is a set of configurable [fields](/03-fields/01-introduction).
+Content is the foundation of each page. Every content item has a [type](/02-types/01-introduction) defined by configurable [fields](/03-fields/01-introduction).
 
-### Blade file
-The blade file that is being rendered is based on the following conditions:
+## Blade
 
+Blade templates are resolved in this order:
 
-1. The `template_slug` value for the requested content. For example: 'content.sidebar-left'.
-2. The `/resources/views/types/{content_type}.blade.php` where `content_type` is the slug of the type.
-3. The `/resources/views/types/default.blade.php`. This file can be used for all content that doesnt have a specific blade file.
-4. A default blade file inside Backstage.
+1. The `template_slug` value for the content (e.g., `content.sidebar-left`).
+2. `/resources/views/types/{content_type}.blade.php` (where `{content_type}` is the type slug).
+3. `/resources/views/types/default.blade.php` (fallback for types without a custom template).
+4. The Backstage default blade file.
 
-### Variables inside blade
+### Variables
 
-The `$content` variable is always available. This is the current requested content. This is by default a `Backstage\Models\Content` model.
+- `$content`: Always available, represents the current `Backstage\Models\Content` instance.
 
-
-### Blade file example
+### Example
 
 ```php
 <x-page>
     {{ $content->field('body') }}
-    
+
     @foreach ($content->field('authors') as $author)
-
         {{ $author->field('name') }}<br />
-
     @endforeach
 
     <x-blocks field="blocks" />
     <x-blocks field="main" />
 </x-page>
-
 ```
