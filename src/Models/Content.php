@@ -171,6 +171,7 @@ class Content extends Model
                 $query->limit(1);
             },
         ])
+            ->where('environment', config('app.env'))
             ->first();
 
         if ($domain) {
