@@ -88,7 +88,7 @@ class LanguagesRelationManager extends RelationManager
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[1] ?? __('Worldwide'))
+                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[1] ?? 'worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))
