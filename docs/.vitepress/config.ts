@@ -5,6 +5,9 @@ export default defineConfig({
   title: "Backstage",
   description: "CMS done the Laravel way",
   themeConfig: {
+    search: {
+      provider: 'local',
+    },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
