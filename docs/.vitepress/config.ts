@@ -43,6 +43,12 @@ export default defineConfig({
           { text: 'Settings', link: '/06-settings/01-introduction' },
           { text: 'Sites & domains', link: '/07-sites/01-introduction' },
         ]
+      },
+      {
+        text: 'Extending Backstage',
+        items: [
+          { text: 'Plugins', link: '/09-plugins/01-introduction' }
+        ]
       }
     ],
 

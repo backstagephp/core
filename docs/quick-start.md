@@ -37,3 +37,16 @@ Create a [type](/02-types/01-introduction) with [fields](03-fields/01-introducti
 Content / New content / [type]
 
 <video controls src="/quickstart/create-content.mp4"></video>
+
+### 5. Create a blade file
+
+Create a blade file located in `/resources/views/types/[type-slug].blade.php`.
+
+```blade
+<!-- resources/views/types/company.blade.php -->
+<x-page>
+    
+    Welcome, {{ $content->field('name') }}.
+    
+</x-page>
+```
