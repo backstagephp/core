@@ -3,6 +3,7 @@
 namespace Backstage\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\View;
 
 class Page extends Component
 {
@@ -10,6 +11,6 @@ class Page extends Component
 
     public function render()
     {
-        return view('backstage::components.page');
+        return View::first(['components.page', 'backstage::components.page']);
     }
 }

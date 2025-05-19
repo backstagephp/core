@@ -31,6 +31,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Enums\VerticalAlignment;
 use SplFileInfo;
 
 class BackstageServiceProvider extends PackageServiceProvider
@@ -197,6 +199,9 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
+
+
+        Notifications::verticalAlignment(VerticalAlignment::End);
     }
 
     protected function getAssetPackageName(): ?string
