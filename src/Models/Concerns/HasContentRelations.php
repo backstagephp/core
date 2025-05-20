@@ -3,7 +3,9 @@
 namespace Backstage\Models\Concerns;
 
 use Backstage\Models\ContentRelation;
+use Backstage\Models\Content;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 trait HasContentRelations
@@ -49,5 +51,18 @@ trait HasContentRelations
             ->where('target_type', $target->getMorphClass())
             ->where('target_ulid', $target->ulid)
             ->delete();
+    }
+
+    public function relatedContent(): BelongsToMany
+    {
+        return $this->belongsToMany(Content::class, 'content_relation', 'source_ulid', 'target_ulid')
+            ->where('source_type', $this->getMorphClass());
+    }
+
+    public function relatedToContent(): BelongsToMany
+    {
+        return $this->belongsToMany(Content::class, 'content_relation', 'target_ulid', 'source_ulid')
+            ->where('target_type', $this->getMorphClass())
+            ->where('source_type', 'content');
     }
 } 
