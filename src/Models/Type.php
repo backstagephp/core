@@ -12,7 +12,6 @@ class Type extends Model
 {
     use HasFields;
     use HasPackageFactory;
-    use HasContentRelations;
 
     protected $primaryKey = 'slug';
 
