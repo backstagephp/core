@@ -3,13 +3,14 @@
 namespace Backstage\Models\Concerns;
 
 use Backstage\Models\Content;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasContentRelations
 {
-    public function content(): MorphToMany
+    public function content(): BelongsToMany
     {
-        return $this->morphToMany(Content::class, 'related', 'relationables', 'related_ulid', 'relation_ulid')
-            ->where('relation_type', 'content');
+        return $this->belongsToMany(Content::class, 'relationables', 'related_ulid', 'relation_ulid')
+            ->where('relationables.related_type', $this->getMorphClass())
+            ->where('relationables.relation_type', 'content');
     }
 } 
