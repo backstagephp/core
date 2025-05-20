@@ -20,9 +20,9 @@ class Select extends Base
             return $data;
         }
 
-        DB::table('content_relation')
-            ->where('source_type', $record->getMorphClass())
-            ->where('source_ulid', $record->ulid)
+        DB::table('relationables')
+            ->where('relation_type', $record->getMorphClass())
+            ->where('relation_ulid', $record->ulid)
             ->delete();
         
         $values = $data['values'][$field->ulid];
@@ -40,11 +40,11 @@ class Select extends Base
             $results = $model->whereIn($key, $values)->get();
 
             foreach ($results as $result) {
-                DB::table('content_relation')->insert([
-                    'source_type' => $record->getMorphClass(),
-                    'source_ulid' => $record->ulid,
-                    'target_type' => $resource,
-                    'target_ulid' => $result->ulid,
+                DB::table('relationables')->insert([
+                    'relation_type' => $record->getMorphClass(),
+                    'relation_ulid' => $record->ulid,
+                    'related_type' => $resource,
+                    'related_ulid' => $result->ulid,
                 ]);
             }
         }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ContentRelation extends Model
 {
-    protected $table = 'content_relation';
+    protected $table = 'relationables';
 
     public $timestamps = false;
 
