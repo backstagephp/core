@@ -29,6 +29,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -369,15 +370,39 @@ class ContentResource extends Resource
         return $instance->traitResolveFieldInput($field, $customFields, $record, $isNested);
     }
 
-    public static function getTypeInputs()
+    private static function getTypeInputs()
     {
-        return collect(self::$type->fields)
+        $fields = collect(self::$type->fields)
             ->filter(fn($field) => self::$type->name_field !== $field->slug)
-            ->map(function ($field) {
-                return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
-            })
-            ->filter()
-            ->toArray();
+            ->groupBy('group');
+
+        $schema = [];
+
+        // Add grouped fields in collapsible sections first
+        $groupedFields = $fields->except('');
+        foreach ($groupedFields as $groupName => $groupFields) {
+            $schema[] = Section::make($groupName)
+                // ->description(__('Fields grouped under :group', ['group' => $groupName]))
+                ->collapsible()
+                ->compact()
+                ->schema(
+                    $groupFields->map(fn($field) => self::resolveFieldInput($field, collect(Fields::getFields()), self::$type))
+                        ->filter()
+                        ->toArray()
+                );
+        }
+
+        // Add ungrouped fields after the sections
+        if ($fields->has('')) {
+            $ungroupedFields = $fields->get('')
+                ->map(fn($field) => self::resolveFieldInput($field, collect(Fields::getFields()), self::$type))
+                ->filter()
+                ->toArray();
+            
+            $schema = array_merge($schema, $ungroupedFields);
+        }
+
+        return $schema;
     }
 
     public static function tableDatabase(Table $table, Type $type): Table
