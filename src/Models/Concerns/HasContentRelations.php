@@ -53,13 +53,13 @@ trait HasContentRelations
             ->delete();
     }
 
-    public function relatedContent(): BelongsToMany
+    public function relatedContents(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'content_relation', 'source_ulid', 'target_ulid')
             ->where('source_type', $this->getMorphClass());
     }
 
-    public function relatedToContent(): BelongsToMany
+    public function contents(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'content_relation', 'target_ulid', 'source_ulid')
             ->where('target_type', $this->getMorphClass())
