@@ -14,7 +14,7 @@ trait HasContentRelations
             ->where('relationables.related_type', $this->getMorphClass());
     }
 
-    public function content_related(): BelongsToMany
+    public function relatedContent(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'relationables', 'related_ulid', 'relation_ulid')
             ->where('relationables.related_type', 'content')
