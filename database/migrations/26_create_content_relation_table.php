@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('content_relation', function (Blueprint $table) {
+        Schema::create('relationables', function (Blueprint $table) {
             $table->id();
             
-            $table->string('source_type');
-            $table->ulid('source_ulid');
+            $table->string('relation_type');
+            $table->ulid('relation_ulid');
             
-            $table->string('target_type');
-            $table->ulid('target_ulid');
+            $table->string('related_type');
+            $table->ulid('related_ulid');
                         
-            $table->index(['source_type', 'source_ulid']);
-            $table->index(['target_type', 'target_ulid']);
+            $table->index(['relation_type', 'relation_ulid']);
+            $table->index(['related_type', 'related_ulid']);
         });
     }
 };

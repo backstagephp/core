@@ -10,59 +10,59 @@ use Illuminate\Support\Collection;
 
 trait HasContentRelations
 {
-    public function outgoingRelations(): HasMany
+    public function asRelation(): HasMany
     {
-        return $this->hasMany(ContentRelation::class, 'source_ulid', 'ulid')
-            ->where('source_type', $this->getMorphClass());
+        return $this->hasMany(ContentRelation::class, 'relation_ulid', 'ulid')
+            ->where('relation_type', $this->getMorphClass());
     }
 
-    public function incomingRelations(): HasMany
+    public function asRelated(): HasMany
     {
-        return $this->hasMany(ContentRelation::class, 'target_ulid', 'ulid')
-            ->where('target_type', $this->getMorphClass());
+        return $this->hasMany(ContentRelation::class, 'related_ulid', 'ulid')
+            ->where('related_type', $this->getMorphClass());
     }
 
-    public function getRelatedOfType(string $type, string $direction = 'outgoing'): Collection
+    public function getRelatedOfType(string $type, string $direction = 'relation'): Collection
     {
-        $query = $direction === 'outgoing' 
-            ? $this->outgoingRelations()->where('target_type', $type)
-            : $this->incomingRelations()->where('source_type', $type);
+        $query = $direction === 'relation' 
+            ? $this->asRelation()->where('related_type', $type)
+            : $this->asRelated()->where('relation_type', $type);
 
         $relations = $query->get();
 
         return $relations->map(function ($relation) use ($direction) {
-            return $direction === 'outgoing'
-                ? $relation->target
-                : $relation->source;
+            return $direction === 'relation'
+                ? $relation->related
+                : $relation->relation;
         });
     }
 
     public function addRelation($target): void
     {
-        $this->outgoingRelations()->create([
-            'target_type' => $target->getMorphClass(),
-            'target_ulid' => $target->ulid,
+        $this->asRelation()->create([
+            'related_type' => $target->getMorphClass(),
+            'related_ulid' => $target->ulid,
         ]);
     }
 
     public function removeRelation($target): void
     {
-        $this->outgoingRelations()
-            ->where('target_type', $target->getMorphClass())
-            ->where('target_ulid', $target->ulid)
+        $this->asRelation()
+            ->where('related_type', $target->getMorphClass())
+            ->where('related_ulid', $target->ulid)
             ->delete();
     }
 
     public function relatedContents(): BelongsToMany
     {
-        return $this->belongsToMany(Content::class, 'content_relation', 'source_ulid', 'target_ulid')
-            ->where('source_type', $this->getMorphClass());
+        return $this->belongsToMany(Content::class, 'relationables', 'relation_ulid', 'related_ulid')
+            ->where('relation_type', $this->getMorphClass());
     }
 
     public function contents(): BelongsToMany
     {
-        return $this->belongsToMany(Content::class, 'content_relation', 'target_ulid', 'source_ulid')
-            ->where('target_type', $this->getMorphClass())
-            ->where('source_type', 'content');
+        return $this->belongsToMany(Content::class, 'relationables', 'related_ulid', 'relation_ulid')
+            ->where('related_type', $this->getMorphClass())
+            ->where('relation_type', 'content');
     }
 } 
