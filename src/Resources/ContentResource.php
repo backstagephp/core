@@ -382,14 +382,8 @@ class ContentResource extends Resource
             ->toArray();
     }
 
-    public static function table(Table $table): Table
+    public static function tableDatabase(Table $table, Type $type): Table
     {
-        $typeSlug = request()->input('tableFilters.type_slug.values.0') ?? null;
-
-        if ($typeSlug) {
-            self::$type = Type::firstWhere('slug', $typeSlug);
-        }
-
         return $table
             ->columns([
                 IconColumn::make('published')
@@ -430,47 +424,32 @@ class ContentResource extends Resource
                     ->view('backstage::filament.tables.columns.country-flag-column')
                     ->visible(fn () => Language::active()->where('code', 'LIKE', '%-%')->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
 
-                ...Type::first()
+                ...$type
                     ->fields
-                    ->whereIn('field_type', ['text', 'select'])
+                    ->whereIn('field_type', ['text'])
                     ->map(function ($field) {
                         if ($field->field_type === 'text') {
-                            return TextInputColumn::make($field->slug)->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value);
-                        } elseif ($field->field_type === 'select') {
-                            return SelectColumn::make($field->slug)->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value);
+                            return TextInputColumn::make($field->slug)
+                                ->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value)
+                                ->updateStateUsing(function(Set $set, Get $get, ?string $state, ?Content $record) use ($field) {
+                                    if ($state === null) {
+                                        return;
+                                    }
+
+                                    $record->values->where('field_ulid', $field->ulid)->first()->update([
+                                        'value' => $state
+                                    ]);
+                                });
                         }
                     })
                     ->toArray(),
             ])
             ->modifyQueryUsing(
-                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')
+                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug)
             )
-            ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
-            ->filters([
-                SelectFilter::make('type_slug')
-                    ->label(__('Type'))
-                    ->native(false)
-                    ->searchable()
-                    ->multiple()
-                    ->preload()
-                    ->relationship('type', 'name'),
-                TernaryFilter::make('parent_ulid')
-                    ->nullable()
-                    ->label('Parent')
-                    ->trueLabel('Has parent')
-                    ->falseLabel('No parent')
-                    ->queries(
-                        true: function (EloquentBuilder $query): EloquentBuilder {
-                            return $query->whereNotNull('parent_ulid');
-                        },
-                        false: function (EloquentBuilder $query): EloquentBuilder {
-                            return $query->whereNull('parent_ulid');
-                        },
-                    ),
-            ], layout: FiltersLayout::Modal)
-            ->filtersFormWidth('md')
+            ->defaultSort($type->sort_column ?? 'position', $type->sort_direction ?? 'desc')
             ->actions([
-                ...Type::first()
+                ...$type
                     ->fields
                     ->where('field_type', '!=', 'text')
                     ->where('field_type', '!=', 'select')
@@ -509,12 +488,7 @@ class ContentResource extends Resource
                     ->toArray(),
 
                 Tables\Actions\EditAction::make(),
-            ])->filtersTriggerAction(
-                fn (Action $action) => $action
-                    ->button()
-                    ->label(__('Filter'))
-                    ->slideOver(),
-            )
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -522,7 +496,7 @@ class ContentResource extends Resource
             ]);
     }
 
-    public static function table3(Table $table): Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
