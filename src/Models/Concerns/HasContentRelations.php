@@ -9,8 +9,15 @@ trait HasContentRelations
 {
     public function content(): BelongsToMany
     {
+        return $this->belongsToMany(Content::class, 'relationables', 'relation_ulid', 'related_ulid')
+            ->where('relationables.relation_type', 'content')
+            ->where('relationables.related_type', $this->getMorphClass());
+    }
+
+    public function content_related(): BelongsToMany
+    {
         return $this->belongsToMany(Content::class, 'relationables', 'related_ulid', 'relation_ulid')
-            ->where('relationables.related_type', $this->getMorphClass())
-            ->where('relationables.relation_type', 'content');
+            ->where('relationables.related_type', 'content')
+            ->where('relationables.relation_type', $this->getMorphClass());
     }
 } 
