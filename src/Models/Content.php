@@ -6,6 +6,7 @@ use Backstage\Casts\ContentPathCast;
 use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
 use Backstage\Media\Concerns\HasMedia;
+use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Observers\ContentDepthObserver;
 use Backstage\Observers\ContentObserver;
 use Backstage\Shared\HasPackageFactory;
@@ -42,6 +43,7 @@ class Content extends Model
     use HasRecursiveRelationships;
     use HasTags;
     use HasUlids;
+    use HasContentRelations;
 
     protected $primaryKey = 'ulid';
 
