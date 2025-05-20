@@ -5,11 +5,13 @@ namespace Backstage\Models;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class MenuItem extends Model
 {
     use HasPackageFactory;
     use HasUlids;
+    use HasRecursiveRelationships;
 
     protected $primaryKey = 'ulid';
 
@@ -22,5 +24,10 @@ class MenuItem extends Model
     protected function casts(): array
     {
         return [];
+    }
+
+    public function getParentKeyName()
+    {
+        return 'parent_ulid';
     }
 }

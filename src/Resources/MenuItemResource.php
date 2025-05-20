@@ -6,6 +6,7 @@ use Backstage\Models\MenuItem;
 use Backstage\Resources\MenuItemResource\Pages;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -51,6 +52,16 @@ class MenuItemResource extends Resource
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
+                                        Select::make('parent_ulid')
+                                            ->relationship('parent', 'name', function ($query) use ($form) {
+                                                $query->when($form->getRecord()->menu_slug ?? null, function ($query, $slug) {
+                                                    $query->where('menu_slug', $slug);
+                                                });
+                                                $query->where('ulid', '!=', $form->getRecord()->ulid ?? null);
+                                            })
+                                            ->preload()
+                                            ->label('Parent')
+                                            ->columnSpan(2),
                                         TextInput::make('name')
                                             ->columnSpan(1)
                                             ->required()
