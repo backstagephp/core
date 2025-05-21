@@ -51,7 +51,7 @@ class ListContent extends ListRecords
             Actions\ActionGroup::make(
                 Type::orderBy('name')->get()->map(
                     fn($type) => Actions\Action::make(__($type->name))
-                        ->url(fn(): string => route('filament.backstage.resources.content.index', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
+                        ->url(fn(): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
                         ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
                 )->toArray()
             )
