@@ -19,7 +19,9 @@ class BackstageUpgrade extends Command
             '--tag' => 'backstage-migrations',
             '--force' => true,
         ]);
-        $this->call('migrate');
+        $this->call('migrate', [
+            '--force' => true,
+        ]);
 
         BackstageUpgraded::dispatch();
 
