@@ -29,6 +29,7 @@ use Backstage\Resources\ContentResource;
 use Backstage\Listeners\ExecuteFormActions;
 use Filament\Support\Facades\FilamentAsset;
 use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Commands\BackstageUpgrade;
 use Backstage\Media\Resources\MediaResource;
 use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Features\SupportTesting\Testable;
@@ -232,6 +233,7 @@ class BackstageServiceProvider extends PackageServiceProvider
     {
         return [
             BackstageSeedCommand::class,
+            BackstageUpgrade::class,
         ];
     }
 
