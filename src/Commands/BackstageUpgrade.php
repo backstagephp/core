@@ -15,13 +15,11 @@ class BackstageUpgrade extends Command
 
     public function handle(): int
     {
-
-        foreach ([
-            'vendor:publish --tag=backstage-migrations',
-            'migrate'
-        ] as $command) {
-            $this->call($command);
-        }
+        $this->call('vendor:publish', [
+            '--tag' => 'backstage-migrations',
+            '--force' => true,
+        ]);
+        $this->call('migrate');
 
         BackstageUpgraded::dispatch();
 
