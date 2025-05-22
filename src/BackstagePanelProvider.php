@@ -115,6 +115,6 @@ class BackstagePanelProvider extends PanelProvider
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
-            ], isPersistent: true);
+            ]);
     }
 }
