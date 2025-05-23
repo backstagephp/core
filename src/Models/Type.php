@@ -2,9 +2,9 @@
 
 namespace Backstage\Models;
 
+use Backstage\Fields\Concerns\HasFields;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
-use Backstage\Fields\Concerns\HasFields;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Type extends Model

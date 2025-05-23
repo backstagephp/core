@@ -2,8 +2,8 @@
 
 namespace Backstage\View\Components;
 
-use Illuminate\View\Component;
 use Illuminate\Support\Facades\View;
+use Illuminate\View\Component;
 
 class Page extends Component
 {

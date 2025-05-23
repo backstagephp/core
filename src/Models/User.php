@@ -3,18 +3,17 @@
 namespace Backstage\Models;
 
 use Backstage\Shared\HasPackageFactory;
+use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants
 {
     use HasPackageFactory;
     use Notifiable;
@@ -89,25 +88,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return (string) $this->avatarUrl;
+        $avatarUrl = Filament::getUserAvatarUrl($this);
+
+        return $avatarUrl;
     }
 
     public function getFilamentAvatarUrlAttribute(): ?string
     {
-        return (string) $this->avatarUrl;
-    }
+        $avatarUrl = Filament::getUserAvatarUrl($this);
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
-     */
-    protected function avatarUrl(): Attribute
-    {
-        return Attribute::make(
-            get: function (?string $value, array $attributes) {
-                $uiAvatar = 'https://ui-avatars.com/api/?name=' . urlencode(substr($attributes['name'], 0, 1)) . '&color=FFFFFF&background=09090b';
-
-                return 'https://gravatar.com/avatar/' . hash('sha256', strtolower(trim($attributes['email']))) . '?d=' . urlencode($uiAvatar) . '&s=200';
-            },
-        );
+        return $avatarUrl;
     }
 }

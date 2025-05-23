@@ -3,12 +3,13 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Concerns\HasFields;
+use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Backstage\Models\Concerns\HasContentRelations;
+
 /**
  * @property string $ulid
  * @property string $values
@@ -17,10 +18,10 @@ use Backstage\Models\Concerns\HasContentRelations;
  */
 class Setting extends Model
 {
+    use HasContentRelations;
     use HasFields;
     use HasPackageFactory;
     use HasUlids;
-    use HasContentRelations;
 
     protected $primaryKey = 'ulid';
 

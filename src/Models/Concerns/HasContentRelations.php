@@ -20,4 +20,4 @@ trait HasContentRelations
             ->where('relationables.related_type', 'content')
             ->where('relationables.relation_type', $this->getMorphClass());
     }
-} 
+}
