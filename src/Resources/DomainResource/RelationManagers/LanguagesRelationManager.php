@@ -9,15 +9,12 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables;
-use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -62,8 +59,8 @@ class LanguagesRelationManager extends RelationManager
                                             ->groupBy(function ($language) {
                                                 return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
                                             })
-                                            ->mapWithKeys(fn($languages, $countryName) => [
-                                                $countryName => $languages->mapWithKeys(fn($language) => [
+                                            ->mapWithKeys(fn ($languages, $countryName) => [
+                                                $countryName => $languages->mapWithKeys(fn ($language) => [
                                                     $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
                                                 ])->toArray(),
                                             ])
@@ -84,11 +81,11 @@ class LanguagesRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('language_code')
                     ->label('Language')
-                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[0])
+                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn(Language $record) => explode('-', $record->language_code)[1] ?? 'worldwide')
+                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? 'worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))
@@ -101,8 +98,8 @@ class LanguagesRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['name', 'code', 'native'])
                     ->recordTitleAttribute('native')
-                    ->recordSelectOptionsQuery(fn(Builder $query) => $query->withoutGlobalScopes())
-                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->withoutGlobalScopes())
+                    ->form(fn (Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
                         TextInput::make('path'),
                     ])
@@ -123,12 +120,12 @@ class LanguagesRelationManager extends RelationManager
                             $action->failureNotificationTitle(__('Failed to attach language'));
 
                             $action->failure();
+
                             return;
                         }
 
-
                         $action->success();
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
