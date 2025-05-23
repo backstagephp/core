@@ -9,6 +9,7 @@ use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Models\Type;
+use Backstage\Models\User;
 use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
@@ -540,7 +541,7 @@ class ContentResource extends Resource
                     ->circular()
                     ->stacked()
                     ->ring(2)
-                    ->getStateUsing(fn(Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
+                    ->getStateUsing(fn(Content $record) => collect($record->authors)->map(fn(User $user) => Filament::getUserAvatarUrl($user))->toArray())
                     ->limit(3),
 
                 ImageColumn::make('language_code')
