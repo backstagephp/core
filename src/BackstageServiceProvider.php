@@ -2,6 +2,8 @@
 
 namespace Backstage;
 
+use Backstage\Http\Middleware\SetLocale;
+use Illuminate\Contracts\Http\Kernel;
 use SplFileInfo;
 use Backstage\Models\Menu;
 use Backstage\Models\Site;
@@ -135,6 +137,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+
         // Asset Registration
         FilamentAsset::register(
             $this->getAssets(),
