@@ -8,7 +8,7 @@ Route::fallback(function (Request $request) {
 
     abort_unless($request->content(), 404);
 
-    if (! $request->isMethod('GET')) {
+    if (! $request->isMethod('GET', 'HEAD')) {
         return abort(405, 'Method Not Allowed');
     }
 
