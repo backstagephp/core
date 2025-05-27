@@ -99,11 +99,7 @@ class TranslateContentAction extends ReplicateAction
 
         $editContent->mount($replica->ulid);
 
-        $jsonData = json_encode($editContent->data, JSON_THROW_ON_ERROR);
-
-        $translatedJson = Translator::translate($jsonData, $language->code);
-
-        $editContent->data = json_decode($translatedJson, associative: true);
+        $editContent->data = Translator::translate($editContent->data, $language->code);
 
         $editContent->save();
     }
