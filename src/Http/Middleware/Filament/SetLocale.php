@@ -11,7 +11,7 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        if(null !== $content = View::shared('content')) {
+        if (null !== $content = View::shared('content')) {
             App::setLocale($content->language->code);
         }
 

@@ -40,7 +40,6 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use SplFileInfo;
 
-
 class BackstageServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'backstage';

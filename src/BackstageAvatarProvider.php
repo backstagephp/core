@@ -19,7 +19,7 @@ class BackstageAvatarProvider extends UiAvatarsProvider
             $name = str(Filament::getNameForDefaultAvatar($record))
                 ->trim()
                 ->explode(' ')
-                ->map(fn(string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+                ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
                 ->join(' ');
 
             if (str($name)->contains('(') || str($name)->contains(')')) {
