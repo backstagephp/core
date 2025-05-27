@@ -3,66 +3,56 @@
 namespace Backstage\Actions\Content;
 
 use Backstage\Models\Content;
-use Filament\Facades\Filament;
-use Filament\Actions\ReplicateAction;
-use Backstage\Models\ContentFieldValue;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
-use Backstage\Translations\Laravel\Facades\Translator;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Translations\Laravel\Facades\Translator;
+use Filament\Actions\ReplicateAction;
+use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class TranslateContentAction extends ReplicateAction
 {
-    protected function getNextAvailableName(Model $model, string $field, string $value, string $languageCode): string
+    public static function getNextAvailable(Model $model, string $field, string $value, string $languageCode): string
     {
         $baseName = preg_replace('/-\d+$/', '', $value);
-        $copyNumber = 2;
+        $copyNumber = 1;
 
         while (
-            $model->where($field, $baseName . '-' . $copyNumber)
-            ->where('language_code', $languageCode)
-            ->exists()
+            $model->where($field, $baseName . ($copyNumber > 1 ? '-' . $copyNumber : ''))
+                ->where('language_code', $languageCode)
+                ->exists()
         ) {
             $copyNumber++;
         }
 
-        return $baseName . '-' . ($copyNumber + 1);
+        return $baseName;
     }
 
     protected function setUp(): void
     {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', 0);
+
         parent::setUp();
 
         $this->label('Translate')
-            ->beforeReplicaSaved(function (Model $replica, array $arguments): void {
-                $language = $arguments['language'];
-
-                $replica->edited_at = now();
-
-                $replica->path = $this->getNextAvailableName($replica, 'path', $replica->path, $language->code);
-                $replica->slug = $this->getNextAvailableName($replica, 'slug', $replica->slug, $language->code);
-            })
             ->after(function (Model $replica, array $arguments, Model $record): void {
-                if ($record->parent) {
-                    $replicaParent = $record
-                        ->parent
-                        ->replicate();
+                dispatch(function() use ($record, $arguments) {
+                    if ($record->parent) {
+                        $parent = static::translateContent(
+                            record: $record->parent,
+                            languageCode: $arguments['language']->code,
+                        );
+                    }
 
-                    static::handleAfterReplicaSaved(
-                        replica: $replicaParent,
-                        arguments: $arguments,
-                        record: $replicaParent,
+                    static::translateContent(
+                        record: $record,
+                        languageCode: $arguments['language']->code,
+                        parent: $parent ?? null,
                     );
-
-                    $replica->parent_ulid = $replicaParent
-                        ->ulid;
-                }
-
-                static::handleAfterReplicaSaved(
-                    replica: $replica,
-                    arguments: $arguments,
-                    record: $record,
-                );
+                });
             })
             ->requiresConfirmation()
             ->modalIcon('heroicon-o-language')
@@ -88,81 +78,67 @@ class TranslateContentAction extends ReplicateAction
                     'name' => $record ? $record->name : '',
                 ]);
 
-                return $notification->title(fn() => __('Content translated'))
+                return $notification->title(fn () => __('Content translated'))
                     ->body($body);
             })
-            ->successRedirectUrl(fn(Model $replica): string => EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
+            ->successRedirectUrl(fn (Model $replica): string => EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
                 'record' => $replica,
-            ]))
-        ;
+            ]));
     }
 
-    public static function handleAfterReplicaSaved(Model $replica, array $arguments, Model $record): void
+    public static function translateContent(Model $record, string $languageCode, Model $parent = null): Model
     {
-        $language = $arguments['language'];
+        $content = Content::where('slug', $record->slug)->where('language_code', $languageCode)->first();
 
-        $replica->meta_tags = collect($replica->meta_tags)
-            ->mapWithKeys(function ($value, $key) use ($language) {
+        if(! $content) {
+            $content = $record->replicate();
+            $content->save();
+        }
+
+        $content->parent_ulid = $parent?->getKey();
+
+        $content->meta_tags = collect($content->meta_tags)
+            ->mapWithKeys(function ($value, $key) use ($languageCode) {
                 if (is_array($value) || is_null($value)) {
                     return [$key => $value];
                 }
 
                 return [
-                    $key => Translator::translate($value, $language->code)
+                    $key => Translator::translate($value, $languageCode),
                 ];
             })
             ->toArray();
 
-        $replica
-            ->tags()
-            ->sync($record->tags->pluck('ulid')
-                ->toArray());
+        $content->tags()->sync($record->tags->pluck('ulid')->toArray());
 
-        $replica->update([
-            'name' => Translator::translate($record->name, $language->code),
-            'language_code' => $language->code,
-            'meta_tags' => $replica->meta_tags,
+        $content->update([
+            'name' => Translator::translate($record->name, $languageCode),
+            'path' => static::getNextAvailable($content, 'path', Str::slug(Translator::translate($record->path, $languageCode)), $languageCode),
+            'language_code' => $languageCode,
+            'meta_tags' => $content->meta_tags,
         ]);
 
-        $originalValues = $record->values;
+        foreach ($record->values as $originalValue) {
+            if(count($originalValue->field->config['relations'] ?? []) !== 0) {
+                continue;
+            }
 
-        foreach ($originalValues as $originalValue) {
-            /**
-             * @var ContentFieldValue $value 
-             */
-            $value = $originalValue
-                ->replicate();
-
-            $value
-                ->content()
-                ->associate($replica);
-
-            $value
-                ->save();
+            $value = $originalValue->replicate();
+            $value->content()->associate($content);
+            $value->save();
         }
 
-        /**
-         * @var Content $replica
-         */
-        $replica = $replica
-            ->load('values');
+        $content = $content->load('values');
 
-        /**
-         * @var EditContent $editContent
-         */
-        $editContent = new EditContent;
+        $contentForm = new EditContent;
+        $contentForm->boot();
+        $contentForm->mount($content->getKey());
+        $contentForm->form->fill(Translator::translate($contentForm->data, $languageCode));
+        $contentForm->save();
 
-        $editContent
-            ->boot();
+        $content->edited_at = now();
+        $content->save();
 
-        $editContent
-            ->mount($replica->ulid ?? $replica->getKey());
-
-        $editContent
-            ->form
-            ->fill(Translator::translate($editContent->data, $language->code));
-
-        $editContent
-            ->save();
+        return $content;
     }
 }
