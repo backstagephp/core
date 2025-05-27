@@ -37,13 +37,13 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 #[ObservedBy(ContentObserver::class)]
 class Content extends Model
 {
+    use HasContentRelations;
     use HasFields;
     use HasMedia;
     use HasPackageFactory;
     use HasRecursiveRelationships;
     use HasTags;
     use HasUlids;
-    use HasContentRelations;
 
     protected $primaryKey = 'ulid';
 

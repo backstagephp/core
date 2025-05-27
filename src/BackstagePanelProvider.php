@@ -84,6 +84,7 @@ class BackstagePanelProvider extends PanelProvider
             ->resources(config('backstage.cms.panel.resources', []))
             ->widgets(config('backstage.cms.panel.widgets', []))
             ->pages(config('backstage.cms.panel.pages', []))
+            ->defaultAvatarProvider(BackstageAvatarProvider::class)
             ->colors(fn () => [
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
