@@ -2,9 +2,6 @@
 
 namespace Backstage\Actions\Content;
 
-use Filament\Forms\Form;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Backstage\Models\Content;
 use Filament\Facades\Filament;
 use Filament\Actions\ReplicateAction;
@@ -13,20 +10,59 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Backstage\Resources\ContentResource\Pages\EditContent;
-use Filament\Pages\Page;
 
 class TranslateContentAction extends ReplicateAction
 {
+    protected function getNextAvailableName(Model $model, string $field, string $value, string $languageCode): string
+    {
+        $baseName = preg_replace('/-\d+$/', '', $value);
+        $copyNumber = 2;
+
+        while (
+            $model->where($field, $baseName . '-' . $copyNumber)
+            ->where('language_code', $languageCode)
+            ->exists()
+        ) {
+            $copyNumber++;
+        }
+
+        return $baseName . '-' . ($copyNumber + 1);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('Translate')
-            ->beforeReplicaSaved(function (Model $replica): void {
+            ->beforeReplicaSaved(function (Model $replica, array $arguments): void {
+                $language = $arguments['language'];
+
                 $replica->edited_at = now();
+
+                $replica->path = $this->getNextAvailableName($replica, 'path', $replica->path, $language->code);
+                $replica->slug = $this->getNextAvailableName($replica, 'slug', $replica->slug, $language->code);
             })
-            ->after(function (Model $replica, array $arguments): void {
-                static::afterReplicate($replica, $this->getRecord(), $arguments);
+            ->after(function (Model $replica, array $arguments, Model $record): void {
+                if ($record->parent) {
+                    $replicaParent = $record
+                        ->parent
+                        ->replicate();
+
+                    static::handleAfterReplicaSaved(
+                        replica: $replicaParent,
+                        arguments: $arguments,
+                        record: $replicaParent,
+                    );
+
+                    $replica->parent_ulid = $replicaParent
+                        ->ulid;
+                }
+
+                static::handleAfterReplicaSaved(
+                    replica: $replica,
+                    arguments: $arguments,
+                    record: $record,
+                );
             })
             ->requiresConfirmation()
             ->modalIcon('heroicon-o-language')
@@ -34,73 +70,99 @@ class TranslateContentAction extends ReplicateAction
                 $language = $this->getArguments()['language'];
 
                 return __('Translate :name (:type) to :language', [
-                    'name' => $this->getRecord()?->name,
-                    'type' => $this->getRecord()?->type?->name,
-                    'language' => $language->native,
+                    'name' => $this->getRecord()
+                        ?->name,
+                    'type' => $this->getRecord()
+                        ?->type
+                        ?->name,
+                    'language' => $language
+                        ->native,
                 ]);
             })
             ->modalDescription(__('Are you sure you want to translate this content?'))
             ->modalSubmitActionLabel(__('Translate'))
-            ->successNotification(
-                fn(Notification $notification) => $notification->title('Content translated')
-                    ->body(fn() => "The content '" . $this->getRecord()->name . "' has been translated.")
-            )
+            ->successNotification(function (Notification $notification) {
+                $record = $this->getRecord();
+
+                $body = __("The content ':name' has been translated.", [
+                    'name' => $record ? $record->name : '',
+                ]);
+
+                return $notification->title(fn() => __('Content translated'))
+                    ->body($body);
+            })
             ->successRedirectUrl(fn(Model $replica): string => EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
                 'record' => $replica,
             ]))
         ;
     }
 
-    public static function afterReplicate(Model $replicate, Model $original, array $arguments): void
+    public static function handleAfterReplicaSaved(Model $replica, array $arguments, Model $record): void
     {
         $language = $arguments['language'];
 
-        $replicate->meta_tags = collect($replicate->meta_tags)->mapWithKeys(function ($value, $key) use ($language) {
-            if (is_array($value) || is_null($value)) {
-                return [$key => $value];
-            }
+        $replica->meta_tags = collect($replica->meta_tags)
+            ->mapWithKeys(function ($value, $key) use ($language) {
+                if (is_array($value) || is_null($value)) {
+                    return [$key => $value];
+                }
 
-            return [$key => Translator::translate($value, $language->code)];
-        })->toArray();
+                return [
+                    $key => Translator::translate($value, $language->code)
+                ];
+            })
+            ->toArray();
 
-        $replicate->tags()->sync($original->tags->pluck('ulid')->toArray());
+        $replica
+            ->tags()
+            ->sync($record->tags->pluck('ulid')
+                ->toArray());
 
-        $replicate->update([
-            'name' => $name = Translator::translate($original->name, $language->code),
-            'path' => Str::slug($name),
+        $replica->update([
+            'name' => Translator::translate($record->name, $language->code),
             'language_code' => $language->code,
-            'meta_tags' => $replicate->meta_tags,
+            'meta_tags' => $replica->meta_tags,
         ]);
 
-        $originalValues = $original->values;
+        $originalValues = $record->values;
 
         foreach ($originalValues as $originalValue) {
             /**
              * @var ContentFieldValue $value 
              */
-            $value = $originalValue->replicate();
+            $value = $originalValue
+                ->replicate();
 
-            $value->content()->associate($replicate);
+            $value
+                ->content()
+                ->associate($replica);
 
-            $value->save();
+            $value
+                ->save();
         }
 
         /**
          * @var Content $replica
          */
-        $replica = $replicate->load('values');
+        $replica = $replica
+            ->load('values');
 
         /**
          * @var EditContent $editContent
          */
         $editContent = new EditContent;
 
-        $editContent->boot();
+        $editContent
+            ->boot();
 
-        $editContent->mount($replica->ulid);
+        $editContent
+            ->mount($replica->ulid ?? $replica->getKey());
 
-        $editContent->data = Translator::translate($editContent->data, $language->code);
+        $editContent
+            ->form
+            ->fill(Translator::translate($editContent->data, $language->code));
 
-        $editContent->save();
+        $editContent
+            ->save();
     }
 }

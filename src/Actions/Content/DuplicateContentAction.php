@@ -14,7 +14,11 @@ class DuplicateContentAction extends ReplicateAction
         $baseName = preg_replace('/-\d+$/', '', $value);
         $copyNumber = 2;
 
-        while ($model->where($field, $baseName . '-' . $copyNumber)->exists()) {
+        while (
+            $model->where($field, $baseName . '-' . $copyNumber)
+                ->where('language_code', $this->getRecord()->language_code)
+                ->exists()
+        ) {
             $copyNumber++;
         }
 

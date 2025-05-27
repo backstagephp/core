@@ -2,59 +2,60 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Actions\Content\TranslateContentAction;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Fields\Fields;
-use Backstage\Fields\Fields\RichEditor;
-use Backstage\Models\Content;
-use Backstage\Models\Language;
-use Backstage\Models\Tag;
-use Backstage\Models\Type;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
-use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Navigation\NavigationItem;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Columns\ViewColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
+use Backstage\Models\Tag;
+use Backstage\Models\Type;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Str;
+use Backstage\Fields\Fields;
+use Backstage\Models\Content;
+use Backstage\Models\Language;
+use Filament\Facades\Filament;
+use Illuminate\Validation\Rule;
+use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Backstage\Fields\Fields\RichEditor;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Navigation\NavigationItem;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Columns\TextInputColumn;
+use Backstage\View\Components\Filament\Badge;
+use Filament\Forms\Components\DateTimePicker;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Actions\Content\TranslateContentAction;
+use Backstage\Translations\Laravel\Facades\Translator;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 
 class ContentResource extends Resource
 {
@@ -700,18 +701,66 @@ class ContentResource extends Resource
                                     ->default(fn() => Language::active()->where('default', true)->first()?->code),
                             ];
                         })
-                        ->action(function ($records, $data) {
+                        ->action(function ($records, $data, $action) {
                             foreach ($records as $record) {
-                                $replicate = $record->replicate();
+                                $replica = $record->replicate();
+                               
+                                $replica->edited_at = now();
 
-                                $replicate->save();
+                                $replica->save();
 
                                 $language = Language::active()->where('code', $data['language'])->firstOrFail();
 
-                                TranslateContentAction::afterReplicate($replicate, $record, [
-                                    'language' => $language,
+                                $replica->meta_tags = collect($replica->meta_tags)->mapWithKeys(function ($value, $key) use ($language) {
+                                    if (is_array($value) || is_null($value)) {
+                                        return [$key => $value];
+                                    }
+
+                                    return [$key => Translator::translate($value, $language->code)];
+                                })->toArray();
+
+                                $replica->tags()->sync($record->tags()->get()->pluck('ulid')->toArray());
+
+                                $replica->update([
+                                    'name' => $name = Translator::translate($record->name, $language->code),
+                                    'path' => Str::slug($name),
+                                    'language_code' => $language->code,
+                                    'meta_tags' => $replica->meta_tags,
                                 ]);
+
+                                $originalValues = $record->values()->get();
+
+                                foreach ($originalValues as $originalValue) {
+                                    /**
+                                     * @var ContentFieldValue $value 
+                                     */
+                                    $value = $originalValue->replicate();
+
+                                    $value->content()->associate($replica);
+
+                                    $value->save();
+                                }
+
+                                /**
+                                 * @var Content $replica
+                                 */
+                                $replica = $replica->load('values');
+
+                                /**
+                                 * @var EditContent $editContent
+                                 */
+                                $editContent = new EditContent;
+
+                                $editContent->boot();
+
+                                $editContent->mount($replica->ulid);
+
+                                $editContent->data = Translator::translate($editContent->data, $language->code);
+
+                                $editContent->save();
                             }
+
+                            $action->close();
                         })
                 ]),
             ]);
