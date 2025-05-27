@@ -7,6 +7,7 @@ use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
 use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
+use Backstage\Http\Middleware\SetLocale;
 use Backstage\Listeners\ExecuteFormActions;
 use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
@@ -26,6 +27,7 @@ use Filament\Support\Assets\Asset;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -37,6 +39,7 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use SplFileInfo;
+
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -136,6 +139,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+
         // Asset Registration
         FilamentAsset::register(
             $this->getAssets(),
