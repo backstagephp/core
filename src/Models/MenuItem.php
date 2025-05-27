@@ -10,8 +10,8 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 class MenuItem extends Model
 {
     use HasPackageFactory;
-    use HasUlids;
     use HasRecursiveRelationships;
+    use HasUlids;
 
     protected $primaryKey = 'ulid';
 

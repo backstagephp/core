@@ -2,12 +2,12 @@
 
 namespace Backstage\Resources\FormSubmissionResource\Pages;
 
+use Backstage\Resources\FormSubmissionResource;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Backstage\Resources\FormSubmissionResource;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewFormSubmission extends ViewRecord
 {
@@ -29,19 +29,19 @@ class ViewFormSubmission extends ViewRecord
                 ->form([
                     Textarea::make('notes')
                         ->label(__('Notes'))
-                        ->rows(3)
+                        ->rows(3),
                 ])
                 ->modalSubmitActionLabel(__('Save'))
                 ->action(function (array $data) {
                     $this->record->update([
-                        'notes' => $data['notes']
+                        'notes' => $data['notes'],
                     ]);
 
                     Notification::make()
                         ->title(__('Notes saved'))
                         ->success()
                         ->send();
-                })
+                }),
         ];
     }
 }

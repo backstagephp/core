@@ -2,43 +2,43 @@
 
 namespace Backstage;
 
+use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Commands\BackstageUpgrade;
+use Backstage\CustomFields\Builder;
+use Backstage\CustomFields\CheckboxList;
+use Backstage\Events\FormSubmitted;
 use Backstage\Http\Middleware\SetLocale;
-use Illuminate\Contracts\Http\Kernel;
-use SplFileInfo;
+use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Media\Resources\MediaResource;
+use Backstage\Models\Block;
+use Backstage\Models\Media;
 use Backstage\Models\Menu;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;
-use Backstage\Models\Block;
-use Backstage\Models\Media;
-use Illuminate\Support\Str;
-use Filament\Support\Assets\Asset;
-use Backstage\CustomFields\Builder;
-use Backstage\Events\FormSubmitted;
-use Backstage\View\Components\Page;
 use Backstage\Observers\MenuObserver;
+use Backstage\Resources\ContentResource;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
+use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Spatie\LaravelPackageTools\Package;
-use Backstage\CustomFields\CheckboxList;
-use Backstage\Resources\ContentResource;
-use Backstage\Listeners\ExecuteFormActions;
-use Filament\Support\Facades\FilamentAsset;
-use Backstage\Commands\BackstageSeedCommand;
-use Backstage\Commands\BackstageUpgrade;
-use Backstage\Media\Resources\MediaResource;
-use Filament\Support\Enums\VerticalAlignment;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportTesting\Testable;
-use Filament\Notifications\Livewire\Notifications;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use SplFileInfo;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -138,7 +138,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+        $this->app->make(Kernel::class)->prependMiddleware(SetLocale::class);
 
         // Asset Registration
         FilamentAsset::register(
@@ -207,7 +207,6 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
-
 
         Notifications::verticalAlignment(VerticalAlignment::End);
         Notifications::alignment(Alignment::End);
