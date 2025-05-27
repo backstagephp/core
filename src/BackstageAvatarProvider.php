@@ -19,7 +19,7 @@ class BackstageAvatarProvider extends UiAvatarsProvider
             $name = str(Filament::getNameForDefaultAvatar($record))
                 ->trim()
                 ->explode(' ')
-                ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+                ->map(fn(string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
                 ->join(' ');
 
             if (str($name)->contains('(') || str($name)->contains(')')) {
@@ -31,12 +31,10 @@ class BackstageAvatarProvider extends UiAvatarsProvider
             $backgroundColor = Rgb::fromString('rgb(' . FilamentColor::getColors()['gray'][950] . ')')->toHex();
 
             if ($this->hasGravatar($record->email)) {
-                $gravatarUrl = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($record->email))) . '?s=200';
-            } else {
-                $gravatarUrl = 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=' . $backgroundColor . '&size=200&bold=true&rounded=true&';
+                return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($record->email))) . '?s=200';
             }
 
-            return $gravatarUrl;
+            return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=' . $backgroundColor . '&size=200&bold=true&rounded=true&';
         }
 
         return parent::get($record);
