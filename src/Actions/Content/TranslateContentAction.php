@@ -104,23 +104,24 @@ class TranslateContentAction extends Action
             });
     }
 
-    public static function translate(Model $record, Language $language)
+    public static function translate(Model $record, Language $language, bool $replicate = true)
     {
         if (static::shouldTranslateOnSync()) {
-            return static::translateParentAndContent($record, $language);
+            return static::translateParentAndContent($record, $language, $replicate);
         }
 
-        dispatch(fn()  => static::translateParentAndContent($record, $language));
+        dispatch(fn()  => static::translateParentAndContent($record, $language, $replicate));
     }
 
-    public static function translateParentAndContent(Model $record, Language $language)
+    public static function translateParentAndContent(Model $record, Language $language, bool $replicate = true): Model
     {
         $record->load('parent');
 
-        if ($record->parent) {
+        if ($record->parent && $replicate) {
             $parent = static::translateContent(
                 record: $record->parent,
                 language: $language,
+                replicate: $replicate,
             );
         }
 
@@ -128,16 +129,17 @@ class TranslateContentAction extends Action
             record: $record,
             language: $language,
             parent: $parent ?? null,
+            replicate: $replicate,
         );
 
         return $content;
     }
 
-    public static function translateContent(Model $record, Language $language, ?Model $parent = null): Model
+    public static function translateContent(Model $record, Language $language, ?Model $parent = null, bool $replicate = true): Model
     {
         $content = Content::where('slug', $record->slug)->where('language_code', $language->code)->first();
 
-        if (! $content) {
+        if (! $content && $replicate) {
             $content = $record->replicate();
             $content->save();
         }
@@ -167,10 +169,14 @@ class TranslateContentAction extends Action
         $content->tags()->sync($record->tags->pluck('ulid')->toArray());
         $content->authors()->sync($record->authors->pluck('id')->all());
 
-        foreach ($record->values as $originalValue) {
-            $value = $originalValue->replicate();
-            $value->content()->associate($content);
-            $value->save();
+        if ($replicate) {
+            foreach ($record->values as $originalValue) {
+                $value = $originalValue->replicate();
+
+                $value->content()->associate($content);
+
+                $value->save();
+            }
         }
 
         $content->parent_ulid = $parent?->ulid;
@@ -185,6 +191,7 @@ class TranslateContentAction extends Action
         $contentForm->boot();
         $contentForm->mount($content->getKey());
         $contentForm->form->fill(Translator::translate($contentForm->data, $language->code));
+
         $contentForm->save();
 
         return $content;
