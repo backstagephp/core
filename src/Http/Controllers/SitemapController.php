@@ -3,7 +3,6 @@
 namespace Backstage\Http\Controllers;
 
 use Backstage\Models\Content;
-use Backstage\Models\Site;
 use Illuminate\Http\Request;
 
 class SitemapController
