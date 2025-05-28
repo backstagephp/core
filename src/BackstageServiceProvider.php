@@ -3,8 +3,11 @@
 namespace Backstage;
 
 use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
+use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
+use Backstage\Http\Middleware\SetLocale;
 use Backstage\Listeners\ExecuteFormActions;
 use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
@@ -19,8 +22,12 @@ use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
 use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Assets\Asset;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -131,6 +138,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+
         // Asset Registration
         FilamentAsset::register(
             $this->getAssets(),
@@ -161,6 +170,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'field' => 'Backstage\Fields\Models\Field',
             'form' => 'Backstage\Models\Form',
             'language' => 'Backstage\Models\Language',
+            'translation' => 'Backstage\Translations\Laravel\Models\Language',
             'menu' => 'Backstage\Models\Menu',
             'setting' => 'Backstage\Models\Setting',
             'site' => 'Backstage\Models\Site',
@@ -189,7 +199,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
 
-        collect($this->app['config']['backstage']['components']['blocks'] ?? [])
+        collect($this->app['config']['backstage']['cms']['components']['blocks'] ?? [])
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
                 Backstage::registerComponent($component);
@@ -197,6 +207,9 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
+
+        Notifications::verticalAlignment(VerticalAlignment::End);
+        Notifications::alignment(Alignment::End);
     }
 
     protected function getAssetPackageName(): ?string
@@ -223,6 +236,7 @@ class BackstageServiceProvider extends PackageServiceProvider
     {
         return [
             BackstageSeedCommand::class,
+            BackstageUpgrade::class,
         ];
     }
 
@@ -361,6 +375,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
             'custom_fields' => [
                 Builder::class,
+                CheckboxList::class,
+                Select::class,
             ],
 
             'selectable_resources' => [

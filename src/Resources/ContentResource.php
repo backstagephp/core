@@ -9,6 +9,7 @@ use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Models\Type;
+use Backstage\Models\User;
 use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
@@ -18,7 +19,6 @@ use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
@@ -41,7 +41,6 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ViewColumn;
@@ -382,14 +381,8 @@ class ContentResource extends Resource
             ->toArray();
     }
 
-    public static function table(Table $table): Table
+    public static function tableDatabase(Table $table, Type $type): Table
     {
-        $typeSlug = request()->input('tableFilters.type_slug.values.0') ?? null;
-
-        if ($typeSlug) {
-            self::$type = Type::firstWhere('slug', $typeSlug);
-        }
-
         return $table
             ->columns([
                 IconColumn::make('published')
@@ -430,71 +423,50 @@ class ContentResource extends Resource
                     ->view('backstage::filament.tables.columns.country-flag-column')
                     ->visible(fn () => Language::active()->where('code', 'LIKE', '%-%')->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
 
-                ...Type::first()
+                ...$type
                     ->fields
-                    ->whereIn('field_type', ['text', 'select'])
+                    ->whereIn('field_type', ['text'])
                     ->map(function ($field) {
                         if ($field->field_type === 'text') {
-                            return TextInputColumn::make($field->slug)->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value);
-                        } elseif ($field->field_type === 'select') {
-                            return SelectColumn::make($field->slug)->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value);
+                            return TextInputColumn::make($field->slug)
+                                ->getStateUsing(fn ($record) => $record->values->where('field_ulid', $field->ulid)->first()?->value)
+                                ->updateStateUsing(function (Set $set, Get $get, ?string $state, ?Content $record) use ($field) {
+                                    if ($state === null) {
+                                        return;
+                                    }
+
+                                    $record->values->where('field_ulid', $field->ulid)->first()->update([
+                                        'value' => $state,
+                                    ]);
+                                });
                         }
                     })
                     ->toArray(),
             ])
             ->modifyQueryUsing(
-                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')
+                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug)
             )
-            ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
-            ->filters([
-                SelectFilter::make('type_slug')
-                    ->label(__('Type'))
-                    ->native(false)
-                    ->searchable()
-                    ->multiple()
-                    ->preload()
-                    ->relationship('type', 'name'),
-                TernaryFilter::make('parent_ulid')
-                    ->nullable()
-                    ->label('Parent')
-                    ->trueLabel('Has parent')
-                    ->falseLabel('No parent')
-                    ->queries(
-                        true: function (EloquentBuilder $query): EloquentBuilder {
-                            return $query->whereNotNull('parent_ulid');
-                        },
-                        false: function (EloquentBuilder $query): EloquentBuilder {
-                            return $query->whereNull('parent_ulid');
-                        },
-                    ),
-            ], layout: FiltersLayout::Modal)
-            ->filtersFormWidth('md')
+            ->defaultSort($type->sort_column ?? 'position', $type->sort_direction ?? 'desc')
             ->actions([
-                ...Type::first()
+                ...$type
                     ->fields
-                    ->where('field_type', '!=', 'text')
-                    ->where('field_type', '!=', 'select')
+                    ->whereIn('field_type', ['rich-editor'])
                     ->map(
                         fn ($field) => Action::make($field->slug)
                             ->label(__('Edit :name', ['name' => $field->name]))
                             ->modal()
+                            ->mountUsing(function (Form $form, Content $record) use ($field) {
+                                $value = $record->values->where('field_ulid', $field->ulid)->first();
+
+                                $form->fill([
+                                    'value' => $value->value ?? '',
+                                ]);
+                            })
                             ->form(function () use ($field) {
-                                if ($field->field_type === 'builder') {
-                                    return [
-                                        Builder::make('value')
-                                            ->label($field->name),
-                                    ];
-                                } elseif ($field->field_type === 'rich-editor') {
+                                if ($field->field_type === 'rich-editor') {
                                     return [
                                         RichEditor::make('value')
                                             ->label($field->name),
-                                    ];
-                                } else {
-                                    return [
-                                        TextInput::make('value')
-                                            ->label($field->name)
-                                            ->required()
-                                            ->default(fn () => $field->default ?? null),
                                     ];
                                 }
                             })
@@ -504,17 +476,18 @@ class ContentResource extends Resource
                                 default => 'heroicon-o-pencil-square',
                             })
                             ->color('gray')
+                            ->action(function (Content $record, array $data, Action $action) use ($field): void {
+                                $record->values->where('field_ulid', $field->ulid)->first()->update([
+                                    'value' => $data['value'],
+                                ]);
+                                $action->success();
+                            })
                             ->button()
                     )
                     ->toArray(),
 
                 Tables\Actions\EditAction::make(),
-            ])->filtersTriggerAction(
-                fn (Action $action) => $action
-                    ->button()
-                    ->label(__('Filter'))
-                    ->slideOver(),
-            )
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -522,7 +495,7 @@ class ContentResource extends Resource
             ]);
     }
 
-    public static function table3(Table $table): Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -568,7 +541,7 @@ class ContentResource extends Resource
                     ->circular()
                     ->stacked()
                     ->ring(2)
-                    ->getStateUsing(fn (Content $record) => collect($record->authors)->pluck('avatar_url')->toArray())
+                    ->getStateUsing(fn (Content $record) => collect($record->authors)->map(fn (User $user) => Filament::getUserAvatarUrl($user))->toArray())
                     ->limit(3),
 
                 ImageColumn::make('language_code')

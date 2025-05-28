@@ -42,8 +42,11 @@ class ContentFieldValue extends Pivot
 
     public function value()
     {
-
         if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations'])) {
+            if (! json_validate($this->value)) {
+                return Content::where('ulid', $this->value)->get();
+            }
+
             return Content::whereIn('ulid', json_decode($this->value))->get();
         }
 

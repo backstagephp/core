@@ -51,6 +51,7 @@ class Builder extends Base implements FieldContract
 
         foreach ($blocks as $block) {
             $options[] = BuilderBlock::make($block->slug)
+                ->label($block->name)
                 ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
                 ->schema(
                     self::resolveFormFields(record: $block, isNested: true)

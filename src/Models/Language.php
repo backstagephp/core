@@ -11,6 +11,7 @@ class Language extends \Backstage\Translations\Laravel\Models\Language
 
     public function domains(): BelongsToMany
     {
-        return $this->belongsToMany(Domain::class);
+        return $this->belongsToMany(Domain::class, 'domain_language', 'language_code', 'domain_ulid')
+            ->withPivot('path');
     }
 }

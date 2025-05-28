@@ -6,6 +6,7 @@ use Backstage\Casts\ContentPathCast;
 use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
 use Backstage\Media\Concerns\HasMedia;
+use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Observers\ContentDepthObserver;
 use Backstage\Observers\ContentObserver;
 use Backstage\Shared\HasPackageFactory;
@@ -36,6 +37,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 #[ObservedBy(ContentObserver::class)]
 class Content extends Model
 {
+    use HasContentRelations;
     use HasFields;
     use HasMedia;
     use HasPackageFactory;
@@ -171,6 +173,7 @@ class Content extends Model
                 $query->limit(1);
             },
         ])
+            ->where('environment', config('app.env'))
             ->first();
 
         if ($domain) {

@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -84,7 +85,7 @@ class LanguagesRelationManager extends RelationManager
                     ->view('backstage::filament.tables.columns.language-flag-column'),
                 ViewColumn::make('country_code')
                     ->label('Country')
-                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? __('Worldwide'))
+                    ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? 'worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
                 Tables\Columns\TextColumn::make('path')
                     ->label(__('Path'))
@@ -93,10 +94,37 @@ class LanguagesRelationManager extends RelationManager
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->slideOver()
-                    ->after(function (Component $livewire) {
-                        $livewire->dispatch('refreshFields');
+                Tables\Actions\AttachAction::make()
+                    ->preloadRecordSelect()
+                    ->recordSelectSearchColumns(['name', 'code', 'native'])
+                    ->recordTitleAttribute('native')
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->withoutGlobalScopes())
+                    ->form(fn (Tables\Actions\AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        TextInput::make('path'),
+                    ])
+                    ->action(function (array $arguments, array $data, Tables\Actions\AttachAction $action, Table $table) {
+                        $recordId = $data['recordId'];
+                        $path = $data['path'];
+
+                        /**
+                         * @var \Backstage\Models\Domain $language
+                         */
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        $attachment = $ownerRecord->languages()->attach($recordId, [
+                            'path' => $path,
+                        ]);
+
+                        if (! $attachment) {
+                            $action->failureNotificationTitle(__('Failed to attach language'));
+
+                            $action->failure();
+
+                            return;
+                        }
+
+                        $action->success();
                     }),
             ])
             ->actions([
@@ -105,7 +133,7 @@ class LanguagesRelationManager extends RelationManager
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
