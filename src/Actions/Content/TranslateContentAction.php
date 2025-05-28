@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class TranslateContentAction extends Action
 {
-    protected static $translatedContent = null;
+    use TranslateContentAction\HasModifiedStaticProperties;
 
     public static function getNextAvailable(Model $model, string $field, string $value, Language $language): string
     {
@@ -23,8 +23,8 @@ class TranslateContentAction extends Action
 
         while (
             $model->where($field, $baseName . ($copyNumber > 1 ? '-' . $copyNumber : ''))
-                ->where('language_code', $language->code)
-                ->exists()
+            ->where('language_code', $language->code)
+            ->exists()
         ) {
             $copyNumber++;
         }
@@ -41,9 +41,6 @@ class TranslateContentAction extends Action
         parent::setUp();
 
         $this->label('Translate')
-            ->action(function (Model $record, array $arguments): void {
-                static::$translatedContent = static::translate($record, $arguments['language'], sync: true);
-            })
             ->requiresConfirmation()
             ->modalIcon('heroicon-o-language')
             ->modalHeading(function () {
@@ -61,24 +58,55 @@ class TranslateContentAction extends Action
             })
             ->modalDescription(__('Are you sure you want to translate this content?'))
             ->modalSubmitActionLabel(__('Translate'))
+            ->action(function (Model $record, array $arguments): void {
+                if (isset($arguments['translate_on_sync'])) {
+                    static::setTranslateOnSync($arguments['translate_on_sync']);
+                }
+
+                $content = static::translate($record, $arguments['language']);
+
+                static::setTranslatedContent($content);
+            })
+            ->after(function (self $action) {
+                if (!static::shouldTranslateOnSync()) {
+                    $action->success();
+
+                    return;
+                }
+
+                if (! static::getTranslatedContent()) {
+                    $action->failureNotificationTitle(__('Content translation failed'));
+
+                    $action->failure();
+                    return;
+                }
+
+                $url = EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
+                    'record' => static::getTranslatedContent(),
+                ]);
+
+                $this->getLivewire()->redirect($url);
+            })
             ->successNotification(function (Notification $notification) {
+                if (!static::shouldTranslateOnSync()) {
+                    return $notification->title(__('Content translation started'))
+                        ->body(__('The content translation has been started and will be processed in the background.'));
+                }
+
                 $record = $this->getRecord();
 
                 $body = __("The content ':name' has been translated.", [
                     'name' => $record ? $record->name : '',
                 ]);
 
-                return $notification->title(fn () => __('Content translated'))
+                return $notification->title(fn() => __('Content translated'))
                     ->body($body);
-            })
-            ->successRedirectUrl(fn (): string => EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
-                'record' => static::$translatedContent,
-            ]));
+            });
     }
 
-    public static function translate(Model $record, Language $language, bool $sync = false)
+    public static function translate(Model $record, Language $language)
     {
-        if($sync) {
+        if (static::shouldTranslateOnSync()) {
             return static::translateParentAndContent($record, $language);
         }
 
@@ -109,7 +137,7 @@ class TranslateContentAction extends Action
     {
         $content = Content::where('slug', $record->slug)->where('language_code', $language->code)->first();
 
-        if(! $content) {
+        if (! $content) {
             $content = $record->replicate();
             $content->save();
         }
@@ -137,6 +165,7 @@ class TranslateContentAction extends Action
         ]);
 
         $content->tags()->sync($record->tags->pluck('ulid')->toArray());
+        $content->authors()->sync($record->authors->pluck('id')->all());
 
         foreach ($record->values as $originalValue) {
             $value = $originalValue->replicate();
