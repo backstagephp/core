@@ -3,17 +3,18 @@
 namespace Backstage\Actions\Content;
 
 use Backstage\Models\Content;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Translations\Laravel\Facades\Translator;
-use Filament\Actions\ReplicateAction;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class TranslateContentAction extends ReplicateAction
+class TranslateContentAction extends Action
 {
+    protected static $translatedContent = null;
+
     public static function getNextAvailable(Model $model, string $field, string $value, string $languageCode): string
     {
         $baseName = preg_replace('/-\d+$/', '', $value);
@@ -32,27 +33,15 @@ class TranslateContentAction extends ReplicateAction
 
     protected function setUp(): void
     {
+        // @todo: for testing in sync only
         ini_set('memory_limit', -1);
         ini_set('max_execution_time', 0);
 
         parent::setUp();
 
         $this->label('Translate')
-            ->after(function (Model $replica, array $arguments, Model $record): void {
-                dispatch(function() use ($record, $arguments) {
-                    if ($record->parent) {
-                        $parent = static::translateContent(
-                            record: $record->parent,
-                            languageCode: $arguments['language']->code,
-                        );
-                    }
-
-                    static::translateContent(
-                        record: $record,
-                        languageCode: $arguments['language']->code,
-                        parent: $parent ?? null,
-                    );
-                });
+            ->action(function (Model $record, array $arguments): void {
+                static::$translatedContent = static::translate($record, $arguments, sync: true);
             })
             ->requiresConfirmation()
             ->modalIcon('heroicon-o-language')
@@ -81,9 +70,34 @@ class TranslateContentAction extends ReplicateAction
                 return $notification->title(fn () => __('Content translated'))
                     ->body($body);
             })
-            ->successRedirectUrl(fn (Model $replica): string => EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
-                'record' => $replica,
+            ->successRedirectUrl(fn (): string => EditContent::getUrl(tenant: Filament::getTenant(), parameters: [
+                'record' => static::$translatedContent,
             ]));
+    }
+
+    public static function translate(Model $record, array $arguments, bool $sync = true)
+    {
+        if($sync) {
+            return static::translateParentAndContent($record, $arguments);
+        }
+
+        dispatch(fn()  => static::translateParentAndContent($record, $arguments));
+    }
+
+    public static function translateParentAndContent(Model $record, array $arguments)
+    {
+        if ($record->parent) {
+            $parent = static::translateContent(
+                record: $record->parent,
+                languageCode: $arguments['language']->code,
+            );
+        }
+
+        $content = static::translateContent(
+            record: $record,
+            languageCode: $arguments['language']->code,
+            parent: $parent ?? null,
+        );
     }
 
     public static function translateContent(Model $record, string $languageCode, Model $parent = null): Model
@@ -94,8 +108,6 @@ class TranslateContentAction extends ReplicateAction
             $content = $record->replicate();
             $content->save();
         }
-
-        $content->parent_ulid = $parent?->getKey();
 
         $content->meta_tags = collect($content->meta_tags)
             ->mapWithKeys(function ($value, $key) use ($languageCode) {
@@ -109,20 +121,17 @@ class TranslateContentAction extends ReplicateAction
             })
             ->toArray();
 
-        $content->tags()->sync($record->tags->pluck('ulid')->toArray());
-
         $content->update([
+            'parent_ulid' => $parent?->getKey(),
             'name' => Translator::translate($record->name, $languageCode),
             'path' => static::getNextAvailable($content, 'path', Str::slug(Translator::translate($record->path, $languageCode)), $languageCode),
             'language_code' => $languageCode,
             'meta_tags' => $content->meta_tags,
         ]);
 
-        foreach ($record->values as $originalValue) {
-            if(count($originalValue->field->config['relations'] ?? []) !== 0) {
-                continue;
-            }
+        $content->tags()->sync($record->tags->pluck('ulid')->toArray());
 
+        foreach ($record->values as $originalValue) {
             $value = $originalValue->replicate();
             $value->content()->associate($content);
             $value->save();
