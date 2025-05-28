@@ -12,15 +12,12 @@ class SitemapController
     {
         $xml = cache()
             ->tags(['sitemap'])
-            ->rememberForever('xlm-sitemap', function () {
+            ->rememberForever('sitemap-xml', function () {
                 $doc = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
 
                 $site = request()->get('site', Site::first());
 
-                Content::where('site_ulid', $site->ulid)
-                    ->with('site')
-                    ->where('slug', '!=', '404')
-                    ->where('slug', '!=', '500')
+                Content::with('site')
                     ->whereNotNull('path')
                     ->where(function ($query) {
                         $query->where(function ($query) {
