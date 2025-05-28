@@ -235,8 +235,8 @@ class ContentResource extends Resource
                                             ->searchable()
                                             ->withCount()
                                             ->rules([
-                                                Rule::exists('content', 'ulid')
-                                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
+                                                // Rule::exists('content', 'ulid')
+                                                //     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
                                             ])
                                             ->enableBranchNode()
                                             ->relationship(
@@ -728,7 +728,7 @@ class ContentResource extends Resource
                                 foreach ($data['languages'] as $languageCode) {
                                     $language = Language::where('code', $languageCode)->first();
 
-                                    dispatch(fn () => TranslateContentAction::translateContent(record: $record, languageCode: $languageCode));
+                                    TranslateContentAction::translate(record: $record, language: $language);
                                 }
                             }
 

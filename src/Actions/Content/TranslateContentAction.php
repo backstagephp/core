@@ -3,6 +3,7 @@
 namespace Backstage\Actions\Content;
 
 use Backstage\Models\Content;
+use Backstage\Models\Language;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions\Action;
@@ -15,14 +16,14 @@ class TranslateContentAction extends Action
 {
     protected static $translatedContent = null;
 
-    public static function getNextAvailable(Model $model, string $field, string $value, string $languageCode): string
+    public static function getNextAvailable(Model $model, string $field, string $value, Language $language): string
     {
         $baseName = preg_replace('/-\d+$/', '', $value);
         $copyNumber = 1;
 
         while (
             $model->where($field, $baseName . ($copyNumber > 1 ? '-' . $copyNumber : ''))
-                ->where('language_code', $languageCode)
+                ->where('language_code', $language->code)
                 ->exists()
         ) {
             $copyNumber++;
@@ -41,7 +42,7 @@ class TranslateContentAction extends Action
 
         $this->label('Translate')
             ->action(function (Model $record, array $arguments): void {
-                static::$translatedContent = static::translate($record, $arguments, sync: true);
+                static::$translatedContent = static::translate($record, $arguments['language'], sync: true);
             })
             ->requiresConfirmation()
             ->modalIcon('heroicon-o-language')
@@ -75,57 +76,63 @@ class TranslateContentAction extends Action
             ]));
     }
 
-    public static function translate(Model $record, array $arguments, bool $sync = true)
+    public static function translate(Model $record, Language $language, bool $sync = false)
     {
         if($sync) {
-            return static::translateParentAndContent($record, $arguments);
+            return static::translateParentAndContent($record, $language);
         }
 
-        dispatch(fn()  => static::translateParentAndContent($record, $arguments));
+        dispatch(fn()  => static::translateParentAndContent($record, $language));
     }
 
-    public static function translateParentAndContent(Model $record, array $arguments)
+    public static function translateParentAndContent(Model $record, Language $language)
     {
+        $record->load('parent');
+
         if ($record->parent) {
             $parent = static::translateContent(
                 record: $record->parent,
-                languageCode: $arguments['language']->code,
+                language: $language,
             );
         }
 
         $content = static::translateContent(
             record: $record,
-            languageCode: $arguments['language']->code,
+            language: $language,
             parent: $parent ?? null,
         );
+
+        return $content;
     }
 
-    public static function translateContent(Model $record, string $languageCode, Model $parent = null): Model
+    public static function translateContent(Model $record, Language $language, ?Model $parent = null): Model
     {
-        $content = Content::where('slug', $record->slug)->where('language_code', $languageCode)->first();
+        $content = Content::where('slug', $record->slug)->where('language_code', $language->code)->first();
 
         if(! $content) {
             $content = $record->replicate();
             $content->save();
         }
 
+        $content->update([
+            'language_code' => $language->code,
+        ]);
+
         $content->meta_tags = collect($content->meta_tags)
-            ->mapWithKeys(function ($value, $key) use ($languageCode) {
+            ->mapWithKeys(function ($value, $key) use ($language) {
                 if (is_array($value) || is_null($value)) {
                     return [$key => $value];
                 }
 
                 return [
-                    $key => Translator::translate($value, $languageCode),
+                    $key => Translator::translate($value, $language->code),
                 ];
             })
             ->toArray();
 
         $content->update([
-            'parent_ulid' => $parent?->getKey(),
-            'name' => Translator::translate($record->name, $languageCode),
-            'path' => static::getNextAvailable($content, 'path', Str::slug(Translator::translate($record->path, $languageCode)), $languageCode),
-            'language_code' => $languageCode,
+            'name' => Translator::translate($record->name, $language->code),
+            'path' => static::getNextAvailable($content, 'path', Str::slug(Translator::translate($record->path, $language->code)), $language),
             'meta_tags' => $content->meta_tags,
         ]);
 
@@ -137,16 +144,19 @@ class TranslateContentAction extends Action
             $value->save();
         }
 
-        $content = $content->load('values');
+        $content->parent_ulid = $parent?->ulid;
+        $content->edited_at = now();
+        $content->save();
+
+        $content->refresh();
+
+        $content->load('values', 'parent');
 
         $contentForm = new EditContent;
         $contentForm->boot();
         $contentForm->mount($content->getKey());
-        $contentForm->form->fill(Translator::translate($contentForm->data, $languageCode));
+        $contentForm->form->fill(Translator::translate($contentForm->data, $language->code));
         $contentForm->save();
-
-        $content->edited_at = now();
-        $content->save();
 
         return $content;
     }
