@@ -16,7 +16,6 @@ Route::fallback(function (Request $request) {
     return $request->content()->response();
 });
 
-Route::post('/forms/{form}', [FormController::class, 'submit'])->middleware('web')->name('backstage.forms.submit');
+Route::post('forms/{form}', [FormController::class, 'submit'])->middleware('web')->name('backstage.forms.submit');
 
-Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
-Route::get('/{site}/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
