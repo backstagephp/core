@@ -46,5 +46,5 @@ jobs:
           composer config repositories.backstage vcs git@github.com:backstagephp/core.git
           composer config repositories.fields vcs git@github.com:backstagephp/fields.git
           composer config repositories.media vcs git@github.com:backstagephp/media.git
-          composer require backstage/cms:dev-${{ steps.extract_branch.outputs.branch }}
+          composer require backstage/core:dev-${{ steps.extract_branch.outputs.branch }}
           php artisan backstage:install
