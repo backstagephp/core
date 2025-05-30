@@ -3,8 +3,11 @@
 namespace Backstage;
 
 use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
+use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
+use Backstage\Http\Middleware\SetLocale;
 use Backstage\Listeners\ExecuteFormActions;
 use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
@@ -19,9 +22,12 @@ use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
 use Backstage\View\Components\Page;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Assets\Asset;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -32,6 +38,7 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use SplFileInfo;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -63,6 +70,16 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Preparing stage...');
 
                         $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-migrations',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-config',
+                            '--force' => true,
+                        ]);
+
+                        $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-migrations',
                             '--force' => true,
                         ]);
@@ -82,11 +99,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $this->writeMediaPickerConfig();
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'media-picker-migrations',
+                            '--tag' => 'media-migrations',
                             '--force' => true,
                         ]);
 
                         $command->comment('Clean the decor...');
+
                         $command->callSilently('migrate:fresh', [
                             '--force' => true,
                         ]);
@@ -120,6 +138,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+
         // Asset Registration
         FilamentAsset::register(
             $this->getAssets(),
@@ -130,9 +150,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             $this->getScriptData(),
             $this->getAssetPackageName()
         );
-
-        // Icon Registration
-        FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
         if (app()->runningInConsole()) {
@@ -153,6 +170,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'field' => 'Backstage\Fields\Models\Field',
             'form' => 'Backstage\Models\Form',
             'language' => 'Backstage\Models\Language',
+            'translation' => 'Backstage\Translations\Laravel\Models\Language',
             'menu' => 'Backstage\Models\Menu',
             'setting' => 'Backstage\Models\Setting',
             'site' => 'Backstage\Models\Site',
@@ -186,7 +204,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $this->app->register(Providers\RequestServiceProvider::class);
         $this->app->register(Providers\RouteServiceProvider::class);
 
-        collect($this->app['config']['backstage']['components']['blocks'] ?? [])
+        collect($this->app['config']['backstage']['cms']['components']['blocks'] ?? [])
             ->each(function ($component) {
                 Blade::component(Str::slug(last(explode('\\', $component))), $component);
                 Backstage::registerComponent($component);
@@ -194,6 +212,9 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Blade::component('blocks', Blocks::class);
         Blade::component('page', Page::class);
+
+        Notifications::verticalAlignment(VerticalAlignment::End);
+        Notifications::alignment(Alignment::End);
     }
 
     protected function getAssetPackageName(): ?string
@@ -220,15 +241,8 @@ class BackstageServiceProvider extends PackageServiceProvider
     {
         return [
             BackstageSeedCommand::class,
+            BackstageUpgrade::class,
         ];
-    }
-
-    /**
-     * @return array<string>
-     */
-    protected function getIcons(): array
-    {
-        return [];
     }
 
     /**
@@ -250,30 +264,13 @@ class BackstageServiceProvider extends PackageServiceProvider
     /**
      * @return array<string>
      */
-    public function getMigrations(): array
+    protected function getMigrations(): array
     {
-        return [
-            '01_create_languages_table',
-            '02_create_sites_table',
-            '03_create_types_table',
-            '04_create_settings_table',
-            '05_create_content_table',
-            '06_create_templates_table',
-            '07_create_content_field_values_table',
-            '08_create_blocks_table',
-            '09_create_menus_table',
-            '10_create_menu_items_table',
-            '11_create_domains_table',
-            '12_create_forms_table',
-            '13_create_form_actions_table',
-            '14_create_form_submissions_table',
-            '15_create_form_submission_values_table',
-            '16_create_tags_tables',
-            '17_create_notifications_table',
-            '18_add_columns_to_users_table',
-            '19_add_ulid_column_to_blocks_table',
-            '20_modify_primary_keys_for_blocks_table',
-        ];
+        return collect(app(Filesystem::class)->files(__DIR__ . '/../database/migrations'))
+            ->map(fn (SplFileInfo $file) => str_replace('.php', '', $file->getBasename()))
+            ->sortBy(fn ($filename) => (int) explode('_', $filename)[0])
+            ->values()
+            ->toArray();
     }
 
     private function generateMediaPickerConfig(): array
@@ -383,6 +380,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
             'custom_fields' => [
                 Builder::class,
+                CheckboxList::class,
+                Select::class,
             ],
 
             'selectable_resources' => [

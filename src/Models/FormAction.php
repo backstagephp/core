@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * @property string $type
+ */
 class FormAction extends Model
 {
     use HasPackageFactory;
@@ -43,9 +46,13 @@ class FormAction extends Model
      */
     public function execute(FormSubmission $submission)
     {
-        switch ($this->get('type')) {
+        switch ($this->type) {
             case 'email':
-                Mail::to($submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'])
+                $to = $submission->value($this->config['to_email'] ?? null) ?? $this->config['to_email'];
+                if (filter_var($to, FILTER_VALIDATE_EMAIL) === false) {
+                    return;
+                }
+                Mail::to($to)
                     ->send(new FormActionExecute($this, $submission));
 
                 break;

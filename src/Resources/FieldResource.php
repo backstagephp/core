@@ -16,9 +16,9 @@ class FieldResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
-    public static ?string $recordTitleAttribute = 'name';
-
     protected static ?string $tenantOwnershipRelationshipName = 'sites';
+
+    protected static ?string $recordTitleAttribute = null;
 
     protected static bool $shouldRegisterNavigation = false;
 

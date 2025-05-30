@@ -12,11 +12,13 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class BlockResource extends Resource
@@ -62,8 +64,12 @@ class BlockResource extends Resource
                                     ->columnSpanFull()
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('slug', Str::slug($state));
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Block $record) {
+                                        $currentSlug = $get('slug');
+
+                                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
+                                            $set('slug', Str::slug($state));
+                                        }
                                     }),
                                 ToggleButtons::make('icon')
                                     ->columnSpanFull()
@@ -110,7 +116,10 @@ class BlockResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            $records->each(fn (Block $record) => $record->sites()->detach());
+                        }),
                 ]),
             ]);
     }

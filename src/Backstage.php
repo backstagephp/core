@@ -51,6 +51,9 @@ class Backstage
         if (file_exists(app_path("View/Components/{$className}.php"))) {
             return self::$cachedBlocks[$slug] = '\App\View\Components\\' . $className;
         }
+        if (class_exists("\\Backstage\\View\\Components\\$className")) {
+            return self::$cachedBlocks[$slug] = '\\Backstage\\View\\Components\\' . $className;
+        }
 
         return self::$cachedBlocks[$slug] = static::$components[$block->component] ?? static::$cachedBlocks['default'];
     }
@@ -87,7 +90,8 @@ class Backstage
         ];
 
         foreach ($values as $key => $value) {
-            $params[$fields[$key] ?? $key] = $value;
+            $fieldKey = Str::camel($fields[$key] ?? $key);
+            $params[$fieldKey] = $value;
         }
 
         return $params;

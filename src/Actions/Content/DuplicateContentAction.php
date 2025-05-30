@@ -9,6 +9,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class DuplicateContentAction extends ReplicateAction
 {
+    protected function getNextAvailableName(Model $model, string $field, string $value): string
+    {
+        $baseName = preg_replace('/-\d+$/', '', $value);
+        $copyNumber = 2;
+
+        while ($model->where($field, $baseName . '-' . $copyNumber)->exists()) {
+            $copyNumber++;
+        }
+
+        return $baseName . '-' . $copyNumber;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,6 +30,14 @@ class DuplicateContentAction extends ReplicateAction
             ->color('gray')
             ->beforeReplicaSaved(function (Model $replica): void {
                 $replica->edited_at = now();
+
+                if (isset($replica->path)) {
+                    $replica->path = $this->getNextAvailableName($replica, 'path', $replica->path);
+                }
+
+                if (isset($replica->slug)) {
+                    $replica->slug = $this->getNextAvailableName($replica, 'slug', $replica->slug);
+                }
             })
             ->after(function (Model $replica): void {
                 $replica->tags()->sync($this->getRecord()->tags->pluck('ulid')->toArray());

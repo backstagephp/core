@@ -2,6 +2,21 @@
 
 All notable changes to `backstage` will be documented in this file.
 
+## v0.0.12 - 2025-02-14
+
+- Changed debounce to onBlur
+- Form actions with mail, template and s3 file upload
+
+## v0.0.11 - 2025-02-14
+
+- Repeater now uses slugs instead of name as key.
+
+## v0.0.10 - 2025-02-14
+
+-   Fixed unique validation for non-public content.
+-   Reorder children content within the content edit page.
+-   Content that is non-public now doesn't have a url.
+
 ## v0.0.9 - 2025-02-09
 
 -   Added ulid to blocks table.

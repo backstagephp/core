@@ -8,7 +8,13 @@ use Backstage\Resources\TypeResource\Pages;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -46,18 +52,23 @@ class TypeResource extends Resource
     {
         return $form
             ->schema([
-                Section::make()
+                Grid::make('Type')
                     ->schema([
                         TextInput::make('name')
-                            ->columnSpanFull()
                             ->required()
-                            ->live(debounce: 250)
-                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                $set('slug', Str::slug($state));
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Type $record) {
                                 $set('name_plural', Str::plural($state));
+
+                                $currentSlug = $get('slug');
+
+                                if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
+                                    $set('slug', Str::slug($state));
+                                }
                             }),
+                        TextInput::make('name_plural')
+                            ->required(),
                         TextInput::make('slug')
-                            ->columnSpanFull()
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->rules([
@@ -67,16 +78,46 @@ class TypeResource extends Resource
                                     }
                                 },
                             ]),
-                        Select::make('template_slug')
-                            ->columnSpanFull()
-                            ->relationship(
-                                'template',
-                                'name',
-                                fn ($query) => $query->whereHas('sites')
-                            )
-                            ->searchable()
-                            ->preload(),
-                    ]),
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('sort_column')
+                                    ->searchable()
+                                    ->preload()
+                                    ->options([
+                                        'approved_at' => 'Approved At',
+                                        'created_at' => 'Created At',
+                                        'edited_at' => 'Edited At',
+                                        'name' => 'Name',
+                                        'pinned_at' => 'Pinned At',
+                                        'position' => 'Position',
+                                        'published_at' => 'Published At',
+                                        'refreshed_at' => 'Refreshed At',
+                                        'updated_at' => 'Updated At',
+                                    ]),
+                                Select::make('sort_direction')
+                                    ->options([
+                                        'asc' => 'Ascending',
+                                        'desc' => 'Descending',
+                                    ]),
+                            ])->columns(2),
+                        ToggleButtons::make('icon')
+                            ->default('circle-stack')
+                            ->options([
+                                'circle-stack' => '',
+                                'light-bulb' => '',
+                            ])
+                            ->icons([
+                                'circle-stack' => 'heroicon-o-circle-stack',
+                                'light-bulb' => 'heroicon-o-light-bulb',
+                            ])
+                            ->inline()
+                            ->grouped()
+                            ->required(),
+                        Toggle::make('public')
+                            ->label('Public')
+                            ->inline(false)
+                            ->columnSpanFull(),
+                    ])->columns(2),
             ]);
     }
 

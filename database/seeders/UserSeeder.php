@@ -19,6 +19,12 @@ class UserSeeder extends Seeder
             'password' => 'mark@vk10.nl',
         ])->create();
 
+        User::factory([
+            'name' => 'Rob',
+            'email' => 'rob@vk10.nl',
+            'password' => 'rob@vk10.nl',
+        ])->create();
+
         User::factory()->state([
             'name' => 'Mathieu',
             'email' => 'mathieu@vk10.nl',
@@ -29,6 +35,24 @@ class UserSeeder extends Seeder
             'name' => 'Bas',
             'email' => 'bas@vk10.nl',
             'password' => 'bas@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Yoni',
+            'email' => 'yoni@vk10.nl',
+            'password' => 'yoni@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Patrick',
+            'email' => 'patrick@vk10.nl',
+            'password' => 'patrick@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Sandro',
+            'email' => 'sandro@vk10.nl',
+            'password' => 'sandro@vk10.nl',
         ])->create();
 
         Site::default()->users()->attach(User::all());

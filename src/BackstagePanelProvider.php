@@ -84,6 +84,7 @@ class BackstagePanelProvider extends PanelProvider
             ->resources(config('backstage.cms.panel.resources', []))
             ->widgets(config('backstage.cms.panel.widgets', []))
             ->pages(config('backstage.cms.panel.pages', []))
+            ->defaultAvatarProvider(BackstageAvatarProvider::class)
             ->colors(fn () => [
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
@@ -109,14 +110,12 @@ class BackstagePanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Users'),
                 NavigationGroup::make()
-                    ->label('Setup'),
+                    ->label('Manage'),
             ])
             ->tenant(Site::class)
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
-            ], isPersistent: true)
-            // enable spa mode for browsers except Safari
-            ->spa(fn () => ! (str_contains(strtolower(request()->userAgent()), 'safari') !== false && str_contains(strtolower(request()->userAgent()), 'chrome') === false));
+            ]);
     }
 }

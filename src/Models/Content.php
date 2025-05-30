@@ -3,10 +3,15 @@
 namespace Backstage\Models;
 
 use Backstage\Casts\ContentPathCast;
+use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
 use Backstage\Media\Concerns\HasMedia;
+use Backstage\Models\Concerns\HasContentRelations;
+use Backstage\Observers\ContentDepthObserver;
+use Backstage\Observers\ContentObserver;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -23,12 +28,17 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * Backstage\Models\Content
  *
  * @property string $path
- * @property string $url
+ * @property string|null $url
  * @property string $language_code
+ * @property bool $public
  * @property string $type_slug
  */
+#[ObservedBy(ContentDepthObserver::class)]
+#[ObservedBy(ContentObserver::class)]
 class Content extends Model
 {
+    use HasContentRelations;
+    use HasFields;
     use HasMedia;
     use HasPackageFactory;
     use HasRecursiveRelationships;
@@ -97,6 +107,12 @@ class Content extends Model
      */
     protected function url(): Attribute
     {
+        if (! $this->public) {
+            return Attribute::make(
+                get: fn () => null,
+            );
+        }
+
         $url = rtrim($this->pathPrefix . $this->path, '/');
         if ($this->site->trailing_slash) {
             $url .= '/';
@@ -133,6 +149,16 @@ class Content extends Model
     }
 
     /**
+     * Custom depth column name.
+     *
+     * @see https://github.com/staudenmeir/laravel-adjacency-list/issues/87
+     */
+    public function getDepthName(): string
+    {
+        return 'backstage_depth';
+    }
+
+    /**
      * The full url, domain and language path. Without the content path, with trailing slash.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
@@ -147,6 +173,7 @@ class Content extends Model
                 $query->limit(1);
             },
         ])
+            ->where('environment', config('app.env'))
             ->first();
 
         if ($domain) {
@@ -172,12 +199,8 @@ class Content extends Model
         ) ?? [];
     }
 
-    /**
-     * Returns the value of a field based on the slug.
-     *
-     * @return HtmlString|Collection
-     */
-    public function field(string $slug): HtmlString | Collection | array
+    /** Returns the value of a field based on the slug. */
+    public function field(string $slug): HtmlString | Collection | array | float | int
     {
         $value = $this->values->where('field.slug', $slug)->first();
 

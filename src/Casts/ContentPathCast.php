@@ -11,9 +11,8 @@ class ContentPathCast implements CastsAttributes
      * Cast the given value.
      *
      * @param  array<string, mixed>  $attributes
-     * @return array<string, mixed>
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): string
+    public function get(Model $model, string $key, mixed $value, array $attributes): ?string
     {
         return $value;
     }

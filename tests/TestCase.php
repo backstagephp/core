@@ -67,7 +67,7 @@ class TestCase extends Orchestra
         $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'filament-fields-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'fields-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
     }
 

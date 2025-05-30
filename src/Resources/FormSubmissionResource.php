@@ -6,6 +6,7 @@ use Backstage\Models\FormSubmission;
 use Backstage\Resources\FormSubmissionResource\Pages;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -25,8 +26,6 @@ class FormSubmissionResource extends Resource
     protected static ?string $model = FormSubmission::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
-
-    public static ?string $recordTitleAttribute = 'name';
 
     public static function getModelLabel(): string
     {
@@ -55,7 +54,7 @@ class FormSubmissionResource extends Resource
                                 TextInput::make('name')
                                     ->columnSpanFull()
                                     ->required()
-                                    ->live(debounce: 250)
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
                                         $set('slug', Str::slug($state));
                                     }),
@@ -63,6 +62,9 @@ class FormSubmissionResource extends Resource
                                     ->columnSpanFull()
                                     ->required()
                                     ->unique(ignoreRecord: true),
+                                Textarea::make('notes')
+                                    ->columnSpanFull()
+                                    ->rows(3),
                             ]),
                     ]),
             ]);
@@ -75,6 +77,10 @@ class FormSubmissionResource extends Resource
                 TextEntry::make('form.name')
                     ->columnSpanFull()
                     ->label(__('Form'))
+                    ->default('-'),
+                TextEntry::make('notes')
+                    ->columnSpanFull()
+                    ->label(__('Notes'))
                     ->default('-'),
                 TextEntry::make('content.name')
                     ->columnSpanFull()
@@ -113,8 +119,12 @@ class FormSubmissionResource extends Resource
                     ->default('-'),
                 RepeatableEntry::make('values')
                     ->schema([
+                        TextEntry::make('field.name')
+                            ->state(function ($record) {
+                                return $record->field?->name ?? '-';
+                            }),
                         TextEntry::make('value'),
-                        TextEntry::make('field.name'),
+
                     ]),
             ]);
     }
@@ -164,5 +174,10 @@ class FormSubmissionResource extends Resource
             'index' => Pages\ListFormSubmissions::route('/'),
             'view' => Pages\ViewFormSubmission::route('/{record}/view'),
         ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['values.field']);
     }
 }

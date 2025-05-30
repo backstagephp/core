@@ -3,35 +3,15 @@
 namespace Backstage\Models;
 
 use Backstage\Shared\HasPackageFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class Language extends Model
+class Language extends \Backstage\Translations\Laravel\Models\Language
 {
-    use HasCompositeRelations;
     use HasPackageFactory;
-
-    protected $primaryKey = 'code';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    protected $guarded = [];
-
-    protected function casts(): array
-    {
-        return [];
-    }
-
-    public static function default(): ?Language
-    {
-        return static::firstWhere('default', 1);
-    }
 
     public function domains(): BelongsToMany
     {
-        return $this->belongsToMany(Domain::class);
+        return $this->belongsToMany(Domain::class, 'domain_language', 'language_code', 'domain_ulid')
+            ->withPivot('path');
     }
 }

@@ -13,11 +13,12 @@ class FormController
     {
         $request->validate(
             $form->fields->mapWithKeys(function ($field) {
+                $rules = [];
                 if ($field->config['required'] ?? false) {
-                    $field->rules = ['required'];
+                    $rules[] = 'required';
                 }
 
-                return [$field->slug => $field->rules];
+                return [$field->slug => $rules];
             })
                 ->filter()
                 ->merge(['content_ulid' => ['nullable', 'exists:content,ulid']])
@@ -39,9 +40,22 @@ class FormController
 
         $submission->values()->createMany(
             $form->fields->map(function ($field) use ($request) {
+                $value = $request->input($field->slug);
+                if ($field->field_type == 'file-upload') {
+                    $result = $request->file($field->slug)->store();
+                    $value = json_encode([
+                        'path' => $result,
+                        'name' => $request->file($field->slug)->getClientOriginalName(),
+                        'size' => $request->file($field->slug)->getSize(),
+                        'type' => $request->file($field->slug)->getMimeType(),
+                    ]);
+                } elseif (is_array($value)) {
+                    $value = json_encode($value);
+                }
+
                 return [
                     'field_ulid' => $field->ulid,
-                    'value' => $request->input($field->slug),
+                    'value' => $value,
                 ];
             })->toArray()
         );

@@ -179,15 +179,19 @@ class BackstageSeeder extends Seeder
             'name' => 'Mark',
             'email' => 'mark@vk10.nl',
             'password' => 'mark@vk10.nl',
-        ])
-            ->create();
+        ])->create();
+
+        User::factory([
+            'name' => 'Rob',
+            'email' => 'rob@vk10.nl',
+            'password' => 'rob@vk10.nl',
+        ])->create();
 
         User::factory([
             'name' => 'Mathieu',
             'email' => 'mathieu@vk10.nl',
             'password' => 'mathieu@vk10.nl',
-        ])
-            ->create();
+        ])->create();
 
         User::factory([
             'name' => 'Bas',
