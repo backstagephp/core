@@ -51,6 +51,12 @@ jobs:
           composer config repositories.backstage vcs git@github.com:backstagephp/cms.git
           composer install --no-interaction --dev
 
+      - name: Prepare database
+        run: |
+          php artisan vendor:publish --tag=backstage-migrations
+          php artisan vendor:publish --provider="Backstage\Translations\Laravel\TranslationServiceProvider"
+
+
       - name: Execute tests
         env:
           DB_CONNECTION: mysql
