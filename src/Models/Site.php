@@ -79,6 +79,11 @@ class Site extends Model
         return $this->hasMany(Form::class);
     }
 
+    public function templates(): BelongsToMany
+    {
+        return $this->belongsToMany(Template::class);
+    }
+
     public function media(): HasMany
     {
         return $this->hasMany(Media::class);
