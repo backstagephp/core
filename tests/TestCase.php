@@ -65,6 +65,7 @@ class TestCase extends Orchestra
         parent::refreshApplication();
 
         $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+        $this->artisan('vendor:publish', ['--provider' => 'Backstage\Translations\Laravel\TranslationServiceProvider', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'fields-migrations', '--force' => true]);
