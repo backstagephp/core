@@ -9,8 +9,10 @@ class ContentObserver
 {
     public function saved(Content $content)
     {
-        if ($content->isDirty('path') && $oldPath = $content->getOriginal('path')) {
+        if ($content->isDirty('path') && $oldPath = $content->getOriginal('path') && $content->public) {
+
             $oldUrl = rtrim($content->pathPrefix . $oldPath, '/');
+
             if ($content->site->trailing_slash) {
                 $oldUrl .= '/';
             }
