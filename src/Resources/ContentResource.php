@@ -177,7 +177,9 @@ class ContentResource extends Resource
                                                     return [];
                                                 }
 
-                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                                return Rule::unique('content', 'path')
+                                                    ->where('language_code', $get('language_code'))
+                                                    ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
                                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
