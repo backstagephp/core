@@ -265,18 +265,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         return [];
     }
 
-    /**
-     * @return array<string>
-     */
-    protected function getMigrations(): array
-    {
-        return collect(app(Filesystem::class)->files(__DIR__ . '/../database/migrations'))
-            ->map(fn (SplFileInfo $file) => str_replace('.php', '', $file->getBasename()))
-            ->sortBy(fn ($filename) => (int) explode('_', $filename)[0])
-            ->values()
-            ->toArray();
-    }
-
     private function generateMediaPickerConfig(): array
     {
         $config = [
