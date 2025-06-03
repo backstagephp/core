@@ -58,8 +58,8 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+        // $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
+        // $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
     }
 
     public function defineDatabaseMigrations()
