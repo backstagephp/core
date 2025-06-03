@@ -1,6 +1,7 @@
 <?php
 
 use Backstage\Http\Controllers\FormController;
+use Backstage\Http\Controllers\SitemapController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,4 +16,6 @@ Route::fallback(function (Request $request) {
     return $request->content()->response();
 });
 
-Route::post('/forms/{form}', [FormController::class, 'submit'])->middleware('web')->name('backstage.forms.submit');
+Route::post('forms/{form}', [FormController::class, 'submit'])->middleware('web')->name('backstage.forms.submit');
+
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');

@@ -54,21 +54,22 @@ class TestCase extends Orchestra
 
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+    }
+
     public function defineDatabaseMigrations()
     {
-        $this->artisan('migrate:fresh');
-        // $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     protected function refreshApplication()
     {
         parent::refreshApplication();
-
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'fields-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
     }
 
     public function getEnvironmentSetUp($app)

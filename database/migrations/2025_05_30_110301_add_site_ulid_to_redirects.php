@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('content', function (Blueprint $table) {
-            $table->integer('position')->nullable()->after('lock');
-            $table->integer('depth')->nullable()->after('position');
+        if (Schema::hasColumn('redirects', 'site_id')) {
+            return;
+        }
+
+        Schema::table('redirects', function (Blueprint $table) {
+            $table->ulid('site_id')->nullable()->after('ulid');
         });
     }
 };
