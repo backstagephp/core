@@ -30,9 +30,4 @@ return new class extends Migration
             $table->softDeletes();
         });
     }
-
-    public function down()
-    {
-        Schema::dropIfExists('translations');
-    }
 };

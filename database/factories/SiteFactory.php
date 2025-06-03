@@ -32,9 +32,10 @@ class SiteFactory extends Factory
         ];
     }
 
-    public function withDomain($domain = 'localhost'): self
+    public function withDomain($domain = 'localhost', $language = null): self
     {
         return $this->has(Domain::factory()
+            ->withLanguage($language)
             ->state([
                 'name' => $domain,
             ]));
