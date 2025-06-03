@@ -21,6 +21,7 @@ use Backstage\Resources\ContentResource;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
 use Backstage\View\Components\Page;
+use Carbon\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Assets\Asset;
@@ -53,7 +54,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'backstage/cms',
                 'backstage/media',
             ])
-            ->hasMigrations($this->getMigrations())
+            ->discoversMigrations()
             ->hasTranslations()
             ->hasViews(static::$viewNamespace)
             ->hasCommands($this->getCommands())
@@ -117,6 +118,29 @@ class BackstageServiceProvider extends PackageServiceProvider
                     })
                     ->askToStarRepoOnGitHub('backstage/cms');
             });
+    }
+
+    protected function generateMigrationName(string $migrationFileName, Carbon $now): string
+    {
+        $migrationsPath = 'migrations/' . dirname($migrationFileName) . '/';
+        $migrationFileName = basename($migrationFileName);
+
+        $len = strlen($migrationFileName) + 4;
+
+        if (Str::contains($migrationFileName, '/')) {
+            $migrationsPath .= Str::of($migrationFileName)->beforeLast('/')->finish('/');
+            $migrationFileName = Str::of($migrationFileName)->afterLast('/');
+        }
+
+        foreach (glob(database_path("{$migrationsPath}*.php")) as $filename) {
+            if ((substr($filename, -$len) === $migrationFileName . '.php')) {
+                return $filename;
+            }
+        }
+
+        $formattedFileName = Str::of($migrationFileName)->snake()->finish('.php');
+
+        return database_path("{$migrationsPath}{$formattedFileName}");
     }
 
     public function packageRegistered(): void {}
