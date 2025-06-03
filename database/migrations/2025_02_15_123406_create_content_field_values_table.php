@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('form_submission_values', function (Blueprint $table) {
+        if (Schema::hasTable('content_field_values')) {
+            return;
+        }
+
+        Schema::create('content_field_values', function (Blueprint $table) {
             $table->ulid()->primary();
 
-            $table->foreignUlid('submission_ulid')->nullable()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignUlid('field_ulid')->nullable()->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUlid('content_ulid')->nullable()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('field_ulid')->nullable()->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->longText('value');
 

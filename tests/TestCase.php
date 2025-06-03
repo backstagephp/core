@@ -3,6 +3,7 @@
 namespace Backstage\Tests;
 
 use Backstage\BackstageServiceProvider;
+use Backstage\Translations\Laravel\TranslationServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
@@ -40,6 +41,7 @@ class TestCase extends Orchestra
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             BackstageServiceProvider::class,
+            TranslationServiceProvider::class
         ];
     }
 
@@ -54,6 +56,15 @@ class TestCase extends Orchestra
 
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Backstage should be last
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
+        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
+    }
+
     public function defineDatabaseMigrations()
     {
         $this->artisan('migrate:fresh');
@@ -63,12 +74,6 @@ class TestCase extends Orchestra
     protected function refreshApplication()
     {
         parent::refreshApplication();
-
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'redirects-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'media-picker-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'fields-migrations', '--force' => true]);
-        $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
     }
 
     public function getEnvironmentSetUp($app)

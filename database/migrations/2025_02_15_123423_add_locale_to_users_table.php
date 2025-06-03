@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('redirects', function (Blueprint $table) {
-            $table->ulid('site_id')->nullable()->after('ulid');
+        if (Schema::hasColumn('users', 'locale')) {
+            return;
+        }
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->char('locale', 5)->nullable()->after('password');
         });
     }
 };

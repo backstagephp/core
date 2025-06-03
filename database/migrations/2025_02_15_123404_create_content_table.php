@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('content')) {
+            return;
+        }
+
         Schema::create('content', function (Blueprint $table) {
             $table->ulid()->primary();
             $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();

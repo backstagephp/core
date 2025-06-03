@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('templates')) {
+            return;
+        }
+
         Schema::create('templates', function (Blueprint $table) {
             $table->string('slug')->primary();
 
