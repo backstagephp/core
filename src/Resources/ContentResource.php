@@ -24,6 +24,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -161,7 +162,9 @@ class ContentResource extends Resource
                                             ->default(self::$type->slug),
                                         Grid::make()
                                             ->columns(1)
-                                            ->schema(self::getTypeInputs()),
+                                            ->schema(function () {
+                                                return self::getTypeInputs();
+                                            }),
                                     ]),
                                 Tab::make('meta')
                                     ->label(__('Meta'))
@@ -174,7 +177,9 @@ class ContentResource extends Resource
                                                     return [];
                                                 }
 
-                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                                return Rule::unique('content', 'path')
+                                                    ->where('language_code', $get('language_code'))
+                                                    ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
                                             ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
@@ -372,13 +377,30 @@ class ContentResource extends Resource
 
     public static function getTypeInputs()
     {
-        return collect(self::$type->fields)
+        $groups = [];
+        collect(self::$type->fields)
             ->filter(fn ($field) => self::$type->name_field !== $field->slug)
-            ->map(function ($field) {
-                return self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
-            })
-            ->filter()
-            ->toArray();
+            ->each(function ($field) use (&$groups) {
+                $resolvedField = self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
+                if ($resolvedField) {
+                    $groups[$field->group ?? null][] = $resolvedField;
+                }
+            });
+
+        return collect($groups)->map(function ($fields, $group) {
+            if (empty($group)) {
+                return Grid::make(1)->schema($fields);
+            }
+
+            return Section::make($group)
+                ->collapsible()
+                ->collapsed()
+                ->compact()
+                ->label(__($group))
+                ->schema([
+                    Grid::make(1)->schema($fields),
+                ]);
+        })->values()->toArray();
     }
 
     public static function tableDatabase(Table $table, Type $type): Table
