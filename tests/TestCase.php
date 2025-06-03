@@ -59,15 +59,13 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        // Backstage should be last
         $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);
     }
 
     public function defineDatabaseMigrations()
     {
-        $this->artisan('migrate:fresh');
-        // $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     protected function refreshApplication()
