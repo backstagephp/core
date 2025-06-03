@@ -11,7 +11,7 @@ return new class extends Migration
         if (Schema::hasIndex('fields', 'fields_unique_parent')) {
             return;
         }
-        
+
         Schema::table('fields', function (Blueprint $table) {
             $table->dropUnique(['model_type', 'model_key', 'slug']);
 

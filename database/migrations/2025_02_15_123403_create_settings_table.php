@@ -14,7 +14,7 @@ return new class extends Migration
         if (Schema::hasTable('settings')) {
             return;
         }
-        
+
         Schema::create('settings', function (Blueprint $table) {
             $table->ulid()->primary();
             $table->string('slug')->unique();

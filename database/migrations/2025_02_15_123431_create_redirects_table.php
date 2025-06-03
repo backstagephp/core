@@ -14,7 +14,7 @@ return new class extends Migration
         if (Schema::hasTable('redirects')) {
             return;
         }
-        
+
         Schema::create('redirects', function (Blueprint $table) {
             $table->ulid()->primary();
             $table->string('source');

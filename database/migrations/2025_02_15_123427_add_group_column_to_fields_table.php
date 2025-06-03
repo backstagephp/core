@@ -11,7 +11,7 @@ return new class extends Migration
         if (Schema::hasColumn('fields', 'group')) {
             return;
         }
-        
+
         Schema::table('fields', function (Blueprint $table) {
             $table->string('group')->nullable()->after('position');
         });
