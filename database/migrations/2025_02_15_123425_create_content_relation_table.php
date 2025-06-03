@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('relationables')) {
+            return;
+        }
+
         Schema::create('relationables', function (Blueprint $table) {
             $table->id();
 

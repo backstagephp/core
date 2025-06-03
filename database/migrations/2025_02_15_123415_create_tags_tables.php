@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('tags')) {
+            return;
+        }
+
         Schema::create('tags', function (Blueprint $table) {
             $table->ulid()->primary();
 

@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('blocks', 'ulid')) {
+            return;
+        }
+
         Schema::table('blocks', function (Blueprint $table) {
             $table->dropPrimary();
             $table->ulid('ulid')->primary()->change();

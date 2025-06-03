@@ -70,17 +70,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Preparing stage...');
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'translations-migrations',
-                            '--force' => true,
-                        ]);
-
-                        $command->callSilently('vendor:publish', [
                             '--tag' => 'translations-config',
-                            '--force' => true,
-                        ]);
-
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'backstage-migrations',
                             '--force' => true,
                         ]);
 
@@ -89,17 +79,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                             '--force' => true,
                         ]);
 
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'redirects-migrations',
-                            '--force' => true,
-                        ]);
-
                         $this->runFilamentFieldsCommand($command);
 
                         $this->writeMediaPickerConfig();
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'media-migrations',
+                            '--tag' => 'backstage-migrations',
                             '--force' => true,
                         ]);
 
@@ -323,26 +308,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         ]);
 
         $this->writeFilamentFieldsConfig();
-
-        $command->callSilently('vendor:publish', [
-            '--tag' => 'fields-migrations',
-            '--force' => true,
-        ]);
-
-        $migrationsPath = database_path('migrations');
-
-        // Specifically look for the fields migration file
-        $fieldsMigrationFiles = glob($migrationsPath . '/*_create_fields_table.php');
-
-        // Get timestamp from create_sites_table migration
-        $sitesMigrationFiles = glob($migrationsPath . '/*_create_sites_table.php');
-        $date = substr(basename($sitesMigrationFiles[0]), 0, 17);
-
-        if (! empty($fieldsMigrationFiles)) {
-            $oldName = $fieldsMigrationFiles[0];
-            $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
-            rename($oldName, $newName);
-        }
     }
 
     private function writeFilamentFieldsConfig(?string $path = null): void

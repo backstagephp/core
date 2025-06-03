@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('types', 'sort_column')) {
+            return;
+        }
+
         Schema::table('types', function (Blueprint $table) {
             $table->string('sort_column')->nullable()->after('body_field');
             $table->string('sort_direction')->nullable()->after('sort_column');

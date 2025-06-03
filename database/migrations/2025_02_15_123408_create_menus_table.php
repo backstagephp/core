@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('form_actions', function (Blueprint $table) {
-            $table->ulid()->primary();
+        if (Schema::hasTable('menus')) {
+            return;
+        }
 
-            $table->string('form_slug')->constrained(table: 'forms', column: 'slug')->cascadeOnUpdate()->cascadeOnDelete();
+        Schema::create('menus', function (Blueprint $table) {
+            $table->string('slug')->primary();
 
-            $table->foreignUlid('site_ulid')->nullable()->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUlid('site_ulid')->constrained(table: 'sites', column: 'ulid')->cascadeOnUpdate()->cascadeOnDelete();
             $table->char('language_code', 5);
 
-            $table->string('type')->nullable();
-            $table->json('config')->nullable();
+            $table->string('name');
 
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('language_code')->references('code')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
         });

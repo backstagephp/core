@@ -11,14 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('block_template')) {
+            return;
+        }
+
         Schema::create('block_template', function (Blueprint $table) {
             $table->id();
             $table->string('block_slug');
             $table->string('template_slug');
             $table->integer('position')->default(0);
 
-            $table->foreign('block_slug')->references('slug')->on('blocks')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreign('template_slug')->references('slug')->on('templates')->cascadeOnUpdate()->cascadeOnDelete();
+            // $table->foreign('block_slug')->references('slug')->on('blocks')->cascadeOnUpdate()->cascadeOnDelete();
+            // $table->foreign('template_slug')->references('slug')->on('templates')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->index(['block_slug', 'template_slug']);
         });
