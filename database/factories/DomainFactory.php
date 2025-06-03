@@ -32,7 +32,7 @@ class DomainFactory extends Factory
         }
 
         return $this->has(Language::factory([
-            'code' => $language ?? 'en',
+            'code' => $language,
         ]));
     }
 }
