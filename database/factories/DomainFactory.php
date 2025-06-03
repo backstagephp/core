@@ -27,6 +27,10 @@ class DomainFactory extends Factory
 
     public function withLanguage($language = null): self
     {
+        if (!$language) {
+            return $this;
+        }
+
         return $this->has(Language::factory([
             'code' => $language ?? 'en',
         ]));
