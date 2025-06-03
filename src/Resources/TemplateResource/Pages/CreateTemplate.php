@@ -14,10 +14,10 @@ class CreateTemplate extends CreateRecord
         dd($data);
     }
 
-    protected function handleRecordCreation(array $data): Model
-    {
-        dd($data);
+    // protected function handleRecordCreation(array $data): Model
+    // {
+    //     dd($data);
 
-        return static::getModel()::create($data);
-    }
+    //     return static::getModel()::create($data);
+    // }
 }

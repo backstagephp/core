@@ -2,8 +2,8 @@
 
 namespace Backstage\Resources\TemplateResource\RelationManagers;
 
+use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Block;
-use Fields\Concerns\CanMapDynamicFields;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Set;

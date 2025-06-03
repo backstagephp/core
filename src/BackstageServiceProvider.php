@@ -14,6 +14,7 @@ use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
 use Backstage\Models\Site;
+use Backstage\Models\Template;
 use Backstage\Models\Type;
 use Backstage\Models\User;
 use Backstage\Observers\MenuObserver;

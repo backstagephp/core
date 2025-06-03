@@ -3,6 +3,7 @@
 namespace Backstage\Resources\TemplateResource\Pages;
 
 use Backstage\Resources\TemplateResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListTemplates extends ListRecords
@@ -12,7 +13,7 @@ class ListTemplates extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

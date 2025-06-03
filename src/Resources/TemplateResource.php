@@ -2,10 +2,12 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Builder;
+use Backstage\CustomFields\Builder;
 use Backstage\Models\Template;
 use Backstage\Resources\TemplateResource\Pages;
 use Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
