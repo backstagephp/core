@@ -41,7 +41,6 @@ class TestCase extends Orchestra
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             BackstageServiceProvider::class,
-            TranslationServiceProvider::class,
         ];
     }
 
