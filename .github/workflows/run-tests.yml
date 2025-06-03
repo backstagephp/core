@@ -51,6 +51,7 @@ jobs:
           composer config repositories.backstage vcs git@github.com:backstagephp/cms.git
           composer install --no-interaction --dev
 
+
       - name: Execute tests
         env:
           DB_CONNECTION: mysql

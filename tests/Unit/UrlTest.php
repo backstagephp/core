@@ -43,8 +43,9 @@ test('confirm basic path works', function () {
 
 test('confirm site domain works', function () {
     $content = Content::factory()->create([
+        'language_code' => 'en',
         'site_ulid' => Site::factory()
-            ->withDomain('example.com'),
+            ->withDomain('example.com', 'en'),
         'path' => '',
     ]);
 

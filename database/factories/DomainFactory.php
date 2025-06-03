@@ -21,12 +21,14 @@ class DomainFactory extends Factory
         return [
             'site_ulid' => Site::factory(),
             'name' => $this->faker->domainName(),
-            'environment' => 'local',
+            'environment' => config('app.env'),
         ];
     }
 
-    public function withLanguage(): self
+    public function withLanguage($language = null): self
     {
-        return $this->has(Language::factory());
+        return $this->has(Language::factory([
+            'code' => $language ?? 'en',
+        ]));
     }
 }

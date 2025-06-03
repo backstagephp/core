@@ -34,6 +34,7 @@ class CheckboxList extends Base
             $resource = $relation['resource'];
             $key = $relation['relationKey'];
 
+            /** @phpstan-ignore-next-line */
             $instance = new static;
             $model = $instance->resolveResourceModel($resource);
 

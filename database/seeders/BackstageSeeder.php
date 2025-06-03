@@ -11,6 +11,7 @@ use Backstage\Models\Form;
 use Backstage\Models\FormAction;
 use Backstage\Models\Language;
 use Backstage\Models\Site;
+use Backstage\Models\Template;
 use Backstage\Models\Type;
 use Backstage\Models\User;
 use Illuminate\Database\Seeder;
@@ -196,24 +197,14 @@ class BackstageSeeder extends Seeder
             'name' => 'Bas',
             'email' => 'bas@vk10.nl',
             'password' => 'bas@vk10.nl',
+        ])
+            ->create();
+
+        $template = Template::factory([
+            'name' => 'Default',
+            'slug' => 'default',
         ])->create();
 
-        User::factory([
-            'name' => 'Yoni',
-            'email' => 'yoni@vk10.nl',
-            'password' => 'yoni@vk10.nl',
-        ])->create();
-
-        User::factory([
-            'name' => 'Patrick',
-            'email' => 'patrick@vk10.nl',
-            'password' => 'patrick@vk10.nl',
-        ])->create();
-
-        User::factory([
-            'name' => 'Sandro',
-            'email' => 'sandro@vk10.nl',
-            'password' => 'sandro@vk10.nl',
-        ])->create();
+        $template->blocks()->attach(Block::where('slug', 'text')->first());
     }
 }

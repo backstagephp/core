@@ -14,6 +14,7 @@ use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
 use Backstage\Models\Site;
+use Backstage\Models\Template;
 use Backstage\Models\Type;
 use Backstage\Models\User;
 use Backstage\Observers\MenuObserver;
@@ -70,17 +71,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $command->comment('Preparing stage...');
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'translations-migrations',
-                            '--force' => true,
-                        ]);
-
-                        $command->callSilently('vendor:publish', [
                             '--tag' => 'translations-config',
-                            '--force' => true,
-                        ]);
-
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'backstage-migrations',
                             '--force' => true,
                         ]);
 
@@ -89,17 +80,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                             '--force' => true,
                         ]);
 
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'redirects-migrations',
-                            '--force' => true,
-                        ]);
-
                         $this->runFilamentFieldsCommand($command);
 
                         $this->writeMediaPickerConfig();
 
                         $command->callSilently('vendor:publish', [
-                            '--tag' => 'media-migrations',
+                            '--tag' => 'backstage-migrations',
                             '--force' => true,
                         ]);
 
@@ -176,6 +162,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
+            'template' => 'Backstage\Models\Template',
             'user' => 'Backstage\Models\User',
         ]);
 
@@ -185,6 +172,10 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Route::bind('block', function (string $slug) {
             return Block::where('slug', $slug)->firstOrFail();
+        });
+
+        Route::bind('template', function (string $slug) {
+            return Template::where('slug', $slug)->firstOrFail();
         });
 
         Select::configureUsing(function (Select $select): void {
@@ -305,7 +296,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['media-picker' => $config]);
+        config(['backstage.media' => $config]);
 
         return $config;
     }
@@ -318,26 +309,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         ]);
 
         $this->writeFilamentFieldsConfig();
-
-        $command->callSilently('vendor:publish', [
-            '--tag' => 'fields-migrations',
-            '--force' => true,
-        ]);
-
-        $migrationsPath = database_path('migrations');
-
-        // Specifically look for the fields migration file
-        $fieldsMigrationFiles = glob($migrationsPath . '/*_create_fields_table.php');
-
-        // Get timestamp from create_sites_table migration
-        $sitesMigrationFiles = glob($migrationsPath . '/*_create_sites_table.php');
-        $date = substr(basename($sitesMigrationFiles[0]), 0, 17);
-
-        if (! empty($fieldsMigrationFiles)) {
-            $oldName = $fieldsMigrationFiles[0];
-            $newName = $migrationsPath . '/' . $date . '_03_create_fields_table.php';
-            rename($oldName, $newName);
-        }
     }
 
     private function writeFilamentFieldsConfig(?string $path = null): void
@@ -384,7 +355,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['fields' => $config]);
+        config(['backstage.fields' => $config]);
 
         return $config;
     }

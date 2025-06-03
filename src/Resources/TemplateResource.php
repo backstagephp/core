@@ -2,13 +2,19 @@
 
 namespace Backstage\Resources;
 
+use Backstage\CustomFields\Builder;
 use Backstage\Models\Template;
 use Backstage\Resources\TemplateResource\Pages;
+use Backstage\Resources\TemplateResource\RelationManagers\BlocksRelationManager;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class TemplateResource extends Resource
 {
@@ -43,7 +49,24 @@ class TemplateResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(__('Name'))
+                            ->required()
+                            ->live(debounce: 250)
+                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                $set('slug', Str::slug($state));
+                            }),
+                        TextInput::make('slug')
+                            ->label(__('Slug'))
+                            ->required()
+                            ->unique(ignoreRecord: true),
+                        Builder::make('blocks')
+                            ->label(__('Blocks')),
+                    ]),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -69,7 +92,9 @@ class TemplateResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            BlocksRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
