@@ -41,7 +41,7 @@ class TestCase extends Orchestra
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             BackstageServiceProvider::class,
-            TranslationServiceProvider::class
+            TranslationServiceProvider::class,
         ];
     }
 
@@ -59,7 +59,7 @@ class TestCase extends Orchestra
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Backstage should be last
         $this->artisan('vendor:publish', ['--tag' => 'backstage-config', '--force' => true]);
         $this->artisan('vendor:publish', ['--tag' => 'backstage-migrations', '--force' => true]);

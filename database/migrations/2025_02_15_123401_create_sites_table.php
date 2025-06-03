@@ -14,7 +14,7 @@ return new class extends Migration
         if (Schema::hasTable('sites')) {
             return;
         }
-        
+
         Schema::create('sites', function (Blueprint $table) {
             $table->ulid()->primary();
             $table->string('name');

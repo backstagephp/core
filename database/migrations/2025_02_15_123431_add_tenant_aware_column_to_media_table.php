@@ -11,7 +11,7 @@ return new class extends Migration
         if (Schema::hasColumn(app(\Backstage\Media\Models\Media::class)->getTable(), 'site_ulid')) {
             return;
         }
-        
+
         Schema::table(app(\Backstage\Media\Models\Media::class)->getTable(), function (Blueprint $table) {
             $table->ulid('site_ulid')->nullable()->after('ulid');
         });
