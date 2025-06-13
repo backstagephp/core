@@ -39,7 +39,7 @@ class FormSubmissionResource extends Resource
 
     public static function getNavigationParentItem(): ?string
     {
-        return 'Forms';
+        return __('Forms');
     }
 
     public static function form(Form $form): Form

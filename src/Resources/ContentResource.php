@@ -93,7 +93,7 @@ class ContentResource extends Resource
         $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) {
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
-                ->parentItem('Content')
+                ->parentItem(__('Content'))
                 ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
