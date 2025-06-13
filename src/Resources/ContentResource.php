@@ -238,6 +238,7 @@ class ContentResource extends Resource
                                             ->placeholder(__('Select parent content'))
                                             ->searchable()
                                             ->withCount()
+                                            ->key(fn (Get $get) => 'parent_ulid_' . ($get('language_code') ?? ''))
                                             ->rules([
                                                 Rule::exists('content', 'ulid')
                                                     ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
@@ -253,6 +254,7 @@ class ContentResource extends Resource
                                                     });
                                                 },
                                             )
+                                            ->live()
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
                                                 if ($state) {
                                                     $parent = Content::find($state);
@@ -262,7 +264,6 @@ class ContentResource extends Resource
                                                     }
                                                 }
                                             })
-                                            ->live()
                                             ->disabledOptions(fn ($record) => [$record?->getKey()]),
 
                                         TextInput::make('path')
@@ -295,7 +296,8 @@ class ContentResource extends Resource
                                                     ])
                                             )
                                             ->allowHtml()
-                                            ->visible(fn () => Language::active()->count() > 1),
+                                            ->visible(fn () => Language::active()->count() > 1)
+                                            ->live(),
 
                                         TextInput::make('slug')
                                             ->columnSpanFull()
@@ -609,6 +611,7 @@ class ContentResource extends Resource
                                         ])->toArray(),
                                     ])
                             )
+                            ->live()
                             ->allowHtml(),
                     ])
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
