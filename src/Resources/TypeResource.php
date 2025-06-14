@@ -110,10 +110,15 @@ class TypeResource extends Resource
                             ->inline()
                             ->grouped()
                             ->required(),
-                        Toggle::make('public')
-                            ->label('Public')
-                            ->inline(false)
-                            ->columnSpanFull(),
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('public')
+                                    ->label(__('Public'))
+                                    ->inline(false),
+                                Toggle::make('parent_required')
+                                    ->label(__('Parent Required'))
+                                    ->inline(false),
+                            ])->columns(2),
                     ])->columns(2),
             ]);
     }

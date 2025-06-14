@@ -238,6 +238,7 @@ class ContentResource extends Resource
                                             ->placeholder(__('Select parent content'))
                                             ->searchable()
                                             ->withCount()
+                                            ->required(fn () => self::$type->parent_required)
                                             ->key(fn (Get $get) => 'parent_ulid_' . ($get('language_code') ?? ''))
                                             ->rules([
                                                 Rule::exists('content', 'ulid')
