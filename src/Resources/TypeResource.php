@@ -2,23 +2,26 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
-use Backstage\Models\Type;
-use Backstage\Resources\TypeResource\Pages;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
+use Backstage\Models\Type;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Backstage\Models\Content;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Schema;
+use Filament\Forms\Components\Repeater;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Backstage\Resources\TypeResource\Pages;
+use Filament\Forms\Components\ToggleButtons;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 
 class TypeResource extends Resource
 {
@@ -117,7 +120,58 @@ class TypeResource extends Resource
                                     ->inline(false),
                                 Toggle::make('parent_required')
                                     ->label(__('Parent Required'))
+                                    ->live()
                                     ->inline(false),
+                                    Repeater::make('filters')
+                                        ->label(__('Filters'))
+                                        ->live()
+                                        ->visible(fn (Get $get): bool => $get('parent_required'))
+                                        ->schema([
+                                            Grid::make(3)
+                                                ->schema([
+                                                    Select::make('column')
+                                                        ->options(function (Get $get) {
+                                                            $columns = Schema::getColumnListing((new Content())->getTable());
+
+                                                            // Create options array with column names
+                                                            $columnOptions = collect($columns)->mapWithKeys(function ($column) {
+                                                                return [$column => Str::title($column)];
+                                                            })->toArray();
+
+                                                            return $columnOptions;
+                                                        })
+                                                        ->live()
+                                                        ->label(__('Column')),
+                                                    Select::make('operator')
+                                                        ->options([
+                                                            '=' => __('Equal'),
+                                                            '!=' => __('Not equal'),
+                                                            '>' => __('Greater than'),
+                                                            '<' => __('Less than'),
+                                                            '>=' => __('Greater than or equal to'),
+                                                            '<=' => __('Less than or equal to'),
+                                                            'LIKE' => __('Like'),
+                                                            'NOT LIKE' => __('Not like'),
+                                                        ])
+                                                        ->label(__('Operator')),
+                                                    TextInput::make('value')
+                                                        ->datalist(function (Get $get) {
+                                                            $column = $get('column');
+
+                                                            if (! $column) {
+                                                                return [];
+                                                            }
+
+                                                            return Content::query()
+                                                                ->select($column)
+                                                                ->distinct()
+                                                                ->pluck($column)
+                                                                ->toArray();
+                                                        })
+                                                        ->label(__('Value')),
+                                                ]),
+                                        ])
+                                    ->columnSpanFull(),
                             ])->columns(2),
                     ])->columns(2),
             ]);
