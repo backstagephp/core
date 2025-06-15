@@ -275,7 +275,7 @@ class ContentResource extends Resource
                                             ->default(function (Get $get) use ($form) {
                                                 $query = Content::query();
                                                 $query = self::applyParentQueryFilters($query, $form);
-                                                
+
                                                 return $query->count() === 1 ? $query->first()->ulid : null;
                                             })
                                             ->live()
