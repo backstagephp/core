@@ -254,9 +254,9 @@ class ContentResource extends Resource
                                                         return $query->where(function ($query) {
                                                             foreach (self::$type->parent_filters as $filter) {
                                                                 $query->where(
-                                                                    column: $filter['parent_filters']['column'],
-                                                                    operator: $filter['parent_filters']['operator'],
-                                                                    value: $filter['parent_filters']['value']
+                                                                    column: $filter['column'],
+                                                                    operator: $filter['operator'],
+                                                                    value: $filter['value']
                                                                 );
                                                             }
                                                         });
