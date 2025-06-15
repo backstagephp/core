@@ -2,29 +2,28 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Content;
+use Backstage\Models\Type;
+use Backstage\Resources\TypeResource\Pages;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Backstage\Models\Content;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Illuminate\Support\Facades\Schema;
-use Filament\Forms\Components\Repeater;
+use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Backstage\Resources\TypeResource\Pages;
-use Filament\Forms\Components\ToggleButtons;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Tabs;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class TypeResource extends Resource
 {
@@ -79,7 +78,7 @@ class TypeResource extends Resource
                                     ->required()
                                     ->unique(ignoreRecord: true)
                                     ->rules([
-                                        fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                             if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
                                                 $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                                             }
@@ -138,13 +137,13 @@ class TypeResource extends Resource
                                         Repeater::make('parent_filters')
                                             ->label(__('Filters'))
                                             ->live()
-                                            ->visible(fn(Get $get): bool => $get('parent_required'))
+                                            ->visible(fn (Get $get): bool => $get('parent_required'))
                                             ->schema([
                                                 Grid::make(3)
                                                     ->schema([
                                                         Select::make('column')
                                                             ->options(function (Get $get) {
-                                                                $columns = Schema::getColumnListing((new Content())->getTable());
+                                                                $columns = Schema::getColumnListing((new Content)->getTable());
 
                                                                 // Create options array with column names
                                                                 $columnOptions = collect($columns)->mapWithKeys(function ($column) {
@@ -198,7 +197,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(1)
-                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
