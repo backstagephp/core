@@ -129,7 +129,7 @@ class TypeResource extends Resource
                                         ->schema([
                                             Grid::make(3)
                                                 ->schema([
-                                                    Select::make('parent_filters.column')
+                                                    Select::make('column')
                                                         ->options(function (Get $get) {
                                                             $columns = Schema::getColumnListing((new Content())->getTable());
 
@@ -142,7 +142,7 @@ class TypeResource extends Resource
                                                         })
                                                         ->live()
                                                         ->label(__('Column')),
-                                                    Select::make('parent_filters.operator')
+                                                    Select::make('operator')
                                                         ->options([
                                                             '=' => __('Equal'),
                                                             '!=' => __('Not equal'),
@@ -154,7 +154,7 @@ class TypeResource extends Resource
                                                             'NOT LIKE' => __('Not like'),
                                                         ])
                                                         ->label(__('Operator')),
-                                                    TextInput::make('parent_filters.value')
+                                                    TextInput::make('value')
                                                         ->datalist(function (Get $get) {
                                                             $column = $get('column');
 
