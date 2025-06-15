@@ -122,14 +122,14 @@ class TypeResource extends Resource
                                     ->label(__('Parent Required'))
                                     ->live()
                                     ->inline(false),
-                                    Repeater::make('filters')
+                                    Repeater::make('parent_filters')
                                         ->label(__('Filters'))
                                         ->live()
                                         ->visible(fn (Get $get): bool => $get('parent_required'))
                                         ->schema([
                                             Grid::make(3)
                                                 ->schema([
-                                                    Select::make('column')
+                                                    Select::make('parent_filters.column')
                                                         ->options(function (Get $get) {
                                                             $columns = Schema::getColumnListing((new Content())->getTable());
 
@@ -142,7 +142,7 @@ class TypeResource extends Resource
                                                         })
                                                         ->live()
                                                         ->label(__('Column')),
-                                                    Select::make('operator')
+                                                    Select::make('parent_filters.operator')
                                                         ->options([
                                                             '=' => __('Equal'),
                                                             '!=' => __('Not equal'),
@@ -154,7 +154,7 @@ class TypeResource extends Resource
                                                             'NOT LIKE' => __('Not like'),
                                                         ])
                                                         ->label(__('Operator')),
-                                                    TextInput::make('value')
+                                                    TextInput::make('parent_filters.value')
                                                         ->datalist(function (Get $get) {
                                                             $column = $get('column');
 

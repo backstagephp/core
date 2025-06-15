@@ -250,6 +250,18 @@ class ContentResource extends Resource
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
                                                 modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
+                                                    if (self::$type->parent_filters) {
+                                                        return $query->where(function ($query) {
+                                                            foreach (self::$type->parent_filters as $filter) {
+                                                                $query->where(
+                                                                    column: $filter['parent_filters']['column'],
+                                                                    operator: $filter['parent_filters']['operator'],
+                                                                    value: $filter['parent_filters']['value']
+                                                                );
+                                                            }
+                                                        });
+                                                    }
+
                                                     return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
                                                         $query->where('language_code', $languageCode);
                                                     });

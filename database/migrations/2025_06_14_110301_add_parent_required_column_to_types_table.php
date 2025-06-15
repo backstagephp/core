@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasColumn('types', 'parent_required')) {
+        if (Schema::hasColumn('types', 'parent_required') && Schema::hasColumn('types', 'parent_filters')) {
             return;
         }
 
         Schema::table('types', function (Blueprint $table) {
             $table->boolean('parent_required')->default(false)->after('public');
+            $table->json('parent_filters')->nullable()->after('parent_required');
         });
     }
 };
