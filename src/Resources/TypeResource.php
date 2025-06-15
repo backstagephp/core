@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
 use Illuminate\Support\Facades\Schema;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\IconColumn;
@@ -22,6 +23,8 @@ use Filament\Forms\Components\TextInput;
 use Backstage\Resources\TypeResource\Pages;
 use Filament\Forms\Components\ToggleButtons;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs;
 
 class TypeResource extends Resource
 {
@@ -52,128 +55,139 @@ class TypeResource extends Resource
     {
         return $form
             ->schema([
-                Grid::make('Type')
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Type $record) {
-                                $set('name_plural', Str::plural($state));
-
-                                $currentSlug = $get('slug');
-
-                                if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
-                                    $set('slug', Str::slug($state));
-                                }
-                            }),
-                        TextInput::make('name_plural')
-                            ->required(),
-                        TextInput::make('slug')
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->rules([
-                                fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
-                                    if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
-                                        $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
-                                    }
-                                },
-                            ]),
-                        Grid::make(2)
+                Tabs::make()
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tabs\Tab::make(__('Type'))
                             ->schema([
-                                Select::make('sort_column')
-                                    ->searchable()
-                                    ->preload()
-                                    ->options([
-                                        'approved_at' => 'Approved At',
-                                        'created_at' => 'Created At',
-                                        'edited_at' => 'Edited At',
-                                        'name' => 'Name',
-                                        'pinned_at' => 'Pinned At',
-                                        'position' => 'Position',
-                                        'published_at' => 'Published At',
-                                        'refreshed_at' => 'Refreshed At',
-                                        'updated_at' => 'Updated At',
+
+                                TextInput::make('name')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Type $record) {
+                                        $set('name_plural', Str::plural($state));
+
+                                        $currentSlug = $get('slug');
+
+                                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
+                                TextInput::make('name_plural')
+                                    ->required(),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->rules([
+                                        fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                            if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
+                                                $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
+                                            }
+                                        },
                                     ]),
-                                Select::make('sort_direction')
+                                ToggleButtons::make('icon')
+                                    ->default('circle-stack')
                                     ->options([
-                                        'asc' => 'Ascending',
-                                        'desc' => 'Descending',
-                                    ]),
-                            ])->columns(2),
-                        ToggleButtons::make('icon')
-                            ->default('circle-stack')
-                            ->options([
-                                'circle-stack' => '',
-                                'light-bulb' => '',
-                            ])
-                            ->icons([
-                                'circle-stack' => 'heroicon-o-circle-stack',
-                                'light-bulb' => 'heroicon-o-light-bulb',
-                            ])
-                            ->inline()
-                            ->grouped()
-                            ->required(),
-                        Grid::make(2)
-                            ->schema([
+                                        'circle-stack' => '',
+                                        'light-bulb' => '',
+                                    ])
+                                    ->icons([
+                                        'circle-stack' => 'heroicon-o-circle-stack',
+                                        'light-bulb' => 'heroicon-o-light-bulb',
+                                    ])
+                                    ->inline()
+                                    ->grouped()
+                                    ->required(),
                                 Toggle::make('public')
                                     ->label(__('Public'))
                                     ->inline(false),
-                                Toggle::make('parent_required')
-                                    ->label(__('Parent Required'))
-                                    ->live()
-                                    ->inline(false),
-                                    Repeater::make('parent_filters')
-                                        ->label(__('Filters'))
-                                        ->live()
-                                        ->visible(fn (Get $get): bool => $get('parent_required'))
-                                        ->schema([
-                                            Grid::make(3)
-                                                ->schema([
-                                                    Select::make('column')
-                                                        ->options(function (Get $get) {
-                                                            $columns = Schema::getColumnListing((new Content())->getTable());
+                            ])->columns(3),
+                        Tabs\Tab::make(__('Settings'))
+                            ->schema([
+                                Fieldset::make('Sorting')
+                                    ->schema([
+                                        Select::make('sort_column')
+                                            ->label(__('Column'))
+                                            ->searchable()
+                                            ->preload()
+                                            ->options([
+                                                'approved_at' => 'Approved At',
+                                                'created_at' => 'Created At',
+                                                'edited_at' => 'Edited At',
+                                                'name' => 'Name',
+                                                'pinned_at' => 'Pinned At',
+                                                'position' => 'Position',
+                                                'published_at' => 'Published At',
+                                                'refreshed_at' => 'Refreshed At',
+                                                'updated_at' => 'Updated At',
+                                            ]),
+                                        Select::make('sort_direction')
+                                            ->label(__('Direction'))
+                                            ->options([
+                                                'asc' => 'Ascending',
+                                                'desc' => 'Descending',
+                                            ]),
+                                    ])->columns(2),
+                                Fieldset::make(__('Parent selection'))
+                                    ->schema([
+                                        Toggle::make('parent_required')
+                                            ->label(__('Parent Required'))
+                                            ->helperText(__('If enabled, all content of this type must have a parent.'))
+                                            ->live()
+                                            ->inline(false),
+                                        Repeater::make('parent_filters')
+                                            ->label(__('Filters'))
+                                            ->live()
+                                            ->visible(fn(Get $get): bool => $get('parent_required'))
+                                            ->schema([
+                                                Grid::make(3)
+                                                    ->schema([
+                                                        Select::make('column')
+                                                            ->options(function (Get $get) {
+                                                                $columns = Schema::getColumnListing((new Content())->getTable());
 
-                                                            // Create options array with column names
-                                                            $columnOptions = collect($columns)->mapWithKeys(function ($column) {
-                                                                return [$column => Str::title($column)];
-                                                            })->toArray();
+                                                                // Create options array with column names
+                                                                $columnOptions = collect($columns)->mapWithKeys(function ($column) {
+                                                                    return [$column => Str::title($column)];
+                                                                })->toArray();
 
-                                                            return $columnOptions;
-                                                        })
-                                                        ->live()
-                                                        ->label(__('Column')),
-                                                    Select::make('operator')
-                                                        ->options([
-                                                            '=' => __('Equal'),
-                                                            '!=' => __('Not equal'),
-                                                            '>' => __('Greater than'),
-                                                            '<' => __('Less than'),
-                                                            '>=' => __('Greater than or equal to'),
-                                                            '<=' => __('Less than or equal to'),
-                                                            'LIKE' => __('Like'),
-                                                            'NOT LIKE' => __('Not like'),
-                                                        ])
-                                                        ->label(__('Operator')),
-                                                    TextInput::make('value')
-                                                        ->datalist(function (Get $get) {
-                                                            $column = $get('column');
+                                                                return $columnOptions;
+                                                            })
+                                                            ->live()
+                                                            ->label(__('Column')),
+                                                        Select::make('operator')
+                                                            ->options([
+                                                                '=' => __('Equal'),
+                                                                '!=' => __('Not equal'),
+                                                                '>' => __('Greater than'),
+                                                                '<' => __('Less than'),
+                                                                '>=' => __('Greater than or equal to'),
+                                                                '<=' => __('Less than or equal to'),
+                                                                'LIKE' => __('Like'),
+                                                                'NOT LIKE' => __('Not like'),
+                                                            ])
+                                                            ->label(__('Operator')),
+                                                        TextInput::make('value')
+                                                            ->datalist(function (Get $get) {
+                                                                $column = $get('column');
 
-                                                            if (! $column) {
-                                                                return [];
-                                                            }
+                                                                if (! $column) {
+                                                                    return [];
+                                                                }
 
-                                                            return Content::query()
-                                                                ->select($column)
-                                                                ->distinct()
-                                                                ->pluck($column)
-                                                                ->toArray();
-                                                        })
-                                                        ->label(__('Value')),
-                                                ]),
-                                        ])
-                                    ->columnSpanFull(),
-                            ])->columns(2),
-                    ])->columns(2),
+                                                                return Content::query()
+                                                                    ->select($column)
+                                                                    ->distinct()
+                                                                    ->pluck($column)
+                                                                    ->toArray();
+                                                            })
+                                                            ->label(__('Value')),
+                                                    ]),
+                                            ])
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+                    ]),
             ]);
     }
 
@@ -184,7 +198,7 @@ class TypeResource extends Resource
                 IconColumn::make('icon')
                     ->label('')
                     ->width(1)
-                    ->icon(fn (string $state): string => 'heroicon-o-' . $state),
+                    ->icon(fn(string $state): string => 'heroicon-o-' . $state),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
