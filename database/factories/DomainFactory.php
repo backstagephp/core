@@ -27,7 +27,7 @@ class DomainFactory extends Factory
 
     public function withLanguage($language = null): self
     {
-        if (!$language) {
+        if (! $language) {
             return $this;
         }
 
