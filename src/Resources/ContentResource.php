@@ -122,6 +122,25 @@ class ContentResource extends Resource
         ];
     }
 
+    private static function applyParentQueryFilters(EloquentBuilder $query, $form): EloquentBuilder
+    {
+        if (self::$type->parent_filters) {
+            $query->where(function ($query) {
+                foreach (self::$type->parent_filters as $filter) {
+                    $query->where(
+                        column: $filter['column'],
+                        operator: $filter['operator'],
+                        value: $filter['value']
+                    );
+                }
+            });
+        }
+
+        return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+            $query->where('language_code', $languageCode);
+        });
+    }
+
     public static function form(Form $form): Form
     {
         self::$type = Type::firstWhere('slug', ($form->getLivewire()->data['type_slug'] ?? $form->getRecord()->type_slug));
@@ -250,23 +269,15 @@ class ContentResource extends Resource
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
                                                 modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
-                                                    if (self::$type->parent_filters) {
-                                                        return $query->where(function ($query) {
-                                                            foreach (self::$type->parent_filters as $filter) {
-                                                                $query->where(
-                                                                    column: $filter['column'],
-                                                                    operator: $filter['operator'],
-                                                                    value: $filter['value']
-                                                                );
-                                                            }
-                                                        });
-                                                    }
-
-                                                    return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
-                                                        $query->where('language_code', $languageCode);
-                                                    });
+                                                    return self::applyParentQueryFilters($query, $form);
                                                 },
                                             )
+                                            ->default(function (Get $get) use ($form) {
+                                                $query = Content::query();
+                                                $query = self::applyParentQueryFilters($query, $form);
+                                                
+                                                return $query->count() === 1 ? $query->first()->ulid : null;
+                                            })
                                             ->live()
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
                                                 if ($state) {
