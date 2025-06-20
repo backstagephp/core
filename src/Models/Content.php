@@ -31,6 +31,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property string|null $url
  * @property string $language_code
  * @property bool $public
+ * @property string $view
  * @property string $type_slug
  */
 #[ObservedBy(ContentDepthObserver::class)]
