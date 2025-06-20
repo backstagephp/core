@@ -90,11 +90,15 @@ class ContentResource extends Resource
 
     public static function getNavigationItems(): array
     {
-        $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) {
+        // get route binding name of content
+        $content = Content::where('ulid', request()->route()->parameter('record'))->first();
+
+
+        $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) use ($content) {
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem(__('Content'))
-                ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
+                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('tableFilters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
                     'tableFilters[type_slug][values]' => [$type->slug],
