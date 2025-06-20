@@ -544,6 +544,7 @@ class ContentResource extends Resource
                         'scheduled' => 'info',
                         default => 'gray',
                     })
+                    ->tooltip(fn (string $state): string => __($state))
                     ->size(IconColumn\IconColumnSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
