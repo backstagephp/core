@@ -123,16 +123,6 @@ class Content extends Model
         );
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
-     */
-    protected function templateFile(): Attribute
-    {
-        return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['template_slug'],
-        );
-    }
-
     public function getParentKeyName()
     {
         return 'parent_ulid';
@@ -191,6 +181,14 @@ class Content extends Model
         );
     }
 
+    public function scopePublic($query): void
+    {
+        $query->where(function ($query) {
+            return $query->where('public', true)
+                ->where('published_at', '<=', now());
+        });
+    }
+
     public function blocks(string $field): array
     {
         return json_decode(
@@ -218,7 +216,7 @@ class Content extends Model
 
     public function view($data = [])
     {
-        return View::first([$this->template_file, 'types.' . $this->type_slug, 'types.default', 'backstage::types.default'], $data);
+        return View::first([$this->view, 'types.' . $this->type_slug, 'types.default', 'backstage::types.default'], $data);
     }
 
     public function response(int $code = 200)

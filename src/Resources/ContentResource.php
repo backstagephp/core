@@ -219,7 +219,12 @@ class ContentResource extends Resource
                                 Tab::make('template')
                                     ->label(__('Template'))
                                     ->icon('heroicon-o-clipboard')
-                                    ->schema([]),
+                                    ->schema([
+                                        TextInput::make('view')
+                                            ->label(__('View'))
+                                            ->columnSpanFull()
+                                            ->helperText('View to use for rendering this content. E.g. "content.search" or "overview".'),
+                                    ]),
                             ])
                             ->id('content')
                             ->persistTabInQueryString(),
