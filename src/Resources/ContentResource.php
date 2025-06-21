@@ -142,8 +142,10 @@ class ContentResource extends Resource
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
 
-                        $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
-                        $set('path', $path);
+                        $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
+                        $slug = Str::slug($state);
+                        $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
+                        $set('path', ltrim($path, '/'));
 
                         $currentSlug = $get('slug');
 
@@ -266,9 +268,14 @@ class ContentResource extends Resource
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
                                                 if ($state) {
                                                     $parent = Content::find($state);
+                                                    $currentName = $get('name');
+                                                    $currentSlug = $get('slug');
 
-                                                    if ($parent->path && $get('path')) {
-                                                        $set('path', $parent->path . '/' . $get('path'));
+                                                    if ($parent->path && $currentName) {
+                                                        $parentPath = trim($parent->path, '/');
+                                                        $newSlug = Str::slug($currentName);
+                                                        $set('slug', $newSlug);
+                                                        $set('path', ltrim($parentPath . '/' . $newSlug, '/'));
                                                     }
                                                 }
                                             })
