@@ -141,15 +141,7 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-
-                        $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
-                        $set('path', $path);
-
-                        $currentSlug = $get('slug');
-
-                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
-                            $set('slug', Str::slug($state));
-                        }
+                        self::updatePathAndSlug($set, $get, $state, $record);
                     }),
 
                 Grid::make(12)
@@ -266,9 +258,10 @@ class ContentResource extends Resource
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
                                                 if ($state) {
                                                     $parent = Content::find($state);
+                                                    $currentName = $get('name');
 
-                                                    if ($parent->path && $get('path')) {
-                                                        $set('path', $parent->path . '/' . $get('path'));
+                                                    if ($parent->path && $currentName) {
+                                                        self::updatePathAndSlug($set, $get, $currentName, $record);
                                                     }
                                                 }
                                             })
@@ -744,5 +737,19 @@ class ContentResource extends Resource
             EditContent::class,
             ManageChildrenContent::class,
         ]);
+    }
+
+    private static function updatePathAndSlug(Set $set, Get $get, ?string $state, ?Content $record): void
+    {
+        $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
+        $slug = Str::slug($state);
+        $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
+        $set('path', ltrim($path, '/'));
+
+        $currentSlug = $get('slug');
+
+        if (! $record?->slug || $currentSlug === Str::slug($record?->name ?? '')) {
+            $set('slug', $slug);
+        }
     }
 }
