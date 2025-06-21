@@ -12,7 +12,6 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -86,7 +85,7 @@ class MenuItemResource extends Resource
                                                     ->modalHeading('Select Content')
                                                     ->modalWidth('2xl')
                                                     ->form(
-                                                        fn(Form $form) => $form
+                                                        fn (Form $form) => $form
                                                             ->schema([
                                                                 Select::make('content_ulid')
                                                                     ->label('Content')
@@ -95,10 +94,11 @@ class MenuItemResource extends Resource
                                                                     ->searchingMessage([__('Searching in the script...'), __('Looking behind the curtain...'), __('Searching the archives...'), __('Searching the library...'), __('Searching the vault...'), __('Searching behind the scenes...')][rand(0, 5)])
                                                                     ->options(function (?string $state) {
                                                                         $contentQuery = Content::query();
+
                                                                         return $contentQuery->limit(10)->pluck('name', 'ulid')->toArray();
                                                                     })
-                                                                    ->getSearchResultsUsing(fn(string $search): array => Content::where('name', 'like', "%{$search}%")->limit(10)->pluck('name', 'ulid')->toArray())
-                                                                    ->required()
+                                                                    ->getSearchResultsUsing(fn (string $search): array => Content::where('name', 'like', "%{$search}%")->limit(10)->pluck('name', 'ulid')->toArray())
+                                                                    ->required(),
                                                             ])
                                                     )
                                                     ->action(function (array $data, Set $set) {
