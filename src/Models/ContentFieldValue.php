@@ -51,18 +51,18 @@ class ContentFieldValue extends Pivot
         }
 
         $decoded = json_decode($this->value, true);
-        
+
         // If the decoded value is an array (like blocks), return it as is
         if (is_array($decoded)) {
             return $decoded;
         }
-        
+
         // For all other cases, ensure the value is returned as a string
         // This prevents automatic type casting of numeric values
         if ($decoded !== null) {
             return (string) $decoded;
         }
-        
+
         return new HtmlString($this->value);
     }
 }

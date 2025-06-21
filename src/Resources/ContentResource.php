@@ -93,7 +93,6 @@ class ContentResource extends Resource
         // get route binding name of content
         $content = Content::where('ulid', request()->route()->parameter('record'))->first();
 
-
         $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) use ($content) {
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
