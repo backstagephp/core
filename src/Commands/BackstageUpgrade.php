@@ -22,6 +22,7 @@ class BackstageUpgrade extends Command
         $this->call('migrate', [
             '--force' => true,
         ]);
+        $this->call('filament:upgrade');
 
         BackstageUpgraded::dispatch();
 
