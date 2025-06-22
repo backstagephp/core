@@ -77,7 +77,7 @@ class ContentResource extends Resource
     {
         $record->load('type');
 
-        if ($record->type) {
+        if ($record->type && $record->type->name) {
             return $record->name . ' (' . $record->type->name . ')';
         }
 
