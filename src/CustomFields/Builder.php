@@ -2,15 +2,17 @@
 
 namespace Backstage\CustomFields;
 
-use Backstage\Contracts\FieldContract;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Filament\Forms;
+use Backstage\Models\Block;
 use Backstage\Fields\Fields\Base;
 use Backstage\Fields\Models\Field;
-use Backstage\Models\Block;
-use Filament\Forms;
-use Filament\Forms\Components\Builder as Input;
-use Filament\Forms\Components\Builder\Block as BuilderBlock;
 use Illuminate\Support\Collection;
+use Filament\Forms\Components\Hidden;
+use Backstage\Contracts\FieldContract;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Builder as Input;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Filament\Forms\Components\Builder\Block as BuilderBlock;
 
 class Builder extends Base implements FieldContract
 {
@@ -33,6 +35,7 @@ class Builder extends Base implements FieldContract
             Input::make($name)
                 ->label($field->name)
                 ->collapsed(true)
+                ->blockPreviews(areInteractive: true)
                 ->collapsible()
                 ->blocks(
                     self::getBlockOptions()
@@ -55,12 +58,30 @@ class Builder extends Base implements FieldContract
             $options[] = BuilderBlock::make($block->slug)
                 ->label($block->name)
                 ->icon($block->icon ? 'heroicon-o-' . $block->icon : null)
-                ->schema(
-                    self::resolveFormFields(record: $block, isNested: true)
-                );
+                ->preview(self::getPreviewTemplate($block))
+                ->schema([
+                    ...self::resolveFormFields(record: $block, isNested: true),
+                    TextInput::make('block_ulid')
+                        ->default($block->ulid)
+                        ->hidden()
+                        ->dehydrated()
+                        ->afterStateHydrated(function ($state, $set) use ($block) {
+                            if (empty($state)) {
+                                $set('block_ulid', $block->ulid);
+                            }
+                        }),
+                ]);
         }
 
         return $options;
+    }
+
+    /**
+     * Get the preview template for a block
+     */
+    private static function getPreviewTemplate(Block $block): string
+    {
+        return 'backstage::field-previews.generic-block';
     }
 
     public function getForm(): array
