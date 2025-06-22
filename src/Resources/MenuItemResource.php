@@ -2,6 +2,7 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Models\Content;
 use Backstage\Models\MenuItem;
 use Backstage\Resources\MenuItemResource\Pages;
 use Filament\Forms\Components\Actions\Action;
@@ -82,6 +83,30 @@ class MenuItemResource extends Resource
                                                     ->icon('heroicon-o-link')
                                                     ->modal()
                                                     ->modalHeading('Select Content')
+                                                    ->modalWidth('2xl')
+                                                    ->form(
+                                                        fn (Form $form) => $form
+                                                            ->schema([
+                                                                Select::make('content_ulid')
+                                                                    ->label('Content')
+                                                                    ->searchable()
+                                                                    ->preload()
+                                                                    ->searchingMessage([__('Searching in the script...'), __('Looking behind the curtain...'), __('Searching the archives...'), __('Searching the library...'), __('Searching the vault...'), __('Searching behind the scenes...')][rand(0, 5)])
+                                                                    ->options(function (?string $state) {
+                                                                        $contentQuery = Content::query();
+
+                                                                        return $contentQuery->limit(10)->pluck('name', 'ulid')->toArray();
+                                                                    })
+                                                                    ->getSearchResultsUsing(fn (string $search): array => Content::where('name', 'like', "%{$search}%")->limit(10)->pluck('name', 'ulid')->toArray())
+                                                                    ->required(),
+                                                            ])
+                                                    )
+                                                    ->action(function (array $data, Set $set) {
+                                                        $content = \Backstage\Models\Content::where('ulid', $data['content_ulid'])->first();
+                                                        if ($content) {
+                                                            $set('url', $content->url);
+                                                        }
+                                                    })
                                             )
                                             ->columnSpan(2)
                                             ->required(),

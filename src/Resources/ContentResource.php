@@ -50,7 +50,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -69,9 +71,18 @@ class ContentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    public static ?string $recordTitleAttribute = 'name';
-
     protected static ?Type $type = null;
+
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        $record->load('type');
+
+        if ($record->type && $record->type->name) {
+            return $record->name . ' (' . $record->type->name . ')';
+        }
+
+        return $record->name;
+    }
 
     public static function getModelLabel(): string
     {
@@ -90,11 +101,14 @@ class ContentResource extends Resource
 
     public static function getNavigationItems(): array
     {
-        $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) {
+        // get route binding name of content
+        $content = Content::where('ulid', request()->route()->parameter('record'))->first();
+
+        $contentTypes = Type::orderBy('name')->get()->map(function (Type $type) use ($content) {
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem(__('Content'))
-                ->isActiveWhen(fn (NavigationItem $item) => request()->input('tableFilters.type_slug.values.0') === $type->slug)
+                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('tableFilters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
                     'tableFilters[type_slug][values]' => [$type->slug],
@@ -157,15 +171,7 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-
-                        $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
-                        $set('path', $path);
-
-                        $currentSlug = $get('slug');
-
-                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
-                            $set('slug', Str::slug($state));
-                        }
+                        self::updatePathAndSlug($set, $get, $state, $record);
                     }),
 
                 Grid::make(12)
@@ -238,7 +244,12 @@ class ContentResource extends Resource
                                 Tab::make('template')
                                     ->label(__('Template'))
                                     ->icon('heroicon-o-clipboard')
-                                    ->schema([]),
+                                    ->schema([
+                                        TextInput::make('view')
+                                            ->label(__('View'))
+                                            ->columnSpanFull()
+                                            ->helperText('View to use for rendering this content. E.g. "content.search" or "overview".'),
+                                    ]),
                             ])
                             ->id('content')
                             ->persistTabInQueryString(),
@@ -282,9 +293,10 @@ class ContentResource extends Resource
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
                                                 if ($state) {
                                                     $parent = Content::find($state);
+                                                    $currentName = $get('name');
 
-                                                    if ($parent->path && $get('path')) {
-                                                        $set('path', $parent->path . '/' . $get('path'));
+                                                    if ($parent->path && $currentName) {
+                                                        self::updatePathAndSlug($set, $get, $currentName, $record);
                                                     }
                                                 }
                                             })
@@ -563,6 +575,7 @@ class ContentResource extends Resource
                         'scheduled' => 'info',
                         default => 'gray',
                     })
+                    ->tooltip(fn (string $state): string => __($state))
                     ->size(IconColumn\IconColumnSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
@@ -759,5 +772,19 @@ class ContentResource extends Resource
             EditContent::class,
             ManageChildrenContent::class,
         ]);
+    }
+
+    private static function updatePathAndSlug(Set $set, Get $get, ?string $state, ?Content $record): void
+    {
+        $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
+        $slug = Str::slug($state);
+        $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
+        $set('path', ltrim($path, '/'));
+
+        $currentSlug = $get('slug');
+
+        if (! $record?->slug || $currentSlug === Str::slug($record?->name ?? '')) {
+            $set('slug', $slug);
+        }
     }
 }
