@@ -2,59 +2,61 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Fields\Fields;
-use Backstage\Fields\Fields\RichEditor;
-use Backstage\Models\Content;
-use Backstage\Models\Language;
+use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
 use Backstage\Models\Tag;
 use Backstage\Models\Type;
 use Backstage\Models\User;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
-use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Navigation\NavigationItem;
-use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Columns\ViewColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Str;
+use Backstage\Fields\Fields;
+use Backstage\Models\Content;
+use Backstage\Models\Language;
+use Filament\Facades\Filament;
+use Illuminate\Validation\Rule;
+use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Backstage\Fields\Fields\RichEditor;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Navigation\NavigationItem;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Columns\TextInputColumn;
+use Backstage\View\Components\Filament\Badge;
+use Filament\Forms\Components\DateTimePicker;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 
 class ContentResource extends Resource
 {
@@ -69,9 +71,18 @@ class ContentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    public static ?string $recordTitleAttribute = 'name';
-
     protected static ?Type $type = null;
+
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        $record->load('type');
+
+        if ($record->type) {
+            return $record->name . ' (' . $record->type->name . ')';
+        }
+
+        return $record->name;
+    }
 
     public static function getModelLabel(): string
     {
