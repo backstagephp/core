@@ -32,6 +32,8 @@ class Builder extends Base implements FieldContract
         $input = self::applyDefaultSettings(
             Input::make($name)
                 ->label($field->name)
+                ->collapsed(true)
+                ->collapsible() 
                 ->blocks(
                     self::getBlockOptions()
                 ),
