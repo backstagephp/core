@@ -50,7 +50,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -69,9 +71,18 @@ class ContentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    public static ?string $recordTitleAttribute = 'name';
-
     protected static ?Type $type = null;
+
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        $record->load('type');
+
+        if ($record->type && $record->type->name) {
+            return $record->name . ' (' . $record->type->name . ')';
+        }
+
+        return $record->name;
+    }
 
     public static function getModelLabel(): string
     {
