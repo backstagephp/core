@@ -26,6 +26,11 @@ class MenuItem extends Model
         return [];
     }
 
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'menu_slug', 'slug');
+    }
+
     public function getParentKeyName()
     {
         return 'parent_ulid';
