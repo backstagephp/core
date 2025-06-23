@@ -22,7 +22,9 @@ class Type extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'parent_filters' => 'array',
+        ];
     }
 
     public function sites(): BelongsToMany
