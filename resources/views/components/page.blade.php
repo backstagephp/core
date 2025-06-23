@@ -3,8 +3,8 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    {{ $headFirst ?? ''}}
     <title>{!! html_entity_decode($content->meta_tags['title']) !!}</title>
+    {{ $headFirst ?? ''}}
     <meta charset="utf-8">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
