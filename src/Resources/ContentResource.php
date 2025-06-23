@@ -207,11 +207,11 @@ class ContentResource extends Resource
 
                                         TagsInput::make('meta_tags.keywords')
                                             ->label(__('Keywords'))
-                                            ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords.')
+                                            ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords. Split keywords by comma or tab.')
                                             ->color('gray')
                                             ->columnSpanFull()
                                             ->reorderable()
-                                            ->splitKeys(['Tab', ' ', ','])
+                                            ->splitKeys(['Tab', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                                 Tab::make('open-graph')
