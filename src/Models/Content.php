@@ -169,7 +169,7 @@ class Content extends Model
     {
         $url = '';
 
-        if (!$site) {
+        if (! $site) {
             $site = Site::first();
         }
 

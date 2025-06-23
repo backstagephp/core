@@ -41,7 +41,7 @@ class EditContent extends EditRecord
                 foreach ($parents as $parent) {
                     $parentUrl = route('filament.backstage.resources.content.edit', [
                         'record' => $parent,
-                        'tenant' => Filament::getTenant()
+                        'tenant' => Filament::getTenant(),
                     ]);
                     $breadcrumbs[$parentUrl] = $parent->name;
                 }
