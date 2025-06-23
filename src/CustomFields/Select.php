@@ -49,8 +49,8 @@ class Select extends Base
 
             $query = $model->whereIn($key, $values);
 
-            // Filter by same language code if the option is enabled
-            if (isset($field->config['filterByLanguage']) && $field->config['filterByLanguage'] && isset($record->language_code)) {
+            // Filter by same language code if the option is enabled and record has language_code
+            if (isset($field->config['filterByLanguage']) && $field->config['filterByLanguage'] && $record && isset($record->language_code)) {
                 $query->where('language_code', $record->language_code);
             }
 
@@ -97,9 +97,7 @@ class Select extends Base
                 }
 
                 // Filter by same language code if the option is enabled and record has language_code
-                if (isset($field->config['filterByLanguage']) && $field->config['filterByLanguage']) {
-                    // && $model && isset($model->language_code)
-                    dd($model, $record);
+                if (isset($field->config['filterByLanguage']) && $field->config['filterByLanguage'] && $record && isset($record->language_code)) {
                     $query->where('language_code', $record->language_code);
                 }
 
@@ -133,6 +131,14 @@ class Select extends Base
 
     public static function make(string $name, ?Field $field = null, ?Model $record = null): \Filament\Forms\Components\Select
     {
+        // Debug: Check what record is passed to Select
+        \Illuminate\Support\Facades\Log::info('Select::make called', [
+            'name' => $name,
+            'record' => $record,
+            'record_class' => $record ? get_class($record) : null,
+            'language_code' => $record?->language_code ?? null,
+        ]);
+
         $input = self::applyDefaultSettings(\Filament\Forms\Components\Select::make($name), $field);
 
         $input = $input->label($field->name ?? null)

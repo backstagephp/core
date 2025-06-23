@@ -187,8 +187,8 @@ class ContentResource extends Resource
                                             ->default(self::$type->slug),
                                         Grid::make()
                                             ->columns(1)
-                                            ->schema(function () {
-                                                return self::getTypeInputs();
+                                            ->schema(function () use ($form) {
+                                                return self::getTypeInputs($form->getRecord());
                                             }),
                                     ]),
                                 Tab::make('meta')
@@ -410,16 +410,30 @@ class ContentResource extends Resource
     {
         $instance = new self;
 
+        $inputName = $isNested ? "{$field->ulid}" : "{$record->valueColumn}.{$field->ulid}";
+
+        if ($customField = $customFields->get($field->field_type)) {
+            
+            $reflection = new \ReflectionMethod($customField, 'make');
+            $parameters = $reflection->getParameters();
+            
+            if (count($parameters) >= 3) {
+                return $customField::make($inputName, $field, $record);
+            }
+            
+            return $customField::make($inputName, $field);
+        }
+
         return $instance->traitResolveFieldInput($field, $customFields, $record, $isNested);
     }
 
-    public static function getTypeInputs()
+    public static function getTypeInputs($record = null)
     {
         $groups = [];
         collect(self::$type->fields)
             ->filter(fn ($field) => self::$type->name_field !== $field->slug)
-            ->each(function ($field) use (&$groups) {
-                $resolvedField = self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
+            ->each(function ($field) use (&$groups, $record) {
+                $resolvedField = self::resolveFieldInput($field, collect(Fields::getFields()), $record);
                 if ($resolvedField) {
                     $groups[$field->group ?? null][] = $resolvedField;
                 }

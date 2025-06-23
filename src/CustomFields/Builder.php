@@ -99,6 +99,20 @@ class Builder extends Base implements FieldContract
 
         $isNested = true; // Builder fields are always nested
 
+        $inputName = $isNested ? "{$field->ulid}" : "{$record->valueColumn}.{$field->ulid}";
+
+        if ($customField = $customFields->get($field->field_type)) {
+            
+            $reflection = new \ReflectionMethod($customField, 'make');
+            $parameters = $reflection->getParameters();
+            
+            if (count($parameters) >= 3) {
+                return $customField::make($inputName, $field, $record);
+            }
+            
+            return $customField::make($inputName, $field);
+        }
+
         return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record, isNested: $isNested);
     }
 }
