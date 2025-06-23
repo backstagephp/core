@@ -206,8 +206,9 @@ class ContentResource extends Resource
                                                     ->where('language_code', $get('language_code'))
                                                     ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
-                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
+                                            ->live(),
 
                                         TextInput::make('meta_tags.title')
                                             ->label(__('Page Title'))
@@ -311,8 +312,9 @@ class ContentResource extends Resource
 
                                                 return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
                                             })
-                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
+                                            ->live(),
 
                                         Select::make('language_code')
                                             ->label(__('Language'))
@@ -333,7 +335,10 @@ class ContentResource extends Resource
                                             )
                                             ->allowHtml()
                                             ->visible(fn () => Language::active()->count() > 1)
-                                            ->live(),
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                $set('path', $get('path'));
+                                            }),
 
                                         TextInput::make('slug')
                                             ->columnSpanFull()
