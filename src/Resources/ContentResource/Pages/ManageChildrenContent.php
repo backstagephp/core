@@ -37,6 +37,7 @@ class ManageChildrenContent extends ManageRelatedRecords
         return __('Related Content');
     }
 
+
     public function getModelLabel(): string
     {
         return __('Related Content');
