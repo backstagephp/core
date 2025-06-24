@@ -23,6 +23,7 @@ class ListContent extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        return [];
         return [
             ActionGroup::make([
                 Action::make(__('List'))
