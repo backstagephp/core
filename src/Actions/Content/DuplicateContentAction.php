@@ -49,7 +49,9 @@ class DuplicateContentAction extends ReplicateAction
                     'value' => $value->value,
                 ]));
             })
-            ->modalHeading("Duplicate {$this->getRecord()->name} {$this->getRecord()->type->name}")
+            ->modalHeading(function () {
+                return "Duplicate {$this->getRecord()->name} {$this->getRecord()->type->name}";
+            })
             ->requiresConfirmation()
             ->successNotification(
                 Notification::make()
