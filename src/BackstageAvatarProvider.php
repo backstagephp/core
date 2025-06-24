@@ -6,7 +6,6 @@ use Exception;
 use Backstage\Models\User;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Facades\Filament;
-use Filament\Support\Facades\FilamentColor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
@@ -28,7 +27,8 @@ class BackstageAvatarProvider extends UiAvatarsProvider
                     ->replace(')', '');
             }
 
-            $backgroundColor = '#a0a0a0';
+            $backgroundColor = '#242325';
+    
 
             if ($this->hasGravatar($record->email)) {
                 return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($record->email))) . '?s=200';
