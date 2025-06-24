@@ -2,9 +2,15 @@
 
 namespace Backstage\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Backstage\Resources\FieldResource\Pages\ListFields;
+use Backstage\Resources\FieldResource\Pages\CreateField;
+use Backstage\Resources\FieldResource\Pages\EditField;
 use Backstage\Fields\Models\Field;
 use Backstage\Resources\FieldResource\Pages;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -14,7 +20,7 @@ class FieldResource extends Resource
 {
     protected static ?string $model = Field::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-queue-list';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-queue-list';
 
     protected static ?string $tenantOwnershipRelationshipName = 'sites';
 
@@ -32,10 +38,10 @@ class FieldResource extends Resource
         return __('Fields');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([]);
+        return $schema
+            ->components([]);
     }
 
     public static function table(Table $table): Table
@@ -49,12 +55,12 @@ class FieldResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -69,9 +75,9 @@ class FieldResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFields::route('/'),
-            'create' => Pages\CreateField::route('/create'),
-            'edit' => Pages\EditField::route('/{record}/edit'),
+            'index' => ListFields::route('/'),
+            'create' => CreateField::route('/create'),
+            'edit' => EditField::route('/{record}/edit'),
         ];
     }
 }

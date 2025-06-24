@@ -2,6 +2,7 @@
 
 namespace Backstage;
 
+use Exception;
 use Backstage\Models\User;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Facades\Filament;
@@ -52,7 +53,7 @@ class BackstageAvatarProvider extends UiAvatarsProvider
                 $response = Http::withoutRedirecting()->head($url);
 
                 return $response->status() === 200;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return false;
             }
         });

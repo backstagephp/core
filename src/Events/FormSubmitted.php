@@ -2,6 +2,7 @@
 
 namespace Backstage\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Backstage\Models\FormSubmission;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -25,7 +26,7 @@ class FormSubmitted
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return array<int, Channel>
      */
     public function broadcastOn(): array
     {

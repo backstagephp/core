@@ -2,17 +2,22 @@
 
 namespace Backstage\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Backstage\Resources\FormSubmissionResource\Pages\ListFormSubmissions;
+use Backstage\Resources\FormSubmissionResource\Pages\ViewFormSubmission;
+use Illuminate\Database\Eloquent\Builder;
 use Backstage\Models\FormSubmission;
 use Backstage\Resources\FormSubmissionResource\Pages;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -25,7 +30,7 @@ class FormSubmissionResource extends Resource
 {
     protected static ?string $model = FormSubmission::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
     public static function getModelLabel(): string
     {
@@ -42,10 +47,10 @@ class FormSubmissionResource extends Resource
         return __('Forms');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -70,10 +75,10 @@ class FormSubmissionResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 TextEntry::make('form.name')
                     ->columnSpanFull()
                     ->label(__('Form'))
@@ -151,12 +156,12 @@ class FormSubmissionResource extends Resource
                     ->preload()
                     ->relationship('form', 'name'),
             ])
-            ->actions([
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -171,12 +176,12 @@ class FormSubmissionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFormSubmissions::route('/'),
-            'view' => Pages\ViewFormSubmission::route('/{record}/view'),
+            'index' => ListFormSubmissions::route('/'),
+            'view' => ViewFormSubmission::route('/{record}/view'),
         ];
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with(['values.field']);
     }

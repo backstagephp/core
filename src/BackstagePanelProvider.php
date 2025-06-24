@@ -86,7 +86,7 @@ class BackstagePanelProvider extends PanelProvider
             ->pages(config('backstage.cms.panel.pages', []))
             ->defaultAvatarProvider(BackstageAvatarProvider::class)
             ->colors(fn () => [
-                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
+                'primary' => Color::generateV3Palette(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->middleware([
                 EncryptCookies::class,

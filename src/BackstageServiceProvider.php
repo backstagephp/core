@@ -2,6 +2,8 @@
 
 namespace Backstage;
 
+use Backstage\Providers\RequestServiceProvider;
+use Backstage\Providers\RouteServiceProvider;
 use Backstage\Commands\BackstageSeedCommand;
 use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
@@ -204,8 +206,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Event::listen(FormSubmitted::class, ExecuteFormActions::class);
 
-        $this->app->register(Providers\RequestServiceProvider::class);
-        $this->app->register(Providers\RouteServiceProvider::class);
+        $this->app->register(RequestServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
 
         collect($this->app['config']['backstage']['cms']['components']['blocks'] ?? [])
             ->each(function ($component) {

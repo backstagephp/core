@@ -2,6 +2,8 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
 use Filament\Actions;
@@ -22,15 +24,15 @@ class ListContent extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ActionGroup::make([
-                Actions\Action::make(__('List'))
+            ActionGroup::make([
+                Action::make(__('List'))
                     ->url(fn (): string => route('filament.backstage.resources.content.index', ['tenant' => Filament::getTenant()]))
                     ->icon('heroicon-o-bars-3')
                     ->iconPosition('before'),
 
-                Actions\ActionGroup::make(
+                ActionGroup::make(
                     Type::orderBy('name')->get()->map(
-                        fn ($type) => Actions\Action::make(__($type->name))
+                        fn ($type) => Action::make(__($type->name))
                             ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
                             ->url(fn (): string => route('filament.backstage.resources.content.index', ['type' => $type->slug, 'show' => 'database', 'tenant' => Filament::getTenant()]))
                     )->toArray()
@@ -49,9 +51,9 @@ class ListContent extends ListRecords
                 ->iconPosition('before')
                 ->button(),
 
-            Actions\ActionGroup::make(
+            ActionGroup::make(
                 Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
+                    fn ($type) => Action::make(__($type->name))
                         ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
                         ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
                 )->toArray()

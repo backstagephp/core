@@ -2,6 +2,9 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Language;
@@ -58,7 +61,7 @@ class EditContent extends EditRecord
     {
         return [
             DuplicateContentAction::make('duplicate'),
-            Actions\ActionGroup::make(
+            ActionGroup::make(
                 Language::active()->pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
                     // multiple countries
                     Language::active()->orderBy('name')
@@ -66,9 +69,9 @@ class EditContent extends EditRecord
                         ->groupBy(function ($language) {
                             return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
                         })->map(function ($languages, $countryCode) {
-                            return Actions\ActionGroup::make(
+                            return ActionGroup::make(
                                 $languages->map(function ($language) use ($countryCode) {
-                                    return Actions\Action::make($language->code . '-' . $countryCode)
+                                    return Action::make($language->code . '-' . $countryCode)
                                         ->label($language->name)
                                         ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
                                         ->action(fn () => $this->translate($language));
@@ -83,7 +86,7 @@ class EditContent extends EditRecord
                         })->toArray() :
                     // one country
                     Language::active()->orderBy('name')->get()->map(function (Language $language) {
-                        return Actions\Action::make($language->code)
+                        return Action::make($language->code)
                             ->label($language->name)
                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
                             ->action(fn () => $this->translate($language));
@@ -95,12 +98,12 @@ class EditContent extends EditRecord
                 ->color('gray')
                 ->button()
                 ->visible(fn () => Language::active()->count() > 1),
-            Actions\Action::make('Preview')
+            Action::make('Preview')
                 ->color('gray')
                 ->icon('heroicon-o-eye')
                 ->url(fn () => $this->getRecord()->url)
                 ->openUrlInNewTab(),
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 

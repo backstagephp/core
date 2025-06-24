@@ -2,18 +2,24 @@
 
 namespace Backstage\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Backstage\Resources\SiteResource\Pages\ListSites;
+use Backstage\Resources\SiteResource\Pages\CreateSite;
+use Backstage\Resources\SiteResource\Pages\EditSite;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\Pages;
 use DateTimeZone;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
@@ -26,7 +32,7 @@ class SiteResource extends Resource
 {
     protected static ?string $model = Site::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-window';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-window';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -47,10 +53,10 @@ class SiteResource extends Resource
         return __('Sites');
     }
 
-    public static function form(Form $form, bool $fullWidth = false): Form
+    public static function form(Schema $schema, bool $fullWidth = false): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -199,12 +205,12 @@ class SiteResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -219,9 +225,9 @@ class SiteResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSites::route('/'),
-            'create' => Pages\CreateSite::route('/create'),
-            'edit' => Pages\EditSite::route('/{record}/edit'),
+            'index' => ListSites::route('/'),
+            'create' => CreateSite::route('/create'),
+            'edit' => EditSite::route('/{record}/edit'),
         ];
     }
 }

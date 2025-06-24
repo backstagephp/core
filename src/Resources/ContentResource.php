@@ -2,6 +2,21 @@
 
 namespace Backstage\Resources;
 
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Panel;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\IconSize;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Fieldset;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Fields\Fields\RichEditor;
@@ -21,25 +36,15 @@ use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -67,9 +72,9 @@ class ContentResource extends Resource
 
     protected static ?string $model = Content::class;
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    protected static ?\Filament\Pages\Enums\SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
     protected static ?Type $type = null;
 
@@ -94,7 +99,7 @@ class ContentResource extends Resource
         return __('Content');
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return 'content';
     }
@@ -155,12 +160,12 @@ class ContentResource extends Resource
         });
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        self::$type = Type::firstWhere('slug', ($form->getLivewire()->data['type_slug'] ?? $form->getRecord()->type_slug));
+        self::$type = Type::firstWhere('slug', ($schema->getLivewire()->data['type_slug'] ?? $schema->getRecord()->type_slug));
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
@@ -273,20 +278,20 @@ class ContentResource extends Resource
                                             ->key(fn (Get $get) => 'parent_ulid_' . ($get('language_code') ?? ''))
                                             ->rules([
                                                 Rule::exists('content', 'ulid')
-                                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
+                                                    ->where('language_code', $schema->getLivewire()->data['language_code'] ?? null),
                                             ])
                                             ->enableBranchNode()
                                             ->relationship(
                                                 relationship: 'parent',
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
-                                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
-                                                    return self::applyParentQueryFilters($query, $form);
+                                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
+                                                    return self::applyParentQueryFilters($query, $schema);
                                                 },
                                             )
-                                            ->default(function (Get $get) use ($form) {
+                                            ->default(function (Get $get) use ($schema) {
                                                 $query = Content::query();
-                                                $query = self::applyParentQueryFilters($query, $form);
+                                                $query = self::applyParentQueryFilters($query, $schema);
 
                                                 return $query->count() === 1 ? $query->first()->ulid : null;
                                             })
@@ -466,7 +471,7 @@ class ContentResource extends Resource
                         'scheduled' => 'info',
                         default => 'gray',
                     })
-                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->size(IconSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
                 TextColumn::make('name')
@@ -512,7 +517,7 @@ class ContentResource extends Resource
                 fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug)
             )
             ->defaultSort($type->sort_column ?? 'position', $type->sort_direction ?? 'desc')
-            ->actions([
+            ->recordActions([
                 ...$type
                     ->fields
                     ->whereIn('field_type', ['rich-editor'])
@@ -520,14 +525,14 @@ class ContentResource extends Resource
                         fn ($field) => Action::make($field->slug)
                             ->label(__('Edit :name', ['name' => $field->name]))
                             ->modal()
-                            ->mountUsing(function (Form $form, Content $record) use ($field) {
+                            ->mountUsing(function (Schema $schema, Content $record) use ($field) {
                                 $value = $record->values->where('field_ulid', $field->ulid)->first();
 
-                                $form->fill([
+                                $schema->fill([
                                     'value' => $value->value ?? '',
                                 ]);
                             })
-                            ->form(function () use ($field) {
+                            ->schema(function () use ($field) {
                                 if ($field->field_type === 'rich-editor') {
                                     return [
                                         RichEditor::make('value')
@@ -551,11 +556,11 @@ class ContentResource extends Resource
                     )
                     ->toArray(),
 
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -581,7 +586,7 @@ class ContentResource extends Resource
                         default => 'gray',
                     })
                     ->tooltip(fn (string $state): string => __($state))
-                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->size(IconSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
                 BadgeableColumn::make('name')
@@ -635,7 +640,7 @@ class ContentResource extends Resource
             ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
                 Filter::make('locale')
-                    ->form([
+                    ->schema([
                         Select::make('language_code')
                             ->label(__('Language'))
                             ->columnSpanFull()
@@ -708,7 +713,7 @@ class ContentResource extends Resource
                         },
                     ),
                 Filter::make('date')
-                    ->form([
+                    ->schema([
                         Fieldset::make('Date')
                             ->schema([
                                 Select::make('date_column')
@@ -740,17 +745,17 @@ class ContentResource extends Resource
                     }),
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
                     ->label(__('Filter'))
                     ->slideOver(),
             )
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

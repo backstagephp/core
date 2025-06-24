@@ -2,18 +2,25 @@
 
 namespace Backstage\Resources;
 
+use Filament\Panel;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Backstage\Resources\BlockResource\Pages\ListBlocks;
+use Backstage\Resources\BlockResource\Pages\CreateBlock;
+use Backstage\Resources\BlockResource\Pages\EditBlock;
 use Backstage\Facades\Backstage;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Block;
 use Backstage\Resources\BlockResource\Pages;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -25,7 +32,7 @@ class BlockResource extends Resource
 {
     protected static ?string $model = Block::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-squares-2x2';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -46,15 +53,15 @@ class BlockResource extends Resource
         return __('Blocks');
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return 'block';
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -111,12 +118,12 @@ class BlockResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
                         ->before(function (Collection $records) {
                             $records->each(fn (Block $record) => $record->sites()->detach());
                         }),
@@ -134,9 +141,9 @@ class BlockResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBlocks::route('/'),
-            'create' => Pages\CreateBlock::route('/create'),
-            'edit' => Pages\EditBlock::route('/{record}/edit'),
+            'index' => ListBlocks::route('/'),
+            'create' => CreateBlock::route('/create'),
+            'edit' => EditBlock::route('/{record}/edit'),
         ];
     }
 }

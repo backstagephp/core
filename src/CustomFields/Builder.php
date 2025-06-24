@@ -2,6 +2,8 @@
 
 namespace Backstage\CustomFields;
 
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Backstage\Contracts\FieldContract;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields\Base;
@@ -66,9 +68,9 @@ class Builder extends Base implements FieldContract
     public function getForm(): array
     {
         return [
-            Forms\Components\Tabs::make()
+            Tabs::make()
                 ->schema([
-                    Forms\Components\Tabs\Tab::make('General')
+                    Tab::make('General')
                         ->label(__('General'))
                         ->schema([
                             ...parent::getForm(),

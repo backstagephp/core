@@ -2,6 +2,7 @@
 
 namespace Backstage\Resources\MenuItemResource\Pages;
 
+use Filament\Actions\CreateAction;
 use Backstage\Resources\MenuResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,7 +14,7 @@ class ListMenuItems extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }
