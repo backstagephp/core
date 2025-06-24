@@ -36,7 +36,7 @@
         "backstage/fields": "dev-release/1.x",
         "backstage/media": "dev-release/1.x",
         "backstage/redirects": "dev-release/1.x",
-        "backstage/translations": "^0.3",
+        "backstage/translations": "dev-release/1.x",
         "baspa/laravel-timezones": "^1.2",
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^4.0",
@@ -86,6 +86,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
             "phpstan/extension-installer": true
         }
     },
@@ -122,6 +123,6 @@
             "url": "git@github.com:backstagephp/filament-adjacency-list.git"
         }
     },
-    "minimum-stability": "beta",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
