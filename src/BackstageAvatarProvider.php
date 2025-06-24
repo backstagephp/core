@@ -10,7 +10,6 @@ use Filament\Support\Facades\FilamentColor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
-use Spatie\Color\Rgb;
 
 class BackstageAvatarProvider extends UiAvatarsProvider
 {
@@ -29,7 +28,7 @@ class BackstageAvatarProvider extends UiAvatarsProvider
                     ->replace(')', '');
             }
 
-            $backgroundColor = Rgb::fromString('rgb(' . FilamentColor::getColors()['gray'][950] . ')')->toHex();
+            $backgroundColor = '#a0a0a0';
 
             if ($this->hasGravatar($record->email)) {
                 return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($record->email))) . '?s=200';
