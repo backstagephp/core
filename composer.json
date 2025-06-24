@@ -36,9 +36,9 @@
         "backstage/fields": "dev-release/1.x",
         "backstage/media": "dev-release/1.x",
         "backstage/redirects": "dev-release/1.x",
-        "backstage/translations": "^0.3",
+        "backstage/translations": "dev-release/1.x",
         "baspa/laravel-timezones": "^1.2",
-        "codewithdennis/filament-select-tree": "^3.1",
+        "codewithdennis/filament-select-tree": "4.x-dev",
         "filament/filament": "^4.0",
         "nette/php-generator": "^4.1",
         "saade/filament-adjacency-list": "dev-release/filament-v4",
@@ -48,7 +48,7 @@
         "staudenmeir/laravel-adjacency-list": "^1.0"
     },
     "require-dev": {
-        "larastan/larastan": "^2.0.1",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^8.0",
         "orchestra/testbench": "^9.0",
@@ -56,8 +56,8 @@
         "pestphp/pest-plugin-arch": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0"
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -120,6 +120,10 @@
         "saade/filament-adjacency-list": {
             "type": "git",
             "url": "git@github.com:backstagephp/filament-adjacency-list.git"
+        },
+        "codewithdennis/filament-select-tree": {
+            "type": "git",
+            "url": "git@github.com:backstagephp/filament-select-tree.git"
         }
     },
     "minimum-stability": "beta",
