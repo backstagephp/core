@@ -22,7 +22,7 @@ class FieldResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-queue-list';
 
-    protected static ?string $tenantOwnershipRelationshipName = 'sites';
+    protected static bool $isScopedToTenant = false;
 
     protected static ?string $recordTitleAttribute = null;
 
