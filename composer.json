@@ -42,6 +42,7 @@
         "filament/filament": "^4.0",
         "nette/php-generator": "^4.1",
         "saade/filament-adjacency-list": "dev-release/filament-v4",
+        "spatie/color": "^1.8",
         "spatie/laravel-package-tools": "^1.18",
         "spatie/once": "^3.1",
         "spatie/schema-org": "^3.23",
