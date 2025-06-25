@@ -9,19 +9,35 @@ class ContentObserver
 {
     public function saved(Content $content)
     {
-        if ($content->isDirty('path') && $oldPath = $content->getOriginal('path') && $content->public) {
-
-            $oldUrl = rtrim($content->pathPrefix . $oldPath, '/');
-
-            if ($content->site->trailing_slash) {
-                $oldUrl .= '/';
-            }
-
-            event(new UrlHasChanged(
-                oldUrl: $oldUrl,
-                newUrl: $content->url,
-                code: 301
-            ));
+        if (! $content->public || ! $content->isDirty('path')) {
+            return;
         }
+
+        $oldPath = $content->getOriginal('path');
+
+        if (! $oldPath) {
+            return;
+        }
+
+        $oldUrl = $this->constructUrlWithPath($content, $oldPath);
+
+        event(new UrlHasChanged(
+            oldUrl: $oldUrl,
+            newUrl: $content->url,
+            code: 301
+        ));
+    }
+
+    private function constructUrlWithPath(Content $content, string $path): string
+    {
+        $pathPrefix = Content::getPathPrefixForLanguage($content->language_code, $content->site);
+
+        $url = rtrim($pathPrefix . $path, '/');
+
+        if ($content->site->trailing_slash) {
+            $url .= '/';
+        }
+
+        return $url;
     }
 }
