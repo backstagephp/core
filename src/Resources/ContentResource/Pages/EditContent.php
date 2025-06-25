@@ -41,7 +41,7 @@ class EditContent extends EditRecord
                 foreach ($parents as $parent) {
                     $parentUrl = route('filament.backstage.resources.content.edit', [
                         'record' => $parent,
-                        'tenant' => Filament::getTenant()
+                        'tenant' => Filament::getTenant(),
                     ]);
                     $breadcrumbs[$parentUrl] = $parent->name;
                 }
@@ -194,8 +194,23 @@ class EditContent extends EditRecord
 
         collect($this->data['values'] ?? [])
             ->each(function ($value, $field) {
+                // Get the field configuration to check if it's a rich-editor
+                $fieldModel = \Backstage\Fields\Models\Field::where('ulid', $field)->first();
 
                 $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+
+                // Clean content for rich-editor fields
+                if ($fieldModel && $fieldModel->field_type === 'rich-editor' && ! empty($value)) {
+                    $autoCleanContent = $fieldModel->config['autoCleanContent'] ?? true;
+
+                    if ($autoCleanContent) {
+                        $options = [
+                            'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
+                        ];
+
+                        $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
+                    }
+                }
 
                 if (blank($value)) {
                     $this->getRecord()->values()->where([

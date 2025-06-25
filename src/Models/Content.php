@@ -156,30 +156,45 @@ class Content extends Model
      */
     protected function pathPrefix(): Attribute
     {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => self::getPathPrefixForLanguage($this->language_code, $this->site),
+        );
+    }
+
+    /**
+     * Calculate the path prefix for a given language code.
+     * This is used in forms to update the path prefix live when language changes.
+     */
+    public static function getPathPrefixForLanguage(string $languageCode, ?Site $site = null): string
+    {
         $url = '';
 
-        $domain = $this->site?->domains()->with([
-            'languages' => function ($query) {
-                $query->where('code', $this->language_code);
-                $query->limit(1);
-            },
-        ])
-            ->where('environment', config('app.env'))
-            ->first();
+        if (! $site) {
+            $site = Site::first();
+        }
 
-        if ($domain) {
-            $url .= 'https://' . $domain->name;
-            $url .= $this->site->path ? '/' . trim($this->site->path, '/') : '';
-            if ($language = $domain->languages->first()) {
-                $url .= $language->pivot->path ? '/' . trim($language->pivot->path, '/') : '';
+        if ($site) {
+            $domain = $site->domains()->with([
+                'languages' => function ($query) use ($languageCode) {
+                    $query->where('code', $languageCode);
+                    $query->limit(1);
+                },
+            ])
+                ->where('environment', config('app.env'))
+                ->first();
+
+            if ($domain) {
+                $url .= 'https://' . $domain->name;
+                $url .= $site->path ? '/' . trim($site->path, '/') : '';
+                if ($language = $domain->languages->first()) {
+                    $url .= $language->pivot->path ? '/' . trim($language->pivot->path, '/') : '';
+                }
             }
         }
 
         $url .= '/';
 
-        return Attribute::make(
-            get: fn (?string $value, array $attributes) => $url,
-        );
+        return $url;
     }
 
     public function scopePublic($query): void
