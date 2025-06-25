@@ -33,7 +33,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "backstage/fields": "^0.5.0",
+        "backstage/fields": "^0.6.0",
         "backstage/media": "dev-main",
         "backstage/redirects": "dev-main",
         "backstage/translations": "^0.3",
@@ -86,6 +86,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
             "phpstan/extension-installer": true
         }
     },
@@ -101,11 +102,11 @@
         }
     },
     "repositories": {
-        "fields": {
+        "backstage/fields": {
             "type": "git",
             "url": "git@github.com:backstagephp/fields.git"
         },
-        "media": {
+        "backstage/media": {
             "type": "git",
             "url": "git@github.com:backstagephp/media.git"
         },
