@@ -50,7 +50,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -69,9 +71,18 @@ class ContentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    public static ?string $recordTitleAttribute = 'name';
-
     protected static ?Type $type = null;
+
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        $record->load('type');
+
+        if ($record->type && $record->type->name) {
+            return $record->name . ' (' . $record->type->name . ')';
+        }
+
+        return $record->name;
+    }
 
     public static function getModelLabel(): string
     {
@@ -125,6 +136,25 @@ class ContentResource extends Resource
         ];
     }
 
+    private static function applyParentQueryFilters(EloquentBuilder $query, $form): EloquentBuilder
+    {
+        if (self::$type->parent_filters) {
+            $query->where(function ($query) {
+                foreach (self::$type->parent_filters as $filter) {
+                    $query->where(
+                        column: $filter['column'],
+                        operator: $filter['operator'],
+                        value: $filter['value']
+                    );
+                }
+            });
+        }
+
+        return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+            $query->where('language_code', $languageCode);
+        });
+    }
+
     public static function form(Form $form): Form
     {
         self::$type = Type::firstWhere('slug', ($form->getLivewire()->data['type_slug'] ?? $form->getRecord()->type_slug));
@@ -141,15 +171,7 @@ class ContentResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?string $old, ?Content $record) {
                         $set('meta_tags.title', $state);
-
-                        $path = ($get('parent_ulid') ? Content::find($get('parent_ulid'))->path . '/' : '') . Str::slug($state);
-                        $set('path', $path);
-
-                        $currentSlug = $get('slug');
-
-                        if (! $record?->slug && (! $currentSlug || $currentSlug === Str::slug($old))) {
-                            $set('slug', Str::slug($state));
-                        }
+                        self::updatePathAndSlug($set, $get, $state, $record);
                     }),
 
                 Grid::make(12)
@@ -184,8 +206,9 @@ class ContentResource extends Resource
                                                     ->where('language_code', $get('language_code'))
                                                     ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
-                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
+                                            ->live(),
 
                                         TextInput::make('meta_tags.title')
                                             ->label(__('Page Title'))
@@ -204,11 +227,11 @@ class ContentResource extends Resource
 
                                         TagsInput::make('meta_tags.keywords')
                                             ->label(__('Keywords'))
-                                            ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords.')
+                                            ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords. Split keywords by comma or tab.')
                                             ->color('gray')
                                             ->columnSpanFull()
                                             ->reorderable()
-                                            ->splitKeys(['Tab', ' ', ','])
+                                            ->splitKeys(['Tab', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
                                 Tab::make('open-graph')
@@ -246,6 +269,7 @@ class ContentResource extends Resource
                                             ->placeholder(__('Select parent content'))
                                             ->searchable()
                                             ->withCount()
+                                            ->required(fn () => self::$type->parent_required)
                                             ->key(fn (Get $get) => 'parent_ulid_' . ($get('language_code') ?? ''))
                                             ->rules([
                                                 Rule::exists('content', 'ulid')
@@ -257,18 +281,23 @@ class ContentResource extends Resource
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
                                                 modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
-                                                    return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
-                                                        $query->where('language_code', $languageCode);
-                                                    });
+                                                    return self::applyParentQueryFilters($query, $form);
                                                 },
                                             )
+                                            ->default(function (Get $get) use ($form) {
+                                                $query = Content::query();
+                                                $query = self::applyParentQueryFilters($query, $form);
+
+                                                return $query->count() === 1 ? $query->first()->ulid : null;
+                                            })
                                             ->live()
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
                                                 if ($state) {
                                                     $parent = Content::find($state);
+                                                    $currentName = $get('name');
 
-                                                    if ($parent->path && $get('path')) {
-                                                        $set('path', $parent->path . '/' . $get('path'));
+                                                    if ($parent->path && $currentName) {
+                                                        self::updatePathAndSlug($set, $get, $currentName, $record);
                                                     }
                                                 }
                                             })
@@ -281,10 +310,13 @@ class ContentResource extends Resource
                                                     return [];
                                                 }
 
-                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                                return Rule::unique('content', 'path')
+                                                    ->where('language_code', $get('language_code'))
+                                                    ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
-                                            ->prefix($form->getRecord()?->path_prefix ? $form->getRecord()->path_prefix : '/')
-                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/')),
+                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
+                                            ->live(),
 
                                         Select::make('language_code')
                                             ->label(__('Language'))
@@ -305,7 +337,10 @@ class ContentResource extends Resource
                                             )
                                             ->allowHtml()
                                             ->visible(fn () => Language::active()->count() > 1)
-                                            ->live(),
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                $set('path', $get('path'));
+                                            }),
 
                                         TextInput::make('slug')
                                             ->columnSpanFull()
@@ -744,5 +779,19 @@ class ContentResource extends Resource
             EditContent::class,
             ManageChildrenContent::class,
         ]);
+    }
+
+    private static function updatePathAndSlug(Set $set, Get $get, ?string $state, ?Content $record): void
+    {
+        $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
+        $slug = Str::slug($state);
+        $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
+        $set('path', ltrim($path, '/'));
+
+        $currentSlug = $get('slug');
+
+        if (! $record?->slug || $currentSlug === Str::slug($record?->name ?? '')) {
+            $set('slug', $slug);
+        }
     }
 }

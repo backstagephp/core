@@ -9,6 +9,7 @@ use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
@@ -20,6 +21,38 @@ class EditContent extends EditRecord
     use CanMapDynamicFields;
 
     protected static string $resource = ContentResource::class;
+
+    public function getBreadcrumbs(): array
+    {
+        $originalBreadcrumbs = parent::getBreadcrumbs();
+
+        if (! $this->getRecord()->parent) {
+            return $originalBreadcrumbs;
+        }
+
+        $breadcrumbs = [];
+
+        $first = true;
+        foreach ($originalBreadcrumbs as $key => $breadcrumb) {
+            $breadcrumbs[$key] = $breadcrumb;
+
+            if ($first) {
+                $parents = $this->getRecord()->ancestors()->get()->reverse();
+                foreach ($parents as $parent) {
+                    $parentUrl = route('filament.backstage.resources.content.edit', [
+                        'record' => $parent,
+                        'tenant' => Filament::getTenant(),
+                    ]);
+                    $breadcrumbs[$parentUrl] = $parent->name;
+                }
+            }
+
+            $first = false;
+        }
+
+        return $breadcrumbs;
+
+    }
 
     protected function getHeaderActions(): array
     {
@@ -161,8 +194,23 @@ class EditContent extends EditRecord
 
         collect($this->data['values'] ?? [])
             ->each(function ($value, $field) {
+                // Get the field configuration to check if it's a rich-editor
+                $fieldModel = \Backstage\Fields\Models\Field::where('ulid', $field)->first();
 
                 $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+
+                // Clean content for rich-editor fields
+                if ($fieldModel && $fieldModel->field_type === 'rich-editor' && ! empty($value)) {
+                    $autoCleanContent = $fieldModel->config['autoCleanContent'] ?? true;
+
+                    if ($autoCleanContent) {
+                        $options = [
+                            'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
+                        ];
+
+                        $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
+                    }
+                }
 
                 if (blank($value)) {
                     $this->getRecord()->values()->where([

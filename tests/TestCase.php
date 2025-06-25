@@ -13,6 +13,7 @@ use Filament\Notifications\NotificationsServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Attributes\WithMigration;
@@ -70,6 +71,8 @@ class TestCase extends Orchestra
     protected function refreshApplication()
     {
         parent::refreshApplication();
+
+        Model::shouldBeStrict();
     }
 
     public function getEnvironmentSetUp($app)

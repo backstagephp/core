@@ -21,6 +21,15 @@ class Form extends Model
 
     protected $guarded = [];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function ($form) {
+            $form->fields()->delete();
+        });
+    }
+
     protected function casts(): array
     {
         return [];
