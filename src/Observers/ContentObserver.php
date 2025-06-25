@@ -9,13 +9,13 @@ class ContentObserver
 {
     public function saved(Content $content)
     {
-        if (!$content->public || !$content->isDirty('path')) {
+        if (! $content->public || ! $content->isDirty('path')) {
             return;
         }
 
         $oldPath = $content->getOriginal('path');
 
-        if (!$oldPath) {
+        if (! $oldPath) {
             return;
         }
 
@@ -25,15 +25,15 @@ class ContentObserver
             oldUrl: $oldUrl,
             newUrl: $content->url,
             code: 301
-        ));        
+        ));
     }
 
     private function constructUrlWithPath(Content $content, string $path): string
     {
         $pathPrefix = Content::getPathPrefixForLanguage($content->language_code, $content->site);
-        
+
         $url = rtrim($pathPrefix . $path, '/');
-        
+
         if ($content->site->trailing_slash) {
             $url .= '/';
         }
