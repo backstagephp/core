@@ -106,7 +106,7 @@ class LanguagesRelationManager extends RelationManager
                     ->recordSelectSearchColumns(['name', 'code', 'native'])
                     ->recordTitleAttribute('native')
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->withoutGlobalScopes())
-                    ->form(fn (AttachAction $action): array => [
+                    ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         TextInput::make('path'),
                     ])

@@ -182,6 +182,7 @@ class ContentResource extends Resource
                     }),
 
                 Grid::make(12)
+                    ->columnSpanFull()
                     ->schema([
                         Tabs::make('Tabs')
                             ->columnSpan(8)
