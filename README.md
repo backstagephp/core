@@ -1,4 +1,7 @@
 # Backstage CMS
+
+![Backstage](/docs/backstage-logo-groen-light.jpg)
+
 ## CMS done the Laravel way
 *Enter backstage, to be in front*
 
