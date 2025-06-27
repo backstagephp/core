@@ -4,9 +4,8 @@
     "scripts": {
         "dev:styles": "npx @tailwindcss/cli --input resources/css/index.css --output resources/dist/backstage.css --watch",
         "dev:scripts": "node bin/build.js --dev",
-        "build:styles": "npx @tailwindcss/cli --input resources/css/index.css --output resources/dist/backstage.css --minify && npm run purge",
+        "build:styles": "npx @tailwindcss/cli --input resources/css/index.css --output resources/dist/backstage.css --minify",
         "build:scripts": "node bin/build.js",
-        "purge": "filament-purge -i resources/dist/backstage.css -o resources/dist/backstage.css -v 3.x",
         "dev": "npm-run-all --parallel dev:*",
         "build": "npm-run-all build:*"
     },
