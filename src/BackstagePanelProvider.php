@@ -11,9 +11,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -66,10 +64,6 @@ class BackstagePanelProvider extends PanelProvider
                 HTML
             ),
         );
-
-        FilamentAsset::register([
-            Css::make('media', base_path('vendor/backstage/media/resources/dist/media.css')),
-        ], package: 'backstage/media');
 
         return $panel
             ->id('backstage')
