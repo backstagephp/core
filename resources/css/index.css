@@ -1,0 +1,7 @@
+@import '../../vendor/filament/filament/resources/css/theme.css';
+
+@import './backstage.css'; 
+
+@source './app/Filament/**/*.php';
+@source './resources/views/filament/**/*.blade.php'
+@source './vendor/filament/**/*.blade.php'
