@@ -38,7 +38,7 @@
         "backstage/redirects": "dev-release/1.x",
         "backstage/translations": "dev-release/1.x",
         "baspa/laravel-timezones": "^1.2",
-        "codewithdennis/filament-select-tree": "^4.0",
+        "codewithdennis/filament-select-tree": "4.x-dev",
         "filament/filament": "^4.0",
         "nette/php-generator": "^4.1",
         "saade/filament-adjacency-list": "dev-release/filament-v4",
@@ -124,7 +124,8 @@
         },
         "codewithdennis/filament-select-tree": {
             "type": "git",
-            "url": "git@github.com:backstagephp/filament-select-tree.git"
+            "url": "git@github.com:backstagephp/filament-select-tree.git",
+            "reference": "4.x"
         }
     },
     "minimum-stability": "dev",

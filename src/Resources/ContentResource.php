@@ -170,7 +170,7 @@ class ContentResource extends Resource
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
                     // ->withAI(hint: true)
-                    ->canTranslate(hint: true)
+                    // ->canTranslate(hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(onBlur: true)
@@ -271,7 +271,7 @@ class ContentResource extends Resource
                                     ->label(__('Details'))
                                     ->schema([
                                         SelectTree::make('parent_ulid')
-                                            ->label(__('Parent'))
+                                            ->label(__('Parent')),
                                         //     ->placeholder(__('Select parent content'))
                                         //     ->searchable()
                                         //     ->withCount()
