@@ -155,9 +155,11 @@ class ContentResource extends Resource
             });
         }
 
-        return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+        $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
             $query->where('language_code', $languageCode);
         });
+
+        return $query;
     }
 
     public static function form(Schema $schema): Schema
@@ -269,44 +271,43 @@ class ContentResource extends Resource
                                 Tab::make('details')
                                     ->label(__('Details'))
                                     ->schema([
-                                        // SelectTree::make('parent_ulid')
-                                        //     ->label(__('Parent'))
-                                        //     ->placeholder(__('Select parent content'))
-                                        //     ->searchable()
-                                        //     ->withCount()
-                                        //     ->required(fn () => self::$type->parent_required)
-                                        //     ->key(fn (Get $get) => 'parent_ulid_' . ($get('language_code') ?? ''))
-                                        //     ->rules([
-                                        //         Rule::exists('content', 'ulid')
-                                        //             ->where('language_code', $schema->getLivewire()->data['language_code'] ?? null),
-                                        //     ])
-                                        //     ->enableBranchNode()
-                                        //     ->relationship(
-                                        //         relationship: 'parent',
-                                        //         titleAttribute: 'name',
-                                        //         parentAttribute: 'parent_ulid',
-                                        //         modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
-                                        //             return self::applyParentQueryFilters($query, $schema);
-                                        //         },
-                                        //     )
-                                        //     ->default(function (Get $get) use ($schema) {
-                                        //         $query = Content::query();
-                                        //         $query = self::applyParentQueryFilters($query, $schema);
+                                        SelectTree::make('parent_ulid')
+                                            ->label(__('Parent'))
+                                            ->placeholder(__('Select parent content'))
+                                            ->relationship(
+                                                relationship: 'parent',
+                                                titleAttribute: 'name',
+                                                parentAttribute: 'parent_ulid',
+                                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
+                                                    return self::applyParentQueryFilters($query, $schema);
+                                                },
+                                            )
+                                            ->searchable()
+                                            ->withCount()
+                                            ->required(fn () => self::$type->parent_required)
+                                            ->rules([
+                                                Rule::exists('content', 'ulid')
+                                                    ->where('language_code', $schema->getLivewire()->data['language_code'] ?? null),
+                                            ])
+                                            ->enableBranchNode()
+                                            ->default(function (Get $get) use ($schema) {
+                                                $query = Content::query();
+                                                $query = self::applyParentQueryFilters($query, $schema);
 
-                                        //         return $query->count() === 1 ? $query->first()->ulid : null;
-                                        //     })
-                                        //     ->live()
-                                        //     ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
-                                        //         if ($state) {
-                                        //             $parent = Content::find($state);
-                                        //             $currentName = $get('name');
+                                                return $query->count() === 1 ? $query->first()->ulid : null;
+                                            })
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
+                                                if ($state) {
+                                                    $parent = Content::find($state);
+                                                    $currentName = $get('name');
 
-                                        //             if ($parent->path && $currentName) {
-                                        //                 self::updatePathAndSlug($set, $get, $currentName, $record);
-                                        //             }
-                                        //         }
-                                        //     })
-                                        //     ->disabledOptions(fn ($record) => [$record?->getKey()]),
+                                                    if ($parent->path && $currentName) {
+                                                        self::updatePathAndSlug($set, $get, $currentName, $record);
+                                                    }
+                                                }
+                                            })
+                                            ->disabledOptions(fn ($record) => [$record?->getKey()]),
 
                                         TextInput::make('path')
                                             ->columnSpanFull()
