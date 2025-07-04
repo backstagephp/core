@@ -49,10 +49,10 @@ class LanguagesRelationManager extends RelationManager
         return $schema
             ->components([
                 Grid::make()
-                    ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         Section::make(__('Language'))
-                            ->columns(3)
+                            ->columnSpanFull()
                             ->schema([
                                 Select::make('language_code')
                                     ->label(__('Language'))
@@ -75,7 +75,7 @@ class LanguagesRelationManager extends RelationManager
                                     ->allowHtml(),
                                 TextInput::make('path')
                                     ->label(__('Path'))
-                                    ->columnSpan(6),
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
