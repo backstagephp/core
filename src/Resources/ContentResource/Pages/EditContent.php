@@ -167,7 +167,7 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (!isset($data[$this->getRecord()->valueColumn])) {
+        if (! isset($data[$this->getRecord()->valueColumn])) {
             $data[$this->getRecord()->valueColumn] = [];
         }
 
@@ -177,6 +177,7 @@ class EditContent extends EditRecord
                 return [];
             }
             $value->value = json_decode($value->value, true) ?? $value->value;
+
             return [$value->field->ulid => $value->value];
         })->toArray();
 
