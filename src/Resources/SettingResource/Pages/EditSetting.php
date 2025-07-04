@@ -53,7 +53,7 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // $data = $this->mutateBeforeFill($data);
+        $data = $this->mutateBeforeFill($data);
 
         return $data;
     }
