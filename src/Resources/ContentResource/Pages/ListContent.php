@@ -23,41 +23,34 @@ class ListContent extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
+        $typeFilterActions = [];
+        $typeCreateActions = [];
+        foreach (Type::orderBy('name')->get() as $type) {
+            $typeFilterActions[] = Action::make(__($type->name))
+                ->url(fn (): string => route('filament.backstage.resources.content.index', ['type' => $type->slug, 'show' => 'database', 'tenant' => Filament::getTenant()]));
+            $typeCreateActions[] = Action::make(__($type->name))
+                ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]));
+        }
+
         return [
-            ActionGroup::make([
-                Action::make(__('List'))
-                    ->url(fn (): string => route('filament.backstage.resources.content.index', ['tenant' => Filament::getTenant()]))
-                    ->icon('heroicon-o-bars-3')
-                    ->iconPosition('before'),
+            Action::make(__('List'))
+                ->url(fn (): string => route('filament.backstage.resources.content.index', ['tenant' => Filament::getTenant()]))
+                ->icon('heroicon-o-bars-3')
+                ->color($this->show != 'database' ? null : 'gray')
+                ->iconPosition('before'),
 
                 ActionGroup::make(
-                    Type::orderBy('name')->get()->map(
-                        fn ($type) => Action::make(__($type->name))
-                            ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                            ->url(fn (): string => route('filament.backstage.resources.content.index', ['type' => $type->slug, 'show' => 'database', 'tenant' => Filament::getTenant()]))
-                    )->toArray()
+                    $typeFilterActions
                 )
-                    ->label(__('Database'))
+                    ->label(__('Database') . ($this->type ? ' (' . Type::where('slug', $this->type)->firstOrFail()->name . ')' : ''))
                     ->dropdownPlacement('bottom-end')
-                    ->color('gray')
+                    ->color($this->show == 'database' ? null : 'gray')
                     ->icon('heroicon-o-circle-stack')
                     ->iconPosition('before')
-                    ->grouped(false),
-            ])
-                ->label($this->show == 'database' ? __('Viewed as: :type (:slug)', ['type' => __('Database'), 'slug' => $this->type]) : __('Viewed as: :type', ['type' => __('List')]))
-                ->dropdownPlacement('bottom-start')
-                ->color('gray')
-                ->icon('heroicon-o-bars-3')
-                ->iconPosition('before')
+                    ->grouped(false)
                 ->button(),
-
             ActionGroup::make(
-                Type::orderBy('name')->get()->map(
-                    fn ($type) => Action::make(__($type->name))
-                        ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
-                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                )->toArray()
+                $typeCreateActions
             )
                 ->label(__('New Content'))
                 ->dropdownPlacement('bottom-end')

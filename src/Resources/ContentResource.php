@@ -555,8 +555,7 @@ class ContentResource extends Resource
                                 $action->success();
                             })
                             ->button()
-                    )
-                    ->toArray(),
+                        ),
 
                 EditAction::make(),
             ])
