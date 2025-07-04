@@ -167,6 +167,10 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        if (!isset($data[$this->getRecord()->valueColumn])) {
+            $data[$this->getRecord()->valueColumn] = [];
+        }
+
         // Get all values as an array: [ulid => value]
         $values = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
             if (! $value->field) {
@@ -176,62 +180,10 @@ class EditContent extends EditRecord
             return [$value->field->ulid => $value->value];
         })->toArray();
 
-        // Initialize the data structure
-        if (!isset($data[$this->getRecord()->valueColumn])) {
-            $data[$this->getRecord()->valueColumn] = [];
-        }
+        $this->getRecord()->values = $values;
 
-        // Process regular fields first
-        foreach ($this->getRecord()->fields as $field) {
-            if ($field->field_type !== 'builder') {
-                $fieldConfig = $this->resolveFieldConfigAndInstance($field);
-                if (!empty($fieldConfig['config']['methods']['mutateFormDataCallback'])) {
-                    $fieldInstance = new $fieldConfig['config']['class'];
-                    $data = $fieldInstance->mutateFormDataCallback($this->getRecord(), $field, $data);
-                } else {
-                    $data[$this->getRecord()->valueColumn][$field->ulid] = $values[$field->ulid] ?? null;
-                }
-            }
-        }
-
-        // Process builder fields and their nested fields
-        $builderFields = collect($values)->filter(function ($value, $key) {
-            $field = $this->getRecord()->fields->where('ulid', $key)->first();
-            return $field && $field->field_type === 'builder';
-        });
-
-        foreach ($builderFields as $fieldUlid => $blocks) {
-            if (is_array($blocks)) {
-                foreach ($blocks as &$block) {
-                    if (isset($block['data']) && is_array($block['data'])) {
-                        foreach ($block['data'] as $nestedFieldUlid => $nestedValue) {
-                            $nestedField = \Backstage\Fields\Models\Field::where('ulid', $nestedFieldUlid)->first();
-                            if ($nestedField) {
-                                $fieldConfig = $this->resolveFieldConfigAndInstance($nestedField);
-                                if (!empty($fieldConfig['config']['methods']['mutateFormDataCallback'])) {
-                                    $fieldInstance = new $fieldConfig['config']['class'];
-                                    
-                                    // Create a mock record with the nested value for the callback
-                                    $mockRecord = clone $this->getRecord();
-                                    $mockRecord->values = [$nestedFieldUlid => $nestedValue];
-                                    
-                                    // Create a temporary data structure for the callback
-                                    $tempData = [$this->getRecord()->valueColumn => [$nestedFieldUlid => $nestedValue]];
-                                    $tempData = $fieldInstance->mutateFormDataCallback($mockRecord, $nestedField, $tempData);
-                                    $block['data'][$nestedFieldUlid] = $tempData[$this->getRecord()->valueColumn][$nestedFieldUlid] ?? $nestedValue;
-                                }
-                            }
-                        }
-                    }
-                }
-                $data[$this->getRecord()->valueColumn][$fieldUlid] = $blocks;
-            }
-        }
-
-        return $data;
+        return $this->mutateBeforeFill($data);
     }
-
-
 
     protected function afterSave(): void
     {
