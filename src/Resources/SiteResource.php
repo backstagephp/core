@@ -112,10 +112,12 @@ class SiteResource extends Resource
                                         ->preload()
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn ($color, $name) => [
-                                                    sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
-                                                ])
+                                                ->mapWithKeys(function ($color, $name) {
+                                                    preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
+                                                    return [sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]) => ucfirst($name)];
+                                                })
                                                 ->put('#000000', 'Black')
+                                                ->filter()
                                                 ->sort()
                                                 ->unique()
                                                 ->toArray(),
