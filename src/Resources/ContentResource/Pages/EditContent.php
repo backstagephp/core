@@ -13,6 +13,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -166,18 +167,23 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
+        if (! isset($data[$this->getRecord()->valueColumn])) {
+            $data[$this->getRecord()->valueColumn] = [];
+        }
 
+        // Get all values as an array: [ulid => value]
+        $values = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
             if (! $value->field) {
                 return [];
             }
-
             $value->value = json_decode($value->value, true) ?? $value->value;
 
             return [$value->field->ulid => $value->value];
         })->toArray();
 
-        return $data;
+        $this->getRecord()->values = $values;
+
+        return $this->mutateBeforeFill($data);
     }
 
     protected function afterSave(): void
@@ -233,7 +239,7 @@ class EditContent extends EditRecord
             'edited_at' => now(),
         ]);
 
-        $this->getRecord()->authors()->syncWithoutDetaching(auth()->id());
+        $this->getRecord()->authors()->syncWithoutDetaching(Auth::id());
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
