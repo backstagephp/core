@@ -33,8 +33,8 @@
     ],
     "require": {
         "php": "^8.2",
-        "backstage/fields": "^0.6.0",
-        "backstage/media": "dev-main",
+        "backstage/fields": "@dev",
+        "backstage/media": "@dev",
         "backstage/redirects": "dev-main",
         "backstage/translations": "^0.3",
         "baspa/laravel-timezones": "^1.2",
@@ -103,12 +103,12 @@
     },
     "repositories": {
         "backstage/fields": {
-            "type": "git",
-            "url": "git@github.com:backstagephp/fields.git"
+            "type": "path",
+            "url": "../fields"
         },
         "backstage/media": {
-            "type": "git",
-            "url": "git@github.com:backstagephp/media.git"
+            "type": "path",
+            "url": "../media"
         },
         "backstage/redirects": {
             "type": "git",
