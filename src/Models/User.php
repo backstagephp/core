@@ -2,18 +2,22 @@
 
 namespace Backstage\Models;
 
-use Backstage\Shared\HasPackageFactory;
-use Filament\Facades\Filament;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Backstage\Models\Site;
+use Backstage\Models\Setting;
+use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
+use Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants, HasAppAuthentication, HasAppAuthenticationRecovery
 {
     use HasPackageFactory;
     use Notifiable;
@@ -46,6 +50,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     protected $hidden = [
         'password',
         'remember_token',
+        'app_authentication_secret',
+        'app_authentication_recovery_codes',
     ];
 
     /**
@@ -58,6 +64,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'app_authentication_secret' => 'encrypted',
+            'app_authentication_recovery_codes' => 'encrypted:array',
         ];
     }
 
@@ -98,5 +106,34 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         $avatarUrl = Filament::getUserAvatarUrl($this);
 
         return $avatarUrl;
+    }
+
+    public function getAppAuthenticationSecret(): ?string
+    {
+        return $this->app_authentication_secret;
+    }
+
+    public function saveAppAuthenticationSecret(?string $secret): void
+    {    
+        $this->app_authentication_secret = $secret;
+        $this->save();
+    }
+
+    public function getAppAuthenticationHolderName(): string
+    {
+        return $this->email;
+    }
+
+    /** @return ?array<string> */
+    public function getAppAuthenticationRecoveryCodes(): ?array
+    {    
+        return $this->app_authentication_recovery_codes;
+    }
+
+    /** @param  array<string> | null  $codes */
+    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
+    {    
+        $this->app_authentication_recovery_codes = $codes;
+        $this->save();
     }
 }
