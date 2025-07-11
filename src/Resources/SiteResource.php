@@ -95,6 +95,7 @@ class SiteResource extends Resource
                                         ->helperText('Select default theme.'),
                                     Toggle::make('default')
                                         ->label('Use this site as default.')
+                                        ->default(Site::default()?->id === null)
                                         ->columnSpanFull(),
                                     Toggle::make('auth')
                                         ->label('Protect site behind authentication.')
@@ -110,6 +111,15 @@ class SiteResource extends Resource
                                         ->label('Primary color')
                                         ->columnSpanFull()
                                         ->preload()
+                                        ->default(collect(Color::all())
+                                                ->map(function ($color, $name) {
+                                                    preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
+                                                    return sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]);
+                                                })
+                                                ->put('#000000', 'Black')
+                                                ->filter()
+                                                ->random(preserveKeys: true)
+                                                )
                                         ->options([
                                             collect(Color::all())
                                                 ->mapWithKeys(function ($color, $name) {
@@ -163,6 +173,7 @@ class SiteResource extends Resource
                                                 'Asia' => DateTimeZone::ASIA,
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
+                                                'UTC' => DateTimeZone::UTC,
                                             ])->map(function ($code) {
                                                 return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
                                             })

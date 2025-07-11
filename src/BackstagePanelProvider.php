@@ -2,6 +2,7 @@
 
 namespace Backstage;
 
+use Backstage\Http\Middleware\Filament\HasTenant;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\RegisterSite;
@@ -92,6 +93,7 @@ class BackstagePanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                HasTenant::class
             ])
             ->authMiddleware([
                 Authenticate::class,

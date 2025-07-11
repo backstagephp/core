@@ -59,10 +59,13 @@ class DomainResource extends Resource
                                     ->label('Domain name')
                                     ->columnSpanFull()
                                     ->afterStateUpdated(fn (string $state): string => preg_replace('/^(http)(s)?:\/\//i', '', $state))
+                                    ->placeholder('example.com')
+                                    ->default(parse_url(config('app.url', ''))['host'] ?? '')
                                     ->required(),
                                 Select::make('environment')
                                     ->label('Environment')
                                     ->columnSpanFull()
+                                    ->default(config('app.env', 'local'))
                                     ->options([
                                         'local' => __('Local'),
                                         'production' => __('Production'),
