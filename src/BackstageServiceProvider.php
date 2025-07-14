@@ -42,6 +42,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Carbon\CarbonImmutable;
+
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -122,7 +124,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             });
     }
 
-    protected function generateMigrationName(string $migrationFileName, Carbon $now): string
+    protected function generateMigrationName(string $migrationFileName, Carbon|CarbonImmutable $now): string
     {
         $migrationsPath = 'migrations/' . dirname($migrationFileName) . '/';
         $migrationFileName = basename($migrationFileName);
