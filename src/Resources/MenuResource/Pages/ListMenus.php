@@ -2,9 +2,8 @@
 
 namespace Backstage\Resources\MenuResource\Pages;
 
-use Filament\Actions\CreateAction;
 use Backstage\Resources\MenuResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListMenus extends ListRecords

@@ -2,25 +2,23 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\MenuItemResource\Pages\ListMenuItems;
-use Backstage\Resources\MenuItemResource\Pages\CreateMenuItem;
-use Backstage\Resources\MenuItemResource\Pages\EditMenuItem;
 use Backstage\Models\Content;
 use Backstage\Models\MenuItem;
-use Backstage\Resources\MenuItemResource\Pages;
+use Backstage\Resources\MenuItemResource\Pages\CreateMenuItem;
+use Backstage\Resources\MenuItemResource\Pages\EditMenuItem;
+use Backstage\Resources\MenuItemResource\Pages\ListMenuItems;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;

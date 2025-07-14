@@ -2,21 +2,6 @@
 
 namespace Backstage\Resources;
 
-use Filament\Pages\Enums\SubNavigationPosition;
-use Filament\Panel;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Support\Enums\IconSize;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Schemas\Components\Fieldset;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Fields\Fields\RichEditor;
@@ -33,6 +18,10 @@ use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -42,9 +31,19 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
+use Filament\Panel;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -555,7 +554,7 @@ class ContentResource extends Resource
                                 $action->success();
                             })
                             ->button()
-                        ),
+                    ),
 
                 EditAction::make(),
             ])

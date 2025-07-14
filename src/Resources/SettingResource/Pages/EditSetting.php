@@ -2,15 +2,14 @@
 
 namespace Backstage\Resources\SettingResource\Pages;
 
-use Filament\Actions\DeleteAction;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Grid;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Resources\SettingResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 
 class EditSetting extends EditRecord
 {

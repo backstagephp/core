@@ -2,22 +2,20 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\DomainResource\Pages\ListDomains;
+use Backstage\Models\Domain;
 use Backstage\Resources\DomainResource\Pages\CreateDomain;
 use Backstage\Resources\DomainResource\Pages\EditDomain;
-use Backstage\Models\Domain;
-use Backstage\Resources\DomainResource\Pages;
+use Backstage\Resources\DomainResource\Pages\ListDomains;
 use Backstage\Resources\DomainResource\RelationManagers\LanguagesRelationManager;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 

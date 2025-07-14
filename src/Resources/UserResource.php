@@ -2,17 +2,15 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\UserResource\Pages\ListUsers;
+use Backstage\Models\User;
 use Backstage\Resources\UserResource\Pages\CreateUser;
 use Backstage\Resources\UserResource\Pages\EditUser;
-use Backstage\Models\User;
-use Backstage\Resources\UserResource\Pages;
+use Backstage\Resources\UserResource\Pages\ListUsers;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

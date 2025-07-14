@@ -2,9 +2,9 @@
 
 namespace Backstage\Http\Controllers;
 
-use SimpleXMLElement;
 use Backstage\Models\Content;
 use Illuminate\Http\Request;
+use SimpleXMLElement;
 
 class SitemapController
 {

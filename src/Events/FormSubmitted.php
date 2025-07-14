@@ -2,8 +2,8 @@
 
 namespace Backstage\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Backstage\Models\FormSubmission;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;

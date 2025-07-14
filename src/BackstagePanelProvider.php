@@ -93,7 +93,7 @@ class BackstagePanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                HasTenant::class
+                HasTenant::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

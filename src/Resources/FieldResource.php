@@ -2,17 +2,15 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\FieldResource\Pages\ListFields;
+use Backstage\Fields\Models\Field;
 use Backstage\Resources\FieldResource\Pages\CreateField;
 use Backstage\Resources\FieldResource\Pages\EditField;
-use Backstage\Fields\Models\Field;
-use Backstage\Resources\FieldResource\Pages;
+use Backstage\Resources\FieldResource\Pages\ListFields;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 

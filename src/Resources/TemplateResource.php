@@ -2,18 +2,16 @@
 
 namespace Backstage\Resources;
 
-use Filament\Panel;
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\TemplateResource\Pages\ListTemplates;
+use Backstage\Models\Template;
 use Backstage\Resources\TemplateResource\Pages\CreateTemplate;
 use Backstage\Resources\TemplateResource\Pages\EditTemplate;
-use Backstage\Models\Template;
-use Backstage\Resources\TemplateResource\Pages;
+use Backstage\Resources\TemplateResource\Pages\ListTemplates;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Panel;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 

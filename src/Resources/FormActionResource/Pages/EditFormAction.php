@@ -2,9 +2,8 @@
 
 namespace Backstage\Resources\FormActionResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use Backstage\Resources\FormResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditFormAction extends EditRecord

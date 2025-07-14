@@ -2,9 +2,8 @@
 
 namespace Backstage\Resources\SettingResource\Pages;
 
-use Filament\Actions\CreateAction;
 use Backstage\Resources\SettingResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSettings extends ListRecords

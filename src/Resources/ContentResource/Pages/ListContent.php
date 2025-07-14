@@ -2,11 +2,10 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\Action;
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
@@ -39,15 +38,15 @@ class ListContent extends ListRecords
                 ->color($this->show != 'database' ? null : 'gray')
                 ->iconPosition('before'),
 
-                ActionGroup::make(
-                    $typeFilterActions
-                )
-                    ->label(__('Database') . ($this->type ? ' (' . Type::where('slug', $this->type)->firstOrFail()->name . ')' : ''))
-                    ->dropdownPlacement('bottom-end')
-                    ->color($this->show == 'database' ? null : 'gray')
-                    ->icon('heroicon-o-circle-stack')
-                    ->iconPosition('before')
-                    ->grouped(false)
+            ActionGroup::make(
+                $typeFilterActions
+            )
+                ->label(__('Database') . ($this->type ? ' (' . Type::where('slug', $this->type)->firstOrFail()->name . ')' : ''))
+                ->dropdownPlacement('bottom-end')
+                ->color($this->show == 'database' ? null : 'gray')
+                ->icon('heroicon-o-circle-stack')
+                ->iconPosition('before')
+                ->grouped(false)
                 ->button(),
             ActionGroup::make(
                 $typeCreateActions
