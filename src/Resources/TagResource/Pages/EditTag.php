@@ -2,9 +2,8 @@
 
 namespace Backstage\Resources\TagResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use Backstage\Resources\TagResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTag extends EditRecord

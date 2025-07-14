@@ -2,27 +2,25 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\SiteResource\Pages\ListSites;
+use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\Pages\CreateSite;
 use Backstage\Resources\SiteResource\Pages\EditSite;
-use Backstage\Models\Site;
-use Backstage\Resources\SiteResource\Pages;
+use Backstage\Resources\SiteResource\Pages\ListSites;
 use DateTimeZone;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -111,19 +109,22 @@ class SiteResource extends Resource
                                         ->label('Primary color')
                                         ->columnSpanFull()
                                         ->preload()
-                                        ->default(collect(Color::all())
+                                        ->default(
+                                            collect(Color::all())
                                                 ->map(function ($color, $name) {
                                                     preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
+
                                                     return sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]);
                                                 })
                                                 ->put('#000000', 'Black')
                                                 ->filter()
                                                 ->random(preserveKeys: true)
-                                                )
+                                        )
                                         ->options([
                                             collect(Color::all())
                                                 ->mapWithKeys(function ($color, $name) {
                                                     preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
+
                                                     return [sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]) => ucfirst($name)];
                                                 })
                                                 ->put('#000000', 'Black')

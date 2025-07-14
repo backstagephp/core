@@ -2,16 +2,15 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
