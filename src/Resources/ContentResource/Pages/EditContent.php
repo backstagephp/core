@@ -217,6 +217,7 @@ class EditContent extends EditRecord
 
                 if ($this->shouldDeleteValue($value)) {
                     $this->deleteValue($field);
+
                     return;
                 }
 
@@ -226,6 +227,7 @@ class EditContent extends EditRecord
 
                 if ($fieldModel && $fieldModel->field_type === 'builder') {
                     $this->handleBuilderField($value, $field);
+
                     return;
                 }
 
@@ -255,7 +257,7 @@ class EditContent extends EditRecord
     {
         $autoCleanContent = $fieldModel->config['autoCleanContent'] ?? true;
 
-        if ($autoCleanContent && !empty($value)) {
+        if ($autoCleanContent && ! empty($value)) {
             $options = [
                 'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
             ];
@@ -334,6 +336,7 @@ class EditContent extends EditRecord
                 }
             }
         }
+
         return $data;
     }
 }
