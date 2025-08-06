@@ -2,20 +2,21 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Actions\Content\DuplicateContentAction;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Models\Language;
-use Backstage\Models\Tag;
-use Backstage\Resources\ContentResource;
-use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions;
+use Backstage\Models\Tag;
+use Illuminate\Support\Str;
+use Backstage\Models\Language;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Auth;
+use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Actions\Content\DuplicateContentAction;
+use Backstage\Actions\Content\TranslateContentAction;
+use Backstage\Fields\Models\Field;
+use Backstage\Translations\Laravel\Contracts\TranslatesAttributes;
 
 class EditContent extends EditRecord
 {
@@ -52,7 +53,6 @@ class EditContent extends EditRecord
         }
 
         return $breadcrumbs;
-
     }
 
     protected function getHeaderActions(): array
@@ -60,19 +60,21 @@ class EditContent extends EditRecord
         return [
             DuplicateContentAction::make('duplicate'),
             Actions\ActionGroup::make(
-                Language::active()->pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
-                    // multiple countries
-                    Language::active()->orderBy('name')
+                [
+                    ...Language::active()->pluck('code')->map(fn($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
+                        // multiple countries
+                        Language::active()->orderBy('name')
                         ->get()
+                        ->filter(fn($language) => $this->record->language_code !== $language->code)
                         ->groupBy(function ($language) {
                             return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
                         })->map(function ($languages, $countryCode) {
                             return Actions\ActionGroup::make(
                                 $languages->map(function ($language) use ($countryCode) {
-                                    return Actions\Action::make($language->code . '-' . $countryCode)
+                                    return TranslateContentAction::make('translate-' . $language->code . '-' . $countryCode)
                                         ->label($language->name)
-                                        ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                                        ->action(fn () => $this->translate($language));
+                                        ->groupedIcon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
+                                        ->arguments(['language' => $language]);
                                 })
                                     ->toArray()
                             )
@@ -82,103 +84,45 @@ class EditContent extends EditRecord
                                 ->iconPosition(IconPosition::After)
                                 ->grouped();
                         })->toArray() :
-                    // one country
-                    Language::active()->orderBy('name')->get()->map(function (Language $language) {
-                        return Actions\Action::make($language->code)
-                            ->label($language->name)
-                            ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                            ->action(fn () => $this->translate($language));
-                    })->toArray()
+                        // one country
+                        Language::active()
+                        ->orderBy('name')
+                        ->get()
+                        ->filter(fn($language) => $this->record->language_code !== $language->code)
+                        ->map(function (Language $language) {
+                            return TranslateContentAction::make('translate-' . $language->code)
+                                ->label($language->name)
+                                ->groupedIcon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
+                                ->arguments(['language' => $language->code]);
+                        })->toArray(),
+                ]
             )
                 ->label('Translate')
                 ->icon('heroicon-o-language')
                 ->iconPosition(IconPosition::Before)
                 ->color('gray')
                 ->button()
-                ->visible(fn () => Language::active()->count() > 1),
+                ->visible(fn() => Language::active()->count() > 1),
+
             Actions\Action::make('Preview')
                 ->color('gray')
                 ->icon('heroicon-o-eye')
-                ->url(fn () => $this->getRecord()->url)
+                ->url(fn() => $this->getRecord()->url)
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];
     }
 
-    public function translate($language)
-    {
-        $state = $this->form->getState();
-
-        $values = collect($state['values'])->map(function ($value, $key) use ($language) {
-            if (is_array($value)) {
-                return collect($value)->map(function ($item) use ($language) {
-                    if (is_array($item)) {
-                        return collect($item)->map(function ($i) use ($language) {
-                            if (isset($i['data'])) {
-                                $i['data'] = collect($i['data'])->mapWithKeys(function ($text, $key) use ($language) {
-                                    return [$key => Translator::translate($text, $language->code)];
-                                })->toArray();
-                            }
-
-                            if (is_array($i)) {
-                                return collect($i)->mapWithKeys(function ($value, $key) use ($language) {
-                                    if (is_array($value) || is_null($value)) {
-                                        return [$key => $value];
-                                    }
-
-                                    return [$key => Translator::translate($value, $language->code)];
-                                })->toArray();
-                            }
-
-                            return $i;
-                        })->toArray();
-                    }
-
-                    return $item;
-                })->toArray();
-            }
-
-            if (is_null($value)) {
-                return $value;
-            }
-
-            return Translator::translate($value, $language->code);
-        })->toArray();
-
-        $metaTags = collect($state['meta_tags'])->mapWithKeys(function ($value, $key) use ($language) {
-            if (is_array($value) || is_null($value)) {
-                return [$key => $value];
-            }
-
-            return [$key => Translator::translate($value, $language->code)];
-        })->toArray();
-
-        $state['values'] = $values;
-        $state['meta_tags'] = $metaTags;
-        $state['name'] = Translator::translate($state['name'], $language->code);
-
-        $this->form->fill($state);
-
-        Notification::make()
-            ->title(__('Translated'))
-            ->body(__('The content has been translated to ' . $language->name))
-            ->send();
-    }
-
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (! isset($data[$this->getRecord()->valueColumn])) {
-            $data[$this->getRecord()->valueColumn] = [];
-        }
-
-        // Get all values as an array: [ulid => value]
-        $values = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
+        $values = $this->getRecord()->values()->get()->mapWithKeys(function (TranslatesAttributes $value) {
             if (! $value->field) {
                 return [];
             }
-            $value->value = json_decode($value->value, true) ?? $value->value;
 
-            return [$value->field->ulid => $value->value];
+            $translatedAttribute = $value->getTranslatedAttribute('value', $this->getRecord()->language_code);
+
+            return [$value->field->ulid => json_decode($translatedAttribute, true) ?? $translatedAttribute];
         })->toArray();
 
         $this->getRecord()->values = $values;
@@ -197,12 +141,12 @@ class EditContent extends EditRecord
     private function handleTags(): void
     {
         $tags = collect($this->data['tags'] ?? [])
-            ->filter(fn ($tag) => filled($tag))
-            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
+            ->filter(fn($tag) => filled($tag))
+            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
                 'name' => $tag,
                 'slug' => Str::slug($tag),
             ]))
-            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
+            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
     }
@@ -281,6 +225,26 @@ class EditContent extends EditRecord
 
     private function updateOrCreateValue($value, $field): void
     {
+        /**
+         * @var TranslatesAttributes|CreateContentAction $value
+         */
+        $record = $this->getRecord();
+
+        $existing = $record->values()
+            ->where('content_ulid', $record->getKey())
+            ->where('field_ulid', $field)
+            ->first();
+
+        if (! $existing) {
+            $value = is_array($value) ? json_encode($value) : $value;
+
+            $value = $record->values()->create([
+                'content_ulid' => $record->getKey(),
+                'field_ulid' => $field,
+                'value' => $value,
+            ]);
+        }
+
         $this->getRecord()->values()->updateOrCreate([
             'content_ulid' => $this->getRecord()->getKey(),
             'field_ulid' => $field,

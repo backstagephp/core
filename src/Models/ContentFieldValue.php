@@ -3,19 +3,22 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
+use Illuminate\Support\HtmlString;
 use Backstage\Shared\HasPackageFactory;
+use Backstage\Translations\Laravel\Contracts\TranslatesAttributes;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\HtmlString;
+use Backstage\Translations\Laravel\Models\Concerns\HasTranslatableAttributes;
 
 /**
  * Backstage\Models\ContentFieldValue
  *
  * @property string $value
  */
-class ContentFieldValue extends Pivot
+class ContentFieldValue extends Pivot implements TranslatesAttributes
 {
+    use HasTranslatableAttributes;
     use HasPackageFactory;
     use HasUlids;
 
@@ -51,5 +54,19 @@ class ContentFieldValue extends Pivot
         }
 
         return json_decode($this->value, true) ?? new HtmlString($this->value);
+    }
+
+    public function getTranslatableAttributes(): array
+    {
+        return [
+            'value'
+        ];
+    }
+
+    public function getTranslatableAttributeRulesForValue(): array
+    {
+        return [
+            '*data'
+        ];
     }
 }

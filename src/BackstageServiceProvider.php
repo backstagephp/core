@@ -186,6 +186,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
             'user' => 'Backstage\Models\User',
+            'content_field_value' => 'Backstage\Models\ContentFieldValue',
         ]);
 
         Route::bind('type', function (string $slug) {

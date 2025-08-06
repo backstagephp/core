@@ -87,12 +87,29 @@ class Content extends Model
 
     public function values(): HasMany
     {
+        if ($this->getAttribute('source_content_ulid')) {
+            $this->load('sourceContent');
+
+            return $this->sourceContent->values();
+        }
+
         return $this->hasMany(ContentFieldValue::class)
             ->with('field');
     }
 
+    public function sourceContent(): BelongsTo
+    {
+        return $this->belongsTo(Content::class, 'source_content_ulid', 'ulid');
+    }
+
     public function fields(): HasManyThrough
     {
+        if ($this->getAttribute('source_content_ulid')) {
+            $this->load('sourceContent');
+
+            return $this->sourceContent->fields();
+        }
+
         return $this->hasManyThrough(
             Field::class,
             Type::class,
@@ -110,7 +127,7 @@ class Content extends Model
     {
         if (! $this->public) {
             return Attribute::make(
-                get: fn () => null,
+                get: fn() => null,
             );
         }
 
@@ -120,7 +137,17 @@ class Content extends Model
         }
 
         return Attribute::make(
-            get: fn () => $url,
+            get: fn() => $url,
+        );
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     */
+    protected function templateFile(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value, array $attributes) => $attributes['template_slug'],
         );
     }
 
@@ -157,7 +184,7 @@ class Content extends Model
     protected function pathPrefix(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => self::getPathPrefixForLanguage($this->language_code, $this->site),
+            get: fn(?string $value, array $attributes) => self::getPathPrefixForLanguage($this->language_code, $this->site),
         );
     }
 
@@ -195,14 +222,6 @@ class Content extends Model
         $url .= '/';
 
         return $url;
-    }
-
-    public function scopePublic($query): void
-    {
-        $query->where(function ($query) {
-            return $query->where('public', true)
-                ->where('published_at', '<=', now());
-        });
     }
 
     public function blocks(string $field): array
