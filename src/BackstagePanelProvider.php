@@ -113,7 +113,7 @@ class BackstagePanelProvider extends PanelProvider
                 'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->brandLogo(function () {
-                if (Filament::getTenant()->logo) {
+                if (Filament::getTenant() && Filament::getTenant()->logo) {
                     return asset(Filament::getTenant()->logo);
                 }
 
