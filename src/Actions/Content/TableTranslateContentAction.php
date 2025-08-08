@@ -54,6 +54,17 @@ class TableTranslateContentAction extends BulkAction
                 ->first();
 
             $records->each(function (Content $record) use ($language) {
+                $slug = $record->slug;
+
+                $existing = Content::query()
+                    ->where('slug', $slug)
+                    ->where('language_code', $language->code)
+                    ->exists();
+
+                if ($existing) {
+                    return;
+                }
+                
                 TranslateContent::dispatch(
                     $record,
                     $language
