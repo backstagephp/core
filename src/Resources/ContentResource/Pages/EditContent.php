@@ -115,20 +115,25 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $values = $this->getRecord()->values()->get()->mapWithKeys(function (TranslatesAttributes $value) {
+        if (! isset($data[$this->getRecord()->valueColumn])) {
+            $data[$this->getRecord()->valueColumn] = [];
+        }
+
+        // Get all values as an array: [ulid => value]
+        $values = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
             if (! $value->field) {
                 return [];
             }
+            $value->value = json_decode($value->value, true) ?? $value->value;
 
-            $translatedAttribute = $value->getTranslatedAttribute('value', $this->getRecord()->language_code);
-
-            return [$value->field->ulid => json_decode($translatedAttribute, true) ?? $translatedAttribute];
+            return [$value->field->ulid => $value->value];
         })->toArray();
 
         $this->getRecord()->values = $values;
 
         return $this->mutateBeforeFill($data);
     }
+
 
     protected function afterSave(): void
     {

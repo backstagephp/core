@@ -87,29 +87,12 @@ class Content extends Model
 
     public function values(): HasMany
     {
-        if ($this->getAttribute('source_content_ulid')) {
-            $this->load('sourceContent');
-
-            return $this->sourceContent->values();
-        }
-
         return $this->hasMany(ContentFieldValue::class)
             ->with('field');
     }
 
-    public function sourceContent(): BelongsTo
-    {
-        return $this->belongsTo(Content::class, 'source_content_ulid', 'ulid');
-    }
-
     public function fields(): HasManyThrough
     {
-        if ($this->getAttribute('source_content_ulid')) {
-            $this->load('sourceContent');
-
-            return $this->sourceContent->fields();
-        }
-
         return $this->hasManyThrough(
             Field::class,
             Type::class,

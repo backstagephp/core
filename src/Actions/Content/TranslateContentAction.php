@@ -56,7 +56,18 @@ class TranslateContentAction extends Action
                 ->where('code', $arguments['language'])
                 ->first();
 
-            TranslateContent::dispatch(
+            $slug = $record->slug;
+
+            $existing = Content::query()
+                ->where('slug', $slug)
+                ->where('language_code', $language->code)
+                ->exists();
+
+            if ($existing) {
+                return;
+            }
+
+            TranslateContent::dispatchSync(
                 $record,
                 $language
             );

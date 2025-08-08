@@ -16,10 +16,8 @@ use Backstage\Translations\Laravel\Models\Concerns\HasTranslatableAttributes;
  *
  * @property string $value
  */
-class ContentFieldValue extends Pivot implements TranslatesAttributes
-{
-    use HasTranslatableAttributes;
-    use HasPackageFactory;
+class ContentFieldValue extends Pivot
+{    use HasPackageFactory;
     use HasUlids;
 
     protected $primaryKey = 'ulid';
@@ -54,19 +52,5 @@ class ContentFieldValue extends Pivot implements TranslatesAttributes
         }
 
         return json_decode($this->value, true) ?? new HtmlString($this->value);
-    }
-
-    public function getTranslatableAttributes(): array
-    {
-        return [
-            'value'
-        ];
-    }
-
-    public function getTranslatableAttributeRulesForValue(): array
-    {
-        return [
-            '*data'
-        ];
     }
 }
