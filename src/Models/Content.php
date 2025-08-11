@@ -91,6 +91,27 @@ class Content extends Model
             ->with('field');
     }
 
+    /**
+     * Get formatted field values as a key-value array where keys are field ULIDs.
+     * This method processes JSON values and returns them in a format suitable for forms.
+     * Used in the EditContent page to fill the form with existing values and 
+     * in the ContentResource to fill the table with existing values, which is needed in
+     * the ManageChildrenContent page.
+     *
+     * @return array
+     */
+    public function getFormattedFieldValues(): array
+    {
+        return $this->values()->get()->mapWithKeys(function ($value) {
+            if (! $value->field) {
+                return [];
+            }
+            $value->value = json_decode($value->value, true) ?? $value->value;
+
+            return [$value->field->ulid => $value->value];
+        })->toArray();
+    }
+
     public function fields(): HasManyThrough
     {
         return $this->hasManyThrough(

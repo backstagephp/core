@@ -172,14 +172,7 @@ class EditContent extends EditRecord
         }
 
         // Get all values as an array: [ulid => value]
-        $values = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
-            if (! $value->field) {
-                return [];
-            }
-            $value->value = json_decode($value->value, true) ?? $value->value;
-
-            return [$value->field->ulid => $value->value];
-        })->toArray();
+        $values = $this->getRecord()->getFormattedFieldValues();
 
         $this->getRecord()->values = $values;
 
