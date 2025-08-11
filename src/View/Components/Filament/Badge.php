@@ -2,17 +2,17 @@
 
 namespace Backstage\View\Components\Filament;
 
+use Filament\Support\Concerns\HasFontFamily;
+use Filament\Support\Concerns\HasWeight;
 use Closure;
 use Filament\Infolists\Components\Entry;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Concerns\CanBeHidden;
-use Filament\Tables\Columns\Concerns\HasFontFamily;
 use Filament\Tables\Columns\Concerns\HasLabel;
 use Filament\Tables\Columns\Concerns\HasName;
 use Filament\Tables\Columns\Concerns\HasRecord;
-use Filament\Tables\Columns\Concerns\HasWeight;
 use Illuminate\Database\Eloquent\Model;
 
 class Badge extends ViewComponent

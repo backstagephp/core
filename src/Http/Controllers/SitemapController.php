@@ -2,6 +2,7 @@
 
 namespace Backstage\Http\Controllers;
 
+use SimpleXMLElement;
 use Backstage\Models\Content;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,7 @@ class SitemapController
     {
         $xml = cache()
             ->rememberForever('sitemap-xml', function () {
-                $doc = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+                $doc = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
 
                 Content::with('site')
                     ->whereNotNull('path')

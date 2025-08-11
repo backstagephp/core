@@ -2,6 +2,8 @@
 
 namespace Backstage;
 
+use Backstage\Providers\RequestServiceProvider;
+use Backstage\Providers\RouteServiceProvider;
 use Backstage\Commands\BackstageSeedCommand;
 use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
@@ -26,6 +28,7 @@ use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Css;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
@@ -206,8 +209,8 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Event::listen(FormSubmitted::class, ExecuteFormActions::class);
 
-        $this->app->register(Providers\RequestServiceProvider::class);
-        $this->app->register(Providers\RouteServiceProvider::class);
+        $this->app->register(RequestServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
 
         collect($this->app['config']['backstage']['cms']['components']['blocks'] ?? [])
             ->each(function ($component) {
@@ -233,6 +236,7 @@ class BackstageServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
+            Css::make('backstage', __DIR__ . '/../resources/dist/backstage.css'),
             // AlpineComponent::make('backstage', __DIR__ . '/../resources/dist/components/backstage.js'),
             // Css::make('backstage-styles', __DIR__ . '/../resources/dist/backstage.css'),
             // Js::make('backstage-scripts', __DIR__ . '/../resources/dist/backstage.js'),

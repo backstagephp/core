@@ -104,7 +104,7 @@ class Content extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     * @return Attribute<Provider, string>
      */
     protected function url(): Attribute
     {
@@ -162,7 +162,7 @@ class Content extends Model
     /**
      * The full url, domain and language path. Without the content path, with trailing slash.
      *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     * @return Attribute<Provider, string>
      */
     protected function pathPrefix(): Attribute
     {

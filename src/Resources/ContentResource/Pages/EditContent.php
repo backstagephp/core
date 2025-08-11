@@ -2,18 +2,22 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Actions;
-use Backstage\Models\Tag;
-use Illuminate\Support\Str;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Backstage\Actions\Content\DuplicateContentAction;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Language;
+use Backstage\Models\Tag;
+use Backstage\Resources\ContentResource;
+use Backstage\Translations\Laravel\Facades\Translator;
+use Filament\Actions;
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
-use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Actions\Content\TranslateContentAction;
 use Backstage\Fields\Models\Field;
 use Backstage\Translations\Laravel\Contracts\TranslatesAttributes;

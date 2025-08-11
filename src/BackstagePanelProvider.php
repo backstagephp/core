@@ -2,6 +2,7 @@
 
 namespace Backstage;
 
+use Backstage\Http\Middleware\Filament\HasTenant;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\RegisterSite;
@@ -12,9 +13,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -83,13 +82,6 @@ class BackstagePanelProvider extends PanelProvider
         );
     }
 
-    protected function registerAssets(): void
-    {
-        FilamentAsset::register([
-            Css::make('media', base_path('vendor/backstage/media/resources/dist/media.css')),
-        ], package: 'backstage/media');
-    }
-
     protected function configureBasicSettings(Panel $panel): Panel
     {
         return $panel
@@ -110,7 +102,7 @@ class BackstagePanelProvider extends PanelProvider
     {
         return $panel
             ->colors(fn () => [
-                'primary' => Color::hex(Site::default()?->primary_color ?: '#ff9900'),
+                'primary' => Color::generateV3Palette(Site::default()?->primary_color ?: '#ff9900'),
             ])
             ->brandLogo(function () {
                 if (Filament::getTenant() && Filament::getTenant()->logo) {
@@ -136,6 +128,7 @@ class BackstagePanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                HasTenant::class
             ])
             ->authMiddleware([
                 Authenticate::class,

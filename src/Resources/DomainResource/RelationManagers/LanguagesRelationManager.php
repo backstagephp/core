@@ -2,12 +2,19 @@
 
 namespace Backstage\Resources\DomainResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\AttachAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Backstage\Models\Domain;
 use Backstage\Models\Language;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
@@ -37,15 +44,15 @@ class LanguagesRelationManager extends RelationManager
         return __('Languages');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Grid::make()
-                    ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         Section::make(__('Language'))
-                            ->columns(3)
+                            ->columnSpanFull()
                             ->schema([
                                 Select::make('language_code')
                                     ->label(__('Language'))
@@ -68,7 +75,7 @@ class LanguagesRelationManager extends RelationManager
                                     ->allowHtml(),
                                 TextInput::make('path')
                                     ->label(__('Path'))
-                                    ->columnSpan(6),
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
@@ -87,28 +94,28 @@ class LanguagesRelationManager extends RelationManager
                     ->label('Country')
                     ->getStateUsing(fn (Language $record) => explode('-', $record->language_code)[1] ?? 'worldwide')
                     ->view('backstage::filament.tables.columns.country-flag-column'),
-                Tables\Columns\TextColumn::make('path')
+                TextColumn::make('path')
                     ->label(__('Path'))
                     ->searchable()
                     ->limit(),
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                AttachAction::make()
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['name', 'code', 'native'])
                     ->recordTitleAttribute('native')
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->withoutGlobalScopes())
-                    ->form(fn (Tables\Actions\AttachAction $action): array => [
+                    ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         TextInput::make('path'),
                     ])
-                    ->action(function (array $arguments, array $data, Tables\Actions\AttachAction $action, Table $table) {
+                    ->action(function (array $arguments, array $data, AttachAction $action, Table $table) {
                         $recordId = $data['recordId'];
                         $path = $data['path'];
 
                         /**
-                         * @var \Backstage\Models\Domain $language
+                         * @var Domain $language
                          */
                         $ownerRecord = $this->getOwnerRecord();
 
@@ -127,17 +134,17 @@ class LanguagesRelationManager extends RelationManager
                         $action->success();
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->slideOver()
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
-                Tables\Actions\DetachAction::make(),
+                DetachAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
