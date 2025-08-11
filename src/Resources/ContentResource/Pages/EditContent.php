@@ -67,8 +67,8 @@ class EditContent extends EditRecord
                 ->label($language->name)
                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                 ->requiresConfirmation()
-                ->action(function () use ($language) {
-                    $slug = $this->getRecord()->slug;
+                ->action(function (Content $record) use ($language) {
+                    $slug = $record->slug;
 
                     $existing = Content::query()
                         ->where('slug', $slug)
@@ -87,10 +87,7 @@ class EditContent extends EditRecord
                         return;
                     }
 
-                    TranslateContent::dispatch(
-                        $this->getRecord(),
-                        $language
-                    );
+                    dispatch_sync(new TranslateContent($record, $language));
                 }));
 
         return [

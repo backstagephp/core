@@ -32,98 +32,99 @@ class TranslateContent implements ShouldQueue
 
     public function handle(): void
     {
-        try {
-            if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->exists()) {
-                return;
-            }
+        if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->exists()) {
+            return;
+        }
 
-            $duplicatedContent = $this->content->replicate(['ulid']);
-            $duplicatedContent->language_code = $this->language->code;
-            $duplicatedContent->meta_tags = [];
-            $duplicatedContent->edited_at = now();
-            $duplicatedContent->save();
+        $duplicatedContent = $this->content->replicate(['ulid']);
+        $duplicatedContent->language_code = $this->language->code;
+        $duplicatedContent->meta_tags = [];
+        $duplicatedContent->edited_at = now();
+        $duplicatedContent->save();
 
-            $parentTranslationUlid = null;
+        $parentTranslationUlid = null;
 
-            if ($this->content->parent_ulid) {
-                $parent = Content::where('ulid', $this->content->parent_ulid)
+        if ($this->content->parent_ulid) {
+            $parent = Content::where('ulid', $this->content->parent_ulid)->first();
+
+            if ($parent) {
+                $parentTranslation = Content::where('slug', $parent->slug)
                     ->where('language_code', $this->language->code)
                     ->first();
 
-                if ($parent) {
-                    $parentTranslationUlid = $parent->ulid;
-                } else {
+                if (! $parentTranslation) {
                     $newInstance = new self($parent, $this->language);
 
                     $newInstance->handle();
 
                     $parentTranslationUlid = $newInstance->contentUlid;
+                } else {
+                    $parentTranslationUlid = $parentTranslation->ulid;
                 }
             }
+        }
 
-            if ($parentTranslationUlid) {
-                $duplicatedContent->parent_ulid = $parentTranslationUlid;
-            }
+        if ($parentTranslationUlid) {
+            $duplicatedContent->parent_ulid = $parentTranslationUlid;
+        }
 
-            $translatableAttributes = ['name', 'path'];
-            foreach ($translatableAttributes as $attribute) {
-                if ($this->content->{$attribute}) {
-                    $duplicatedContent->{$attribute} = Translator::translate(
-                        $this->content->{$attribute},
-                        $this->language->code
-                    );
-                }
-            }
-
-            if (! empty($this->content->meta_tags)) {
-                $duplicatedContent->meta_tags = TranslateAttribute::translateArray(
-                    model: null,
-                    attribute: null,
-                    data: $this->content->meta_tags,
-                    targetLanguage: $this->language->code,
-                    rules: ['!robots', 'title', 'description', 'keywords.*']
+        $translatableAttributes = ['name', 'path'];
+        foreach ($translatableAttributes as $attribute) {
+            if ($this->content->{$attribute}) {
+                $duplicatedContent->{$attribute} = Translator::translate(
+                    $this->content->{$attribute},
+                    $this->language->code
                 );
             }
+        }
 
-            $this->content->values()->get()->each(function (ContentFieldValue $value) use ($duplicatedContent) {
-                $duplicatedValue = $value->replicate(['ulid']);
-                $duplicatedValue->content_ulid = $duplicatedContent->ulid;
+        if (! empty($this->content->meta_tags)) {
+            $duplicatedContent->meta_tags = TranslateAttribute::translateArray(
+                model: null,
+                attribute: null,
+                data: $this->content->meta_tags,
+                targetLanguage: $this->language->code,
+                rules: ['!robots', 'title', 'description', 'keywords.*']
+            );
+        }
 
-                if ($this->isJson($value->value)) {
-                    $array = json_decode($value->value, true);
+        $this->content->values()->get()->each(function (ContentFieldValue $value) use ($duplicatedContent) {
+            $duplicatedValue = $value->replicate(['ulid']);
+            $duplicatedValue->content_ulid = $duplicatedContent->ulid;
 
-                    if (! is_int($array)) {
-                        $translatedArray = TranslateAttribute::translateArray(
-                            model: null,
-                            attribute: null,
-                            targetLanguage: $duplicatedContent->language_code,
-                            data: $array,
-                            rules: ['*data']
-                        );
-                        $duplicatedValue->value = json_encode($translatedArray, JSON_UNESCAPED_UNICODE);
-                    } else {
-                        $duplicatedValue->value = Translator::translate(
-                            $value->value,
-                            $duplicatedContent->language_code
-                        );
-                    }
-                } elseif (! empty($value->value)) {
+            if ($this->isJson($value->value)) {
+                $array = json_decode($value->value, true);
+
+                if (! is_int($array)) {
+                    $translatedArray = TranslateAttribute::translateArray(
+                        model: null,
+                        attribute: null,
+                        targetLanguage: $duplicatedContent->language_code,
+                        data: $array,
+                        rules: ['*data']
+                    );
+                    $duplicatedValue->value = json_encode($translatedArray, JSON_UNESCAPED_UNICODE);
+                } else {
                     $duplicatedValue->value = Translator::translate(
                         $value->value,
                         $duplicatedContent->language_code
                     );
                 }
+            } elseif (! empty($value->value)) {
+                $duplicatedValue->value = Translator::translate(
+                    $value->value,
+                    $duplicatedContent->language_code
+                );
+            }
 
-                $duplicatedValue->save();
-            });
+            $duplicatedValue->save();
+        });
 
-            $duplicatedContent->save();
+        $duplicatedContent->save();
 
-            $this->contentUlid = $duplicatedContent->ulid;
-        } catch (\Exception $e) {
-            $this->fail($e);
-        }
+        $this->contentUlid = $duplicatedContent->ulid;
     }
+
 
     protected function isJson($value): bool
     {
