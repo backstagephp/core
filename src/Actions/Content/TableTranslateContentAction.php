@@ -19,7 +19,7 @@ class TableTranslateContentAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(fn (): string => 'Translate');
+        $this->label(fn (): string => __('Translate'));
 
         $this->requiresConfirmation();
 
