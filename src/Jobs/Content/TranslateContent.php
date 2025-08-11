@@ -131,7 +131,7 @@ class TranslateContent implements ShouldQueue
         }
     }
 
-    private function isJson($value): bool
+    protected function isJson($value): bool
     {
         if (! is_string($value)) {
             return false;
