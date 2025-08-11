@@ -95,7 +95,7 @@ class SiteResource extends Resource
                                         ->helperText('Select default theme.'),
                                     Toggle::make('default')
                                         ->label('Use this site as default.')
-                                        ->default(Site::default()?->id === null)
+                                        ->default(Site::default()?->ulid === null)
                                         ->columnSpanFull(),
                                     Toggle::make('auth')
                                         ->label('Protect site behind authentication.')
