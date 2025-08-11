@@ -2,17 +2,9 @@
 
 namespace Backstage\Actions\Content;
 
-use Illuminate\Support\Str;
+use Backstage\Jobs\Content\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Filament\Facades\Filament;
-use Filament\Tables\Actions\Action;
-use Backstage\Models\ContentFieldValue;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
-use Backstage\Jobs\Content\TranslateContent;
-use Backstage\Translations\Laravel\Facades\Translator;
-use Backstage\Resources\ContentResource\Pages\EditContent;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Support\Collection;
 
@@ -27,11 +19,11 @@ class TableTranslateContentAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(fn(): string => 'Translate');
+        $this->label(fn (): string => 'Translate');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(fn(): string => 'heroicon-o-language');
+        $this->modalIcon(fn (): string => 'heroicon-o-language');
 
         $this->modalHeading(function (array $arguments) {
             $language = Language::query()
@@ -44,14 +36,23 @@ class TableTranslateContentAction extends BulkAction
             ]);
         });
 
-        $this->modalDescription(fn(): string => __('Are you sure you want to translate this content?'));
+        $this->modalDescription(fn (): string => __('Are you sure you want to translate this content?'));
 
-        $this->modalSubmitActionLabel(fn(): string => __('Translate'));
+        $this->modalSubmitActionLabel(fn (): string => __('Translate'));
 
         $this->action(function (Collection $records, array $arguments) {
             $language = Language::query()
                 ->where('code', $arguments['language'])
                 ->first();
+
+            $records = $records->filter(function (Content $record) use ($language) {
+                $slug = $record->slug;
+
+                return ! Content::query()
+                    ->where('slug', $slug)
+                    ->where('language_code', $language->code)
+                    ->exists();
+            });
 
             $records->each(function (Content $record) use ($language) {
                 $slug = $record->slug;
@@ -64,7 +65,7 @@ class TableTranslateContentAction extends BulkAction
                 if ($existing) {
                     return;
                 }
-                
+
                 TranslateContent::dispatch(
                     $record,
                     $language

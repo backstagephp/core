@@ -67,7 +67,7 @@ class TranslateContentAction extends Action
                 return;
             }
 
-            TranslateContent::dispatchSync(
+            TranslateContent::dispatch(
                 $record,
                 $language
             );
