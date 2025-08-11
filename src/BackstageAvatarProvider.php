@@ -2,8 +2,8 @@
 
 namespace Backstage;
 
-use Exception;
 use Backstage\Models\User;
+use Exception;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -28,7 +28,6 @@ class BackstageAvatarProvider extends UiAvatarsProvider
             }
 
             $backgroundColor = '#242325';
-    
 
             if ($this->hasGravatar($record->email)) {
                 return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($record->email))) . '?s=200';

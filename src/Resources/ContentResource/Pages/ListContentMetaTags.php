@@ -2,14 +2,11 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\Action;
 use Backstage\Models\Content;
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
-use Filament\Actions;
-use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;

@@ -4,7 +4,6 @@ namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
 use Backstage\Shared\HasPackageFactory;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -50,7 +49,6 @@ class ContentFieldValue extends Pivot
 
             return Content::whereIn('ulid', json_decode($this->value))->get();
         }
-
 
         return json_decode($this->value, true) ?? new HtmlString($this->value);
     }
