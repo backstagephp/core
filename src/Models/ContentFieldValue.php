@@ -3,14 +3,11 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
-use Illuminate\Support\HtmlString;
 use Backstage\Shared\HasPackageFactory;
-use Backstage\Translations\Laravel\Contracts\TranslatesAttributes;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Backstage\Translations\Laravel\Models\Concerns\HasTranslatableAttributes;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\HtmlString;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -18,7 +15,8 @@ use Backstage\Translations\Laravel\Models\Concerns\HasTranslatableAttributes;
  * @property string $value
  */
 class ContentFieldValue extends Pivot
-{    use HasPackageFactory;
+{
+    use HasPackageFactory;
     use HasUlids;
 
     protected $primaryKey = 'ulid';
@@ -51,7 +49,6 @@ class ContentFieldValue extends Pivot
 
             return Content::whereIn('ulid', json_decode($this->value))->get();
         }
-
 
         return json_decode($this->value, true) ?? new HtmlString($this->value);
     }

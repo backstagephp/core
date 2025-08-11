@@ -2,22 +2,20 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\TagResource\Pages\ListTags;
+use Backstage\Models\Tag;
 use Backstage\Resources\TagResource\Pages\CreateTag;
 use Backstage\Resources\TagResource\Pages\EditTag;
-use Backstage\Models\Tag;
-use Backstage\Resources\TagResource\Pages;
+use Backstage\Resources\TagResource\Pages\ListTags;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;

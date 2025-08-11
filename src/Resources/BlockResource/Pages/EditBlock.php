@@ -2,15 +2,14 @@
 
 namespace Backstage\Resources\BlockResource\Pages;
 
-use Illuminate\Support\Str;
-use Filament\Actions\DeleteAction;
 use Backstage\Models\Block;
 use Backstage\Resources\BlockResource;
-use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class EditBlock extends EditRecord
 {

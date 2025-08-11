@@ -4,15 +4,8 @@ namespace Backstage\Actions\Content;
 
 use Backstage\Jobs\Content\TranslateContent;
 use Backstage\Models\Content;
-use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Language;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class TranslateContentAction extends Action
 {
@@ -25,11 +18,11 @@ class TranslateContentAction extends Action
     {
         parent::setUp();
 
-        $this->label(fn(): string => 'Translate');
+        $this->label(fn (): string => 'Translate');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(fn(): string => 'heroicon-o-language');
+        $this->modalIcon(fn (): string => 'heroicon-o-language');
 
         $this->modalHeading(function (array $arguments) {
             $language = Language::query()
@@ -47,9 +40,9 @@ class TranslateContentAction extends Action
             ]);
         });
 
-        $this->modalDescription(fn(): string => __('Are you sure you want to translate this content?'));
+        $this->modalDescription(fn (): string => __('Are you sure you want to translate this content?'));
 
-        $this->modalSubmitActionLabel(fn(): string => __('Translate'));
+        $this->modalSubmitActionLabel(fn (): string => __('Translate'));
 
         $this->action(function (Content $record, array $arguments) {
             $language = Language::query()
