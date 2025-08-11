@@ -35,11 +35,6 @@ class TranslateContent implements ShouldQueue
     {
         try {
             if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->exists()) {
-                Log::info('Skipping translation: Content already in target language.', [
-                    'content_ulid' => $this->content->ulid,
-                    'language_code' => $this->language->code,
-                ]);
-
                 return;
             }
 
@@ -132,11 +127,6 @@ class TranslateContent implements ShouldQueue
             $this->contentUlid = $duplicatedContent->ulid;
 
         } catch (\Exception $e) {
-            Log::error('Failed to translate content.', [
-                'content_ulid' => $this->content->ulid,
-                'language_code' => $this->language->code,
-                'error' => $e->getMessage(),
-            ]);
             $this->fail($e);
         }
     }
