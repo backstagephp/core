@@ -747,7 +747,7 @@ class ContentResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->mutateRecordDataUsing(function (array $data, Content $record) {
                         $values = $record->getFormattedFieldValues();
-                
+
                         $record->values = $values;
 
                         $data['values'] = $record->values;
