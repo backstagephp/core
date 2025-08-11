@@ -63,6 +63,7 @@ class ContentResource extends Resource
     use CanMapDynamicFields {
         resolveFormFields as private traitResolveFormFields;
         resolveFieldInput as private traitResolveFieldInput;
+        mutateBeforeFill as private traitMutateBeforeFill;
     }
 
     protected static ?string $model = Content::class;
@@ -743,7 +744,19 @@ class ContentResource extends Resource
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data, Content $record) {
+                        $values = $record->getFormattedFieldValues();
+
+                        $record->values = $values;
+
+                        $data['values'] = $record->values;
+
+                        $instance = new self;
+                        $data = $instance->traitMutateBeforeFill($data);
+
+                        return $data;
+                    }),
             ])->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
