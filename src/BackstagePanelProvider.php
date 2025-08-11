@@ -30,7 +30,6 @@ class BackstagePanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $this->configureThemeScripts();
-        $this->registerAssets();
 
         $panel = $this->configureBasicSettings($panel);
         $panel = $this->configureTheming($panel);
