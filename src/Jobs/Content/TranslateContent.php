@@ -51,20 +51,14 @@ class TranslateContent implements ShouldQueue
 
             $parentTranslationUlid = null;
 
-            // Check voor de parent content (origineel)
             if ($this->content->parent_ulid) {
-
-                // bestaat deze parent
                 $parent = Content::where('ulid', $this->content->parent_ulid)->first();
 
                 if ($parent) {
-
-                    // Bestaat de parent content met de nieuwe language code al
                     $parentTranslation = Content::where('slug', $parent->slug)
                         ->where('language_code', $this->language->code)
                         ->first();
 
-                        // Bestaat de parent content met de nieuwe language code al
                     if (! $parentTranslation) {
                         $newInstance = new self($parent, $this->language);
 
