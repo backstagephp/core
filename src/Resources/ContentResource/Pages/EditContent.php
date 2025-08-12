@@ -2,20 +2,23 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
+use BackedEnum;
 use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Jobs\TranslateContent;
+use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -54,11 +57,39 @@ class EditContent extends EditRecord
         }
 
         return $breadcrumbs;
-
     }
 
     protected function getHeaderActions(): array
     {
+        $languageActions = Language::all()
+            ->reject(fn (Language $language) => $language->code === $this->getRecord()->language_code)
+            ->map(fn (Language $language) => Action::make($language->code)
+                ->label($language->name)
+                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                ->requiresConfirmation()
+                ->action(function (Content $record) use ($language) {
+                    $slug = $record->slug;
+
+                    $existing = Content::query()
+                        ->where('slug', $slug)
+                        ->where('language_code', $language->code)
+                        ->exists();
+
+                    if ($existing) {
+                        Notification::make()
+                            ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
+                                'slug' => $slug,
+                                'language' => $language->name,
+                            ]))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    dispatch_sync(new TranslateContent($record, $language));
+                }));
+
         return [
             // DuplicateContentAction::make('duplicate'),
             // ActionGroup::make(
@@ -104,6 +135,14 @@ class EditContent extends EditRecord
             //     ->url(fn () => $this->getRecord()->url)
             //     ->openUrlInNewTab(),
             // DeleteAction::make(),
+
+            ActionGroup::make([
+                ...$languageActions,
+            ])
+                ->button()
+                ->color('gray')
+                ->label(fn (): string => __('Translate'))
+                ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage),
         ];
     }
 
