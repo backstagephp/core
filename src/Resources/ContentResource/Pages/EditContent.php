@@ -87,55 +87,10 @@ class EditContent extends EditRecord
                         return;
                     }
 
-                    dispatch_sync(new TranslateContent($record, $language));
+                    TranslateContent::dispatch($record, $language);
                 }));
 
         return [
-            // DuplicateContentAction::make('duplicate'),
-            // ActionGroup::make(
-            //     Language::active()->pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
-            //         // multiple countries
-            //         Language::active()->orderBy('name')
-            //             ->get()
-            //             ->groupBy(function ($language) {
-            //                 return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
-            //             })->map(function ($languages, $countryCode) {
-            //                 return ActionGroup::make(
-            //                     $languages->map(function ($language) use ($countryCode) {
-            //                         return Action::make($language->code . '-' . $countryCode)
-            //                             ->label($language->name)
-            //                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-            //                             ->action(fn () => $this->translate($language));
-            //                     })
-            //                         ->toArray()
-            //                 )
-            //                     ->label(localized_country_name($countryCode) ?: __('Worldwide'))
-            //                     ->color('gray')
-            //                     ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
-            //                     ->iconPosition(IconPosition::After)
-            //                     ->grouped();
-            //             })->toArray() :
-            //         // one country
-            //         Language::active()->orderBy('name')->get()->map(function (Language $language) {
-            //             return Action::make($language->code)
-            //                 ->label($language->name)
-            //                 ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-            //                 ->action(fn () => $this->translate($language));
-            //         })->toArray()
-            // )
-            //     ->label('Translate')
-            //     ->icon('heroicon-o-language')
-            //     ->iconPosition(IconPosition::Before)
-            //     ->color('gray')
-            //     ->button()
-            //     ->visible(fn () => Language::active()->count() > 1),
-            // Action::make('Preview')
-            //     ->color('gray')
-            //     ->icon('heroicon-o-eye')
-            //     ->url(fn () => $this->getRecord()->url)
-            //     ->openUrlInNewTab(),
-            // DeleteAction::make(),
-
             ActionGroup::make([
                 ...$languageActions,
             ])
