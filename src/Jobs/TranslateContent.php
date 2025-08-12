@@ -125,7 +125,6 @@ class TranslateContent implements ShouldQueue
         $this->contentUlid = $duplicatedContent->ulid;
     }
 
-
     protected function isJson($value): bool
     {
         if (! is_string($value)) {
