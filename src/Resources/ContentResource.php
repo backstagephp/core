@@ -753,7 +753,7 @@ class ContentResource extends Resource
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
             ->recordActions([
-               EditAction::make()
+                EditAction::make()
                     ->mutateRecordDataUsing(function (array $data, Content $record) {
                         $values = $record->getFormattedFieldValues();
 
