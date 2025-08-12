@@ -73,14 +73,14 @@ class TagResource extends Resource
                     ])
                     ->url(fn (Tag $record) => route('filament.backstage.resources.content.index', [
                         'tenant' => Filament::getTenant(),
-                        'tableFilters[tags][values]' => [$record->getKey()],
+                        'filters[tags][values]' => [$record->getKey()],
                     ])),
                 TextColumn::make('content_count')
                     ->label('Times used')
                     ->counts('content')
                     ->url(fn (Tag $record) => route('filament.backstage.resources.content.index', [
                         'tenant' => Filament::getTenant(),
-                        'tableFilters[tags][values]' => [$record->getKey()],
+                        'filters[tags][values]' => [$record->getKey()],
                     ])),
             ])
             ->filters([

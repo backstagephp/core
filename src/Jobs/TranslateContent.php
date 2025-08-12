@@ -40,6 +40,7 @@ class TranslateContent implements ShouldQueue
         $duplicatedContent->language_code = $this->language->code;
         $duplicatedContent->meta_tags = [];
         $duplicatedContent->edited_at = now();
+        $duplicatedContent->save();
 
         $parentTranslationUlid = null;
 

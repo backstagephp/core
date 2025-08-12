@@ -78,7 +78,6 @@ class FormResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                // ->url(fn ($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
             ])
             ->filters([
                 //

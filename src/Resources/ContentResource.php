@@ -116,10 +116,10 @@ class ContentResource extends Resource
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem(__('Content'))
-                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('tableFilters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
+                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('filters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
-                    'tableFilters[type_slug][values]' => [$type->slug],
+                    'filters[type_slug][values]' => [$type->slug],
                 ]));
         })->toArray();
 
@@ -129,7 +129,7 @@ class ContentResource extends Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('filters.type_slug.values.0') && ! request()->is('*/meta-tags'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -175,7 +175,7 @@ class ContentResource extends Resource
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
                     // ->withAI(hint: true)
-                    ->canTranslate(enabled: DB::table('languages')->where('active', true)->count() > 1, hint: true)
+                    // ->canTranslate(enabled: DB::table('languages')->where('active', true)->count() > 1, hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(onBlur: true)

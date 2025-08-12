@@ -23,7 +23,7 @@ class ListContentMetaTags extends ListRecords
         foreach ($types as $type) {
             $actions[] = Action::make($type->name)
                 // ->icon($type->icon)
-                ->url(static::getResource()::getUrl('meta_tags', ['tableFilters' => ['type_slug' => ['values' => [$type->slug]]]]))
+                ->url(static::getResource()::getUrl('meta_tags', ['filters' => ['type_slug' => ['values' => [$type->slug]]]]))
                 ->color('primary')
                 ->label($type->name);
         }

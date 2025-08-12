@@ -61,8 +61,12 @@ class EditContent extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        $languageActions = Language::all()
-            ->reject(fn (Language $language) => $language->code === $this->getRecord()->language_code)
+        $languageActions = Language::query()
+            ->where('active', true)
+            ->when($this->getRecord()->language_code ?? null, function ($query, $languageCode) {
+                $query->where('languages.code', '!=', $languageCode);
+            })
+            ->get()
             ->map(fn (Language $language) => Action::make($language->code)
                 ->label($language->name)
                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
