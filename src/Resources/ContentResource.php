@@ -172,7 +172,7 @@ class ContentResource extends Resource
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
                     // ->withAI(hint: true)
-                    ->canTranslate(hint: true)
+                    ->canTranslate(enabled: DB::table('languages')->where('active', true)->count() > 1, hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(onBlur: true)
