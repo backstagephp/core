@@ -2,9 +2,9 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Schemas\Schema;
 use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -36,7 +36,6 @@ class ManageChildrenContent extends ManageRelatedRecords
     {
         return __('Related Content');
     }
-
 
     public function getModelLabel(): string
     {

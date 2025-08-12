@@ -2,9 +2,8 @@
 
 namespace Backstage\Resources\BlockResource\Pages;
 
-use Filament\Actions\CreateAction;
 use Backstage\Resources\BlockResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListBlocks extends ListRecords

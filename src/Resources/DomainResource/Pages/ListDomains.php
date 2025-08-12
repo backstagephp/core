@@ -2,9 +2,8 @@
 
 namespace Backstage\Resources\DomainResource\Pages;
 
-use Filament\Actions\CreateAction;
 use Backstage\Resources\DomainResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListDomains extends ListRecords
