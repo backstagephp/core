@@ -4,8 +4,8 @@ namespace Backstage\Widgets;
 
 use Backstage\Models\Content;
 use Filament\Facades\Filament;
-use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
@@ -18,7 +18,7 @@ class ContentUpdatesWidget extends BaseWidget
         return $table
             ->heading('Recently updated content')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Name')
                     ->url(fn (Content $content) => route('filament.backstage.resources.content.edit', ['tenant' => Filament::getTenant(), 'record' => $content])),
                 ImageColumn::make('authors')
@@ -31,7 +31,7 @@ class ContentUpdatesWidget extends BaseWidget
                     ->limit(1)
                     ->limitedRemainingText()
                     ->url(fn (Content $content) => route('filament.backstage.resources.content.edit', ['tenant' => Filament::getTenant(), 'record' => $content])),
-                Tables\Columns\TextColumn::make('edited_at')
+                TextColumn::make('edited_at')
                     ->since()
                     ->alignRight()
                     ->url(fn (Content $content) => route('filament.backstage.resources.content.edit', ['tenant' => Filament::getTenant(), 'record' => $content])),

@@ -3,7 +3,7 @@
 namespace Backstage\Resources\TypeResource\Pages;
 
 use Backstage\Resources\TypeResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListTypes extends ListRecords
@@ -13,7 +13,7 @@ class ListTypes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

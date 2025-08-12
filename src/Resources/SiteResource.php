@@ -3,20 +3,24 @@
 namespace Backstage\Resources;
 
 use Backstage\Models\Site;
-use Backstage\Resources\SiteResource\Pages;
+use Backstage\Resources\SiteResource\Pages\CreateSite;
+use Backstage\Resources\SiteResource\Pages\EditSite;
+use Backstage\Resources\SiteResource\Pages\ListSites;
 use DateTimeZone;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,7 +30,7 @@ class SiteResource extends Resource
 {
     protected static ?string $model = Site::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-window';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-window';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -47,10 +51,10 @@ class SiteResource extends Resource
         return __('Sites');
     }
 
-    public static function form(Form $form, bool $fullWidth = false): Form
+    public static function form(Schema $schema, bool $fullWidth = false): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -89,6 +93,7 @@ class SiteResource extends Resource
                                         ->helperText('Select default theme.'),
                                     Toggle::make('default')
                                         ->label('Use this site as default.')
+                                        ->default(Site::default()?->ulid === null)
                                         ->columnSpanFull(),
                                     Toggle::make('auth')
                                         ->label('Protect site behind authentication.')
@@ -104,12 +109,26 @@ class SiteResource extends Resource
                                         ->label('Primary color')
                                         ->columnSpanFull()
                                         ->preload()
+                                        ->default(
+                                            collect(Color::all())
+                                                ->map(function ($color, $name) {
+                                                    preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
+
+                                                    return sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]);
+                                                })
+                                                ->put('#000000', 'Black')
+                                                ->filter()
+                                                ->random(preserveKeys: true)
+                                        )
                                         ->options([
                                             collect(Color::all())
-                                                ->mapWithKeys(fn ($color, $name) => [
-                                                    sprintf('#%02x%02x%02x', ...explode(', ', $color[500])) => ucfirst($name),
-                                                ])
+                                                ->mapWithKeys(function ($color, $name) {
+                                                    preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
+
+                                                    return [sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]) => ucfirst($name)];
+                                                })
                                                 ->put('#000000', 'Black')
+                                                ->filter()
                                                 ->sort()
                                                 ->unique()
                                                 ->toArray(),
@@ -155,6 +174,7 @@ class SiteResource extends Resource
                                                 'Asia' => DateTimeZone::ASIA,
                                                 'Europe' => DateTimeZone::EUROPE,
                                                 'Oceania' => DateTimeZone::AUSTRALIA,
+                                                'UTC' => DateTimeZone::UTC,
                                             ])->map(function ($code) {
                                                 return collect(DateTimeZone::listIdentifiers($code))->mapWithKeys(fn ($code) => [$code => $code]);
                                             })
@@ -199,12 +219,12 @@ class SiteResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -219,9 +239,9 @@ class SiteResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSites::route('/'),
-            'create' => Pages\CreateSite::route('/create'),
-            'edit' => Pages\EditSite::route('/{record}/edit'),
+            'index' => ListSites::route('/'),
+            'create' => CreateSite::route('/create'),
+            'edit' => EditSite::route('/{record}/edit'),
         ];
     }
 }

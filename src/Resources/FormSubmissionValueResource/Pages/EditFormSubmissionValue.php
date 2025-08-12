@@ -3,7 +3,7 @@
 namespace Backstage\Resources\FormSubmissionValueResource\Pages;
 
 use Backstage\Resources\FormResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditFormSubmissionValue extends EditRecord
@@ -13,7 +13,7 @@ class EditFormSubmissionValue extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

@@ -4,17 +4,21 @@ namespace Backstage\Resources;
 
 use Backstage\Models\Content;
 use Backstage\Models\MenuItem;
-use Backstage\Resources\MenuItemResource\Pages;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Grid;
+use Backstage\Resources\MenuItemResource\Pages\CreateMenuItem;
+use Backstage\Resources\MenuItemResource\Pages\EditMenuItem;
+use Backstage\Resources\MenuItemResource\Pages\ListMenuItems;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -23,7 +27,7 @@ class MenuItemResource extends Resource
 {
     protected static ?string $model = MenuItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-list-bullet';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -42,10 +46,10 @@ class MenuItemResource extends Resource
         return __('Menu items');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -54,11 +58,11 @@ class MenuItemResource extends Resource
                                 Grid::make(2)
                                     ->schema([
                                         Select::make('parent_ulid')
-                                            ->relationship('parent', 'name', function ($query) use ($form) {
-                                                $query->when($form->getRecord()->menu_slug ?? null, function ($query, $slug) {
+                                            ->relationship('parent', 'name', function ($query) use ($schema) {
+                                                $query->when($schema->getRecord()->menu_slug ?? null, function ($query, $slug) {
                                                     $query->where('menu_slug', $slug);
                                                 });
-                                                $query->where('ulid', '!=', $form->getRecord()->ulid ?? null);
+                                                $query->where('ulid', '!=', $schema->getRecord()->ulid ?? null);
                                             })
                                             ->preload()
                                             ->label('Parent')
@@ -84,9 +88,9 @@ class MenuItemResource extends Resource
                                                     ->modal()
                                                     ->modalHeading('Select Content')
                                                     ->modalWidth('2xl')
-                                                    ->form(
-                                                        fn (Form $form) => $form
-                                                            ->schema([
+                                                    ->schema(
+                                                        fn (Schema $schema) => $schema
+                                                            ->components([
                                                                 Select::make('content_ulid')
                                                                     ->label('Content')
                                                                     ->searchable()
@@ -102,7 +106,7 @@ class MenuItemResource extends Resource
                                                             ])
                                                     )
                                                     ->action(function (array $data, Set $set) {
-                                                        $content = \Backstage\Models\Content::where('ulid', $data['content_ulid'])->first();
+                                                        $content = Content::where('ulid', $data['content_ulid'])->first();
                                                         if ($content) {
                                                             $set('url', $content->url);
                                                         }
@@ -127,12 +131,12 @@ class MenuItemResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -147,9 +151,9 @@ class MenuItemResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMenuItems::route('/'),
-            'create' => Pages\CreateMenuItem::route('/create'),
-            'edit' => Pages\EditMenuItem::route('/{record}/edit'),
+            'index' => ListMenuItems::route('/'),
+            'create' => CreateMenuItem::route('/create'),
+            'edit' => EditMenuItem::route('/{record}/edit'),
         ];
     }
 }

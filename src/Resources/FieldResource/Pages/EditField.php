@@ -3,7 +3,7 @@
 namespace Backstage\Resources\FieldResource\Pages;
 
 use Backstage\Resources\FieldResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditField extends EditRecord
@@ -13,7 +13,7 @@ class EditField extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

@@ -2,19 +2,21 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Actions\Content\DuplicateContentAction;
+use BackedEnum;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Jobs\TranslateContent;
+use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class EditContent extends EditRecord
@@ -52,56 +54,51 @@ class EditContent extends EditRecord
         }
 
         return $breadcrumbs;
-
     }
 
     protected function getHeaderActions(): array
     {
+        $languageActions = Language::query()
+            ->where('active', true)
+            ->when($this->getRecord()->language_code ?? null, function ($query, $languageCode) {
+                $query->where('languages.code', '!=', $languageCode);
+            })
+            ->get()
+            ->map(fn (Language $language) => Action::make($language->code)
+                ->label($language->name)
+                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                ->requiresConfirmation()
+                ->action(function (Content $record) use ($language) {
+                    $slug = $record->slug;
+
+                    $existing = Content::query()
+                        ->where('slug', $slug)
+                        ->where('language_code', $language->code)
+                        ->exists();
+
+                    if ($existing) {
+                        Notification::make()
+                            ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
+                                'slug' => $slug,
+                                'language' => $language->name,
+                            ]))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    TranslateContent::dispatch($record, $language);
+                }));
+
         return [
-            DuplicateContentAction::make('duplicate'),
-            Actions\ActionGroup::make(
-                Language::active()->pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
-                    // multiple countries
-                    Language::active()->orderBy('name')
-                        ->get()
-                        ->groupBy(function ($language) {
-                            return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
-                        })->map(function ($languages, $countryCode) {
-                            return Actions\ActionGroup::make(
-                                $languages->map(function ($language) use ($countryCode) {
-                                    return Actions\Action::make($language->code . '-' . $countryCode)
-                                        ->label($language->name)
-                                        ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                                        ->action(fn () => $this->translate($language));
-                                })
-                                    ->toArray()
-                            )
-                                ->label(localized_country_name($countryCode) ?: __('Worldwide'))
-                                ->color('gray')
-                                ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
-                                ->iconPosition(IconPosition::After)
-                                ->grouped();
-                        })->toArray() :
-                    // one country
-                    Language::active()->orderBy('name')->get()->map(function (Language $language) {
-                        return Actions\Action::make($language->code)
-                            ->label($language->name)
-                            ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-                            ->action(fn () => $this->translate($language));
-                    })->toArray()
-            )
-                ->label('Translate')
-                ->icon('heroicon-o-language')
-                ->iconPosition(IconPosition::Before)
-                ->color('gray')
+            ActionGroup::make([
+                ...$languageActions,
+            ])
                 ->button()
-                ->visible(fn () => Language::active()->count() > 1),
-            Actions\Action::make('Preview')
                 ->color('gray')
-                ->icon('heroicon-o-eye')
-                ->url(fn () => $this->getRecord()->url)
-                ->openUrlInNewTab(),
-            Actions\DeleteAction::make(),
+                ->label(fn (): string => __('Translate'))
+                ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage),
         ];
     }
 

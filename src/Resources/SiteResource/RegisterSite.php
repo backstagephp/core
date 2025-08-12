@@ -5,12 +5,12 @@ namespace Backstage\Resources\SiteResource;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource;
 use Filament\Actions\Action;
-use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Schemas\Schema;
 
 class RegisterSite extends RegisterTenant
 {
-    protected static string $view = 'backstage::filament.sites.register';
+    protected string $view = 'backstage::filament.sites.register';
 
     public static function getLabel(): string
     {
@@ -23,9 +23,9 @@ class RegisterSite extends RegisterTenant
         // return auth()->user()->hasRole('Admin');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return SiteResource::form($form, fullWidth: true);
+        return SiteResource::form($schema, fullWidth: true);
     }
 
     protected function handleRegistration(array $data): Site
