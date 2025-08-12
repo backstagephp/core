@@ -6,6 +6,7 @@ use Backstage\Http\Middleware\Filament\HasTenant;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\RegisterSite;
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -27,6 +28,19 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 class BackstagePanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
+    {
+        $this->configureThemeScripts();
+
+        $panel = $this->configureBasicSettings($panel);
+        $panel = $this->configureTheming($panel);
+        $panel = $this->configureAuthentication($panel);
+        $panel = $this->configureNavigation($panel);
+        $panel = $this->configureTenancy($panel);
+
+        return $panel;
+    }
+
+    protected function configureThemeScripts(): void
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
@@ -65,13 +79,14 @@ class BackstagePanelProvider extends PanelProvider
                 HTML
             ),
         );
+    }
 
+    protected function configureBasicSettings(Panel $panel): Panel
+    {
         return $panel
             ->id('backstage')
             ->path('backstage')
             ->databaseNotifications()
-            ->login()
-            ->passwordReset()
             ->sidebarCollapsibleOnDesktop()
             ->unsavedChangesAlerts()
             ->default(config('backstage.cms.panel.default', true))
@@ -79,10 +94,29 @@ class BackstagePanelProvider extends PanelProvider
             ->resources(config('backstage.cms.panel.resources', []))
             ->widgets(config('backstage.cms.panel.widgets', []))
             ->pages(config('backstage.cms.panel.pages', []))
-            ->defaultAvatarProvider(BackstageAvatarProvider::class)
+            ->defaultAvatarProvider(BackstageAvatarProvider::class);
+    }
+
+    protected function configureTheming(Panel $panel): Panel
+    {
+        return $panel
             ->colors(fn () => [
                 'primary' => Color::generateV3Palette(Site::default()?->primary_color ?: '#ff9900'),
             ])
+            ->brandLogo(function () {
+                if (Filament::getTenant() && Filament::getTenant()->logo) {
+                    return asset(Filament::getTenant()->logo);
+                }
+
+                return '';
+            });
+    }
+
+    protected function configureAuthentication(Panel $panel): Panel
+    {
+        return $panel
+            ->login()
+            ->passwordReset()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -97,7 +131,12 @@ class BackstagePanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
+            ]);
+    }
+
+    protected function configureNavigation(Panel $panel): Panel
+    {
+        return $panel
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Content'),
@@ -107,7 +146,12 @@ class BackstagePanelProvider extends PanelProvider
                     ->label('Users'),
                 NavigationGroup::make()
                     ->label('Manage'),
-            ])
+            ]);
+    }
+
+    protected function configureTenancy(Panel $panel): Panel
+    {
+        return $panel
             ->tenant(Site::class)
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([

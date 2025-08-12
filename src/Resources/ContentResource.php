@@ -71,6 +71,7 @@ class ContentResource extends Resource
     use CanMapDynamicFields {
         resolveFormFields as private traitResolveFormFields;
         resolveFieldInput as private traitResolveFieldInput;
+        mutateBeforeFill as private traitMutateBeforeFill;
     }
 
     protected static ?string $model = Content::class;
@@ -320,7 +321,9 @@ class ContentResource extends Resource
                                                     return [];
                                                 }
 
-                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                                return Rule::unique('content', 'path')
+                                                    ->where('language_code', $get('language_code'))
+                                                    ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
                                             ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
@@ -750,7 +753,19 @@ class ContentResource extends Resource
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
             ->recordActions([
-                EditAction::make(),
+               EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data, Content $record) {
+                        $values = $record->getFormattedFieldValues();
+
+                        $record->values = $values;
+
+                        $data['values'] = $record->values;
+
+                        $instance = new self;
+                        $data = $instance->traitMutateBeforeFill($data);
+
+                        return $data;
+                    }),
             ])->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
@@ -837,7 +852,7 @@ class ContentResource extends Resource
 
         $currentSlug = $get('slug');
 
-        if (! $record?->slug || $currentSlug === Str::slug($record?->name ?? '')) {
+        if (! $record || ! $record->slug || ! $currentSlug) {
             $set('slug', $slug);
         }
     }

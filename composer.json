@@ -102,11 +102,11 @@
         }
     },
     "repositories": {
-        "fields": {
+        "backstage/fields": {
             "type": "git",
             "url": "git@github.com:backstagephp/fields.git"
         },
-        "media": {
+        "backstage/media": {
             "type": "git",
             "url": "git@github.com:backstagephp/media.git"
         },
