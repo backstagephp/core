@@ -2,9 +2,11 @@
 
 namespace Backstage\Resources;
 
+use BackedEnum;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Fields\Fields\RichEditor;
+use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
@@ -19,6 +21,7 @@ use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -44,6 +47,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -67,6 +71,7 @@ class ContentResource extends Resource
     use CanMapDynamicFields {
         resolveFormFields as private traitResolveFormFields;
         resolveFieldInput as private traitResolveFieldInput;
+        mutateBeforeFill as private traitMutateBeforeFill;
     }
 
     protected static ?string $model = Content::class;
@@ -112,10 +117,10 @@ class ContentResource extends Resource
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem(__('Content'))
-                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('tableFilters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
+                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('filters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
-                    'tableFilters[type_slug][values]' => [$type->slug],
+                    'filters[type_slug][values]' => [$type->slug],
                 ]));
         })->toArray();
 
@@ -125,7 +130,7 @@ class ContentResource extends Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('filters.type_slug.values.0') && ! request()->is('*/meta-tags'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -171,7 +176,7 @@ class ContentResource extends Resource
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
                     // ->withAI(hint: true)
-                    ->canTranslate(hint: true)
+                    // ->canTranslate(enabled: DB::table('languages')->where('active', true)->count() > 1, hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(onBlur: true)
@@ -316,7 +321,9 @@ class ContentResource extends Resource
                                                     return [];
                                                 }
 
-                                                return Rule::unique('content', 'path')->ignore($record?->getKey(), $record?->getKeyName());
+                                                return Rule::unique('content', 'path')
+                                                    ->where('language_code', $get('language_code'))
+                                                    ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
                                             ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
@@ -746,7 +753,19 @@ class ContentResource extends Resource
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data, Content $record) {
+                        $values = $record->getFormattedFieldValues();
+
+                        $record->values = $values;
+
+                        $data['values'] = $record->values;
+
+                        $instance = new self;
+                        $data = $instance->traitMutateBeforeFill($data);
+
+                        return $data;
+                    }),
             ])->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
@@ -757,6 +776,46 @@ class ContentResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+
+                BulkActionGroup::make([
+                    ...Language::all()
+                        ->map(
+                            fn (Language $language) => BulkAction::make($language->code)
+                                ->label($language->name)
+                                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                                ->requiresConfirmation()
+                                ->action(function (Collection $records) use ($language) {
+                                    $records = $records->filter(function (Content $record) use ($language) {
+                                        $slug = $record->slug;
+
+                                        return ! Content::query()
+                                            ->where('slug', $slug)
+                                            ->where('language_code', $language->code)
+                                            ->exists();
+                                    });
+
+                                    $records->each(function (Content $record) use ($language) {
+                                        $slug = $record->slug;
+
+                                        $existing = Content::query()
+                                            ->where('slug', $slug)
+                                            ->where('language_code', $language->code)
+                                            ->exists();
+
+                                        if ($existing) {
+                                            return;
+                                        }
+
+                                        TranslateContent::dispatch(
+                                            content: $record,
+                                            language: $language
+                                        );
+                                    });
+                                })
+                        ),
+                ])
+                    ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage)
+                    ->label(fn (): string => __('Translate')),
             ]);
     }
 
@@ -793,7 +852,7 @@ class ContentResource extends Resource
 
         $currentSlug = $get('slug');
 
-        if (! $record?->slug || $currentSlug === Str::slug($record?->name ?? '')) {
+        if (! $record || ! $record->slug || ! $currentSlug) {
             $set('slug', $slug);
         }
     }

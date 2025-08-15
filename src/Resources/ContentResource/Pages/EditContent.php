@@ -2,20 +2,21 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Actions\Content\DuplicateContentAction;
+use BackedEnum;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Jobs\TranslateContent;
+use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconPosition;
-use Illuminate\Support\HtmlString;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class EditContent extends EditRecord
@@ -53,56 +54,51 @@ class EditContent extends EditRecord
         }
 
         return $breadcrumbs;
-
     }
 
     protected function getHeaderActions(): array
     {
+        $languageActions = Language::query()
+            ->where('active', true)
+            ->when($this->getRecord()->language_code ?? null, function ($query, $languageCode) {
+                $query->where('languages.code', '!=', $languageCode);
+            })
+            ->get()
+            ->map(fn (Language $language) => Action::make($language->code)
+                ->label($language->name)
+                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                ->requiresConfirmation()
+                ->action(function (Content $record) use ($language) {
+                    $slug = $record->slug;
+
+                    $existing = Content::query()
+                        ->where('slug', $slug)
+                        ->where('language_code', $language->code)
+                        ->exists();
+
+                    if ($existing) {
+                        Notification::make()
+                            ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
+                                'slug' => $slug,
+                                'language' => $language->name,
+                            ]))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    TranslateContent::dispatch($record, $language);
+                }));
+
         return [
-            // DuplicateContentAction::make('duplicate'),
-            // ActionGroup::make(
-            //     Language::active()->pluck('code')->map(fn ($languageCode) => explode('-', $languageCode)[1] ?? '')->unique()->count() > 1 ?
-            //         // multiple countries
-            //         Language::active()->orderBy('name')
-            //             ->get()
-            //             ->groupBy(function ($language) {
-            //                 return Str::contains($language->code, '-') ? strtolower(explode('-', $language->code)[1]) : '';
-            //             })->map(function ($languages, $countryCode) {
-            //                 return ActionGroup::make(
-            //                     $languages->map(function ($language) use ($countryCode) {
-            //                         return Action::make($language->code . '-' . $countryCode)
-            //                             ->label($language->name)
-            //                             ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-            //                             ->action(fn () => $this->translate($language));
-            //                     })
-            //                         ->toArray()
-            //                 )
-            //                     ->label(localized_country_name($countryCode) ?: __('Worldwide'))
-            //                     ->color('gray')
-            //                     ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . ($countryCode ?: 'worldwide') . '.svg')))))
-            //                     ->iconPosition(IconPosition::After)
-            //                     ->grouped();
-            //             })->toArray() :
-            //         // one country
-            //         Language::active()->orderBy('name')->get()->map(function (Language $language) {
-            //             return Action::make($language->code)
-            //                 ->label($language->name)
-            //                 ->icon(new HtmlString('data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg')))))
-            //                 ->action(fn () => $this->translate($language));
-            //         })->toArray()
-            // )
-            //     ->label('Translate')
-            //     ->icon('heroicon-o-language')
-            //     ->iconPosition(IconPosition::Before)
-            //     ->color('gray')
-            //     ->button()
-            //     ->visible(fn () => Language::active()->count() > 1),
-            // Action::make('Preview')
-            //     ->color('gray')
-            //     ->icon('heroicon-o-eye')
-            //     ->url(fn () => $this->getRecord()->url)
-            //     ->openUrlInNewTab(),
-            // DeleteAction::make(),
+            ActionGroup::make([
+                ...$languageActions,
+            ])
+                ->button()
+                ->color('gray')
+                ->label(fn (): string => __('Translate'))
+                ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage),
         ];
     }
 
@@ -168,21 +164,27 @@ class EditContent extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['values'] = $this->getRecord()->values()->get()->mapWithKeys(function ($value) {
+        if (! isset($data[$this->getRecord()->valueColumn])) {
+            $data[$this->getRecord()->valueColumn] = [];
+        }
 
-            if (! $value->field) {
-                return [];
-            }
+        // Get all values as an array: [ulid => value]
+        $values = $this->getRecord()->getFormattedFieldValues();
 
-            $value->value = json_decode($value->value, true) ?? $value->value;
+        $this->getRecord()->values = $values;
 
-            return [$value->field->ulid => $value->value];
-        })->toArray();
-
-        return $data;
+        return $this->mutateBeforeFill($data);
     }
 
     protected function afterSave(): void
+    {
+        $this->handleTags();
+        $this->handleValues();
+        $this->updateEditedAt();
+        $this->syncAuthors();
+    }
+
+    private function handleTags(): void
     {
         $tags = collect($this->data['tags'] ?? [])
             ->filter(fn ($tag) => filled($tag))
@@ -193,42 +195,139 @@ class EditContent extends EditRecord
             ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
+    }
 
+    private function handleValues(): void
+    {
         collect($this->data['values'] ?? [])
             ->each(function ($value, $field) {
+                $fieldModel = \Backstage\Fields\Models\Field::where('ulid', $field)->first();
 
-                $value = isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+                $value = $this->prepareValue($value);
 
-                if (blank($value)) {
-                    $this->getRecord()->values()->where([
-                        'content_ulid' => $this->getRecord()->getKey(),
-                        'field_ulid' => $field,
-                    ])->delete();
+                if ($this->shouldDeleteValue($value)) {
+                    $this->deleteValue($field);
 
                     return;
                 }
 
-                $this->getRecord()->values()->updateOrCreate([
-                    'content_ulid' => $this->getRecord()->getKey(),
-                    'field_ulid' => $field,
-                ], [
-                    'value' => is_array($value) ? json_encode($value) : $value,
-                ]);
-            });
+                if ($fieldModel && $fieldModel->field_type === 'rich-editor') {
+                    $value = $this->handleRichEditorField($value, $fieldModel);
+                }
 
+                if ($fieldModel && $fieldModel->field_type === 'builder') {
+                    $this->handleBuilderField($value, $field);
+
+                    return;
+                }
+
+                $this->updateOrCreateValue($value, $field);
+            });
+    }
+
+    private function prepareValue($value)
+    {
+        return isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
+    }
+
+    private function shouldDeleteValue($value): bool
+    {
+        return blank($value);
+    }
+
+    private function deleteValue($field): void
+    {
+        $this->getRecord()->values()->where([
+            'content_ulid' => $this->getRecord()->getKey(),
+            'field_ulid' => $field,
+        ])->delete();
+    }
+
+    private function handleRichEditorField($value, $fieldModel)
+    {
+        $autoCleanContent = $fieldModel->config['autoCleanContent'] ?? true;
+
+        if ($autoCleanContent && ! empty($value)) {
+            $options = [
+                'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
+            ];
+            $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
+        }
+
+        return $value;
+    }
+
+    private function handleBuilderField($value, $field): void
+    {
+        $value = $this->decodeAllJsonStrings($value);
+
+        $this->getRecord()->values()->updateOrCreate([
+            'content_ulid' => $this->getRecord()->getKey(),
+            'field_ulid' => $field,
+        ], [
+            'value' => is_array($value) ? json_encode($value) : $value,
+        ]);
+    }
+
+    private function updateOrCreateValue($value, $field): void
+    {
+        $this->getRecord()->values()->updateOrCreate([
+            'content_ulid' => $this->getRecord()->getKey(),
+            'field_ulid' => $field,
+        ], [
+            'value' => is_array($value) ? json_encode($value) : $value,
+        ]);
+    }
+
+    private function updateEditedAt(): void
+    {
         $this->getRecord()->update([
             'edited_at' => now(),
         ]);
+    }
 
-        $this->getRecord()->authors()->syncWithoutDetaching(auth()->id());
+    private function syncAuthors(): void
+    {
+        $this->getRecord()->authors()->syncWithoutDetaching(Auth::id());
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = $this->mutateBeforeSave($data);
 
+        $this->data['values'] = $data['values'];
+
         unset($data['tags']);
         unset($data['values']);
+
+        return $data;
+    }
+
+    private function decodeAllJsonStrings($data, $path = '')
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $currentPath = $path === '' ? $key : $path . '.' . $key;
+                if (is_string($value)) {
+                    $decoded = $value;
+                    $decodeCount = 0;
+                    while (is_string($decoded)) {
+                        $json = json_decode($decoded, true);
+                        if ($json !== null && (is_array($json) || is_object($json))) {
+                            $decoded = $json;
+                            $decodeCount++;
+                        } else {
+                            break;
+                        }
+                    }
+                    if ($decodeCount > 0) {
+                        $data[$key] = $this->decodeAllJsonStrings($decoded, $currentPath);
+                    }
+                } elseif (is_array($value)) {
+                    $data[$key] = $this->decodeAllJsonStrings($value, $currentPath);
+                }
+            }
+        }
 
         return $data;
     }

@@ -16,7 +16,7 @@ class CheckboxList extends Base
 
     public static function mutateBeforeSaveCallback(Model $record, Field $field, array $data): array
     {
-        if (! isset($field->config['optionType']) || $field->config['optionType'] !== 'relationship' || empty($field->config['relations'])) {
+        if (! isset($field->config['optionType']) || ! collect($field->config['optionType'])->contains('relationship') || empty($field->config['relations'])) {
             return $data;
         }
 

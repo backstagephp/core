@@ -33,12 +33,12 @@
     ],
     "require": {
         "php": "^8.2",
-        "backstage/fields": "dev-release/1.x",
+        "backstage/fields": "^0.7.0",
         "backstage/media": "dev-release/1.x",
         "backstage/redirects": "dev-release/1.x",
-        "backstage/translations": "dev-release/1.x",
+        "backstage/translations": "dev-feature/morph-translations",
         "baspa/laravel-timezones": "^1.2",
-        "codewithdennis/filament-select-tree": "4.x-dev",
+        "codewithdennis/filament-select-tree": "^4.0.0-beta.1",
         "filament/filament": "^4.0",
         "nette/php-generator": "^4.1",
         "saade/filament-adjacency-list": "dev-release/filament-v4",
@@ -102,11 +102,11 @@
         }
     },
     "repositories": {
-        "fields": {
+        "backstage/fields": {
             "type": "git",
             "url": "git@github.com:backstagephp/fields.git"
         },
-        "media": {
+        "backstage/media": {
             "type": "git",
             "url": "git@github.com:backstagephp/media.git"
         },
@@ -121,11 +121,6 @@
         "saade/filament-adjacency-list": {
             "type": "git",
             "url": "git@github.com:backstagephp/filament-adjacency-list.git"
-        },
-        "codewithdennis/filament-select-tree": {
-            "type": "git",
-            "url": "git@github.com:backstagephp/filament-select-tree.git",
-            "reference": "4.x"
         }
     },
     "minimum-stability": "dev",

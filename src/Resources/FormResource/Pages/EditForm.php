@@ -17,7 +17,7 @@ class EditForm extends EditRecord
         return [
             Action::make('Submissions')
                 ->label(__('Submissions'))
-                ->url(route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$this->record->slug]]]])),
+                ->url(route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'filters' => ['form_slug' => ['values' => [$this->record->slug]]]])),
             DeleteAction::make(),
         ];
     }

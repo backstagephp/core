@@ -11,7 +11,6 @@ use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Tabs;
@@ -78,7 +77,6 @@ class FormResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                // ->url(fn ($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
             ])
             ->filters([
                 //

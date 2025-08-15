@@ -83,7 +83,7 @@ class ListContent extends ListRecords
 
     protected function shouldBeReorderable(): bool
     {
-        return isset($this->tableFilters['parent_ulid']['value']) &&
-            $this->tableFilters['parent_ulid']['value'] === '0';
+        return isset($this->filters['parent_ulid']['value']) &&
+            $this->filters['parent_ulid']['value'] === '0';
     }
 }

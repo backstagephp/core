@@ -150,7 +150,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+        $this->app->make(Kernel::class)->appendMiddlewareToGroup('web', SetLocale::class);
 
         // Asset Registration
         FilamentAsset::register(
