@@ -6,6 +6,7 @@ use Backstage\Http\Middleware\Filament\HasTenant;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\RegisterSite;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -87,7 +88,16 @@ class BackstagePanelProvider extends PanelProvider
             ->id('backstage')
             ->path('backstage')
             ->databaseNotifications()
+            ->login()
+            ->passwordReset()
+            ->emailVerification()
+            ->emailChangeVerification()
+            ->profile()
             ->sidebarCollapsibleOnDesktop()
+            ->multiFactorAuthentication([
+                AppAuthentication::make()
+                    ->recoverable(),
+            ])
             ->unsavedChangesAlerts()
             ->default(config('backstage.cms.panel.default', true))
             ->plugins(config('backstage.cms.panel.plugins', []))
