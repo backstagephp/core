@@ -3,7 +3,6 @@
 namespace Backstage\CustomFields;
 
 use Backstage\Fields\Fields\Select as Base;
-use Backstage\Fields\Models\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 

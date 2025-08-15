@@ -81,8 +81,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         'app_authentication_recovery_codes',
     ];
 
-
-
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class);
