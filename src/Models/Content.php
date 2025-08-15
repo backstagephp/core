@@ -91,6 +91,25 @@ class Content extends Model
             ->with('field');
     }
 
+    /**
+     * Get formatted field values as a key-value array where keys are field ULIDs.
+     * This method processes JSON values and returns them in a format suitable for forms.
+     * Used in the EditContent page to fill the form with existing values and
+     * in the ContentResource to fill the table with existing values, which is needed in
+     * the ManageChildrenContent page.
+     */
+    public function getFormattedFieldValues(): array
+    {
+        return $this->values()->get()->mapWithKeys(function ($value) {
+            if (! $value->field) {
+                return [];
+            }
+            $value->value = json_decode($value->value, true) ?? $value->value;
+
+            return [$value->field->ulid => $value->value];
+        })->toArray();
+    }
+
     public function fields(): HasManyThrough
     {
         return $this->hasManyThrough(
@@ -104,7 +123,7 @@ class Content extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     * @return Attribute<Provider, string>
      */
     protected function url(): Attribute
     {
@@ -152,7 +171,7 @@ class Content extends Model
     /**
      * The full url, domain and language path. Without the content path, with trailing slash.
      *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Provider, string>
+     * @return Attribute<Provider, string>
      */
     protected function pathPrefix(): Attribute
     {
@@ -214,7 +233,7 @@ class Content extends Model
     }
 
     /** Returns the value of a field based on the slug. */
-    public function field(string $slug): HtmlString | Collection | array | float | int
+    public function field(string $slug): HtmlString | Collection | array | string
     {
         $value = $this->values->where('field.slug', $slug)->first();
 

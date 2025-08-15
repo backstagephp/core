@@ -3,8 +3,8 @@
 namespace Backstage\Resources\ContentResource\Pages;
 
 use Backstage\Resources\ContentResource;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -14,7 +14,7 @@ class ManageChildrenContent extends ManageRelatedRecords
 
     protected static string $relationship = 'children';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
     public function getTitle(): string | Htmlable
     {
@@ -37,7 +37,7 @@ class ManageChildrenContent extends ManageRelatedRecords
         return __('Related Content');
     }
 
-    public static function getModelLabel(): string
+    public function getModelLabel(): string
     {
         return __('Related Content');
     }
@@ -47,9 +47,9 @@ class ManageChildrenContent extends ManageRelatedRecords
         return __('Related Content');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return ContentResource::form($form);
+        return ContentResource::form($schema);
     }
 
     public function table(Table $table): Table

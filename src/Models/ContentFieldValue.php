@@ -40,7 +40,7 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function value()
+    public function value(): Content | array | string | null
     {
         if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations'])) {
             if (! json_validate($this->value)) {
@@ -50,6 +50,15 @@ class ContentFieldValue extends Pivot
             return Content::whereIn('ulid', json_decode($this->value))->get();
         }
 
-        return json_decode($this->value, true) ?? new HtmlString($this->value);
+        $decoded = json_decode($this->value, true);
+
+        // If the decoded value is an array (like blocks), return it as is
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        // For all other cases, ensure the value is returned as a string
+        // This prevents automatic type casting of numeric values
+        return new HtmlString($this->value ?? '');
     }
 }

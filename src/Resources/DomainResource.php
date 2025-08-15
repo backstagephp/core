@@ -3,15 +3,19 @@
 namespace Backstage\Resources;
 
 use Backstage\Models\Domain;
-use Backstage\Resources\DomainResource\Pages;
+use Backstage\Resources\DomainResource\Pages\CreateDomain;
+use Backstage\Resources\DomainResource\Pages\EditDomain;
+use Backstage\Resources\DomainResource\Pages\ListDomains;
 use Backstage\Resources\DomainResource\RelationManagers\LanguagesRelationManager;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -19,7 +23,7 @@ class DomainResource extends Resource
 {
     protected static ?string $model = Domain::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-globe-alt';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -40,10 +44,10 @@ class DomainResource extends Resource
         return __('Domains');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -53,10 +57,13 @@ class DomainResource extends Resource
                                     ->label('Domain name')
                                     ->columnSpanFull()
                                     ->afterStateUpdated(fn (string $state): string => preg_replace('/^(http)(s)?:\/\//i', '', $state))
+                                    ->placeholder('example.com')
+                                    ->default(parse_url(config('app.url', ''))['host'] ?? '')
                                     ->required(),
                                 Select::make('environment')
                                     ->label('Environment')
                                     ->columnSpanFull()
+                                    ->default(config('app.env', 'local'))
                                     ->options([
                                         'local' => __('Local'),
                                         'production' => __('Production'),
@@ -88,12 +95,12 @@ class DomainResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -108,9 +115,9 @@ class DomainResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDomains::route('/'),
-            'create' => Pages\CreateDomain::route('/create'),
-            'edit' => Pages\EditDomain::route('/{record}/edit'),
+            'index' => ListDomains::route('/'),
+            'create' => CreateDomain::route('/create'),
+            'edit' => EditDomain::route('/{record}/edit'),
         ];
     }
 }

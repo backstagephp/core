@@ -3,7 +3,7 @@
 namespace Backstage\Resources\TemplateResource\Pages;
 
 use Backstage\Resources\TemplateResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTemplate extends EditRecord
@@ -13,7 +13,7 @@ class EditTemplate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

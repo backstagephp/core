@@ -4,16 +4,19 @@ namespace Backstage\Resources;
 
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Form as FormModel;
-use Backstage\Resources\FormResource\Pages;
+use Backstage\Resources\FormResource\Pages\CreateForm;
+use Backstage\Resources\FormResource\Pages\EditForm;
+use Backstage\Resources\FormResource\Pages\ListForms;
 use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -22,7 +25,7 @@ class FormResource extends Resource
 {
     protected static ?string $model = FormModel::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -38,10 +41,10 @@ class FormResource extends Resource
         return __('Forms');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -74,17 +77,16 @@ class FormResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                // ->url(fn ($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -100,9 +102,9 @@ class FormResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListForms::route('/'),
-            'create' => Pages\CreateForm::route('/create'),
-            'edit' => Pages\EditForm::route('/{record}/edit'),
+            'index' => ListForms::route('/'),
+            'create' => CreateForm::route('/create'),
+            'edit' => EditForm::route('/{record}/edit'),
         ];
     }
 }

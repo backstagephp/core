@@ -1,10 +1,12 @@
 <?php
 
+use Backstage\Models\Setting;
+
 if (! function_exists('setting')) {
     function setting($key, $default = null)
     {
         $keys = explode('.', $key);
-        $setting = \Backstage\Models\Setting::where('slug', $keys[0] ?? null)->with('fields')->first();
+        $setting = Setting::where('slug', $keys[0] ?? null)->with('fields')->first();
 
         if (! $setting) {
             return $default;

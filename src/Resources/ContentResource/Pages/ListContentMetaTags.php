@@ -5,8 +5,8 @@ namespace Backstage\Resources\ContentResource\Pages;
 use Backstage\Models\Content;
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
-use Filament\Actions;
-use Filament\Facades\Filament;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -18,22 +18,17 @@ class ListContentMetaTags extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\ActionGroup::make(
-                Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
-                        ->slideOver()
-                        ->modalWidth('6xl')
-                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                )->toArray()
-            )
-                ->label(__('New Content'))
-                ->dropdownPlacement('bottom-end')
-                ->icon('heroicon-o-chevron-down')
-                ->iconPosition('after')
-                ->button(),
-        ];
+        $types = Type::orderBy('name')->get();
+        $actions = [];
+        foreach ($types as $type) {
+            $actions[] = Action::make($type->name)
+                // ->icon($type->icon)
+                ->url(static::getResource()::getUrl('meta_tags', ['filters' => ['type_slug' => ['values' => [$type->slug]]]]))
+                ->color('primary')
+                ->label($type->name);
+        }
+
+        return [ActionGroup::make($actions)];
     }
 
     public function table(Table $table): Table

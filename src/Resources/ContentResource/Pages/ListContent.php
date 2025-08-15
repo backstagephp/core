@@ -4,7 +4,8 @@ namespace Backstage\Resources\ContentResource\Pages;
 
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
@@ -21,40 +22,34 @@ class ListContent extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        $typeFilterActions = [];
+        $typeCreateActions = [];
+        foreach (Type::orderBy('name')->get() as $type) {
+            $typeFilterActions[] = Action::make(__($type->name))
+                ->url(fn (): string => route('filament.backstage.resources.content.index', ['type' => $type->slug, 'show' => 'database', 'tenant' => Filament::getTenant()]));
+            $typeCreateActions[] = Action::make(__($type->name))
+                ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]));
+        }
+
         return [
-            Actions\ActionGroup::make([
-                Actions\Action::make(__('List'))
-                    ->url(fn (): string => route('filament.backstage.resources.content.index', ['tenant' => Filament::getTenant()]))
-                    ->icon('heroicon-o-bars-3')
-                    ->iconPosition('before'),
-
-                Actions\ActionGroup::make(
-                    Type::orderBy('name')->get()->map(
-                        fn ($type) => Actions\Action::make(__($type->name))
-                            ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                            ->url(fn (): string => route('filament.backstage.resources.content.index', ['type' => $type->slug, 'show' => 'database', 'tenant' => Filament::getTenant()]))
-                    )->toArray()
-                )
-                    ->label(__('Database'))
-                    ->dropdownPlacement('bottom-end')
-                    ->color('gray')
-                    ->icon('heroicon-o-circle-stack')
-                    ->iconPosition('before')
-                    ->grouped(false),
-            ])
-                ->label($this->show == 'database' ? __('Viewed as: :type (:slug)', ['type' => __('Database'), 'slug' => $this->type]) : __('Viewed as: :type', ['type' => __('List')]))
-                ->dropdownPlacement('bottom-start')
-                ->color('gray')
+            Action::make(__('List'))
+                ->url(fn (): string => route('filament.backstage.resources.content.index', ['tenant' => Filament::getTenant()]))
                 ->icon('heroicon-o-bars-3')
-                ->iconPosition('before')
-                ->button(),
+                ->color($this->show != 'database' ? null : 'gray')
+                ->iconPosition('before'),
 
-            Actions\ActionGroup::make(
-                Type::orderBy('name')->get()->map(
-                    fn ($type) => Actions\Action::make(__($type->name))
-                        ->url(fn (): string => route('filament.backstage.resources.content.create', ['type' => $type->slug, 'tenant' => Filament::getTenant()]))
-                        ->icon($type->icon ? 'heroicon-o-' . $type->icon : 'heroicon-o-document')
-                )->toArray()
+            ActionGroup::make(
+                $typeFilterActions
+            )
+                ->label(__('Database') . ($this->type ? ' (' . Type::where('slug', $this->type)->firstOrFail()->name . ')' : ''))
+                ->dropdownPlacement('bottom-end')
+                ->color($this->show == 'database' ? null : 'gray')
+                ->icon('heroicon-o-circle-stack')
+                ->iconPosition('before')
+                ->grouped(false)
+                ->button(),
+            ActionGroup::make(
+                $typeCreateActions
             )
                 ->label(__('New Content'))
                 ->dropdownPlacement('bottom-end')
@@ -88,7 +83,7 @@ class ListContent extends ListRecords
 
     protected function shouldBeReorderable(): bool
     {
-        return isset($this->tableFilters['parent_ulid']['value']) &&
-            $this->tableFilters['parent_ulid']['value'] === '0';
+        return isset($this->filters['parent_ulid']['value']) &&
+            $this->filters['parent_ulid']['value'] === '0';
     }
 }

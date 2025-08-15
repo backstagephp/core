@@ -3,20 +3,19 @@
 namespace Backstage\CustomFields;
 
 use Backstage\Fields\Fields\Select as Base;
-use Backstage\Fields\Models\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Select extends Base
 {
-    public static function mutateFormDataCallback(Model $record, Field $field, array $data): array
+    public static function mutateFormDataCallback(Model $record, mixed $field, array $data): array
     {
         return $data;
     }
 
-    public static function mutateBeforeSaveCallback(Model $record, Field $field, array $data): array
+    public static function mutateBeforeSaveCallback(Model $record, mixed $field, array $data): array
     {
-        if (! isset($field->config['optionType']) || $field->config['optionType'] !== 'relationship' || empty($field->config['relations'])) {
+        if (! isset($field->config['optionType']) || ! collect($field->config['optionType'])->contains('relationship') || empty($field->config['relations'])) {
             return $data;
         }
 

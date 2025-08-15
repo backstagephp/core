@@ -3,7 +3,7 @@
 namespace Backstage\Resources\MenuResource\Pages;
 
 use Backstage\Resources\MenuResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditMenu extends EditRecord
@@ -13,7 +13,7 @@ class EditMenu extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

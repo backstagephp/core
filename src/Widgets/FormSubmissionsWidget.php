@@ -4,7 +4,7 @@ namespace Backstage\Widgets;
 
 use Backstage\Models\FormSubmission;
 use Filament\Facades\Filament;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
@@ -22,7 +22,7 @@ class FormSubmissionsWidget extends BaseWidget
                     ->latest()
             )
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label('Title'),
             ])
             ->defaultPaginationPageOption(5);
