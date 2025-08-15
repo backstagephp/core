@@ -2,16 +2,20 @@
 
 namespace Backstage;
 
-use Backstage\Http\Middleware\Filament\HasTenant;
 use Filament\Panel;
+use Backstage\Models\Site;
 use Filament\PanelProvider;
+use Filament\Facades\Filament;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
+use Backstage\BackstageAvatarProvider;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Backstage\Http\Middleware\Filament\HasTenant;
 use Backstage\Resources\SiteResource\RegisterSite;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
