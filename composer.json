@@ -33,7 +33,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "backstage/fields": "dev-release/filament-v4",
+        "backstage/fields": "0.7.0",
         "backstage/media": "dev-release/1.x",
         "backstage/redirects": "dev-release/1.x",
         "backstage/translations": "dev-feature/morph-translations",
