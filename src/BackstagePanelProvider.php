@@ -97,7 +97,7 @@ class BackstagePanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->multiFactorAuthentication([
                 AppAuthentication::make()
-                ->recoverable(),
+                    ->recoverable(),
             ])
             ->unsavedChangesAlerts()
             ->default(config('backstage.cms.panel.default', true))
