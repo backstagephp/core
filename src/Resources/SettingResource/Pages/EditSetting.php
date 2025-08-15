@@ -4,12 +4,12 @@ namespace Backstage\Resources\SettingResource\Pages;
 
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Resources\SettingResource;
-use Filament\Actions;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 
 class EditSetting extends EditRecord
 {
@@ -20,14 +20,14 @@ class EditSetting extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
@@ -53,7 +53,7 @@ class EditSetting extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // $data = $this->mutateBeforeFill($data);
+        $data = $this->mutateBeforeFill($data);
 
         return $data;
     }

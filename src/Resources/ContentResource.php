@@ -2,9 +2,11 @@
 
 namespace Backstage\Resources;
 
+use BackedEnum;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Fields\Fields\RichEditor;
+use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
@@ -18,28 +20,34 @@ use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
+use Filament\Panel;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -63,13 +71,14 @@ class ContentResource extends Resource
     use CanMapDynamicFields {
         resolveFormFields as private traitResolveFormFields;
         resolveFieldInput as private traitResolveFieldInput;
+        mutateBeforeFill as private traitMutateBeforeFill;
     }
 
     protected static ?string $model = Content::class;
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    protected static ?\Filament\Pages\Enums\SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
     protected static ?Type $type = null;
 
@@ -94,7 +103,7 @@ class ContentResource extends Resource
         return __('Content');
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return 'content';
     }
@@ -108,10 +117,10 @@ class ContentResource extends Resource
             return NavigationItem::make($type->slug)
                 ->label($type->name_plural)
                 ->parentItem(__('Content'))
-                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('tableFilters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
+                ->isActiveWhen(fn (NavigationItem $item) => in_array($type->slug, [request()->input('filters.type_slug.values.0'), $content?->type?->slug, request()->route()->parameter('type')?->slug ?? null]))
                 ->url(route('filament.backstage.resources.content.index', [
                     'tenant' => Filament::getTenant(),
-                    'tableFilters[type_slug][values]' => [$type->slug],
+                    'filters[type_slug][values]' => [$type->slug],
                 ]));
         })->toArray();
 
@@ -121,7 +130,7 @@ class ContentResource extends Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('tableFilters.type_slug.values.0') && ! request()->is('*/meta-tags'))
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*') && ! request()->input('filters.type_slug.values.0') && ! request()->is('*/meta-tags'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -150,22 +159,24 @@ class ContentResource extends Resource
             });
         }
 
-        return $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+        $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
             $query->where('language_code', $languageCode);
         });
+
+        return $query;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        self::$type = Type::firstWhere('slug', ($form->getLivewire()->data['type_slug'] ?? $form->getRecord()->type_slug));
+        self::$type = Type::firstWhere('slug', ($schema->getLivewire()->data['type_slug'] ?? $schema->getRecord()->type_slug));
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->placeholder(__('Name'))
                     ->columnSpanFull()
                     // ->withAI(hint: true)
-                    ->canTranslate(hint: true)
+                    // ->canTranslate(enabled: DB::table('languages')->where('active', true)->count() > 1, hint: true)
                     ->extraInputAttributes(['style' => 'font-size: 30px'])
                     ->required()
                     ->live(onBlur: true)
@@ -175,6 +186,7 @@ class ContentResource extends Resource
                     }),
 
                 Grid::make(12)
+                    ->columnSpanFull()
                     ->schema([
                         Tabs::make('Tabs')
                             ->columnSpan(8)
@@ -267,26 +279,25 @@ class ContentResource extends Resource
                                         SelectTree::make('parent_ulid')
                                             ->label(__('Parent'))
                                             ->placeholder(__('Select parent content'))
-                                            ->searchable()
-                                            ->withCount()
-                                            ->required(fn () => self::$type->parent_required)
-                                            ->key(fn (Get $get) => 'parent_ulid_' . ($get('language_code') ?? ''))
-                                            ->rules([
-                                                Rule::exists('content', 'ulid')
-                                                    ->where('language_code', $form->getLivewire()->data['language_code'] ?? null),
-                                            ])
-                                            ->enableBranchNode()
                                             ->relationship(
                                                 relationship: 'parent',
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
-                                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($form) {
-                                                    return self::applyParentQueryFilters($query, $form);
+                                                modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
+                                                    return self::applyParentQueryFilters($query, $schema);
                                                 },
                                             )
-                                            ->default(function (Get $get) use ($form) {
+                                            ->searchable()
+                                            ->withCount()
+                                            ->required(fn () => self::$type->parent_required)
+                                            ->rules([
+                                                Rule::exists('content', 'ulid')
+                                                    ->where('language_code', $schema->getLivewire()->data['language_code'] ?? null),
+                                            ])
+                                            ->enableBranchNode()
+                                            ->default(function (Get $get) use ($schema) {
                                                 $query = Content::query();
-                                                $query = self::applyParentQueryFilters($query, $form);
+                                                $query = self::applyParentQueryFilters($query, $schema);
 
                                                 return $query->count() === 1 ? $query->first()->ulid : null;
                                             })
@@ -468,7 +479,7 @@ class ContentResource extends Resource
                         'scheduled' => 'info',
                         default => 'gray',
                     })
-                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->size(IconSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
                 TextColumn::make('name')
@@ -514,7 +525,7 @@ class ContentResource extends Resource
                 fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug)
             )
             ->defaultSort($type->sort_column ?? 'position', $type->sort_direction ?? 'desc')
-            ->actions([
+            ->recordActions([
                 ...$type
                     ->fields
                     ->whereIn('field_type', ['rich-editor'])
@@ -522,14 +533,14 @@ class ContentResource extends Resource
                         fn ($field) => Action::make($field->slug)
                             ->label(__('Edit :name', ['name' => $field->name]))
                             ->modal()
-                            ->mountUsing(function (Form $form, Content $record) use ($field) {
+                            ->mountUsing(function (Schema $schema, Content $record) use ($field) {
                                 $value = $record->values->where('field_ulid', $field->ulid)->first();
 
-                                $form->fill([
+                                $schema->fill([
                                     'value' => $value->value ?? '',
                                 ]);
                             })
-                            ->form(function () use ($field) {
+                            ->schema(function () use ($field) {
                                 if ($field->field_type === 'rich-editor') {
                                     return [
                                         RichEditor::make('value')
@@ -550,14 +561,13 @@ class ContentResource extends Resource
                                 $action->success();
                             })
                             ->button()
-                    )
-                    ->toArray(),
+                    ),
 
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -583,7 +593,7 @@ class ContentResource extends Resource
                         default => 'gray',
                     })
                     ->tooltip(fn (string $state): string => __($state))
-                    ->size(IconColumn\IconColumnSize::Medium)
+                    ->size(IconSize::Medium)
                     ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
 
                 BadgeableColumn::make('name')
@@ -637,7 +647,7 @@ class ContentResource extends Resource
             ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
                 Filter::make('locale')
-                    ->form([
+                    ->schema([
                         Select::make('language_code')
                             ->label(__('Language'))
                             ->columnSpanFull()
@@ -710,7 +720,7 @@ class ContentResource extends Resource
                         },
                     ),
                 Filter::make('date')
-                    ->form([
+                    ->schema([
                         Fieldset::make('Date')
                             ->schema([
                                 Select::make('date_column')
@@ -742,18 +752,70 @@ class ContentResource extends Resource
                     }),
             ], layout: FiltersLayout::Modal)
             ->filtersFormWidth('md')
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data, Content $record) {
+                        $values = $record->getFormattedFieldValues();
+
+                        $record->values = $values;
+
+                        $data['values'] = $record->values;
+
+                        $instance = new self;
+                        $data = $instance->traitMutateBeforeFill($data);
+
+                        return $data;
+                    }),
             ])->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
                     ->label(__('Filter'))
                     ->slideOver(),
             )
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
+
+                BulkActionGroup::make([
+                    ...Language::all()
+                        ->map(
+                            fn (Language $language) => BulkAction::make($language->code)
+                                ->label($language->name)
+                                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                                ->requiresConfirmation()
+                                ->action(function (Collection $records) use ($language) {
+                                    $records = $records->filter(function (Content $record) use ($language) {
+                                        $slug = $record->slug;
+
+                                        return ! Content::query()
+                                            ->where('slug', $slug)
+                                            ->where('language_code', $language->code)
+                                            ->exists();
+                                    });
+
+                                    $records->each(function (Content $record) use ($language) {
+                                        $slug = $record->slug;
+
+                                        $existing = Content::query()
+                                            ->where('slug', $slug)
+                                            ->where('language_code', $language->code)
+                                            ->exists();
+
+                                        if ($existing) {
+                                            return;
+                                        }
+
+                                        TranslateContent::dispatch(
+                                            content: $record,
+                                            language: $language
+                                        );
+                                    });
+                                })
+                        ),
+                ])
+                    ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage)
+                    ->label(fn (): string => __('Translate')),
             ]);
     }
 
@@ -790,7 +852,7 @@ class ContentResource extends Resource
 
         $currentSlug = $get('slug');
 
-        if (! $record?->slug || $currentSlug === Str::slug($record?->name ?? '')) {
+        if (! $record || ! $record->slug || ! $currentSlug) {
             $set('slug', $slug);
         }
     }

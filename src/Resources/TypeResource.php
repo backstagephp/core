@@ -5,20 +5,25 @@ namespace Backstage\Resources;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Content;
 use Backstage\Models\Type;
-use Backstage\Resources\TypeResource\Pages;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
+use Backstage\Resources\TypeResource\Pages\CreateType;
+use Backstage\Resources\TypeResource\Pages\EditType;
+use Backstage\Resources\TypeResource\Pages\ListTypes;
+use Closure;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -29,7 +34,7 @@ class TypeResource extends Resource
 {
     protected static ?string $model = Type::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-circle-stack';
 
     public static ?string $recordTitleAttribute = 'name';
 
@@ -50,14 +55,14 @@ class TypeResource extends Resource
         return __('Types');
     }
 
-    public static function form(Form $form): Form
+    public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make()
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make(__('Type'))
+                        Tab::make(__('Type'))
                             ->schema([
 
                                 TextInput::make('name')
@@ -78,7 +83,7 @@ class TypeResource extends Resource
                                     ->required()
                                     ->unique(ignoreRecord: true)
                                     ->rules([
-                                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
                                             if (in_array(strtolower($value), ['content', 'advanced', 'default'])) {
                                                 $fail(__('This :attribute cannot be used.', ['attribute' => 'slug']));
                                             }
@@ -101,7 +106,7 @@ class TypeResource extends Resource
                                     ->label(__('Public'))
                                     ->inline(false),
                             ])->columns(3),
-                        Tabs\Tab::make(__('Settings'))
+                        Tab::make(__('Settings'))
                             ->schema([
                                 Fieldset::make('Sorting')
                                     ->schema([
@@ -205,12 +210,12 @@ class TypeResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -225,9 +230,9 @@ class TypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTypes::route('/'),
-            'create' => Pages\CreateType::route('/create'),
-            'edit' => Pages\EditType::route('/{record}/edit'),
+            'index' => ListTypes::route('/'),
+            'create' => CreateType::route('/create'),
+            'edit' => EditType::route('/{record}/edit'),
         ];
     }
 }

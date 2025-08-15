@@ -3,7 +3,7 @@
 namespace Backstage\Resources\TagResource\Pages;
 
 use Backstage\Resources\TagResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTag extends EditRecord
@@ -13,7 +13,7 @@ class EditTag extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

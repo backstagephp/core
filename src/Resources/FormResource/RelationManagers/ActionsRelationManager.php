@@ -4,16 +4,21 @@ namespace Backstage\Resources\FormResource\RelationManagers;
 
 use Backstage\Models\FormAction;
 use Backstage\Models\Language;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -38,12 +43,12 @@ class ActionsRelationManager extends RelationManager
         return __('Actions');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        $fields = $form->getLivewire()?->getOwnerRecord()?->fields?->pluck('name', 'slug') ?? collect();
+        $fields = $schema->getLivewire()?->getOwnerRecord()?->fields?->pluck('name', 'slug') ?? collect();
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Grid::make()
                     ->columns(3)
                     ->schema([
@@ -133,19 +138,19 @@ class ActionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('type')
             ->columns([
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->label(__('Type'))
                     ->searchable()
                     ->limit(),
-                Tables\Columns\TextColumn::make('config.subject')
+                TextColumn::make('config.subject')
                     ->label(__('Subject'))
                     ->description(fn (FormAction $record): string => ($record->config['from_name'] ?? '') . ' <' . ($record->config['from_email'] ?? '') . '>'),
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->slideOver()
-                    ->mutateFormDataUsing(function (array $data) {
+                    ->mutateDataUsing(function (array $data) {
                         return [
                             ...$data,
                             'site_ulid' => Filament::getTenant()->ulid,
@@ -155,17 +160,17 @@ class ActionsRelationManager extends RelationManager
                         $livewire->dispatch('refreshFields');
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->slideOver()
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

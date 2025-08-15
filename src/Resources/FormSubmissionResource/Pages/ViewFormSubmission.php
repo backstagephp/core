@@ -26,7 +26,7 @@ class ViewFormSubmission extends ViewRecord
                 ->fillForm([
                     'notes' => $this->record->notes,
                 ])
-                ->form([
+                ->schema([
                     Textarea::make('notes')
                         ->label(__('Notes'))
                         ->rows(3),

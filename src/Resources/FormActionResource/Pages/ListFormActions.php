@@ -3,7 +3,7 @@
 namespace Backstage\Resources\FormActionResource\Pages;
 
 use Backstage\Resources\FormResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListFormActions extends ListRecords
@@ -13,7 +13,7 @@ class ListFormActions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }
