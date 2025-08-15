@@ -40,7 +40,7 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function value()
+    public function value(): Content|array|string|null
     {
         if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations'])) {
             if (! json_validate($this->value)) {
