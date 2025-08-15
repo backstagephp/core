@@ -15,10 +15,37 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 
+/**
+ * @property string|null $app_authentication_secret
+ * @property array<string>|null $app_authentication_recovery_codes
+ * @property string|null $email
+ */
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasTenants
 {
     use HasPackageFactory;
     use Notifiable;
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'app_authentication_secret' => 'encrypted',
+        'app_authentication_recovery_codes' => 'encrypted:array',
+    ];
+
+    /**
+     * The model's attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'app_authentication_secret' => null,
+        'app_authentication_recovery_codes' => null,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +65,8 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         'name',
         'email',
         'password',
+        'app_authentication_secret',
+        'app_authentication_recovery_codes',
     ];
 
     /**
@@ -52,20 +81,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         'app_authentication_recovery_codes',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'app_authentication_secret' => 'encrypted',
-            'app_authentication_recovery_codes' => 'encrypted:array',
-        ];
-    }
+
 
     public function sites(): BelongsToMany
     {
