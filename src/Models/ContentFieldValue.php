@@ -59,10 +59,6 @@ class ContentFieldValue extends Pivot
 
         // For all other cases, ensure the value is returned as a string
         // This prevents automatic type casting of numeric values
-        if ($decoded !== null) {
-            return (string) $decoded;
-        }
-
-        return new HtmlString($this->value);
+        return new HtmlString($this->value ?? '');
     }
 }
