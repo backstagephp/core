@@ -3,25 +3,25 @@
 namespace Backstage;
 
 use Backstage\Http\Middleware\Filament\HasTenant;
+use Backstage\Http\Middleware\Filament\ScopedBySite;
+use Backstage\Resources\SiteResource\RegisterSite;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\Blade;
-use Filament\Navigation\NavigationGroup;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentView;
-use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Backstage\Resources\SiteResource\RegisterSite;
-use Backstage\Http\Middleware\Filament\ScopedBySite;
-use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class BackstagePanelProvider extends PanelProvider
 {
@@ -93,7 +93,7 @@ class BackstagePanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->multiFactorAuthentication([
                 AppAuthentication::make()
-                ->recoverable(),
+                    ->recoverable(),
             ])
             ->unsavedChangesAlerts()
             ->default(config('backstage.cms.panel.default', true))
