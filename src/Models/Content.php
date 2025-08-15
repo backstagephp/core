@@ -233,7 +233,7 @@ class Content extends Model
     }
 
     /** Returns the value of a field based on the slug. */
-    public function field(string $slug): HtmlString | Collection | array | string
+    public function field(string $slug): HtmlString | Collection | array
     {
         $value = $this->values->where('field.slug', $slug)->first();
 
