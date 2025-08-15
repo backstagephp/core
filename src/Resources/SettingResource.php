@@ -2,26 +2,24 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Grid;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\SettingResource\Pages\ListSettings;
-use Backstage\Resources\SettingResource\Pages\CreateSetting;
-use Backstage\Resources\SettingResource\Pages\EditSetting;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Language;
 use Backstage\Models\Setting;
 use Backstage\Models\Site;
-use Backstage\Resources\SettingResource\Pages;
+use Backstage\Resources\SettingResource\Pages\CreateSetting;
+use Backstage\Resources\SettingResource\Pages\EditSetting;
+use Backstage\Resources\SettingResource\Pages\ListSettings;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;

@@ -2,16 +2,15 @@
 
 namespace Backstage\Resources\MenuResource\RelationManagers;
 
+use Backstage\Resources\MenuItemResource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\MenuItemResource;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class MenuItemsRelationManager extends RelationManager

@@ -2,24 +2,21 @@
 
 namespace Backstage\Resources;
 
-use Filament\Schemas\Schema;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Form as FormModel;
+use Backstage\Resources\FormResource\Pages\CreateForm;
+use Backstage\Resources\FormResource\Pages\EditForm;
+use Backstage\Resources\FormResource\Pages\ListForms;
+use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Backstage\Resources\FormResource\Pages\ListForms;
-use Backstage\Resources\FormResource\Pages\CreateForm;
-use Backstage\Resources\FormResource\Pages\EditForm;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
-use Backstage\Models\Form as FormModel;
-use Backstage\Resources\FormResource\Pages;
-use Backstage\Resources\FormResource\RelationManagers\ActionsRelationManager;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -80,7 +77,6 @@ class FormResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                // ->url(fn ($record) => route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$record->slug]]]])),
             ])
             ->filters([
                 //

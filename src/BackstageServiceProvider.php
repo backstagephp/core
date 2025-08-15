@@ -2,8 +2,6 @@
 
 namespace Backstage;
 
-use Backstage\Providers\RequestServiceProvider;
-use Backstage\Providers\RouteServiceProvider;
 use Backstage\Commands\BackstageSeedCommand;
 use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
@@ -19,11 +17,14 @@ use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;
 use Backstage\Observers\MenuObserver;
+use Backstage\Providers\RequestServiceProvider;
+use Backstage\Providers\RouteServiceProvider;
 use Backstage\Resources\ContentResource;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
 use Backstage\View\Components\Page;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Assets\Asset;
@@ -122,7 +123,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             });
     }
 
-    protected function generateMigrationName(string $migrationFileName, Carbon $now): string
+    protected function generateMigrationName(string $migrationFileName, Carbon | CarbonImmutable $now): string
     {
         $migrationsPath = 'migrations/' . dirname($migrationFileName) . '/';
         $migrationFileName = basename($migrationFileName);
@@ -149,7 +150,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->make(Kernel::class)->pushMiddleware(SetLocale::class);
+        $this->app->make(Kernel::class)->appendMiddlewareToGroup('web', SetLocale::class);
 
         // Asset Registration
         FilamentAsset::register(

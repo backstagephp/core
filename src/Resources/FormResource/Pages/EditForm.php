@@ -2,10 +2,9 @@
 
 namespace Backstage\Resources\FormResource\Pages;
 
+use Backstage\Resources\FormResource;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Backstage\Resources\FormResource;
-use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\EditRecord;
 
@@ -18,7 +17,7 @@ class EditForm extends EditRecord
         return [
             Action::make('Submissions')
                 ->label(__('Submissions'))
-                ->url(route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'tableFilters' => ['form_slug' => ['values' => [$this->record->slug]]]])),
+                ->url(route('filament.backstage.resources.form-submissions.index', ['tenant' => Filament::getTenant(), 'filters' => ['form_slug' => ['values' => [$this->record->slug]]]])),
             DeleteAction::make(),
         ];
     }

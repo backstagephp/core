@@ -2,14 +2,11 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Actions\ActionGroup;
-use Filament\Actions\Action;
 use Backstage\Models\Content;
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
-use Filament\Actions;
-use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -26,7 +23,7 @@ class ListContentMetaTags extends ListRecords
         foreach ($types as $type) {
             $actions[] = Action::make($type->name)
                 // ->icon($type->icon)
-                ->url(static::getResource()::getUrl('meta_tags', ['tableFilters' => ['type_slug' => ['values' => [$type->slug]]]]))
+                ->url(static::getResource()::getUrl('meta_tags', ['filters' => ['type_slug' => ['values' => [$type->slug]]]]))
                 ->color('primary')
                 ->label($type->name);
         }
