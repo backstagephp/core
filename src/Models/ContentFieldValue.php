@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -40,7 +41,7 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function value(): Content | HtmlString | array | null
+    public function value(): Content | HtmlString | array | Collection | null
     {
         if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations'])) {
             if (! json_validate($this->value)) {
