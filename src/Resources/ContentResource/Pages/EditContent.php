@@ -66,9 +66,9 @@ class EditContent extends EditRecord
                 $query->where('languages.code', '!=', $languageCode);
             })
             ->get()
-            ->map(fn (Language $language) => Action::make($language->code)
+            ->map(fn(Language $language) => Action::make($language->code)
                 ->label($language->name)
-                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                ->icon(fn() => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                 ->requiresConfirmation()
                 ->action(function (Content $record) use ($language) {
                     $slug = $record->slug;
@@ -80,7 +80,7 @@ class EditContent extends EditRecord
 
                     if ($existing) {
                         Notification::make()
-                            ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
+                            ->title(fn(): string => __('Content with slug ":slug" already exists in ":language" language.', [
                                 'slug' => $slug,
                                 'language' => $language->name,
                             ]))
@@ -101,14 +101,13 @@ class EditContent extends EditRecord
             ])
                 ->button()
                 ->color('gray')
-                ->label(fn (): string => __('Translate'))
-                ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage),
+                ->label(fn(): string => __('Translate'))
+                ->icon(fn(): BackedEnum => Heroicon::OutlinedLanguage),
 
             Action::make('preview')
-                ->icon(fn (): BackedEnum => Heroicon::OutlinedEye)
-                ->url(fn () => $this->getRecord()->url)
+                ->icon(fn(): BackedEnum => Heroicon::OutlinedEye)
+                ->url(fn() => $this->getRecord()->url)
                 ->color('gray')
-                ->outlined()
                 ->openUrlInNewTab(),
 
             DeleteAction::make(),
@@ -200,12 +199,12 @@ class EditContent extends EditRecord
     private function handleTags(): void
     {
         $tags = collect($this->data['tags'] ?? [])
-            ->filter(fn ($tag) => filled($tag))
-            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
+            ->filter(fn($tag) => filled($tag))
+            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
                 'name' => $tag,
                 'slug' => Str::slug($tag),
             ]))
-            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
+            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
     }
