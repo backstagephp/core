@@ -101,6 +101,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 - [Mark van Eijk](https://github.com/markvaneijk)
 - [Bas van Dinther](https://github.com/baspa)
 - [Mathieu de Ruiter](https://github.com/casmo)
+- [Manoj Hortulanus](https://github.com/arduinomaster22)
 - [All Contributors](../../contributors)
 
 ## License
