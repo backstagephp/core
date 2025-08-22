@@ -3,6 +3,7 @@
 namespace Backstage\Resources\ContentResource\Pages;
 
 use BackedEnum;
+use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
@@ -12,6 +13,7 @@ use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -92,6 +94,8 @@ class EditContent extends EditRecord
                 }));
 
         return [
+            DuplicateContentAction::make('duplicate'),
+
             ActionGroup::make([
                 ...$languageActions,
             ])
@@ -99,6 +103,15 @@ class EditContent extends EditRecord
                 ->color('gray')
                 ->label(fn (): string => __('Translate'))
                 ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage),
+
+            Action::make('preview')
+                ->icon(fn (): BackedEnum => Heroicon::OutlinedEye)
+                ->url(fn () => $this->getRecord()->url)
+                ->color('gray')
+                ->outlined()
+                ->openUrlInNewTab(),
+
+            DeleteAction::make(),
         ];
     }
 

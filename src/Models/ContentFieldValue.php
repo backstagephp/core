@@ -4,11 +4,11 @@ namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
 use Backstage\Shared\HasPackageFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Backstage\Models\ContentFieldValue
