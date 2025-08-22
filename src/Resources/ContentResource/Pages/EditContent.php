@@ -3,24 +3,23 @@
 namespace Backstage\Resources\ContentResource\Pages;
 
 use BackedEnum;
-use Backstage\Models\Tag;
-use Illuminate\Support\Str;
-use Filament\Actions\Action;
+use Backstage\Actions\Content\DuplicateContentAction;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Filament\Facades\Filament;
-use Filament\Actions\ActionGroup;
-use Backstage\Jobs\TranslateContent;
-use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
+use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
+use Backstage\Translations\Laravel\Facades\Translator;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Actions\Content\DuplicateContentAction;
-use Backstage\Translations\Laravel\Facades\Translator;
-use Filament\Actions\DeleteAction;
-use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class EditContent extends EditRecord
 {
@@ -67,9 +66,9 @@ class EditContent extends EditRecord
                 $query->where('languages.code', '!=', $languageCode);
             })
             ->get()
-            ->map(fn(Language $language) => Action::make($language->code)
+            ->map(fn (Language $language) => Action::make($language->code)
                 ->label($language->name)
-                ->icon(fn() => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
+                ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                 ->requiresConfirmation()
                 ->action(function (Content $record) use ($language) {
                     $slug = $record->slug;
@@ -81,7 +80,7 @@ class EditContent extends EditRecord
 
                     if ($existing) {
                         Notification::make()
-                            ->title(fn(): string => __('Content with slug ":slug" already exists in ":language" language.', [
+                            ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
                                 'slug' => $slug,
                                 'language' => $language->name,
                             ]))
@@ -102,12 +101,12 @@ class EditContent extends EditRecord
             ])
                 ->button()
                 ->color('gray')
-                ->label(fn(): string => __('Translate'))
-                ->icon(fn(): BackedEnum => Heroicon::OutlinedLanguage),
+                ->label(fn (): string => __('Translate'))
+                ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage),
 
             Action::make('preview')
-                ->icon(fn(): BackedEnum => Heroicon::OutlinedEye)
-                ->url(fn() => $this->getRecord()->url)
+                ->icon(fn (): BackedEnum => Heroicon::OutlinedEye)
+                ->url(fn () => $this->getRecord()->url)
                 ->color('gray')
                 ->outlined()
                 ->openUrlInNewTab(),
@@ -201,12 +200,12 @@ class EditContent extends EditRecord
     private function handleTags(): void
     {
         $tags = collect($this->data['tags'] ?? [])
-            ->filter(fn($tag) => filled($tag))
-            ->map(fn(string $tag) => $this->record->tags()->updateOrCreate([
+            ->filter(fn ($tag) => filled($tag))
+            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
                 'name' => $tag,
                 'slug' => Str::slug($tag),
             ]))
-            ->each(fn(Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
+            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
 
         $this->record->tags()->sync($tags->pluck('ulid')->toArray());
     }
