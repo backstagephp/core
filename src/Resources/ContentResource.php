@@ -460,7 +460,7 @@ class ContentResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('published')
-                    ->label(__(''))
+                    ->label(null)
                     ->width(1)
                     ->icon(fn (string $state): string => match ($state) {
                         'draft' => 'heroicon-o-pencil-square',
@@ -484,14 +484,14 @@ class ContentResource extends Resource
                     ->sortable(),
 
                 ImageColumn::make('language_code')
-                    ->label('')
+                    ->label(null)
                     ->width(50)
                     ->getStateUsing(fn (Content $record) => explode('-', $record->language_code)[0])
                     ->view('backstage::filament.tables.columns.language-flag-column')
                     ->visible(fn () => Language::active()->count() > 1),
 
                 ViewColumn::make('country_code')
-                    ->label('')
+                    ->label(null)
                     ->width(50)
                     ->getStateUsing(fn (Content $record) => strtolower(explode('-', $record->language_code)[1]) ?? __('Worldwide'))
                     ->view('backstage::filament.tables.columns.country-flag-column')
@@ -573,7 +573,7 @@ class ContentResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('published')
-                    ->label(__(''))
+                    ->label(null)
                     ->width(1)
                     ->icon(fn (string $state): string => match ($state) {
                         'draft' => 'heroicon-o-pencil-square',
