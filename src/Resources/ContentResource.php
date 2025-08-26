@@ -82,15 +82,11 @@ class ContentResource extends Resource
 
     protected static ?Type $type = null;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {
-        $record->load('type');
-
-        if ($record->type && $record->type->name) {
-            return $record->name . ' (' . $record->type->name . ')';
-        }
-
-        return $record->name;
+        return $record->name . ' (' . $record->type->name . ')';
     }
 
     public static function getModelLabel(): string
