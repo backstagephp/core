@@ -35,11 +35,8 @@ class ListContentMetaTags extends ListRecords
     {
         return static::getResource()::table($table)
             ->columns([
-                TextColumn::make('title')
+                TextColumn::make('name')
                     ->label('Title')
-                    ->state(function (Content $record): string {
-                        return $record->name;
-                    })
                     ->searchable()
                     ->sortable(),
                 TextInputColumn::make('meta_tags.title')
