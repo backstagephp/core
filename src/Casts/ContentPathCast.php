@@ -4,6 +4,7 @@ namespace Backstage\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ContentPathCast implements CastsAttributes
 {
@@ -24,6 +25,9 @@ class ContentPathCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): string
     {
+        // Slugify $value by - but dont slugify "/"
+        $value = collect(explode('/', $value))->map(fn ($part) => Str::slug($part, '-'))->implode('/');
+
         return ltrim($value, '/') ?: '/';
     }
 }
