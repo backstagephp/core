@@ -92,7 +92,6 @@ class TranslateContent implements ShouldQueue
                 $contentPath,
                 $this->language->code,
                 $this->getExtraPrompt()
-
             );
             $duplicatedContent->path = rtrim($fullPath . $translatedPath, '/');
         }

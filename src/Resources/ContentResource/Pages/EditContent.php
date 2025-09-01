@@ -78,7 +78,7 @@ class EditContent extends EditRecord
                         ->where('language_code', $language->code)
                         ->exists();
 
-                        if ($existing) {
+                    if ($existing) {
                         Notification::make()
                             ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
                                 'slug' => $slug,
