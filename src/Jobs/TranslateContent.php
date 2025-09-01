@@ -78,7 +78,7 @@ class TranslateContent implements ShouldQueue
             );
         }
 
-        if ($this->content->path) {
+        if ($this->content->path && $this->content->path !== '/') {
             // $fullPath = '';
             // foreach ($duplicatedContent->ancestors as $ancestor) {
             //     if ($ancestor->language_code === $this->language->code) {
