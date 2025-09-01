@@ -77,23 +77,45 @@ class TranslateContent implements ShouldQueue
                 $this->getExtraPrompt()
             );
         }
+
         if ($this->content->path) {
-            // Get ancestors paths
-            $fullPath = '';
-            foreach ($duplicatedContent->ancestors as $ancestor) {
-                if ($ancestor->language_code === $this->language->code) {
-                    $fullPath .= $ancestor->path . '/';
-                }
+            // $fullPath = '';
+            // foreach ($duplicatedContent->ancestors as $ancestor) {
+            //     if ($ancestor->language_code === $this->language->code) {
+            //         $fullPath .= $ancestor->path . '/';
+            //     }
+            // }
+
+            // $path = explode('/', $this->content->path);
+            // $contentPath = end($path);
+
+            // if($contentPath !==null || $content )
+            // $translatedPath = Translator::translate(
+            //     $contentPath,
+            //     $this->language->code,
+            //     $this->getExtraPrompt()
+
+            // );
+            // $duplicatedContent->path = rtrim($fullPath . $translatedPath, '/');
+
+            $parentPath = $duplicatedContent->parent?->path;
+
+            $path = '';
+            if($parentPath) {
+                $path = $parentPath . '/';
             }
 
-            $path = explode('/', $this->content->path);
-            $contentPath = end($path);
-            $translatedPath = Translator::translate(
-                $contentPath,
+            $translatablePath = str($this->content->path)->afterLast('/');
+
+             $translatedContentPath = Translator::translate(
+                $translatablePath,
                 $this->language->code,
                 $this->getExtraPrompt()
             );
-            $duplicatedContent->path = rtrim($fullPath . $translatedPath, '/');
+
+            $path = $path . $translatedContentPath;
+
+            $duplicatedContent->path = $path;
         }
 
         if (! empty($this->content->meta_tags)) {
