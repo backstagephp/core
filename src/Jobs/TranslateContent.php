@@ -32,6 +32,7 @@ class TranslateContent implements ShouldQueue
 
     public function handle(): void
     {
+
         if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->exists()) {
             return;
         }
@@ -68,15 +69,32 @@ class TranslateContent implements ShouldQueue
             $duplicatedContent->parent_ulid = $parentTranslationUlid;
         }
 
-        $translatableAttributes = ['name', 'path'];
-        foreach ($translatableAttributes as $attribute) {
-            if ($this->content->{$attribute}) {
-                $duplicatedContent->{$attribute} = Translator::translate(
-                    $this->content->{$attribute},
-                    $this->language->code,
-                    $this->getExtraPrompt()
-                );
+        // Translate name and path
+        if ($this->content->name) {
+            $duplicatedContent->name = Translator::translate(
+                $this->content->name,
+                $this->language->code,
+                $this->getExtraPrompt()
+            );
+        }
+        if ($this->content->path) {
+            // Get ancestors paths
+            $fullPath = '';
+            foreach ($duplicatedContent->ancestors as $ancestor) {
+                if ($ancestor->language_code === $this->language->code) {
+                    $fullPath .= $ancestor->path . '/';
+                }
             }
+
+            $path = explode('/', $this->content->path);
+            $contentPath = end($path);
+            $translatedPath = Translator::translate(
+                $contentPath,
+                $this->language->code,
+                $this->getExtraPrompt()
+
+            );
+            $duplicatedContent->path = rtrim($fullPath . $translatedPath, '/');
         }
 
         if (! empty($this->content->meta_tags)) {
