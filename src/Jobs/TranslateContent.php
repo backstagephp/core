@@ -101,13 +101,13 @@ class TranslateContent implements ShouldQueue
             $parentPath = $duplicatedContent->parent?->path;
 
             $path = '';
-            if($parentPath) {
+            if ($parentPath) {
                 $path = $parentPath . '/';
             }
 
             $translatablePath = str($this->content->path)->afterLast('/');
 
-             $translatedContentPath = Translator::translate(
+            $translatedContentPath = Translator::translate(
                 $translatablePath,
                 $this->language->code,
                 $this->getExtraPrompt()
