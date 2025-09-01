@@ -73,7 +73,8 @@ class TranslateContent implements ShouldQueue
             if ($this->content->{$attribute}) {
                 $duplicatedContent->{$attribute} = Translator::translate(
                     $this->content->{$attribute},
-                    $this->language->code
+                    $this->language->code,
+                    $this->getExtraPrompt()
                 );
             }
         }
@@ -84,7 +85,8 @@ class TranslateContent implements ShouldQueue
                 attribute: null,
                 data: $this->content->meta_tags,
                 targetLanguage: $this->language->code,
-                rules: ['!robots', 'title', 'description', 'keywords.*']
+                rules: ['!robots', 'title', 'description', 'keywords.*'],
+                extraPrompt: $this->getExtraPrompt()
             );
         }
 
@@ -101,19 +103,22 @@ class TranslateContent implements ShouldQueue
                         attribute: null,
                         targetLanguage: $duplicatedContent->language_code,
                         data: $array,
-                        rules: ['*data']
+                        rules: ['*data'],
+                        extraPrompt: $this->getExtraPrompt()
                     );
                     $duplicatedValue->value = json_encode($translatedArray, JSON_UNESCAPED_UNICODE);
                 } else {
                     $duplicatedValue->value = Translator::translate(
                         $value->value,
-                        $duplicatedContent->language_code
+                        $duplicatedContent->language_code,
+                        $this->getExtraPrompt()
                     );
                 }
             } elseif (! empty($value->value)) {
                 $duplicatedValue->value = Translator::translate(
                     $value->value,
-                    $duplicatedContent->language_code
+                    $duplicatedContent->language_code,
+                    $this->getExtraPrompt()
                 );
             }
 
@@ -134,6 +139,11 @@ class TranslateContent implements ShouldQueue
         json_decode($value);
 
         return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    protected function getExtraPrompt()
+    {
+        return isset($this->content->type->name) ? 'This translation is in the context of ' . $this->content->type->name : '';
     }
 
     public function middleware(): array
