@@ -48,7 +48,7 @@ class TranslateContent implements ShouldQueue
         $duplicatedContent->language_code = $this->language->code;
         $duplicatedContent->meta_tags = [];
         $duplicatedContent->edited_at = now();
-        $duplicatedContent->save();
+        $duplicatedContent->saveQuietly();
 
         $this->duplicateContent = $duplicatedContent;
 
@@ -170,10 +170,10 @@ class TranslateContent implements ShouldQueue
                 );
             }
 
-            $duplicatedValue->save();
+            $duplicatedValue->saveQuietly();
         });
 
-        $this->duplicateContent->save();
+        $this->duplicateContent->saveQuietly();
 
         $this->contentUlid = $this->duplicateContent->ulid;
     }
