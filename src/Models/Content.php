@@ -5,12 +5,14 @@ namespace Backstage\Models;
 use Backstage\Casts\ContentPathCast;
 use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
+use Backstage\Jobs\TranslateContent;
 use Backstage\Media\Concerns\HasMedia;
 use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Observers\ContentDepthObserver;
 use Backstage\Observers\ContentObserver;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -261,5 +263,24 @@ class Content extends Model
         ]);
 
         return response($this->view(), $code);
+    }
+
+    public function translate(Language $language, bool $toBus = false)
+    {
+        $existing = self::query()
+            ->where('slug', $this->slug)
+            ->where('type_slug', $this->type_slug)
+            ->where('language_code', $language->code)
+            ->exists();
+
+        if ($existing) {
+            return;
+        }
+
+        if (!$toBus) {
+            dispatch(new TranslateContent($this, $language));
+        }
+
+        return new TranslateContent($this, $language);
     }
 }

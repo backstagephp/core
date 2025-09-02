@@ -5,7 +5,6 @@ namespace Backstage\Resources\ContentResource\Pages;
 use BackedEnum;
 use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
@@ -19,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
 class EditContent extends EditRecord
@@ -60,38 +60,51 @@ class EditContent extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        $languageActions = Language::query()
+        $languages = Language::query()
             ->where('active', true)
             ->when($this->getRecord()->language_code ?? null, function ($query, $languageCode) {
                 $query->where('languages.code', '!=', $languageCode);
             })
-            ->get()
+            ->get();
+
+        $languageActions = $languages
             ->map(fn (Language $language) => Action::make($language->code)
                 ->label($language->name)
                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                 ->requiresConfirmation()
                 ->action(function (Content $record) use ($language) {
-                    $slug = $record->slug;
+                    $record->translate($language, toBus: false);
+                }));
 
-                    $existing = Content::query()
-                        ->where('slug', $slug)
-                        ->where('language_code', $language->code)
-                        ->exists();
+        if (! $languageActions->isEmpty()) {
+            $all = $languageActions->all();
 
-                    if ($existing) {
-                        Notification::make()
-                            ->title(fn (): string => __('Content with slug ":slug" already exists in ":language" language.', [
-                                'slug' => $slug,
-                                'language' => $language->name,
-                            ]))
-                            ->danger()
-                            ->send();
+            $translateAllLanguage = Action::make('translate_all')
+                ->label(__('Translate to all languages'))
+                ->icon(fn () => Heroicon::OutlinedLanguage)
+                ->requiresConfirmation()
+                ->action(function (Content $record) use ($languages) {
+                    $jobs = [];
 
+                    foreach ($languages as $language) {
+                        $job =$record->translate(language: $language, toBus: true);
+
+                        if($job) {
+                            $jobs[] = $job;
+                        }
+                    }
+
+                    if (empty($jobs)) {
                         return;
                     }
 
-                    dispatch(new TranslateContent($record, $language));
-                }));
+                    Bus::batch($jobs)
+                        ->name('Translate Content ' . $record->getKey() . ' to ' . $languages->map(fn ($lang) => $lang->name)->join(', '))
+                        ->dispatch();
+                });
+
+            $languageActions = collect([$translateAllLanguage, ...$all]);
+        }
 
         return [
             DuplicateContentAction::make('duplicate'),

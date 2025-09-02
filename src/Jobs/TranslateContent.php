@@ -7,15 +7,19 @@ use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Language;
 use Backstage\Translations\Laravel\Domain\Translatables\Actions\TranslateAttribute;
 use Backstage\Translations\Laravel\Facades\Translator;
+use Exception;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class TranslateContent implements ShouldQueue
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
@@ -23,7 +27,11 @@ class TranslateContent implements ShouldQueue
 
     public $timeout = 3600;
 
+    public $tries = 2;
+
     public $contentUlid = null;
+
+    public $duplicateContent = null;
 
     public function __construct(
         public Content $content,
@@ -32,7 +40,6 @@ class TranslateContent implements ShouldQueue
 
     public function handle(): void
     {
-
         if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->exists()) {
             return;
         }
@@ -42,6 +49,8 @@ class TranslateContent implements ShouldQueue
         $duplicatedContent->meta_tags = [];
         $duplicatedContent->edited_at = now();
         $duplicatedContent->save();
+
+        $this->duplicateContent = $duplicatedContent;
 
         $parentTranslationUlid = null;
 
@@ -66,12 +75,12 @@ class TranslateContent implements ShouldQueue
         }
 
         if ($parentTranslationUlid) {
-            $duplicatedContent->parent_ulid = $parentTranslationUlid;
+            $this->duplicateContent->parent_ulid = $parentTranslationUlid;
         }
 
         // Translate name and path
         if ($this->content->name) {
-            $duplicatedContent->name = Translator::translate(
+            $this->duplicateContent->name = Translator::translate(
                 $this->content->name,
                 $this->language->code,
                 $this->getExtraPrompt()
@@ -129,9 +138,9 @@ class TranslateContent implements ShouldQueue
             );
         }
 
-        $this->content->values()->get()->each(function (ContentFieldValue $value) use ($duplicatedContent) {
+        $this->content->values()->get()->each(function (ContentFieldValue $value) {
             $duplicatedValue = $value->replicate(['ulid']);
-            $duplicatedValue->content_ulid = $duplicatedContent->ulid;
+            $duplicatedValue->content_ulid = $this->duplicateContent->ulid;
 
             if ($this->isJson($value->value)) {
                 $array = json_decode($value->value, true);
@@ -140,7 +149,7 @@ class TranslateContent implements ShouldQueue
                     $translatedArray = TranslateAttribute::translateArray(
                         model: null,
                         attribute: null,
-                        targetLanguage: $duplicatedContent->language_code,
+                        targetLanguage: $this->duplicateContent->language_code,
                         data: $array,
                         rules: ['*data'],
                         extraPrompt: $this->getExtraPrompt()
@@ -149,14 +158,14 @@ class TranslateContent implements ShouldQueue
                 } else {
                     $duplicatedValue->value = Translator::translate(
                         $value->value,
-                        $duplicatedContent->language_code,
+                        $this->duplicateContent->language_code,
                         $this->getExtraPrompt()
                     );
                 }
             } elseif (! empty($value->value)) {
                 $duplicatedValue->value = Translator::translate(
                     $value->value,
-                    $duplicatedContent->language_code,
+                    $this->duplicateContent->language_code,
                     $this->getExtraPrompt()
                 );
             }
@@ -164,9 +173,9 @@ class TranslateContent implements ShouldQueue
             $duplicatedValue->save();
         });
 
-        $duplicatedContent->save();
+        $this->duplicateContent->save();
 
-        $this->contentUlid = $duplicatedContent->ulid;
+        $this->contentUlid = $this->duplicateContent->ulid;
     }
 
     protected function isJson($value): bool
@@ -191,5 +200,23 @@ class TranslateContent implements ShouldQueue
             (new WithoutOverlapping($this->content->ulid . '-' . $this->language->code))
                 ->expireAfter(1800),
         ];
+    }
+
+    public function tags()
+    {
+        return ['translating:' . $this->language->code, 'content:' . $this->content->ulid];
+    }
+
+    public function failed(Exception $exception): void
+    {
+        Log::error('Job failed', [
+            'job' => static::class,
+            'target_content' => $this->content->ulid,
+            'target_language' => $this->language->code,
+            'error' => $exception->getMessage(),
+            'trace' => $exception->getTraceAsString(),
+        ]);
+
+        $this->duplicateContent->delete();
     }
 }

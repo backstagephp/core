@@ -6,7 +6,6 @@ use BackedEnum;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Fields\Fields\RichEditor;
-use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
@@ -62,6 +61,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -776,6 +776,31 @@ class ContentResource extends Resource
                 ]),
 
                 BulkActionGroup::make([
+                    BulkAction::make('translate_all')
+                        ->visible(fn () => Language::query()->count() > 0)
+                        ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage)
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records) {
+                            $jobs = [];
+
+                            $languages = Language::all();
+                            $records->each(function (Content $record) use (&$jobs, $languages) {
+                                foreach ($languages as $language) {
+                                    if ($job = $record->translate($language, toBus: true)) {
+                                        $jobs[] = $job;
+                                    }
+                                }
+                            });
+
+                            if (empty($jobs)) {
+                                return;
+                            }
+
+                            Bus::batch($jobs)
+                                ->name('Translate content to all languages')
+                                ->dispatch();
+                        }),
+
                     ...Language::all()
                         ->map(
                             fn (Language $language) => BulkAction::make($language->code)
@@ -783,32 +808,21 @@ class ContentResource extends Resource
                                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                                 ->requiresConfirmation()
                                 ->action(function (Collection $records) use ($language) {
-                                    $records = $records->filter(function (Content $record) use ($language) {
-                                        $slug = $record->slug;
+                                    $jobs = [];
 
-                                        return ! Content::query()
-                                            ->where('slug', $slug)
-                                            ->where('language_code', $language->code)
-                                            ->exists();
-                                    });
-
-                                    $records->each(function (Content $record) use ($language) {
-                                        $slug = $record->slug;
-
-                                        $existing = Content::query()
-                                            ->where('slug', $slug)
-                                            ->where('language_code', $language->code)
-                                            ->exists();
-
-                                        if ($existing) {
-                                            return;
+                                    $records->each(function (Content $record) use ($language, &$jobs) {
+                                        if ($job = $record->translate($language, toBus: true)) {
+                                            $jobs[] = $job;
                                         }
-
-                                        TranslateContent::dispatch(
-                                            content: $record,
-                                            language: $language
-                                        );
                                     });
+
+                                    if (empty($jobs)) {
+                                        return;
+                                    }
+
+                                    Bus::batch($jobs)
+                                        ->name('Translate content to ' . $language->name)
+                                        ->dispatch();
                                 })
                         ),
                 ])
