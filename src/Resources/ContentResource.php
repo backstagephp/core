@@ -61,7 +61,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -782,13 +781,13 @@ class ContentResource extends Resource
                         ->requiresConfirmation()
                         ->action(function (Collection $records) {
                             $languages = Language::all();
-                            
+
                             $records->each(function (Content $record) use ($languages) {
                                 foreach ($languages as $language) {
                                     $record->translate($language);
                                 }
                             });
-                            
+
                         }),
 
                     ...Language::all()
@@ -799,7 +798,7 @@ class ContentResource extends Resource
                                 ->requiresConfirmation()
                                 ->action(function (Collection $records) use ($language) {
                                     $records->each(function (Content $record) use ($language) {
-                                       $record->translate($language);
+                                        $record->translate($language);
                                     });
                                 })
                         ),
