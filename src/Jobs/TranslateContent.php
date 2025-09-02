@@ -217,7 +217,7 @@ class TranslateContent implements ShouldQueue
             'trace' => $exception->getTraceAsString(),
         ]);
 
-        if($this->duplicateContent !== null && $this->duplicateContent instanceof Content) {
+        if ($this->duplicateContent !== null && $this->duplicateContent instanceof Content) {
             $this->duplicateContent->delete();
         }
     }
