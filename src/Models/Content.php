@@ -12,7 +12,6 @@ use Backstage\Observers\ContentDepthObserver;
 use Backstage\Observers\ContentObserver;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -277,7 +276,7 @@ class Content extends Model
             return;
         }
 
-        if (!$toBus) {
+        if (! $toBus) {
             dispatch(new TranslateContent($this, $language));
         }
 

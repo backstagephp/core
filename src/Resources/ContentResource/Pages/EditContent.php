@@ -87,9 +87,9 @@ class EditContent extends EditRecord
                     $jobs = [];
 
                     foreach ($languages as $language) {
-                        $job =$record->translate(language: $language, toBus: true);
+                        $job = $record->translate(language: $language, toBus: true);
 
-                        if($job) {
+                        if ($job) {
                             $jobs[] = $job;
                         }
                     }
