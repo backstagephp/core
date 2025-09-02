@@ -264,7 +264,7 @@ class Content extends Model
         return response($this->view(), $code);
     }
 
-    public function translate(Language $language, bool $toBus = false)
+    public function translate(Language $language)
     {
         $existing = self::query()
             ->where('slug', $this->slug)
@@ -276,10 +276,6 @@ class Content extends Model
             return;
         }
 
-        if (! $toBus) {
-            dispatch(new TranslateContent($this, $language));
-        }
-
-        return new TranslateContent($this, $language);
+        dispatch(new TranslateContent($this, $language));
     }
 }

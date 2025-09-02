@@ -18,7 +18,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
 class EditContent extends EditRecord
@@ -73,7 +72,7 @@ class EditContent extends EditRecord
                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                 ->requiresConfirmation()
                 ->action(function (Content $record) use ($language) {
-                    $record->translate($language, toBus: false);
+                    $record->translate($language);
                 }));
 
         if (! $languageActions->isEmpty()) {
@@ -84,23 +83,9 @@ class EditContent extends EditRecord
                 ->icon(fn () => Heroicon::OutlinedLanguage)
                 ->requiresConfirmation()
                 ->action(function (Content $record) use ($languages) {
-                    $jobs = [];
-
                     foreach ($languages as $language) {
-                        $job = $record->translate(language: $language, toBus: true);
-
-                        if ($job) {
-                            $jobs[] = $job;
-                        }
+                        $record->translate(language: $language);
                     }
-
-                    if (empty($jobs)) {
-                        return;
-                    }
-
-                    Bus::batch($jobs)
-                        ->name('Translate Content ' . $record->getKey() . ' to ' . $languages->map(fn ($lang) => $lang->name)->join(', '))
-                        ->dispatch();
                 });
 
             $languageActions = collect([$translateAllLanguage, ...$all]);

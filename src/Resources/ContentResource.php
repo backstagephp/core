@@ -781,24 +781,14 @@ class ContentResource extends Resource
                         ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage)
                         ->requiresConfirmation()
                         ->action(function (Collection $records) {
-                            $jobs = [];
-
                             $languages = Language::all();
-                            $records->each(function (Content $record) use (&$jobs, $languages) {
+                            
+                            $records->each(function (Content $record) use ($languages) {
                                 foreach ($languages as $language) {
-                                    if ($job = $record->translate($language, toBus: true)) {
-                                        $jobs[] = $job;
-                                    }
+                                    $record->translate($language);
                                 }
                             });
-
-                            if (empty($jobs)) {
-                                return;
-                            }
-
-                            Bus::batch($jobs)
-                                ->name('Translate content to all languages')
-                                ->dispatch();
+                            
                         }),
 
                     ...Language::all()
@@ -808,21 +798,9 @@ class ContentResource extends Resource
                                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                                 ->requiresConfirmation()
                                 ->action(function (Collection $records) use ($language) {
-                                    $jobs = [];
-
-                                    $records->each(function (Content $record) use ($language, &$jobs) {
-                                        if ($job = $record->translate($language, toBus: true)) {
-                                            $jobs[] = $job;
-                                        }
+                                    $records->each(function (Content $record) use ($language) {
+                                       $record->translate($language);
                                     });
-
-                                    if (empty($jobs)) {
-                                        return;
-                                    }
-
-                                    Bus::batch($jobs)
-                                        ->name('Translate content to ' . $language->name)
-                                        ->dispatch();
                                 })
                         ),
                 ])
