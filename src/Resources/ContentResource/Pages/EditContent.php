@@ -251,8 +251,6 @@ class EditContent extends EditRecord
         ])->delete();
     }
 
-
-
     private function handleBuilderField($value, $field): void
     {
         $value = $this->decodeAllJsonStrings($value);
