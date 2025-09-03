@@ -87,6 +87,7 @@ class ContentResource extends Resource
     public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {
         $record->load('type');
+
         return $record->name . ' (' . $record->type->name . ')';
     }
 
