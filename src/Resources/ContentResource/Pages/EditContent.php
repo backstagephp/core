@@ -223,10 +223,6 @@ class EditContent extends EditRecord
                     return;
                 }
 
-                if ($fieldModel && $fieldModel->field_type === 'rich-editor') {
-                    $value = $this->handleRichEditorField($value, $fieldModel);
-                }
-
                 if ($fieldModel && $fieldModel->field_type === 'builder') {
                     $this->handleBuilderField($value, $field);
 
@@ -253,20 +249,6 @@ class EditContent extends EditRecord
             'content_ulid' => $this->getRecord()->getKey(),
             'field_ulid' => $field,
         ])->delete();
-    }
-
-    private function handleRichEditorField($value, $fieldModel)
-    {
-        $autoCleanContent = $fieldModel->config['autoCleanContent'] ?? true;
-
-        if ($autoCleanContent && ! empty($value)) {
-            $options = [
-                'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
-            ];
-            $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
-        }
-
-        return $value;
     }
 
     private function handleBuilderField($value, $field): void
