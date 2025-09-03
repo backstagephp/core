@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         // Only run if the tables exist
-        if (!Schema::hasTable('content_field_values') && !Schema::hasTable('settings')) {
+        if (! Schema::hasTable('content_field_values') && ! Schema::hasTable('settings')) {
             return;
         }
 
@@ -35,25 +35,25 @@ return new class extends Migration
                 ->chunk(100, function ($rows) {
                     foreach ($rows as $row) {
                         $value = $row->value;
-                        
+
                         // Skip if already in array format (starts with { or [)
                         if (is_string($value) && (str_starts_with(trim($value), '{') || str_starts_with(trim($value), '['))) {
                             continue;
                         }
-                        
+
                         // Skip if empty or null
                         if (empty($value)) {
                             continue;
                         }
-                        
+
                         // Convert HTML string to Filament v4 array format
                         $convertedValue = $this->convertHtmlToRichEditorArray($value);
-                        
+
                         // Update the database
                         DB::table('content_field_values')
                             ->where('ulid', $row->ulid)
                             ->update(['value' => json_encode($convertedValue)]);
-                        
+
                         logger("Converted RichEditor content field value: {$row->ulid}");
                     }
                 });
@@ -67,24 +67,24 @@ return new class extends Migration
                 ->chunk(100, function ($rows) use ($richEditorFields) {
                     foreach ($rows as $row) {
                         $values = $row->values;
-                        
+
                         if (empty($values)) {
                             continue;
                         }
-                        
+
                         $decodedValues = json_decode($values, true);
-                        if (!is_array($decodedValues)) {
+                        if (! is_array($decodedValues)) {
                             continue;
                         }
-                        
+
                         $updated = false;
                         $newValues = $this->convertRichEditorInSettings($decodedValues, $richEditorFields, $updated);
-                        
+
                         if ($updated) {
                             DB::table('settings')
                                 ->where('ulid', $row->ulid)
                                 ->update(['values' => json_encode($newValues)]);
-                            
+
                             logger("Converted RichEditor settings value: {$row->ulid}");
                         }
                     }
@@ -116,25 +116,25 @@ return new class extends Migration
                 ->chunk(100, function ($rows) {
                     foreach ($rows as $row) {
                         $value = $row->value;
-                        
+
                         // Skip if not in array format
-                        if (!is_string($value) || (!str_starts_with(trim($value), '{') && !str_starts_with(trim($value), '['))) {
+                        if (! is_string($value) || (! str_starts_with(trim($value), '{') && ! str_starts_with(trim($value), '['))) {
                             continue;
                         }
-                        
+
                         $decodedValue = json_decode($value, true);
-                        if (!is_array($decodedValue)) {
+                        if (! is_array($decodedValue)) {
                             continue;
                         }
-                        
+
                         // Convert Filament v4 array format back to HTML string
                         $convertedValue = $this->convertRichEditorArrayToHtml($decodedValue);
-                        
+
                         // Update the database
                         DB::table('content_field_values')
                             ->where('ulid', $row->ulid)
                             ->update(['value' => $convertedValue]);
-                        
+
                         logger("Reverted RichEditor content field value: {$row->ulid}");
                     }
                 });
@@ -148,24 +148,24 @@ return new class extends Migration
                 ->chunk(100, function ($rows) use ($richEditorFields) {
                     foreach ($rows as $row) {
                         $values = $row->values;
-                        
+
                         if (empty($values)) {
                             continue;
                         }
-                        
+
                         $decodedValues = json_decode($values, true);
-                        if (!is_array($decodedValues)) {
+                        if (! is_array($decodedValues)) {
                             continue;
                         }
-                        
+
                         $updated = false;
                         $newValues = $this->revertRichEditorInSettings($decodedValues, $richEditorFields, $updated);
-                        
+
                         if ($updated) {
                             DB::table('settings')
                                 ->where('ulid', $row->ulid)
                                 ->update(['values' => json_encode($newValues)]);
-                            
+
                             logger("Reverted RichEditor settings value: {$row->ulid}");
                         }
                     }
@@ -219,21 +219,21 @@ return new class extends Migration
         if (empty($html)) {
             return [
                 'type' => 'doc',
-                'content' => []
+                'content' => [],
             ];
         }
 
         // For now, create a simple paragraph structure
         // In a more sophisticated implementation, you'd parse the HTML properly
         $text = strip_tags($html);
-        
+
         if (empty($text)) {
             return [
                 'type' => 'doc',
-                'content' => []
+                'content' => [],
             ];
         }
-        
+
         return [
             'type' => 'doc',
             'content' => [
@@ -242,11 +242,11 @@ return new class extends Migration
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => $text
-                        ]
-                    ]
-                ]
-            ]
+                            'text' => $text,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -255,7 +255,7 @@ return new class extends Migration
      */
     private function convertRichEditorArrayToHtml(array $data): string
     {
-        if (!isset($data['type']) || $data['type'] !== 'doc') {
+        if (! isset($data['type']) || $data['type'] !== 'doc') {
             return '';
         }
 
@@ -279,39 +279,48 @@ return new class extends Migration
             case 'paragraph':
                 $align = $node['attrs']['textAlign'] ?? 'start';
                 $alignClass = $align !== 'start' ? " style=\"text-align: {$align}\"" : '';
+
                 return "<p{$alignClass}>{$html}</p>";
 
             case 'text':
                 $text = $node['text'] ?? '';
                 $marks = $node['marks'] ?? [];
-                
+
                 foreach ($marks as $mark) {
                     switch ($mark['type'] ?? '') {
                         case 'bold':
                             $text = "<strong>{$text}</strong>";
+
                             break;
                         case 'italic':
                             $text = "<em>{$text}</em>";
+
                             break;
                         case 'underline':
                             $text = "<u>{$text}</u>";
+
                             break;
                         case 'strike':
                             $text = "<s>{$text}</s>";
+
                             break;
                         case 'code':
                             $text = "<code>{$text}</code>";
+
                             break;
                         case 'link':
                             $href = $mark['attrs']['href'] ?? '#';
                             $text = "<a href=\"{$href}\">{$text}</a>";
+
                             break;
                     }
                 }
+
                 return $text;
 
             case 'heading':
                 $level = $node['attrs']['level'] ?? 1;
+
                 return "<h{$level}>{$html}</h{$level}>";
 
             case 'bulletList':
