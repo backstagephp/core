@@ -223,10 +223,6 @@ class EditContent extends EditRecord
                     return;
                 }
 
-                if ($fieldModel && $fieldModel->field_type === 'rich-editor') {
-                    $value = $this->handleRichEditorField($value, $fieldModel);
-                }
-
                 if ($fieldModel && $fieldModel->field_type === 'builder') {
                     $this->handleBuilderField($value, $field);
 
@@ -255,24 +251,7 @@ class EditContent extends EditRecord
         ])->delete();
     }
 
-    private function handleRichEditorField($value, $fieldModel)
-    {
-        $autoCleanContent = $fieldModel->config['autoCleanContent'] ?? true;
 
-        if ($autoCleanContent && ! empty($value)) {
-            $options = [
-                'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
-            ];
-
-            // Only clean if the value is a string (HTML content)
-            // If it's an array, it's already in the new Filament RichEditor format
-            if (is_string($value)) {
-                $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
-            }
-        }
-
-        return $value;
-    }
 
     private function handleBuilderField($value, $field): void
     {
