@@ -40,7 +40,7 @@ class TranslateContent implements ShouldQueue
 
     public function handle(): void
     {
-        if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->exists()) {
+        if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('type_slug', $this->content->type_slug)->where('language_code', $this->language->code)->exists()) {
             return;
         }
 
