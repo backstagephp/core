@@ -263,7 +263,12 @@ class EditContent extends EditRecord
             $options = [
                 'preserveCustomCaptions' => $fieldModel->config['preserveCustomCaptions'] ?? false,
             ];
-            $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
+
+            // Only clean if the value is a string (HTML content)
+            // If it's an array, it's already in the new Filament RichEditor format
+            if (is_string($value)) {
+                $value = \Backstage\Fields\Services\ContentCleaningService::cleanHtmlContent($value, $options);
+            }
         }
 
         return $value;
