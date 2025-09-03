@@ -36,7 +36,7 @@
         "backstage/fields": "^0.7.0",
         "backstage/media": "dev-release/1.x",
         "backstage/redirects": "dev-release/1.x",
-        "backstage/translations": "dev-feature/morph-translations",
+        "backstage/translations": "dev-feature/morph-translations-operational-translations",
         "baspa/laravel-timezones": "^1.2",
         "codewithdennis/filament-select-tree": "^4.0.0-beta.1",
         "filament/filament": "^4.0",
