@@ -263,4 +263,12 @@ class Content extends Model
 
         return response($this->view(), $code);
     }
+    
+    public function previewable(): bool
+    {
+        return $this->public
+            && $this->published_at
+            && $this->published_at <= now()
+            && ($this->expired_at === null || $this->expired_at >= now());
+    }
 }

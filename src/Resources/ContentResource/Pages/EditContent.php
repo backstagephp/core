@@ -109,8 +109,8 @@ class EditContent extends EditRecord
                 ->url(fn () => $this->getRecord()->url)
                 ->color('gray')
                 ->openUrlInNewTab()
-                ->disabled(fn () => ! $this->getRecord()->public)
-                ->tooltip(fn () => $this->getRecord()->public ? __('Preview content') : __('Content must be public to preview')),
+                ->disabled(fn () => ! $this->getRecord()->previewable())
+                ->tooltip(fn () => $this->getRecord()->previewable() ? __('Preview content') : __('Content must be public, published and not expired to preview')),
 
             DeleteAction::make(),
         ];
