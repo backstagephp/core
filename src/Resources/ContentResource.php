@@ -353,7 +353,7 @@ class ContentResource extends Resource
                                                     }
                                                 }
                                             }),
-                                            
+
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()

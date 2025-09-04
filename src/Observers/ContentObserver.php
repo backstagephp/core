@@ -9,7 +9,7 @@ class ContentObserver
 {
     public function saving(Content $content)
     {
-        if (!$content->public && $content->path) {
+        if (! $content->public && $content->path) {
             $content->path = null;
         }
     }

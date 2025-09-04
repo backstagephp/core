@@ -2,8 +2,6 @@
 
 use Backstage\Models\Content;
 use Backstage\Models\Site;
-use Backstage\Models\Type;
-use Backstage\Models\Language;
 
 test('public content has url and path', function () {
     $content = Content::factory()->create([
