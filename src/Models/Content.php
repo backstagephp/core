@@ -263,7 +263,7 @@ class Content extends Model
 
         return response($this->view(), $code);
     }
-    
+
     public function previewable(): bool
     {
         return $this->public
