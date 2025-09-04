@@ -108,7 +108,9 @@ class EditContent extends EditRecord
                 ->icon(fn (): BackedEnum => Heroicon::OutlinedEye)
                 ->url(fn () => $this->getRecord()->url)
                 ->color('gray')
-                ->openUrlInNewTab(),
+                ->openUrlInNewTab()
+                ->disabled(fn () => ! $this->getRecord()->public)
+                ->tooltip(fn () => $this->getRecord()->public ? __('Preview content') : __('Content must be public to preview')),
 
             DeleteAction::make(),
         ];
