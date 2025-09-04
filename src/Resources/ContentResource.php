@@ -205,27 +205,6 @@ class ContentResource extends Resource
                                     ->label(__('Meta'))
                                     ->icon('heroicon-o-magnifying-glass')
                                     ->schema([
-                                        Toggle::make('public')
-                                            ->label(__('Public'))
-                                            ->default(fn () => self::$type->public ?? true)
-                                            ->onIcon('heroicon-s-check')
-                                            ->offIcon('heroicon-s-x-mark')
-                                            ->inline(false)
-                                            ->helperText(__('Make content publicly accessible on path.'))
-                                            ->columnSpanFull()
-                                            ->live()
-                                            ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
-                                                if ($state === false) {
-                                                    $set('path', '');
-                                                } elseif ($state === true && !$get('path')) {
-                                                    // If public is enabled and no path exists, generate one from name
-                                                    $name = $get('name');
-                                                    if ($name) {
-                                                        self::updatePathAndSlug($set, $get, $name, null);
-                                                    }
-                                                }
-                                            }),
-
                                         TextInput::make('path')
                                             ->columnSpanFull()
                                             ->rules(function (Get $get, $record) {
@@ -354,6 +333,27 @@ class ContentResource extends Resource
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
                                             ->live(),
 
+                                        Toggle::make('public')
+                                            ->label(__('Public'))
+                                            ->default(fn () => self::$type->public ?? true)
+                                            ->onIcon('heroicon-s-check')
+                                            ->offIcon('heroicon-s-x-mark')
+                                            ->inline(false)
+                                            ->helperText(__('Make content publicly accessible on path.'))
+                                            ->columnSpanFull()
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
+                                                if ($state === false) {
+                                                    $set('path', '');
+                                                } elseif ($state === true && !$get('path')) {
+                                                    // If public is enabled and no path exists, generate one from name
+                                                    $name = $get('name');
+                                                    if ($name) {
+                                                        self::updatePathAndSlug($set, $get, $name, null);
+                                                    }
+                                                }
+                                            }),
+                                            
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
