@@ -18,7 +18,7 @@ class RequestServiceProvider extends ServiceProvider
                 $host = str_replace('www.', '', $this->getHost());
 
                 $content = Content::select('content.*')
-                    ->where('public', true)
+                    ->public()
                     ->join('sites', 'sites.ulid', 'content.site_ulid')
                     ->join('domains', 'domains.site_ulid', 'sites.ulid')
                     ->join('domain_language', function (JoinClause $join) {

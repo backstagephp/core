@@ -22,8 +22,7 @@ class SitemapController
                                 ->whereRaw('NOT JSON_CONTAINS(JSON_EXTRACT(meta_tags, "$.robots"), ?)', ['"noindex"']);
                         });
                     })
-                    ->where('public', 1)
-                    ->where('published_at', '<=', now())
+                    ->public()
                     ->orderBy('published_at', 'desc')
                     ->each(function ($content) use ($doc) {
                         $url = $doc->addChild('url');
