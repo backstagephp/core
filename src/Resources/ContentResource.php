@@ -217,7 +217,7 @@ class ContentResource extends Resource
                                             ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
                                                 if ($state === false) {
                                                     $set('path', '');
-                                                } elseif ($state === true && !$get('path')) {
+                                                } elseif ($state === true && ! $get('path')) {
                                                     // If public is enabled and no path exists, generate one from name
                                                     $name = $get('name');
                                                     if ($name) {

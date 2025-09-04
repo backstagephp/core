@@ -90,7 +90,7 @@ test('preview URL generation respects site configuration', function () {
 
 test('preview functionality is implemented in EditContent page', function () {
     expect(class_exists(\Backstage\Resources\ContentResource\Pages\EditContent::class))->toBeTrue();
-    
-    $page = new \Backstage\Resources\ContentResource\Pages\EditContent();
+
+    $page = new \Backstage\Resources\ContentResource\Pages\EditContent;
     expect($page)->toBeInstanceOf(\Filament\Resources\Pages\EditRecord::class);
 });

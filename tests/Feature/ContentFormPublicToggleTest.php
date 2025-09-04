@@ -48,7 +48,6 @@ test('path validation logic is implemented', function () {
         'path' => '/',
     ]);
 
-
     expect($content->path)->toBe('/');
     expect($content->url)->toBeNull();
 
@@ -62,7 +61,6 @@ test('path validation logic is implemented', function () {
 
 test('form structure changes are implemented', function () {
 
-    
     $type = Type::factory()->create(['public' => true]);
     $content = Content::factory()->create([
         'type_slug' => $type->slug,
@@ -70,11 +68,9 @@ test('form structure changes are implemented', function () {
         'path' => 'test-content',
     ]);
 
-
     expect($content->public)->toBeTrue();
     expect($content->path)->toBe('test-content');
     expect($content->url)->not->toBeNull();
-
 
     $content->update(['public' => false]);
     $content->refresh();
