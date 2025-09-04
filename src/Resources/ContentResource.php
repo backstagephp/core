@@ -205,10 +205,31 @@ class ContentResource extends Resource
                                     ->label(__('Meta'))
                                     ->icon('heroicon-o-magnifying-glass')
                                     ->schema([
+                                        Toggle::make('public')
+                                            ->label(__('Public'))
+                                            ->default(fn () => self::$type->public ?? true)
+                                            ->onIcon('heroicon-s-check')
+                                            ->offIcon('heroicon-s-x-mark')
+                                            ->inline(false)
+                                            ->helperText(__('Make content publicly accessible on path.'))
+                                            ->columnSpanFull()
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
+                                                if ($state === false) {
+                                                    $set('path', '');
+                                                } elseif ($state === true && !$get('path')) {
+                                                    // If public is enabled and no path exists, generate one from name
+                                                    $name = $get('name');
+                                                    if ($name) {
+                                                        self::updatePathAndSlug($set, $get, $name, null);
+                                                    }
+                                                }
+                                            }),
+
                                         TextInput::make('path')
                                             ->columnSpanFull()
                                             ->rules(function (Get $get, $record) {
-                                                if ($get('public') === false && $record) {
+                                                if ($get('public') === false) {
                                                     return [];
                                                 }
 
@@ -218,7 +239,13 @@ class ContentResource extends Resource
                                             })
                                             ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
-                                            ->live(),
+                                            ->live()
+                                            ->visible(fn (Get $get) => $get('public') === true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                if ($get('public') === false) {
+                                                    $set('path', '');
+                                                }
+                                            }),
 
                                         TextInput::make('meta_tags.title')
                                             ->label(__('Page Title'))
@@ -396,19 +423,6 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
-                                    ]),
-
-                                Tab::make('advanced')
-                                    ->label(__('Options'))
-                                    ->schema([
-                                        Toggle::make('public')
-                                            ->label(__('Public'))
-                                            ->default(fn () => self::$type->public ?? true)
-                                            ->onIcon('heroicon-s-check')
-                                            ->offIcon('heroicon-s-x-mark')
-                                            ->inline(false)
-                                            ->helperText(__('Make content publicly accessible on path.'))
-                                            ->columnSpanFull(),
                                     ]),
                             ]),
                     ]),
@@ -843,15 +857,21 @@ class ContentResource extends Resource
 
     private static function updatePathAndSlug(Set $set, Get $get, ?string $state, ?Content $record): void
     {
-        $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
-        $slug = Str::slug($state);
-        $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
-        $set('path', ltrim($path, '/'));
+        // Only update path if content is public
+        if ($get('public') === true) {
+            $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
+            $slug = Str::slug($state);
+            $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
+            $set('path', ltrim($path, '/'));
+        } else {
+            // Clear path if not public
+            $set('path', '');
+        }
 
         $currentSlug = $get('slug');
 
         if (! $record || ! $record->slug || ! $currentSlug) {
-            $set('slug', $slug);
+            $set('slug', Str::slug($state));
         }
     }
 }

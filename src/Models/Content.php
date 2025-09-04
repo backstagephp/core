@@ -57,6 +57,7 @@ class Content extends Model
         return [
             'path' => ContentPathCast::class,
             'meta_tags' => 'array',
+            'public' => 'boolean',
         ];
     }
 
