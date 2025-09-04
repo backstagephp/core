@@ -109,7 +109,6 @@ class EditContent extends EditRecord
                 ->url(fn () => $this->getRecord()->url)
                 ->color('gray')
                 ->openUrlInNewTab()
-                ->visible(fn () => $this->getRecord()->public)
                 ->disabled(fn () => ! $this->getRecord()->public)
                 ->tooltip(fn () => $this->getRecord()->public ? __('Preview content') : __('Content must be public to preview')),
 
