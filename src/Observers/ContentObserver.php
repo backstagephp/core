@@ -7,6 +7,13 @@ use Backstage\Redirects\Laravel\Events\UrlHasChanged;
 
 class ContentObserver
 {
+    public function saving(Content $content)
+    {
+        if (!$content->public && $content->path) {
+            $content->path = null;
+        }
+    }
+
     public function saved(Content $content)
     {
         if (! $content->public || ! $content->isDirty('path')) {
