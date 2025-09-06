@@ -51,11 +51,13 @@ class ActionsRelationManager extends RelationManager
             ->components([
                 Grid::make()
                     ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         Hidden::make('language_code')
                             ->default(Language::active()->count() === 1 ? Language::active()->first()->code : Language::active()->where('default', true)->first()?->code),
                         Section::make(__('Action'))
                             ->columns(3)
+                            ->columnSpanFull()
                             ->schema([
                                 Select::make('type')
                                     ->label(__('Type'))
@@ -88,6 +90,7 @@ class ActionsRelationManager extends RelationManager
                             ]),
                         Section::make(__('Configuration'))
                             ->columns(3)
+                            ->columnSpanFull()
                             ->schema([
                                 TextInput::make('config.template')
                                     ->label(__('Template'))
