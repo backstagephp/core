@@ -298,7 +298,7 @@ class ContentResource extends Resource
                                                 parentAttribute: 'parent_ulid',
                                                 modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
                                                     $query = self::applyParentQueryFilters($query, $schema);
- 
+
                                                     // Select all necessary columns
                                                     $query->select([
                                                         'ulid',
@@ -309,7 +309,7 @@ class ContentResource extends Resource
                                                         'created_at',
                                                         'updated_at',
                                                     ]);
- 
+
                                                     return $query;
                                                 },
                                             )
