@@ -30,6 +30,8 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property string $path
  * @property string|null $url
  * @property string $language_code
+ * @property string $published_at
+ * @property string $expired_at
  * @property bool $public
  * @property string $view
  * @property string $type_slug
