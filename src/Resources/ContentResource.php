@@ -157,9 +157,18 @@ class ContentResource extends Resource
             });
         }
 
-        $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+        $languageCode = $form->getLivewire()->data['language_code'] ?? null;
+
+        if (! $languageCode) {
+            // If no language is set in the form, get the default language
+            $defaultLanguage = Language::active()->where('default', true)->first()
+                ?? Language::active()->first();
+            $languageCode = $defaultLanguage?->code;
+        }
+
+        if ($languageCode) {
             $query->where('language_code', $languageCode);
-        });
+        }
 
         return $query;
     }
@@ -288,7 +297,20 @@ class ContentResource extends Resource
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
                                                 modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
-                                                    return self::applyParentQueryFilters($query, $schema);
+                                                    $query = self::applyParentQueryFilters($query, $schema);
+
+                                                    // Select all necessary columns
+                                                    $query->select([
+                                                        'ulid',
+                                                        'name',
+                                                        'parent_ulid',
+                                                        'language_code',
+                                                        'type_slug',
+                                                        'created_at',
+                                                        'updated_at',
+                                                    ]);
+
+                                                    return $query;
                                                 },
                                             )
                                             ->searchable()
@@ -376,6 +398,9 @@ class ContentResource extends Resource
                                             ->live()
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
                                                 $set('path', $get('path'));
+
+                                                // Clear parent selection when language changes to prevent cross-language parent relationships
+                                                $set('parent_ulid', null);
                                             }),
 
                                         TextInput::make('slug')
@@ -534,7 +559,21 @@ class ContentResource extends Resource
                     ->toArray(),
             ])
             ->modifyQueryUsing(
-                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug)
+                function (EloquentBuilder $query) use ($type) {
+                    $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug);
+
+                    // Default to filtering by the first active language if no language filter is applied
+                    if (! request()->has('filters.language_code.values.0')) {
+                        $defaultLanguage = Language::active()->where('default', true)->first()
+                            ?? Language::active()->first();
+
+                        if ($defaultLanguage) {
+                            $query->where('language_code', $defaultLanguage->code);
+                        }
+                    }
+
+                    return $query;
+                }
             )
             ->defaultSort($type->sort_column ?? 'position', $type->sort_direction ?? 'desc')
             ->recordActions([
@@ -654,7 +693,21 @@ class ContentResource extends Resource
                     ->sortable(),
             ])
             ->modifyQueryUsing(
-                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type')
+                function (EloquentBuilder $query) {
+                    $query->with('ancestors', 'authors', 'type');
+
+                    // Default to filtering by the first active language if no language filter is applied
+                    if (! request()->has('filters.language_code.values.0')) {
+                        $defaultLanguage = Language::active()->where('default', true)->first()
+                            ?? Language::active()->first();
+
+                        if ($defaultLanguage) {
+                            $query->where('language_code', $defaultLanguage->code);
+                        }
+                    }
+
+                    return $query;
+                }
             )
             ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
