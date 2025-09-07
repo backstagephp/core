@@ -92,7 +92,7 @@ class Backstage
         foreach ($values as $key => $value) {
             $field = $fields[$key] ?? null;
             $fieldKey = Str::camel($field->slug ?? $key);
-            
+
             // Process rich editor content
             if ($field && $field->field_type === 'rich-editor' && is_array($value)) {
                 $params[$fieldKey] = self::processRichEditorContent($value);
@@ -109,7 +109,7 @@ class Backstage
      */
     private static function processRichEditorContent($content): string
     {
-        if (!is_array($content) || !isset($content['type']) || $content['type'] !== 'doc' || !isset($content['content'])) {
+        if (! is_array($content) || ! isset($content['type']) || $content['type'] !== 'doc' || ! isset($content['content'])) {
             return '';
         }
 
@@ -127,7 +127,7 @@ class Backstage
     private static function extractTextFromRichEditor(array $content): string
     {
         $text = '';
-        
+
         if (isset($content['content']) && is_array($content['content'])) {
             foreach ($content['content'] as $item) {
                 if (isset($item['type']) && $item['type'] === 'paragraph' && isset($item['content'])) {
@@ -147,7 +147,7 @@ class Backstage
                 }
             }
         }
-        
+
         return trim($text);
     }
 }

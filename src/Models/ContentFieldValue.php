@@ -3,13 +3,13 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
-use Illuminate\Support\HtmlString;
 use Backstage\Shared\HasPackageFactory;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\HtmlString;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -74,17 +74,17 @@ class ContentFieldValue extends Pivot
         }
 
         $decoded = json_decode($this->value, true);
-        
+
         // If it's already HTML, return it
-        if (is_string($this->value) && !$decoded) {
+        if (is_string($this->value) && ! $decoded) {
             return $this->value;
         }
-        
+
         // If it's JSON rich editor content, render it
         if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
             return RichContentRenderer::make($decoded)->toHtml();
         }
-        
+
         return null;
     }
 
@@ -98,11 +98,11 @@ class ContentFieldValue extends Pivot
         }
 
         $decoded = json_decode($this->value, true);
-        
+
         if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
             return $decoded;
         }
-        
+
         return null;
     }
 
@@ -116,11 +116,12 @@ class ContentFieldValue extends Pivot
         }
 
         // Validate that the content has the correct structure
-        if (!isset($newContent['type']) || $newContent['type'] !== 'doc' || !isset($newContent['content'])) {
+        if (! isset($newContent['type']) || $newContent['type'] !== 'doc' || ! isset($newContent['content'])) {
             throw new \InvalidArgumentException('Rich editor content must have type "doc" and content array');
         }
 
         $this->value = json_encode($newContent);
+
         return $this->save();
     }
 
@@ -134,24 +135,23 @@ class ContentFieldValue extends Pivot
         }
 
         $currentContent = $this->getRichEditorJson();
-        
-        if (!$currentContent) {
+
+        if (! $currentContent) {
             // If no existing content, create a basic structure
             $currentContent = [
                 'type' => 'doc',
-                'content' => []
+                'content' => [],
             ];
         }
 
         // Apply the modifier function
         $modifiedContent = $modifier($currentContent);
-        
+
         // Validate the modified content
-        if (!is_array($modifiedContent) || !isset($modifiedContent['type']) || $modifiedContent['type'] !== 'doc') {
+        if (! is_array($modifiedContent) || ! isset($modifiedContent['type']) || $modifiedContent['type'] !== 'doc') {
             throw new \InvalidArgumentException('Modified content must be a valid rich editor document');
         }
 
         return $this->updateRichEditorContent($modifiedContent);
     }
-
 }
