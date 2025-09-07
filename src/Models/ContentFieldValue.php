@@ -3,12 +3,13 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
+use Illuminate\Support\HtmlString;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -62,4 +63,95 @@ class ContentFieldValue extends Pivot
         // This prevents automatic type casting of numeric values
         return new HtmlString($this->value ?? '');
     }
+
+    /**
+     * Get the rich editor content as HTML using RichContentRenderer
+     */
+    public function getRichEditorHtml(): ?string
+    {
+        if ($this->field->field_type !== 'rich-editor') {
+            return null;
+        }
+
+        $decoded = json_decode($this->value, true);
+        
+        // If it's already HTML, return it
+        if (is_string($this->value) && !$decoded) {
+            return $this->value;
+        }
+        
+        // If it's JSON rich editor content, render it
+        if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
+            return RichContentRenderer::make($decoded)->toHtml();
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get the rich editor content as raw JSON
+     */
+    public function getRichEditorJson(): ?array
+    {
+        if ($this->field->field_type !== 'rich-editor') {
+            return null;
+        }
+
+        $decoded = json_decode($this->value, true);
+        
+        if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
+            return $decoded;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Update the rich editor content with new JSON data
+     */
+    public function updateRichEditorContent(array $newContent): bool
+    {
+        if ($this->field->field_type !== 'rich-editor') {
+            return false;
+        }
+
+        // Validate that the content has the correct structure
+        if (!isset($newContent['type']) || $newContent['type'] !== 'doc' || !isset($newContent['content'])) {
+            throw new \InvalidArgumentException('Rich editor content must have type "doc" and content array');
+        }
+
+        $this->value = json_encode($newContent);
+        return $this->save();
+    }
+
+    /**
+     * Update the rich editor content by modifying existing content
+     */
+    public function modifyRichEditorContent(callable $modifier): bool
+    {
+        if ($this->field->field_type !== 'rich-editor') {
+            return false;
+        }
+
+        $currentContent = $this->getRichEditorJson();
+        
+        if (!$currentContent) {
+            // If no existing content, create a basic structure
+            $currentContent = [
+                'type' => 'doc',
+                'content' => []
+            ];
+        }
+
+        // Apply the modifier function
+        $modifiedContent = $modifier($currentContent);
+        
+        // Validate the modified content
+        if (!is_array($modifiedContent) || !isset($modifiedContent['type']) || $modifiedContent['type'] !== 'doc') {
+            throw new \InvalidArgumentException('Modified content must be a valid rich editor document');
+        }
+
+        return $this->updateRichEditorContent($modifiedContent);
+    }
+
 }

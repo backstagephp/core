@@ -80,20 +80,74 @@ class Backstage
 
         $values = collect($block['data']);
 
-        $fields = Field::select('ulid', 'slug')
+        $fields = Field::select('ulid', 'slug', 'field_type')
             ->whereIn('ulid', $values->keys())
-            ->pluck('slug', 'ulid')
-            ->toArray();
+            ->get()
+            ->keyBy('ulid');
 
         $params = [
             '_type' => $block['type'],
         ];
 
         foreach ($values as $key => $value) {
-            $fieldKey = Str::camel($fields[$key] ?? $key);
-            $params[$fieldKey] = $value;
+            $field = $fields[$key] ?? null;
+            $fieldKey = Str::camel($field->slug ?? $key);
+            
+            // Process rich editor content
+            if ($field && $field->field_type === 'rich-editor' && is_array($value)) {
+                $params[$fieldKey] = self::processRichEditorContent($value);
+            } else {
+                $params[$fieldKey] = $value;
+            }
         }
 
         return $params;
+    }
+
+    /**
+     * Process rich editor content to HTML
+     */
+    private static function processRichEditorContent($content): string
+    {
+        if (!is_array($content) || !isset($content['type']) || $content['type'] !== 'doc' || !isset($content['content'])) {
+            return '';
+        }
+
+        try {
+            return \Filament\Forms\Components\RichEditor\RichContentRenderer::make($content)->toHtml();
+        } catch (\Exception $e) {
+            // Fallback: extract plain text
+            return self::extractTextFromRichEditor($content);
+        }
+    }
+
+    /**
+     * Extract plain text from rich editor content as fallback
+     */
+    private static function extractTextFromRichEditor(array $content): string
+    {
+        $text = '';
+        
+        if (isset($content['content']) && is_array($content['content'])) {
+            foreach ($content['content'] as $item) {
+                if (isset($item['type']) && $item['type'] === 'paragraph' && isset($item['content'])) {
+                    foreach ($item['content'] as $textNode) {
+                        if (isset($textNode['type']) && $textNode['type'] === 'text' && isset($textNode['text'])) {
+                            $text .= $textNode['text'] . ' ';
+                        }
+                    }
+                    $text .= "\n";
+                } elseif (isset($item['type']) && $item['type'] === 'heading' && isset($item['content'])) {
+                    foreach ($item['content'] as $textNode) {
+                        if (isset($textNode['type']) && $textNode['type'] === 'text' && isset($textNode['text'])) {
+                            $text .= $textNode['text'] . ' ';
+                        }
+                    }
+                    $text .= "\n";
+                }
+            }
+        }
+        
+        return trim($text);
     }
 }
