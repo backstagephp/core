@@ -80,20 +80,87 @@ class Backstage
 
         $values = collect($block['data']);
 
-        $fields = Field::select('ulid', 'slug')
+        $fields = Field::select('ulid', 'slug', 'field_type')
             ->whereIn('ulid', $values->keys())
-            ->pluck('slug', 'ulid')
-            ->toArray();
+            ->get()
+            ->keyBy('ulid');
 
         $params = [
             '_type' => $block['type'],
         ];
 
         foreach ($values as $key => $value) {
-            $fieldKey = Str::camel($fields[$key] ?? $key);
-            $params[$fieldKey] = $value;
+            $field = $fields[$key] ?? null;
+            $fieldKey = Str::camel($field->slug ?? $key);
+
+            // Process rich editor content
+            if ($field && $field->field_type === 'rich-editor' && is_array($value)) {
+                $params[$fieldKey] = self::processRichEditorContent($value);
+            } else {
+                $params[$fieldKey] = $value;
+            }
         }
 
         return $params;
+    }
+
+    /**
+     * Process rich editor content to HTML
+     */
+    private static function processRichEditorContent($content): string
+    {
+        if (! is_array($content) || ! isset($content['type']) || $content['type'] !== 'doc' || ! isset($content['content'])) {
+            return '';
+        }
+
+        try {
+            return \Filament\Forms\Components\RichEditor\RichContentRenderer::make($content)->toHtml();
+        } catch (\Exception $e) {
+            // Fallback: extract plain text
+            return self::extractTextFromRichEditor($content);
+        }
+    }
+
+    /**
+     * Extract plain text from rich editor content as fallback.
+     * This method might be removed in the future, when all content is stored as JSON.
+     */
+    private static function extractTextFromRichEditor(array $content): string
+    {
+        if (! isset($content['content']) || ! is_array($content['content'])) {
+            return '';
+        }
+
+        $textParts = [];
+
+        foreach ($content['content'] as $item) {
+            if (! isset($item['type']) || ! isset($item['content']) || ! is_array($item['content'])) {
+                continue;
+            }
+
+            $itemText = self::extractTextFromNodes($item['content']);
+            if (! empty($itemText)) {
+                $textParts[] = $itemText;
+            }
+        }
+
+        return implode("\n", $textParts);
+    }
+
+    /**
+     * Extract text from an array of content nodes.
+     * This method might be removed in the future, when all content is stored as JSON.
+     */
+    private static function extractTextFromNodes(array $nodes): string
+    {
+        $textParts = [];
+
+        foreach ($nodes as $node) {
+            if (isset($node['type']) && $node['type'] === 'text' && isset($node['text'])) {
+                $textParts[] = $node['text'];
+            }
+        }
+
+        return implode(' ', $textParts);
     }
 }

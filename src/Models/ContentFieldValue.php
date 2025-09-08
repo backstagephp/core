@@ -4,6 +4,7 @@ namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
 use Backstage\Shared\HasPackageFactory;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,5 +62,47 @@ class ContentFieldValue extends Pivot
         // For all other cases, ensure the value is returned as a string
         // This prevents automatic type casting of numeric values
         return new HtmlString($this->value ?? '');
+    }
+
+    /**
+     * Get the rich editor content as HTML using RichContentRenderer
+     */
+    public function getRichEditorHtml(): ?string
+    {
+        if ($this->field->field_type !== 'rich-editor') {
+            return null;
+        }
+
+        $decoded = json_decode($this->value, true);
+
+        // If it's already HTML, return it
+        if (is_string($this->value) && ! $decoded) {
+            return $this->value;
+        }
+
+        // If it's JSON rich editor content, render it
+        if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
+            return RichContentRenderer::make($decoded)->toHtml();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the rich editor content as raw JSON
+     */
+    public function getRichEditorJson(): ?array
+    {
+        if ($this->field->field_type !== 'rich-editor') {
+            return null;
+        }
+
+        $decoded = json_decode($this->value, true);
+
+        if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
+            return $decoded;
+        }
+
+        return null;
     }
 }
