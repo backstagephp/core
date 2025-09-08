@@ -126,19 +126,19 @@ class Backstage
      */
     private static function extractTextFromRichEditor(array $content): string
     {
-        if (!isset($content['content']) || !is_array($content['content'])) {
+        if (! isset($content['content']) || ! is_array($content['content'])) {
             return '';
         }
 
         $textParts = [];
 
         foreach ($content['content'] as $item) {
-            if (!isset($item['type']) || !isset($item['content']) || !is_array($item['content'])) {
+            if (! isset($item['type']) || ! isset($item['content']) || ! is_array($item['content'])) {
                 continue;
             }
 
             $itemText = self::extractTextFromNodes($item['content']);
-            if (!empty($itemText)) {
+            if (! empty($itemText)) {
                 $textParts[] = $itemText;
             }
         }
