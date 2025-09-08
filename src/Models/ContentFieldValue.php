@@ -3,13 +3,13 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
-use Illuminate\Support\HtmlString;
 use Backstage\Shared\HasPackageFactory;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\HtmlString;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -74,17 +74,17 @@ class ContentFieldValue extends Pivot
         }
 
         $decoded = json_decode($this->value, true);
-        
+
         // If it's already HTML, return it
-        if (is_string($this->value) && !$decoded) {
+        if (is_string($this->value) && ! $decoded) {
             return $this->value;
         }
-        
+
         // If it's JSON rich editor content, render it
         if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
             return RichContentRenderer::make($decoded)->toHtml();
         }
-        
+
         return null;
     }
 
@@ -98,13 +98,11 @@ class ContentFieldValue extends Pivot
         }
 
         $decoded = json_decode($this->value, true);
-        
+
         if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
             return $decoded;
         }
-        
+
         return null;
     }
-
-
 }
