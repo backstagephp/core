@@ -126,28 +126,39 @@ class Backstage
      */
     private static function extractTextFromRichEditor(array $content): string
     {
-        $text = '';
-        
-        if (isset($content['content']) && is_array($content['content'])) {
-            foreach ($content['content'] as $item) {
-                if (isset($item['type']) && $item['type'] === 'paragraph' && isset($item['content'])) {
-                    foreach ($item['content'] as $textNode) {
-                        if (isset($textNode['type']) && $textNode['type'] === 'text' && isset($textNode['text'])) {
-                            $text .= $textNode['text'] . ' ';
-                        }
-                    }
-                    $text .= "\n";
-                } elseif (isset($item['type']) && $item['type'] === 'heading' && isset($item['content'])) {
-                    foreach ($item['content'] as $textNode) {
-                        if (isset($textNode['type']) && $textNode['type'] === 'text' && isset($textNode['text'])) {
-                            $text .= $textNode['text'] . ' ';
-                        }
-                    }
-                    $text .= "\n";
-                }
+        if (!isset($content['content']) || !is_array($content['content'])) {
+            return '';
+        }
+
+        $textParts = [];
+
+        foreach ($content['content'] as $item) {
+            if (!isset($item['type']) || !isset($item['content']) || !is_array($item['content'])) {
+                continue;
+            }
+
+            $itemText = self::extractTextFromNodes($item['content']);
+            if (!empty($itemText)) {
+                $textParts[] = $itemText;
             }
         }
-        
-        return trim($text);
+
+        return implode("\n", $textParts);
+    }
+
+    /**
+     * Extract text from an array of content nodes
+     */
+    private static function extractTextFromNodes(array $nodes): string
+    {
+        $textParts = [];
+
+        foreach ($nodes as $node) {
+            if (isset($node['type']) && $node['type'] === 'text' && isset($node['text'])) {
+                $textParts[] = $node['text'];
+            }
+        }
+
+        return implode(' ', $textParts);
     }
 }
