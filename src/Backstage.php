@@ -122,7 +122,8 @@ class Backstage
     }
 
     /**
-     * Extract plain text from rich editor content as fallback
+     * Extract plain text from rich editor content as fallback.
+     * This method might be removed in the future, when all content is stored as JSON.
      */
     private static function extractTextFromRichEditor(array $content): string
     {
@@ -147,7 +148,8 @@ class Backstage
     }
 
     /**
-     * Extract text from an array of content nodes
+     * Extract text from an array of content nodes.
+     * This method might be removed in the future, when all content is stored as JSON.
      */
     private static function extractTextFromNodes(array $nodes): string
     {
