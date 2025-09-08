@@ -106,52 +106,5 @@ class ContentFieldValue extends Pivot
         return null;
     }
 
-    /**
-     * Update the rich editor content with new JSON data
-     */
-    public function updateRichEditorContent(array $newContent): bool
-    {
-        if ($this->field->field_type !== 'rich-editor') {
-            return false;
-        }
-
-        // Validate that the content has the correct structure
-        if (!isset($newContent['type']) || $newContent['type'] !== 'doc' || !isset($newContent['content'])) {
-            throw new \InvalidArgumentException('Rich editor content must have type "doc" and content array');
-        }
-
-        $this->value = json_encode($newContent);
-        return $this->save();
-    }
-
-    /**
-     * Update the rich editor content by modifying existing content
-     */
-    public function modifyRichEditorContent(callable $modifier): bool
-    {
-        if ($this->field->field_type !== 'rich-editor') {
-            return false;
-        }
-
-        $currentContent = $this->getRichEditorJson();
-        
-        if (!$currentContent) {
-            // If no existing content, create a basic structure
-            $currentContent = [
-                'type' => 'doc',
-                'content' => []
-            ];
-        }
-
-        // Apply the modifier function
-        $modifiedContent = $modifier($currentContent);
-        
-        // Validate the modified content
-        if (!is_array($modifiedContent) || !isset($modifiedContent['type']) || $modifiedContent['type'] !== 'doc') {
-            throw new \InvalidArgumentException('Modified content must be a valid rich editor document');
-        }
-
-        return $this->updateRichEditorContent($modifiedContent);
-    }
 
 }
