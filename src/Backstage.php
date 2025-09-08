@@ -126,7 +126,6 @@ class Backstage
      */
     private static function extractTextFromRichEditor(array $content): string
     {
-<<<<<<< HEAD
         if (!isset($content['content']) || !is_array($content['content'])) {
             return '';
         }
@@ -161,30 +160,5 @@ class Backstage
         }
 
         return implode(' ', $textParts);
-=======
-        $text = '';
-
-        if (isset($content['content']) && is_array($content['content'])) {
-            foreach ($content['content'] as $item) {
-                if (isset($item['type']) && $item['type'] === 'paragraph' && isset($item['content'])) {
-                    foreach ($item['content'] as $textNode) {
-                        if (isset($textNode['type']) && $textNode['type'] === 'text' && isset($textNode['text'])) {
-                            $text .= $textNode['text'] . ' ';
-                        }
-                    }
-                    $text .= "\n";
-                } elseif (isset($item['type']) && $item['type'] === 'heading' && isset($item['content'])) {
-                    foreach ($item['content'] as $textNode) {
-                        if (isset($textNode['type']) && $textNode['type'] === 'text' && isset($textNode['text'])) {
-                            $text .= $textNode['text'] . ' ';
-                        }
-                    }
-                    $text .= "\n";
-                }
-            }
-        }
-
-        return trim($text);
->>>>>>> 18b4ac24da72cbf398cb99462ba033825b896904
     }
 }
