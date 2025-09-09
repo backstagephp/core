@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -62,8 +63,10 @@ class ActionsRelationManager extends RelationManager
                                 Select::make('type')
                                     ->label(__('Type'))
                                     ->columnSpan(6)
+                                    ->live()
                                     ->options([
                                         'email' => __('Send email'),
+                                        'redirect' => __('Redirect to URL'),
                                         // 'webhook' => __('Call webhook'), // Future - M
                                     ])
                                     ->default('email')
@@ -91,47 +94,60 @@ class ActionsRelationManager extends RelationManager
                         Section::make(__('Configuration'))
                             ->columns(3)
                             ->columnSpanFull()
-                            ->schema([
-                                TextInput::make('config.template')
-                                    ->label(__('Template'))
-                                    ->placeholder('mails.forms.contact')
-                                    ->columnSpan(6),
-                                TextInput::make('config.subject')
-                                    ->label(__('Subject'))
-                                    ->columnSpan(6),
-                                Select::make('config.from_name')
-                                    ->label(__('From name'))
-                                    ->columnSpan(6)
-                                    ->options($fields)
-                                    ->searchable()
-                                    ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
-                                    ->native(false),
-                                Select::make('config.from_email')
-                                    ->label(__('Email from'))
-                                    ->columnSpan(6)
-                                    ->options($fields)
-                                    ->searchable()
-                                    ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
-                                Select::make('config.to_name')
-                                    ->label(__('Name to'))
-                                    ->columnSpan(6)
-                                    ->options($fields)
-                                    ->searchable()
-                                    ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
-                                Select::make('config.to_email')
-                                    ->label(__('Email to'))
-                                    ->columnSpan(6)
-                                    ->options($fields)
-                                    ->searchable()
-                                    ->searchDebounce(250)
-                                    ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
-                                Textarea::make('config.body')
-                                    ->label(__('Body'))
-                                    ->columnSpan(6),
-                            ]),
+                            ->live()
+                            ->schema(function(Get $get) use($fields){
+                                $type = $get('type');
+
+                                if($type === 'redirect') {
+                                    return [
+                                        TextInput::make('config.url')
+                                            ->label(__('URL'))
+                                            ->columnSpanFull()
+                                    ];
+                                }
+
+                                return [
+                                    TextInput::make('config.template')
+                                        ->label(__('Template'))
+                                        ->placeholder('mails.forms.contact')
+                                        ->columnSpan(6),
+                                    TextInput::make('config.subject')
+                                        ->label(__('Subject'))
+                                        ->columnSpan(6),
+                                    Select::make('config.from_name')
+                                        ->label(__('From name'))
+                                        ->columnSpan(6)
+                                        ->options($fields)
+                                        ->searchable()
+                                        ->searchDebounce(250)
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
+                                        ->native(false),
+                                    Select::make('config.from_email')
+                                        ->label(__('Email from'))
+                                        ->columnSpan(6)
+                                        ->options($fields)
+                                        ->searchable()
+                                        ->searchDebounce(250)
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                    Select::make('config.to_name')
+                                        ->label(__('Name to'))
+                                        ->columnSpan(6)
+                                        ->options($fields)
+                                        ->searchable()
+                                        ->searchDebounce(250)
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                    Select::make('config.to_email')
+                                        ->label(__('Email to'))
+                                        ->columnSpan(6)
+                                        ->options($fields)
+                                        ->searchable()
+                                        ->searchDebounce(250)
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                    Textarea::make('config.body')
+                                        ->label(__('Body'))
+                                        ->columnSpan(6),
+                                ];
+                        }),
                     ]),
             ]);
     }
@@ -145,6 +161,8 @@ class ActionsRelationManager extends RelationManager
                     ->label(__('Type'))
                     ->searchable()
                     ->limit(),
+                TextColumn::make('config.url')
+                    ->label(__('Url')),
                 TextColumn::make('config.subject')
                     ->label(__('Subject'))
                     ->description(fn (FormAction $record): string => ($record->config['from_name'] ?? '') . ' <' . ($record->config['from_email'] ?? '') . '>'),

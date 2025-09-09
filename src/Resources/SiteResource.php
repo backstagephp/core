@@ -89,6 +89,12 @@ class SiteResource extends Resource
                                         ->helperText('Symbol between page title and site name.'),
                                     Select::make('theme')
                                         ->label('Theme')
+                                        ->options([
+                                            'system' => 'System',
+                                            'light' => 'Light',
+                                            'dark' => 'Dark',
+                                        ])
+                                        ->nullable()
                                         ->columnSpanFull()
                                         ->helperText('Select default theme.'),
                                     Toggle::make('default')
@@ -134,7 +140,7 @@ class SiteResource extends Resource
                                                 ->toArray(),
                                         ])
                                         ->helperText('Select primary color.')
-                                        ->required(),
+                                        ->nullable(),
                                     FileUpload::make('logo')
                                         ->label('Logo')
                                         ->columnSpanFull()
