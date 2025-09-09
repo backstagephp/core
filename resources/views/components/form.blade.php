@@ -3,6 +3,10 @@
         @csrf
         <input type="hidden" name="content_ulid" value="{{ $content->ulid }}">
         @foreach ($form->fields as $field)
+
+            @if($field->config['hidden'] ?? false)
+                <input type="hidden" name="{{ $field->slug }}" value="{{ old($field->slug, $field->default_value) }}">
+            @else
             <div>
 
                 <label for="{{ $field->slug }}">{{ $field->name }}</label>
@@ -12,6 +16,7 @@
                 @enderror
 
             </div>
+            @endif
         @endforeach
 
         <button type="submit">{{ $form->submit_button ?? __('Submit') }}</button>

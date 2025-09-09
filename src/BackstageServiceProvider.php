@@ -188,7 +188,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
-            'user' => 'Backstage\Models\User',
+            'user' => config('auth.providers.users.model')
         ]);
 
         Route::bind('type', function (string $slug) {
