@@ -52,6 +52,10 @@ class ContentFieldValue extends Pivot
             return Content::whereIn('ulid', json_decode($this->value))->get();
         }
 
+        if ($this->field->field_type == 'rich-editor') {
+            return new HtmlString($this->getRichEditorHtml()) ?? new HtmlString('');
+        }
+
         $decoded = json_decode($this->value, true);
 
         // If the decoded value is an array (like blocks), return it as is
