@@ -95,14 +95,14 @@ class ActionsRelationManager extends RelationManager
                             ->columns(3)
                             ->columnSpanFull()
                             ->live()
-                            ->schema(function(Get $get) use($fields){
+                            ->schema(function (Get $get) use ($fields) {
                                 $type = $get('type');
 
-                                if($type === 'redirect') {
+                                if ($type === 'redirect') {
                                     return [
                                         TextInput::make('config.url')
                                             ->label(__('URL'))
-                                            ->columnSpanFull()
+                                            ->columnSpanFull(),
                                     ];
                                 }
 
@@ -147,7 +147,7 @@ class ActionsRelationManager extends RelationManager
                                         ->label(__('Body'))
                                         ->columnSpan(6),
                                 ];
-                        }),
+                            }),
                     ]),
             ]);
     }
