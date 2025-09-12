@@ -66,6 +66,7 @@ class FormController
 
         if ($url) {
             $url = str_replace('{submission}', encrypt($submission->ulid), $url);
+
             return redirect($url);
         }
 

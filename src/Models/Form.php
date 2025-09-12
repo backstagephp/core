@@ -35,7 +35,7 @@ class Form extends Model
                     'model_key' => $form->getOriginal('slug'),
                 ])->update(['model_key' => $form->slug]);
             }
-        }); 
+        });
     }
 
     protected function casts(): array
