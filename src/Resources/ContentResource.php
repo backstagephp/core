@@ -562,16 +562,6 @@ class ContentResource extends Resource
                 function (EloquentBuilder $query) use ($type) {
                     $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug);
 
-                    // Default to filtering by the first active language if no language filter is applied
-                    if (! request()->has('filters.language_code.values.0')) {
-                        $defaultLanguage = Language::active()->where('default', true)->first()
-                            ?? Language::active()->first();
-
-                        if ($defaultLanguage) {
-                            $query->where('language_code', $defaultLanguage->code);
-                        }
-                    }
-
                     return $query;
                 }
             )
@@ -696,45 +686,30 @@ class ContentResource extends Resource
                 function (EloquentBuilder $query) {
                     $query->with('ancestors', 'authors', 'type');
 
-                    // Default to filtering by the first active language if no language filter is applied
-                    if (! request()->has('filters.language_code.values.0')) {
-                        $defaultLanguage = Language::active()->where('default', true)->first()
-                            ?? Language::active()->first();
-
-                        if ($defaultLanguage) {
-                            $query->where('language_code', $defaultLanguage->code);
-                        }
-                    }
-
                     return $query;
                 }
             )
             ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
-                Filter::make('locale')
-                    ->schema([
-                        Select::make('language_code')
-                            ->label(__('Language'))
-                            ->columnSpanFull()
-                            ->placeholder(__('Select Language'))
-                            ->options(
-                                Language::active()
-                                    ->get()
-                                    ->sort()
-                                    ->groupBy(function ($language) {
-                                        return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
-                                    })
-                                    ->mapWithKeys(fn ($languages, $countryName) => [
-                                        $countryName => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
-                                        ])->toArray(),
-                                    ])
-                            )
-                            ->live()
-                            ->allowHtml(),
-                    ])
+                SelectFilter::make('language_code')
+                    ->label(__('Language'))
+                    ->columnSpanFull()
+                    ->placeholder(__('Select Language'))
+                    ->options(
+                        Language::active()
+                            ->get()
+                            ->sort()
+                            ->groupBy(function ($language) {
+                                return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
+                            })
+                            ->mapWithKeys(fn ($languages, $countryName) => [
+                                $countryName => $languages->mapWithKeys(fn ($language) => [
+                                    $language->code => localized_language_name($language->code) . ' (' . $countryName . ')',
+                                ])->toArray(),
+                            ])
+                    )
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
-                        return $query->when($data['language_code'] ?? null, function ($query, $languageCode) {
+                        return $query->when($data['value'] ?? null, function ($query, $languageCode) {
                             return $query->where('language_code', $languageCode);
                         });
                     })
