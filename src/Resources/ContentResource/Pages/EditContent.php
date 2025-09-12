@@ -291,7 +291,7 @@ class EditContent extends EditRecord
     {
         $data = $this->mutateBeforeSave($data);
 
-        $this->data['values'] = $data['values'];
+        $this->data['values'] = $data['values'] ?? [];
 
         unset($data['tags']);
         unset($data['values']);
