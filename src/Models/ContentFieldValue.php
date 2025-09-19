@@ -2,6 +2,7 @@
 
 namespace Backstage\Models;
 
+use Backstage\Concerns\DecodesJsonStrings;
 use Backstage\Fields\Models\Field;
 use Backstage\Fields\Plugins\JumpAnchorRichContentPlugin;
 use Backstage\Shared\HasPackageFactory;
@@ -19,6 +20,7 @@ use Illuminate\Support\HtmlString;
  */
 class ContentFieldValue extends Pivot
 {
+    use DecodesJsonStrings;
     use HasPackageFactory;
     use HasUlids;
 
@@ -59,9 +61,9 @@ class ContentFieldValue extends Pivot
 
         $decoded = json_decode($this->value, true);
 
-        // If the decoded value is an array (like blocks), return it as is
+        // If the decoded value is an array (like blocks), recursively decode nested JSON strings
         if (is_array($decoded)) {
-            return $decoded;
+            return $this->decodeAllJsonStrings($decoded);
         }
 
         // For all other cases, ensure the value is returned as a string
