@@ -3,6 +3,7 @@
 namespace Backstage\Models;
 
 use Backstage\Casts\ContentPathCast;
+use Backstage\Concerns\DecodesJsonStrings;
 use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
 use Backstage\Media\Concerns\HasMedia;
@@ -40,6 +41,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 #[ObservedBy(ContentObserver::class)]
 class Content extends Model
 {
+    use DecodesJsonStrings;
     use HasContentRelations;
     use HasFields;
     use HasMedia;
@@ -108,6 +110,9 @@ class Content extends Model
                 return [];
             }
             $value->value = json_decode($value->value, true) ?? $value->value;
+
+            // Recursively decode nested JSON strings (e.g., in repeaters)
+            $value->value = $this->decodeAllJsonStrings($value->value);
 
             return [$value->field->ulid => $value->value];
         })->toArray();
