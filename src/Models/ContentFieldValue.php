@@ -3,6 +3,7 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
+use Backstage\Fields\Plugins\JumpAnchorRichContentPlugin;
 use Backstage\Shared\HasPackageFactory;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Collection;
@@ -86,7 +87,9 @@ class ContentFieldValue extends Pivot
 
         // If it's JSON rich editor content, render it
         if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
-            return RichContentRenderer::make($decoded)->toHtml();
+            return RichContentRenderer::make($decoded)
+                ->plugins([JumpAnchorRichContentPlugin::get()])
+                ->toHtml();
         }
 
         return null;

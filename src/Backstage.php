@@ -3,6 +3,7 @@
 namespace Backstage;
 
 use Backstage\Fields\Models\Field;
+use Backstage\Fields\Plugins\JumpAnchorRichContentPlugin;
 use Backstage\Models\Block;
 use Illuminate\Support\Str;
 
@@ -114,7 +115,9 @@ class Backstage
         }
 
         try {
-            return \Filament\Forms\Components\RichEditor\RichContentRenderer::make($content)->toHtml();
+            return \Filament\Forms\Components\RichEditor\RichContentRenderer::make($content)
+                ->plugins([JumpAnchorRichContentPlugin::get()])
+                ->toHtml();
         } catch (\Exception $e) {
             // Fallback: extract plain text
             return self::extractTextFromRichEditor($content);
