@@ -35,6 +35,7 @@ class TranslateContent implements ShouldQueue
         if ($this->content->language_code === $this->language->code || $exsistingContent = Content::query()->where('slug', $this->content->slug)->where('language_code', $this->language->code)->first()) {
 
             $this->contentUlid = $exsistingContent?->ulid;
+
             return;
         }
 
@@ -114,7 +115,6 @@ class TranslateContent implements ShouldQueue
 
                 if (! is_int($array)) {
 
-
                     // Translate relationships
                     if (($value->field?->config['relations'][0]['resource'] ?? '') == 'content') {
                         $translatedArray = [];
@@ -130,8 +130,7 @@ class TranslateContent implements ShouldQueue
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
                         // Translate data (html)
                         $translatedArray = TranslateAttribute::translateArray(
                             model: null,
@@ -141,7 +140,6 @@ class TranslateContent implements ShouldQueue
                             rules: ['*data']
                         );
                     }
-
 
                     $duplicatedValue->value = json_encode($translatedArray, JSON_UNESCAPED_UNICODE);
                 } else {
