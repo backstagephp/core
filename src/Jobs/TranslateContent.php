@@ -40,7 +40,8 @@ class TranslateContent implements ShouldQueue
 
     public function handle(): void
     {
-        if ($this->content->language_code === $this->language->code || Content::query()->where('slug', $this->content->slug)->where('type_slug', $this->content->type_slug)->where('language_code', $this->language->code)->exists()) {
+        if ($this->content->language_code === $this->language->code || $exsistingContent = Content::query()->where('slug', $this->content->slug)->where('type_slug', $this->content->type_slug)->where('language_code', $this->language->code)->first()) {
+            $this->contentUlid = $exsistingContent?->ulid;
             return;
         }
 
@@ -138,7 +139,7 @@ class TranslateContent implements ShouldQueue
             );
         }
 
-        $this->content->values()->get()->each(function (ContentFieldValue $value) {
+        $this->content->values()->with('field')->get()->each(function (ContentFieldValue $value) use ($duplicatedContent) {
             $duplicatedValue = $value->replicate(['ulid']);
             $duplicatedValue->content_ulid = $this->duplicateContent->ulid;
 
@@ -146,14 +147,32 @@ class TranslateContent implements ShouldQueue
                 $array = json_decode($value->value, true);
 
                 if (! is_int($array)) {
-                    $translatedArray = TranslateAttribute::translateArray(
-                        model: null,
-                        attribute: null,
-                        targetLanguage: $this->duplicateContent->language_code,
-                        data: $array,
-                        rules: ['*data'],
-                        extraPrompt: $this->getExtraPrompt()
-                    );
+                    // Translate relationships
+                    if (($value->field?->config['relations'][0]['resource'] ?? '') == 'content') {
+                        $translatedArray = [];
+                        foreach ($array as $contentId) {
+                            $relatedContent = Content::where('ulid', $contentId)->first();
+
+                            if ($relatedContent) {
+                                $newInstance = new self($relatedContent, $this->language);
+                                $newInstance->handle();
+
+                                if ($relationUlid = $newInstance->contentUlid) {
+                                    $translatedArray[] = $relationUlid;
+                                }
+                            }
+                        }
+                    } else {
+                        // Translate data (html)
+                        $translatedArray = TranslateAttribute::translateArray(
+                            model: null,
+                            attribute: null,
+                            targetLanguage: $this->duplicatedContent->language_code,
+                            data: $array,
+                            rules: ['*data'],
+                            extraPrompt: $this->getExtraPrompt()
+                        );
+                    }
                     $duplicatedValue->value = json_encode($translatedArray, JSON_UNESCAPED_UNICODE);
                 } else {
                     $duplicatedValue->value = Translator::translate(

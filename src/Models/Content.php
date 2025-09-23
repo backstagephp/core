@@ -31,6 +31,8 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property string $path
  * @property string|null $url
  * @property string $language_code
+ * @property string $published_at
+ * @property string $expired_at
  * @property bool $public
  * @property string $view
  * @property string $type_slug
@@ -58,6 +60,7 @@ class Content extends Model
         return [
             'path' => ContentPathCast::class,
             'meta_tags' => 'array',
+            'public' => 'boolean',
         ];
     }
 
@@ -277,5 +280,13 @@ class Content extends Model
         }
 
         dispatch(new TranslateContent($this, $language));
+    }
+  
+    public function previewable(): bool
+    {
+        return $this->public
+            && $this->published_at
+            && $this->published_at <= now()
+            && ($this->expired_at === null || $this->expired_at >= now());
     }
 }

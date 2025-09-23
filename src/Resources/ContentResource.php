@@ -156,9 +156,18 @@ class ContentResource extends Resource
             });
         }
 
-        $query->when($form->getLivewire()->data['language_code'] ?? null, function ($query, $languageCode) {
+        $languageCode = $form->getLivewire()->data['language_code'] ?? null;
+
+        if (! $languageCode) {
+            // If no language is set in the form, get the default language
+            $defaultLanguage = Language::active()->where('default', true)->first()
+                ?? Language::active()->first();
+            $languageCode = $defaultLanguage?->code;
+        }
+
+        if ($languageCode) {
             $query->where('language_code', $languageCode);
-        });
+        }
 
         return $query;
     }
@@ -207,7 +216,7 @@ class ContentResource extends Resource
                                         TextInput::make('path')
                                             ->columnSpanFull()
                                             ->rules(function (Get $get, $record) {
-                                                if ($get('public') === false && $record) {
+                                                if ($get('public') === false) {
                                                     return [];
                                                 }
 
@@ -217,7 +226,13 @@ class ContentResource extends Resource
                                             })
                                             ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
-                                            ->live(),
+                                            ->live()
+                                            ->visible(fn (Get $get) => $get('public') === true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                if ($get('public') === false) {
+                                                    $set('path', '');
+                                                }
+                                            }),
 
                                         TextInput::make('meta_tags.title')
                                             ->label(__('Page Title'))
@@ -281,7 +296,20 @@ class ContentResource extends Resource
                                                 titleAttribute: 'name',
                                                 parentAttribute: 'parent_ulid',
                                                 modifyQueryUsing: function (EloquentBuilder $query, $record) use ($schema) {
-                                                    return self::applyParentQueryFilters($query, $schema);
+                                                    $query = self::applyParentQueryFilters($query, $schema);
+
+                                                    // Select all necessary columns
+                                                    $query->select([
+                                                        'ulid',
+                                                        'name',
+                                                        'parent_ulid',
+                                                        'language_code',
+                                                        'type_slug',
+                                                        'created_at',
+                                                        'updated_at',
+                                                    ]);
+
+                                                    return $query;
                                                 },
                                             )
                                             ->searchable()
@@ -326,6 +354,27 @@ class ContentResource extends Resource
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
                                             ->live(),
 
+                                        Toggle::make('public')
+                                            ->label(__('Public'))
+                                            ->default(fn () => self::$type->public ?? true)
+                                            ->onIcon('heroicon-s-check')
+                                            ->offIcon('heroicon-s-x-mark')
+                                            ->inline(false)
+                                            ->helperText(__('Make content publicly accessible on path.'))
+                                            ->columnSpanFull()
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
+                                                if ($state === false) {
+                                                    $set('path', '');
+                                                } elseif ($state === true && ! $get('path')) {
+                                                    // If public is enabled and no path exists, generate one from name
+                                                    $name = $get('name');
+                                                    if ($name) {
+                                                        self::updatePathAndSlug($set, $get, $name, null);
+                                                    }
+                                                }
+                                            }),
+
                                         Select::make('language_code')
                                             ->label(__('Language'))
                                             ->columnSpanFull()
@@ -348,6 +397,9 @@ class ContentResource extends Resource
                                             ->live()
                                             ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
                                                 $set('path', $get('path'));
+
+                                                // Clear parent selection when language changes to prevent cross-language parent relationships
+                                                $set('parent_ulid', null);
                                             }),
 
                                         TextInput::make('slug')
@@ -395,19 +447,6 @@ class ContentResource extends Resource
                                             ->native(false)
                                             ->columnSpanFull()
                                             ->helperText('Set date in future to auto-expire publication.'),
-                                    ]),
-
-                                Tab::make('advanced')
-                                    ->label(__('Options'))
-                                    ->schema([
-                                        Toggle::make('public')
-                                            ->label(__('Public'))
-                                            ->default(fn () => self::$type->public ?? true)
-                                            ->onIcon('heroicon-s-check')
-                                            ->offIcon('heroicon-s-x-mark')
-                                            ->inline(false)
-                                            ->helperText(__('Make content publicly accessible on path.'))
-                                            ->columnSpanFull(),
                                     ]),
                             ]),
                     ]),
@@ -519,7 +558,11 @@ class ContentResource extends Resource
                     ->toArray(),
             ])
             ->modifyQueryUsing(
-                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug)
+                function (EloquentBuilder $query) use ($type) {
+                    $query->with('ancestors', 'authors', 'type', 'values')->where('type_slug', $type->slug);
+
+                    return $query;
+                }
             )
             ->defaultSort($type->sort_column ?? 'position', $type->sort_direction ?? 'desc')
             ->recordActions([
@@ -639,34 +682,33 @@ class ContentResource extends Resource
                     ->sortable(),
             ])
             ->modifyQueryUsing(
-                fn (EloquentBuilder $query) => $query->with('ancestors', 'authors', 'type')
+                function (EloquentBuilder $query) {
+                    $query->with('ancestors', 'authors', 'type');
+
+                    return $query;
+                }
             )
             ->defaultSort(self::$type->sort_column ?? 'position', self::$type->sort_direction ?? 'desc')
             ->filters([
-                Filter::make('locale')
-                    ->schema([
-                        Select::make('language_code')
-                            ->label(__('Language'))
-                            ->columnSpanFull()
-                            ->placeholder(__('Select Language'))
-                            ->options(
-                                Language::active()
-                                    ->get()
-                                    ->sort()
-                                    ->groupBy(function ($language) {
-                                        return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
-                                    })
-                                    ->mapWithKeys(fn ($languages, $countryName) => [
-                                        $countryName => $languages->mapWithKeys(fn ($language) => [
-                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
-                                        ])->toArray(),
-                                    ])
-                            )
-                            ->live()
-                            ->allowHtml(),
-                    ])
+                SelectFilter::make('language_code')
+                    ->label(__('Language'))
+                    ->columnSpanFull()
+                    ->placeholder(__('Select Language'))
+                    ->options(
+                        Language::active()
+                            ->get()
+                            ->sort()
+                            ->groupBy(function ($language) {
+                                return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
+                            })
+                            ->mapWithKeys(fn ($languages, $countryName) => [
+                                $countryName => $languages->mapWithKeys(fn ($language) => [
+                                    $language->code => localized_language_name($language->code) . ' (' . $countryName . ')',
+                                ])->toArray(),
+                            ])
+                    )
                     ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
-                        return $query->when($data['language_code'] ?? null, function ($query, $languageCode) {
+                        return $query->when($data['value'] ?? null, function ($query, $languageCode) {
                             return $query->where('language_code', $languageCode);
                         });
                     })
@@ -834,15 +876,21 @@ class ContentResource extends Resource
 
     private static function updatePathAndSlug(Set $set, Get $get, ?string $state, ?Content $record): void
     {
-        $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
-        $slug = Str::slug($state);
-        $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
-        $set('path', ltrim($path, '/'));
+        // Only update path if content is public
+        if ($get('public') === true) {
+            $parentPath = $get('parent_ulid') ? Content::find($get('parent_ulid'))->path : '';
+            $slug = Str::slug($state);
+            $path = $parentPath ? trim($parentPath, '/') . '/' . $slug : $slug;
+            $set('path', ltrim($path, '/'));
+        } else {
+            // Clear path if not public
+            $set('path', '');
+        }
 
         $currentSlug = $get('slug');
 
         if (! $record || ! $record->slug || ! $currentSlug) {
-            $set('slug', $slug);
+            $set('slug', Str::slug($state));
         }
     }
 }

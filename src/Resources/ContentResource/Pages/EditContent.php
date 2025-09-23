@@ -106,7 +106,9 @@ class EditContent extends EditRecord
                 ->icon(fn (): BackedEnum => Heroicon::OutlinedEye)
                 ->url(fn () => $this->getRecord()->url)
                 ->color('gray')
-                ->openUrlInNewTab(),
+                ->openUrlInNewTab()
+                ->disabled(fn () => ! $this->getRecord()->previewable())
+                ->tooltip(fn () => $this->getRecord()->previewable() ? __('Preview content') : __('Content must be public, published and not expired to preview')),
 
             DeleteAction::make(),
         ];
@@ -287,7 +289,7 @@ class EditContent extends EditRecord
     {
         $data = $this->mutateBeforeSave($data);
 
-        $this->data['values'] = $data['values'];
+        $this->data['values'] = $data['values'] ?? [];
 
         unset($data['tags']);
         unset($data['values']);

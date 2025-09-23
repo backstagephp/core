@@ -142,7 +142,6 @@ class TypeResource extends Resource
                                         Repeater::make('parent_filters')
                                             ->label(__('Filters'))
                                             ->live()
-                                            ->visible(fn (Get $get): bool => $get('parent_required'))
                                             ->schema([
                                                 Grid::make(3)
                                                     ->schema([

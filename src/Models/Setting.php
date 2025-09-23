@@ -63,4 +63,9 @@ class Setting extends Model
 
         return $this->values[$this->fields->where('slug', $key)->first()?->ulid] ?? null;
     }
+
+    public function values(): string | array | null
+    {
+        return $this->values;
+    }
 }

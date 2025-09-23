@@ -28,6 +28,14 @@ class Form extends Model
         static::deleted(function ($form) {
             $form->fields()->delete();
         });
+        static::updated(function ($form) {
+            if ($form->isDirty('slug')) {
+                Field::where([
+                    'model_type' => 'form',
+                    'model_key' => $form->getOriginal('slug'),
+                ])->update(['model_key' => $form->slug]);
+            }
+        });
     }
 
     protected function casts(): array

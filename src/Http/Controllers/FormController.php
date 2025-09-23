@@ -62,6 +62,16 @@ class FormController
 
         FormSubmitted::dispatch($submission);
 
-        return redirect()->back()->with('success', __('Your submission has been received.'));
+        $url = $form->formActions()->where('type', 'redirect')->first()?->config['url'] ?? null;
+
+        if ($url) {
+            $url = str_replace('{submission}', encrypt($submission->ulid), $url);
+
+            return redirect($url);
+        }
+
+        return redirect()->back()
+            ->with('success', __('Your submission has been received.'))
+            ->with('submission', $submission);
     }
 }
