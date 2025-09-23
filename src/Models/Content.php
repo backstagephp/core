@@ -5,6 +5,7 @@ namespace Backstage\Models;
 use Backstage\Casts\ContentPathCast;
 use Backstage\Fields\Concerns\HasFields;
 use Backstage\Fields\Models\Field;
+use Backstage\Jobs\TranslateContent;
 use Backstage\Media\Concerns\HasMedia;
 use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Observers\ContentDepthObserver;
@@ -264,6 +265,21 @@ class Content extends Model
         ]);
 
         return response($this->view(), $code);
+    }
+
+    public function translate(Language $language)
+    {
+        $existing = self::query()
+            ->where('slug', $this->slug)
+            ->where('type_slug', $this->type_slug)
+            ->where('language_code', $language->code)
+            ->exists();
+
+        if ($existing) {
+            return;
+        }
+
+        dispatch(new TranslateContent($this, $language));
     }
 
     public function previewable(): bool
