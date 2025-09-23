@@ -42,6 +42,7 @@ class TranslateContent implements ShouldQueue
     {
         if ($this->content->language_code === $this->language->code || $exsistingContent = Content::query()->where('slug', $this->content->slug)->where('type_slug', $this->content->type_slug)->where('language_code', $this->language->code)->first()) {
             $this->contentUlid = $exsistingContent?->ulid;
+
             return;
         }
 
@@ -139,7 +140,7 @@ class TranslateContent implements ShouldQueue
             );
         }
 
-        $this->content->values()->with('field')->get()->each(function (ContentFieldValue $value) use ($duplicatedContent) {
+        $this->content->values()->with('field')->get()->each(function (ContentFieldValue $value) {
             $duplicatedValue = $value->replicate(['ulid']);
             $duplicatedValue->content_ulid = $this->duplicateContent->ulid;
 

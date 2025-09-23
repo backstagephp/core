@@ -281,7 +281,7 @@ class Content extends Model
 
         dispatch(new TranslateContent($this, $language));
     }
-  
+
     public function previewable(): bool
     {
         return $this->public
