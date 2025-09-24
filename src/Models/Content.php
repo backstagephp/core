@@ -107,7 +107,22 @@ class Content extends Model
             if (! $value->field) {
                 return [];
             }
-            $value->value = json_decode($value->value, true) ?? $value->value;
+
+            // Handle FileUpload fields specially - decode JSON for form usage
+            if ($value->field->field_type === 'file-upload') {
+                // For file uploads, decode the JSON string to array for form usage
+                if (is_string($value->value) && json_validate($value->value)) {
+                    $decodedValue = json_decode($value->value, true);
+                    $decodedValue = is_array($decodedValue) ? $decodedValue : [];
+                } else {
+                    $decodedValue = [];
+                }
+            } else {
+                // For other fields, try to decode JSON
+                $decodedValue = json_decode($value->value, true) ?? $value->value;
+            }
+
+            $value->value = $decodedValue;
 
             return [$value->field->ulid => $value->value];
         })->toArray();
@@ -242,6 +257,13 @@ class Content extends Model
 
         if (! $value) {
             return new HtmlString('');
+        }
+
+        // Handle FileUpload fields specially - they should return arrays
+        if ($value->field->field_type === 'file-upload') {
+            $decoded = json_decode($value->value, true);
+
+            return is_array($decoded) ? $decoded : [];
         }
 
         return $value->value();

@@ -25,6 +25,7 @@ class RequestServiceProvider extends ServiceProvider
                         $join->on('domain_language.domain_ulid', '=', 'domains.ulid')
                             ->on('domain_language.language_code', '=', 'content.language_code');
                     })
+                    ->where('domains.environment', config('app.env'))
                     ->whereRaw('REGEXP_REPLACE(
                         REGEXP_REPLACE(
                             CONCAT(

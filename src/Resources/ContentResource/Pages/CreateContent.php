@@ -5,6 +5,7 @@ namespace Backstage\Resources\ContentResource\Pages;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Tag;
 use Backstage\Resources\ContentResource;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
 
@@ -39,6 +40,13 @@ class CreateContent extends CreateRecord
 
         unset($data['media']);
 
+        // Set the language_code if not already set
+        if (! isset($data['language_code'])) {
+            $defaultLanguage = \Backstage\Models\Language::active()->where('default', true)->first()
+                ?? \Backstage\Models\Language::active()->first();
+            $data['language_code'] = $defaultLanguage?->code;
+        }
+
         return $data;
     }
 
@@ -60,10 +68,10 @@ class CreateContent extends CreateRecord
             ]));
 
         $this->getRecord()->update([
-            'creator_id' => auth()->id(),
+            'creator_id' => Filament::auth()->user()?->id,
             'edited_at' => now(),
         ]);
 
-        $this->getRecord()->authors()->attach(auth()->id());
+        $this->getRecord()->authors()->attach(Filament::auth()->user()?->id);
     }
 }
