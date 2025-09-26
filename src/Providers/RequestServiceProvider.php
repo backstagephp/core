@@ -13,7 +13,6 @@ class RequestServiceProvider extends ServiceProvider
     public function boot()
     {
         Request::macro('content', function () {
-            /** @phpstan-ignore-next-line */
             return once(function () {
                 $path = $this->path() == '/' ? '' : $this->path();
                 $host = str_replace('www.', '', $this->getHost());
