@@ -284,7 +284,7 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'application/pdf',
             ],
             'directory' => 'media',
-            'disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
+            'disk' => config('filament.filesystem_disk', 'public'),
             'should_preserve_filenames' => false,
             'should_register_navigation' => true,
             'visibility' => 'public',
