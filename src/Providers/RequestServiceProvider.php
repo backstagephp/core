@@ -47,13 +47,11 @@ class RequestServiceProvider extends ServiceProvider
         });
 
         Request::macro('language', function () {
-            /** @phpstan-ignore-next-line */
-            return once(fn () => $this->content()->language);
+            return once(fn () => $this->content()->language); // @phpstan-ignore-line
         });
 
         Request::macro('site', function () {
-            /** @phpstan-ignore-next-line */
-            return once(fn () => $this->domain()->site);
+            return once(fn () => $this->domain()->site); // @phpstan-ignore-line
         });
     }
 }

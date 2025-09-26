@@ -6,7 +6,6 @@ use BackedEnum;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Fields;
 use Backstage\Fields\Fields\RichEditor;
-use Backstage\Jobs\TranslateContent;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
@@ -818,6 +817,21 @@ class ContentResource extends Resource
                 ]),
 
                 BulkActionGroup::make([
+                    BulkAction::make('translate_all')
+                        ->visible(fn () => Language::query()->count() > 0)
+                        ->icon(fn (): BackedEnum => Heroicon::OutlinedLanguage)
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records) {
+                            $languages = Language::all();
+
+                            $records->each(function (Content $record) use ($languages) {
+                                foreach ($languages as $language) {
+                                    $record->translate($language);
+                                }
+                            });
+
+                        }),
+
                     ...Language::all()
                         ->map(
                             fn (Language $language) => BulkAction::make($language->code)
@@ -825,31 +839,8 @@ class ContentResource extends Resource
                                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
                                 ->requiresConfirmation()
                                 ->action(function (Collection $records) use ($language) {
-                                    $records = $records->filter(function (Content $record) use ($language) {
-                                        $slug = $record->slug;
-
-                                        return ! Content::query()
-                                            ->where('slug', $slug)
-                                            ->where('language_code', $language->code)
-                                            ->exists();
-                                    });
-
                                     $records->each(function (Content $record) use ($language) {
-                                        $slug = $record->slug;
-
-                                        $existing = Content::query()
-                                            ->where('slug', $slug)
-                                            ->where('language_code', $language->code)
-                                            ->exists();
-
-                                        if ($existing) {
-                                            return;
-                                        }
-
-                                        TranslateContent::dispatch(
-                                            content: $record,
-                                            language: $language
-                                        );
+                                        $record->translate($language);
                                     });
                                 })
                         ),
