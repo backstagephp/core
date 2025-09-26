@@ -258,14 +258,14 @@ class ContentResource extends Resource
                                             ->splitKeys(['Tab', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
-                                Tab::make('open-graph')
-                                    ->label(__('Open Graph'))
-                                    ->icon('heroicon-o-photo')
-                                    ->schema([]),
-                                Tab::make('microdata')
-                                    ->label(__('Microdata'))
-                                    ->icon('heroicon-o-code-bracket-square')
-                                    ->schema([]),
+                                // Tab::make('open-graph')
+                                //     ->label(__('Open Graph'))
+                                //     ->icon('heroicon-o-photo')
+                                //     ->schema([]),
+                                // Tab::make('microdata')
+                                //     ->label(__('Microdata'))
+                                //     ->icon('heroicon-o-code-bracket-square')
+                                //     ->schema([]),
                                 Tab::make('template')
                                     ->label(__('Template'))
                                     ->icon('heroicon-o-clipboard')
