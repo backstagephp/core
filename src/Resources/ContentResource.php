@@ -405,6 +405,10 @@ class ContentResource extends Resource
                                         TextInput::make('slug')
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
+                                                $set('slug', Str::slug($state));
+                                            })
                                             ->required(),
 
                                         Toggle::make('pin')
