@@ -16,4 +16,10 @@ class EditSite extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        // Force refresh the page to apply the new color theme
+        $this->redirect($this->getResource()::getUrl('edit', ['record' => $this->record]));
+    }
 }

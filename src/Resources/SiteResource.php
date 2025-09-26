@@ -10,6 +10,7 @@ use DateTimeZone;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -115,35 +116,10 @@ class SiteResource extends Resource
                                 Grid::make([
                                     'default' => 12,
                                 ])->schema([
-                                    Select::make('primary_color')
+                                    ColorPicker::make('primary_color')
                                         ->label('Primary color')
                                         ->columnSpanFull()
-                                        ->preload()
-                                        ->default(
-                                            collect(Color::all())
-                                                ->map(function ($color, $name) {
-                                                    preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
-
-                                                    return sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]);
-                                                })
-                                                ->put('#000000', 'Black')
-                                                ->filter()
-                                                ->random(preserveKeys: true)
-                                        )
-                                        ->options([
-                                            collect(Color::all())
-                                                ->mapWithKeys(function ($color, $name) {
-                                                    preg_match('/rgb\((\d+),\s*(\d+),\s*(\d+)\)/', Color::convertToRgb($color[500]), $matches);
-
-                                                    return [sprintf('#%02x%02x%02x', $matches[1], $matches[2], $matches[3]) => ucfirst($name)];
-                                                })
-                                                ->put('#000000', 'Black')
-                                                ->filter()
-                                                ->sort()
-                                                ->unique()
-                                                ->toArray(),
-                                        ])
-                                        ->helperText('Select primary color.')
+                                        ->helperText('Pick a custom color for the site.')
                                         ->nullable(),
                                     FileUpload::make('logo')
                                         ->label('Logo')
