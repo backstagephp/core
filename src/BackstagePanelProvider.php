@@ -3,6 +3,7 @@
 namespace Backstage;
 
 use Backstage\Http\Middleware\Filament\HasTenant;
+use Backstage\Http\Middleware\Filament\RequireTwoFactorAuthentication;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
 use Backstage\Models\Site;
 use Backstage\Resources\SiteResource\RegisterSite;
@@ -166,6 +167,7 @@ class BackstagePanelProvider extends PanelProvider
             ->tenantRegistration(RegisterSite::class)
             ->tenantMiddleware([
                 ScopedBySite::class,
+                RequireTwoFactorAuthentication::class,
             ]);
     }
 }
