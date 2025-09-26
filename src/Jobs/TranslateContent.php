@@ -84,8 +84,7 @@ class TranslateContent implements ShouldQueue
         if ($this->content->name) {
             $this->duplicateContent->name = Translator::translate(
                 $this->content->name,
-                $this->language->code,
-                $this->getExtraPrompt()
+                $this->language->code
             );
         }
 
@@ -120,8 +119,7 @@ class TranslateContent implements ShouldQueue
 
             $translatedContentPath = Translator::translate(
                 $translatablePath,
-                $this->language->code,
-                $this->getExtraPrompt()
+                $this->language->code
             );
 
             $path = $path . $translatedContentPath;
@@ -168,7 +166,7 @@ class TranslateContent implements ShouldQueue
                         $translatedArray = TranslateAttribute::translateArray(
                             model: null,
                             attribute: null,
-                            targetLanguage: $this->duplicatedContent->language_code,
+                            targetLanguage: $this->duplicateContent->language_code,
                             data: $array,
                             rules: ['*data'],
                             extraPrompt: $this->getExtraPrompt()
@@ -178,15 +176,13 @@ class TranslateContent implements ShouldQueue
                 } else {
                     $duplicatedValue->value = Translator::translate(
                         $value->value,
-                        $this->duplicateContent->language_code,
-                        $this->getExtraPrompt()
+                        $this->duplicateContent->language_code
                     );
                 }
             } elseif (! empty($value->value)) {
                 $duplicatedValue->value = Translator::translate(
                     $value->value,
-                    $this->duplicateContent->language_code,
-                    $this->getExtraPrompt()
+                    $this->duplicateContent->language_code
                 );
             }
 
