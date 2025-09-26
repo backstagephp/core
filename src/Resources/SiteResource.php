@@ -104,6 +104,10 @@ class SiteResource extends Resource
                                     Toggle::make('auth')
                                         ->label('Protect site behind authentication.')
                                         ->columnSpanFull(),
+                                    Toggle::make('two_factor_required')
+                                        ->label('Require 2FA for authentication.')
+                                        ->columnSpanFull()
+                                        ->helperText('When enabled, users must set up and use two-factor authentication to access this site.'),
                                 ]),
                             ]),
                         Tab::make('Branding')
