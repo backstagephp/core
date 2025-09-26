@@ -2,30 +2,30 @@
 
 namespace Backstage;
 
-use Filament\Panel;
-use Backstage\Models\Site;
-use Filament\PanelProvider;
-use Filament\Facades\Filament;
-use Filament\Support\Colors\Color;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
-use Filament\Navigation\NavigationGroup;
-use Filament\Http\Middleware\Authenticate;
-use Filament\Support\Facades\FilamentView;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Backstage\Http\Middleware\Filament\HasTenant;
-use Backstage\Resources\SiteResource\RegisterSite;
+use Backstage\Http\Middleware\Filament\RequireTwoFactorAuthentication;
 use Backstage\Http\Middleware\Filament\ScopedBySite;
+use Backstage\Models\Site;
+use Backstage\Resources\SiteResource\RegisterSite;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Facades\Filament;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Filament\Navigation\NavigationGroup;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Backstage\Http\Middleware\Filament\RequireTwoFactorAuthentication;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class BackstagePanelProvider extends PanelProvider
 {
