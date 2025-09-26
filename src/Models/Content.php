@@ -302,17 +302,22 @@ class Content extends Model
 
     public function translate(Language $language)
     {
-        $existing = self::query()
-            ->where('slug', $this->slug)
-            ->where('type_slug', $this->type_slug)
-            ->where('language_code', $language->code)
-            ->exists();
+        $existing = $this->existingTranslation($language);
 
         if ($existing) {
             return;
         }
 
         dispatch(new TranslateContent($this, $language));
+    }
+
+    public function existingTranslation(Language $language): ?self
+    {
+        return self::query()
+            ->where('slug', $this->slug)
+            ->where('type_slug', $this->type_slug)
+            ->where('language_code', $language->code)
+            ->first();
     }
 
     public function previewable(): bool
