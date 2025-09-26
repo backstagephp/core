@@ -43,7 +43,7 @@ class RequestServiceProvider extends ServiceProvider
         });
 
         Request::macro('domain', function () {
-            return once(fn () => Domain::whereRaw("REPLACE(name, 'www.', '') = ?", [str_replace('www.', '', $this->getHost())])->first());
+            return once(fn () => Domain::whereRaw("REPLACE('www.', '', name)", str_replace('www.', '', $this->getHost()))->first());
         });
 
         Request::macro('language', function () {
