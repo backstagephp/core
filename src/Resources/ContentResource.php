@@ -645,7 +645,7 @@ class ContentResource extends Resource
                     ->sortable()
                     ->separator('')
                     ->description(
-                        description: fn (Content $record) => $record->ancestors?->implode('name', ' / ') ?? null,
+                        description: fn (Content $record) => $record->ancestors?->reverse()->implode('name', ' / ') ?? null,
                         position: 'above'
                     )
                     ->suffixBadges([
