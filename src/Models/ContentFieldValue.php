@@ -67,6 +67,7 @@ class ContentFieldValue extends Pivot
             if (in_array($this->field->field_type, ['repeater', 'builder'])) {
                 return $this->decodeAllJsonStrings($decoded);
             }
+
             // For other array fields (like media, uploadcare), return as is
             return $decoded;
         }
