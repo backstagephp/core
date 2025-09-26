@@ -28,16 +28,6 @@ class RequireTwoFactorAuthentication
             return redirect()->route('filament.backstage.auth.profile');
         }
 
-        if (! $request->session()->has('filament.auth.multi_factor_authenticated')) {
-            Notification::make()
-                ->title('Two-Factor Authentication Required')
-                ->body('Please complete two-factor authentication to access this site.')
-                ->warning()
-                ->send();
-
-            return redirect()->route('filament.backstage.auth.profile');
-        }
-
         return $next($request);
     }
 }
