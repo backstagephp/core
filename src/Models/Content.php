@@ -28,14 +28,40 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 /**
  * Backstage\Models\Content
  *
- * @property string $path
- * @property string|null $url
+ * @property string $ulid
+ * @property string $site_ulid
  * @property string $language_code
- * @property string $published_at
- * @property string $expired_at
- * @property bool $public
- * @property string $view
  * @property string $type_slug
+ * @property string|null $template_slug
+ * @property int|null $creator_id
+ * @property string|null $parent_ulid
+ * @property string $name
+ * @property string $slug
+ * @property string|null $path
+ * @property array|null $meta_tags
+ * @property array|null $microdata
+ * @property string|null $password
+ * @property bool $auth
+ * @property bool $cache
+ * @property bool $public
+ * @property bool $pin
+ * @property bool $lock
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $approved_at
+ * @property \Carbon\Carbon|null $disapproved_at
+ * @property \Carbon\Carbon|null $edited_at
+ * @property \Carbon\Carbon|null $expired_at
+ * @property \Carbon\Carbon|null $locked_at
+ * @property \Carbon\Carbon|null $pinned_at
+ * @property \Carbon\Carbon|null $published_at
+ * @property \Carbon\Carbon|null $refreshed_at
+ * @property \Carbon\Carbon|null $searchable_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property string|null $url
+ * @property string|null $parent_path
+ * @property int $backstage_depth
+ * @property string $view
  */
 #[ObservedBy(ContentDepthObserver::class)]
 #[ObservedBy(ContentObserver::class)]

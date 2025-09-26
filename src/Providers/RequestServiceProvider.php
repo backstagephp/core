@@ -43,10 +43,12 @@ class RequestServiceProvider extends ServiceProvider
         });
 
         Request::macro('domain', function () {
+            /** phpstan-ignore-next-line */
             return once(fn () => Domain::whereRaw("REPLACE('www.', '', name)", str_replace('www.', '', $this->getHost()))->first());
         });
 
         Request::macro('language', function () {
+            /** phpstan-ignore-next-line */
             return once(fn () => $this->content()->language);
         });
 
