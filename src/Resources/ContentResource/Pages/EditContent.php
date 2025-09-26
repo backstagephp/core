@@ -73,7 +73,7 @@ class EditContent extends EditRecord
             ->map(fn (Language $language) => Action::make($language->code)
                 ->label($language->name)
                 ->icon(fn () => 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(base_path('vendor/backstage/cms/resources/img/flags/' . explode('-', $language->code)[0] . '.svg'))))
-                ->modal(fn(Content $record) => ! $record->existingTranslation($language))
+                ->modal(fn (Content $record) => ! $record->existingTranslation($language))
                 ->modalIcon(fn () => Heroicon::OutlinedLanguage)
                 ->modalHeading(fn () => __('Translate to ' . $language->name))
                 ->modalDescription(fn () => __('This will create a new translation of the content in ' . $language->name))
@@ -84,7 +84,7 @@ class EditContent extends EditRecord
                 ->modalCancelActionLabel(__('Cancel'))
                 ->action(function (Content $record) use ($language) {
                     $existingTranslation = $record->existingTranslation($language);
-                    
+
                     if ($existingTranslation) {
                         $url = self::getUrl([
                             'record' => $existingTranslation,
