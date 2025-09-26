@@ -128,21 +128,24 @@ class ActionsRelationManager extends RelationManager
                                         ->options($fields)
                                         ->searchable()
                                         ->searchDebounce(250)
-                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
+                                        ->getOptionLabelUsing(fn (string $value): ?string => $fields->get($value) ?? $value),
                                     Select::make('config.to_name')
                                         ->label(__('Name to'))
                                         ->columnSpan(6)
                                         ->options($fields)
                                         ->searchable()
                                         ->searchDebounce(250)
-                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
+                                        ->getOptionLabelUsing(fn (string $value): ?string => $fields->get($value) ?? $value),
                                     Select::make('config.to_email')
                                         ->label(__('Email to'))
                                         ->columnSpan(6)
                                         ->options($fields)
                                         ->searchable()
                                         ->searchDebounce(250)
-                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray()),
+                                        ->getSearchResultsUsing(fn (string $search): array => $fields->merge([$search => $search])->filter(fn ($field, $value) => str_contains($field, $search) || str_contains($value, $search))->toArray())
+                                        ->getOptionLabelUsing(fn (string $value): ?string => $fields->get($value) ?? $value),
                                     Textarea::make('config.body')
                                         ->label(__('Body'))
                                         ->columnSpan(6),

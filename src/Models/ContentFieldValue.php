@@ -61,9 +61,15 @@ class ContentFieldValue extends Pivot
 
         $decoded = json_decode($this->value, true);
 
-        // If the decoded value is an array (like blocks), recursively decode nested JSON strings
+        // If the decoded value is an array, handle it based on field type
         if (is_array($decoded)) {
-            return $this->decodeAllJsonStrings($decoded);
+            // For repeater and builder fields, use recursive decoding
+            if (in_array($this->field->field_type, ['repeater', 'builder'])) {
+                return $this->decodeAllJsonStrings($decoded);
+            }
+
+            // For other array fields (like media, uploadcare), return as is
+            return $decoded;
         }
 
         // For all other cases, ensure the value is returned as a string
