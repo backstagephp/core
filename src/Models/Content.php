@@ -138,8 +138,10 @@ class Content extends Model
             }
             $value->value = json_decode($value->value, true) ?? $value->value;
 
-            // Recursively decode nested JSON strings (e.g., in repeaters)
-            $value->value = $this->decodeAllJsonStrings($value->value);
+            // Recursively decode nested JSON strings only for repeater and builder fields
+            if (in_array($value->field->field_type, ['repeater', 'builder'])) {
+                $value->value = $this->decodeAllJsonStrings($value->value);
+            }
 
             return [$value->field->ulid => $value->value];
         })->toArray();
@@ -268,12 +270,12 @@ class Content extends Model
     }
 
     /** Returns the value of a field based on the slug. */
-    public function field(string $slug): HtmlString | Collection | array
+    public function field(string $slug): HtmlString | Collection | array | null
     {
         $value = $this->values->where('field.slug', $slug)->first();
 
         if (! $value) {
-            return new HtmlString('');
+            return null;
         }
 
         return $value->value();
