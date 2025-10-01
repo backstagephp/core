@@ -10,6 +10,13 @@ class Select extends Base
 {
     public static function mutateFormDataCallback(Model $record, mixed $field, array $data): array
     {
+        if (! property_exists($record, 'valueColumn') || ! isset($record->values[$field->ulid])) {
+            return $data;
+        }
+
+        $value = $record->values[$field->ulid];
+        $data[$record->valueColumn][$field->ulid] = self::normalizeSelectValue($value, $field);
+
         return $data;
     }
 
