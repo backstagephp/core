@@ -258,14 +258,14 @@ class ContentResource extends Resource
                                             ->splitKeys(['Tab', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
-                                Tab::make('open-graph')
-                                    ->label(__('Open Graph'))
-                                    ->icon('heroicon-o-photo')
-                                    ->schema([]),
-                                Tab::make('microdata')
-                                    ->label(__('Microdata'))
-                                    ->icon('heroicon-o-code-bracket-square')
-                                    ->schema([]),
+                                // Tab::make('open-graph')
+                                //     ->label(__('Open Graph'))
+                                //     ->icon('heroicon-o-photo')
+                                //     ->schema([]),
+                                // Tab::make('microdata')
+                                //     ->label(__('Microdata'))
+                                //     ->icon('heroicon-o-code-bracket-square')
+                                //     ->schema([]),
                                 Tab::make('template')
                                     ->label(__('Template'))
                                     ->icon('heroicon-o-clipboard')
@@ -405,6 +405,10 @@ class ContentResource extends Resource
                                         TextInput::make('slug')
                                             ->columnSpanFull()
                                             ->helperText('Unique string identifier for this content.')
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state, ?Content $record) {
+                                                $set('slug', Str::slug($state));
+                                            })
                                             ->required(),
 
                                         Toggle::make('pin')
@@ -641,7 +645,7 @@ class ContentResource extends Resource
                     ->sortable()
                     ->separator('')
                     ->description(
-                        description: fn (Content $record) => $record->ancestors?->implode('name', ' / ') ?? null,
+                        description: fn (Content $record) => $record->ancestors?->reverse()->implode('name', ' / ') ?? null,
                         position: 'above'
                     )
                     ->suffixBadges([
