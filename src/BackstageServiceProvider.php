@@ -4,6 +4,8 @@ namespace Backstage;
 
 use Backstage\Commands\BackstageSeedCommand;
 use Backstage\Commands\BackstageUpgrade;
+use Backstage\Mcp\BackstageMcpServiceProvider;
+use Backstage\Mcp\Commands\BackstageMcpCommand;
 use Backstage\CustomFields\Builder;
 use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
@@ -56,6 +58,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ->hasConfigFile([
                 'backstage/cms',
                 'backstage/media',
+                'backstage/mcp',
             ])
             ->discoversMigrations()
             ->hasTranslations()
@@ -210,6 +213,7 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         $this->app->register(RequestServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(BackstageMcpServiceProvider::class);
 
         collect($this->app['config']['backstage']['cms']['components']['blocks'] ?? [])
             ->each(function ($component) {
@@ -250,6 +254,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         return [
             BackstageSeedCommand::class,
             BackstageUpgrade::class,
+            BackstageMcpCommand::class,
         ];
     }
 
