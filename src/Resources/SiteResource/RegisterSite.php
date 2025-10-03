@@ -20,7 +20,6 @@ class RegisterSite extends RegisterTenant
     public static function canView(): bool
     {
         return true;
-        // return auth()->user()->hasRole('Admin');
     }
 
     public function form(Schema $schema): Schema
@@ -33,6 +32,19 @@ class RegisterSite extends RegisterTenant
         $site = Site::create($data);
 
         $site->users()->attach(auth()->user());
+
+        $domain = $site->domains()->create([
+            'name' => parse_url(config('app.url'), PHP_URL_HOST),
+            'environment' => config('app.env'),
+        ]);
+
+        $domain->languages()->create([
+            'code' => config('app.locale'),
+            'name' => config('app.locale'),
+            'native' => config('app.locale'),
+            'active' => true,
+            'default' => true,
+        ]);
 
         return $site;
     }
