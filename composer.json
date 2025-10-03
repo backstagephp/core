@@ -34,14 +34,14 @@
     "require": {
         "php": "^8.2",
         "backstage/fields": "^0.8.0",
-        "backstage/media": "dev-release/1.x",
+        "backstage/media": "^0",
         "backstage/redirects": "dev-release/1.x",
         "backstage/translations": "^0.4.1",
         "baspa/laravel-timezones": "^1.2",
         "codewithdennis/filament-select-tree": "4.x-dev",
         "filament/filament": "^4.0",
         "nette/php-generator": "^4.1",
-        "saade/filament-adjacency-list": "dev-release/filament-v4",
+        "saade/filament-adjacency-list": "^4.0",
         "spatie/laravel-package-tools": "^1.18",
         "spatie/once": "^3.1",
         "spatie/schema-org": "^3.23",
@@ -121,10 +121,6 @@
         "backstage/laravel-redirects": {
             "type": "git",
             "url": "git@github.com:backstagephp/laravel-redirects.git"
-        },
-        "saade/filament-adjacency-list": {
-            "type": "git",
-            "url": "git@github.com:backstagephp/filament-adjacency-list.git"
         }
     },
     "minimum-stability": "dev",
