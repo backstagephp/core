@@ -59,6 +59,7 @@ jobs:
           cd theater
           composer config minimum-stability dev
           composer config repositories.backstage vcs git@github.com:backstagephp/core.git
+          composer config repositories.fields vcs git@github.com:backstagephp/fields.git
           composer config repositories.media vcs git@github.com:backstagephp/media.git
           composer config repositories.translations vcs git@github.com:backstagephp/translations.git
           composer config repositories.redirects vcs git@github.com:backstagephp/redirects.git
