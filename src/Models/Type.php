@@ -31,4 +31,14 @@ class Type extends Model
     {
         return $this->belongsToMany(Site::class);
     }
+
+    public function getTemplateAttribute(): string
+    {
+        return 'types.' . $this->slug;
+    }
+
+    public function getTemplatePathAttribute(): string
+    {
+        return resource_path('views/types/' . $this->slug . '.blade.php');
+    }
 }

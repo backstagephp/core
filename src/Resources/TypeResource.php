@@ -9,6 +9,7 @@ use Backstage\Resources\TypeResource\Pages\CreateType;
 use Backstage\Resources\TypeResource\Pages\EditType;
 use Backstage\Resources\TypeResource\Pages\ListTypes;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
@@ -189,6 +191,29 @@ class TypeResource extends Resource
                                             ])
                                             ->columnSpanFull(),
                                     ]),
+                            ]),
+                        Tab::make(__('Info'))
+                            ->schema([
+                                TextEntry::make('template_path')
+                                    ->label(__('Blade file'))
+                                    ->suffixAction(
+                                        \Filament\Actions\Action::make('create_template_file')
+                                            ->button()
+                                            ->label(__('Create'))
+                                            ->visible(fn ($record) => $record && !file_exists($record->template_path))
+                                            ->action(function ($record) {
+                                                if (!file_exists($record->template_path)) {
+                                                    if (!is_dir(dirname($record->template_path))) {
+                                                        mkdir(dirname($record->template_path), 0755, true);
+                                                    }
+                                                    file_put_contents($record->template_path, "<!-- Blade template for {$record->name} -->\n");
+                                                }
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title(__('Blade file created'))
+                                                    ->success()
+                                                    ->send();
+                                            }),
+                                    )
                             ]),
                     ]),
             ]);
