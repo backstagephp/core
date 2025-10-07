@@ -46,6 +46,29 @@ class RegisterSite extends RegisterTenant
             'default' => true,
         ]);
 
+        $type = $site->types()->create([
+            'name' => 'Page',
+            'name_plural' => 'Pages',
+            'slug' => 'page',
+            'icon' => 'circle-stack',
+            'public' => true
+        ]);
+
+        $type->fields()->createMany([
+            [
+                'name' => 'Title',
+                'slug' => 'title',
+                'field_type' => 'text',
+                'position' => 1,
+            ],
+            [
+                'name' => 'Content',
+                'slug' => 'content',
+                'field_type' => 'rich-editor',
+                'position' => 2,
+            ],
+        ]);
+
         return $site;
     }
 
