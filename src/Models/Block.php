@@ -3,10 +3,12 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Concerns\HasFields;
+use Backstage\Fields\Models\Schema;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -47,5 +49,11 @@ class Block extends Model
         return new Htmlstring(
             Blade::render("<x-{$this->slug} :attributes='' />")
         );
+    }
+
+    public function schemas(): MorphMany
+    {
+        return $this->morphMany(Schema::class, 'model', 'model_type', 'model_key', 'ulid')
+            ->orderBy('position');
     }
 }

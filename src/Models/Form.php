@@ -3,6 +3,7 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
+use Backstage\Fields\Models\Schema;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,5 +63,11 @@ class Form extends Model
     public function submissions(): HasMany
     {
         return $this->hasMany(FormSubmission::class, 'form_slug', 'slug');
+    }
+
+    public function schemas(): MorphMany
+    {
+        return $this->morphMany(Schema::class, 'model', 'model_type', 'model_key', 'slug')
+            ->orderBy('position');
     }
 }

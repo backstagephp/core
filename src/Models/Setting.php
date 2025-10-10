@@ -3,11 +3,13 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Concerns\HasFields;
+use Backstage\Fields\Models\Schema;
 use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
@@ -67,5 +69,11 @@ class Setting extends Model
     public function values(): string | array | null
     {
         return $this->values;
+    }
+
+    public function schemas(): MorphMany
+    {
+        return $this->morphMany(Schema::class, 'model', 'model_type', 'model_key', 'ulid')
+            ->orderBy('position');
     }
 }
