@@ -3,6 +3,7 @@
 namespace Backstage\Resources;
 
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Fields\Filament\RelationManagers\SchemaRelationManager;
 use Backstage\Models\Form as FormModel;
 use Backstage\Resources\FormResource\Pages\CreateForm;
 use Backstage\Resources\FormResource\Pages\EditForm;
@@ -94,6 +95,7 @@ class FormResource extends Resource
     public static function getRelations(): array
     {
         return [
+            SchemaRelationManager::class,
             FieldsRelationManager::class,
             ActionsRelationManager::class,
         ];

@@ -4,6 +4,7 @@ namespace Backstage\Resources;
 
 use Backstage\Facades\Backstage;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Fields\Filament\RelationManagers\SchemaRelationManager;
 use Backstage\Models\Block;
 use Backstage\Resources\BlockResource\Pages\CreateBlock;
 use Backstage\Resources\BlockResource\Pages\EditBlock;
@@ -132,6 +133,7 @@ class BlockResource extends Resource
     public static function getRelations(): array
     {
         return [
+            SchemaRelationManager::class,
             FieldsRelationManager::class,
         ];
     }

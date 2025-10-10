@@ -3,6 +3,7 @@
 namespace Backstage\Resources;
 
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Fields\Filament\RelationManagers\SchemaRelationManager;
 use Backstage\Models\Language;
 use Backstage\Models\Setting;
 use Backstage\Models\Site;
@@ -145,6 +146,7 @@ class SettingResource extends Resource
     public static function getRelations(): array
     {
         return [
+            SchemaRelationManager::class,
             FieldsRelationManager::class,
         ];
     }

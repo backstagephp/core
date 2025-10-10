@@ -3,6 +3,7 @@
 namespace Backstage\Resources;
 
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Fields\Filament\RelationManagers\SchemaRelationManager;
 use Backstage\Models\Content;
 use Backstage\Models\Type;
 use Backstage\Resources\TypeResource\Pages\CreateType;
@@ -222,6 +223,7 @@ class TypeResource extends Resource
     public static function getRelations(): array
     {
         return [
+            SchemaRelationManager::class,
             FieldsRelationManager::class,
         ];
     }
