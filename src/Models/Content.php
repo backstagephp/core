@@ -288,7 +288,7 @@ class Content extends Model
 
     public function view($data = [])
     {
-        return View::first([$this->view, 'types.' . $this->type_slug, 'types.default', 'backstage::types.default'], $data);
+        return View::first([$this->view, $this->type->template, 'types.default', 'backstage::types.default'], $data);
     }
 
     public function response(int $code = 200)

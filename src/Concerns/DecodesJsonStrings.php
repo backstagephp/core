@@ -2,12 +2,16 @@
 
 namespace Backstage\Concerns;
 
+use Backstage\Fields\Plugins\JumpAnchorRichContentPlugin;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
+
 trait DecodesJsonStrings
 {
     /**
      * Recursively decode all JSON strings in an array or value
      */
-    protected function decodeAllJsonStrings($data, $path = '')
+    protected function decodeAllJsonStrings($data, $path = ''): array|HtmlString|null
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -28,7 +32,15 @@ trait DecodesJsonStrings
                         $data[$key] = $this->decodeAllJsonStrings($decoded, $currentPath);
                     }
                 } elseif (is_array($value)) {
-                    $data[$key] = $this->decodeAllJsonStrings($value, $currentPath);
+                    if (isset($value['type']) && $value['type'] === 'doc') {
+                        $value = RichContentRenderer::make($value)
+                            ->plugins([JumpAnchorRichContentPlugin::get()])
+                            ->toHtml();
+                    }
+                    else {
+                        $value = $this->decodeAllJsonStrings($value, $currentPath);
+                    }
+                    $data[$key] = $value;
                 }
             }
         }
