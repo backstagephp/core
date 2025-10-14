@@ -15,7 +15,7 @@ Backstage is the CMS for building the modern web. Made with Laravel and Filament
 
 ## Installation
 
-You can install the package via composer in your (new) [Laravel app](https://laravel.com/docs/11.x#creating-a-laravel-project):
+You can install the package via composer in your (new) [Laravel app](https://laravel.com/docs/12.x#creating-a-laravel-project):
 
 ```bash
 composer require backstage/cms
