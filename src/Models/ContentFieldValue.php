@@ -89,7 +89,7 @@ class ContentFieldValue extends Pivot
     private function getContentRelation(): Content | Collection
     {
         if (! json_validate($this->value)) {
-            return Content::where('ulid', $this->value)->get();
+            return Content::where('ulid', $this->value)->first();
         }
 
         return Content::whereIn('ulid', json_decode($this->value))->get();
