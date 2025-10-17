@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -105,7 +104,7 @@ class ContentFieldValue extends Pivot
         return $this->field->field_type === 'checkbox';
     }
 
-    private function isJsonArray(): array | null
+    private function isJsonArray(): ?array
     {
         $decoded = json_decode($this->value, true);
 
