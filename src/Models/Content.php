@@ -269,16 +269,29 @@ class Content extends Model
         ) ?? [];
     }
 
-    /** Returns the value of a field based on the slug. */
-    public function field(string $slug): HtmlString | Collection | array | null
+    /**
+     * Returns the value of a field based on the slug. The following fields are available in Backstage:
+     * checkbox (list),
+     * Color
+     * Date Time
+     * File
+     * Key Value
+     * Markdown Editor
+     * Radio
+     * Repeater
+     * Rich Editor
+     * Select
+     * Text
+     * Textarea
+     * Toggle
+     * Uploadcare
+     *
+     * @see \Backstage\Models\ContentFieldValue::value()
+     * @see https://docs.backstagephp.com/03-fields/01-introduction.html
+     */
+    public function field(string $slug): Content | HtmlString | Collection | array | bool | null
     {
-        $value = $this->values->where('field.slug', $slug)->first();
-
-        if (! $value) {
-            return null;
-        }
-
-        return $value->value();
+        return $this->values->where('field.slug', $slug)->first()?->value();
     }
 
     public function rawField(string $field): mixed
