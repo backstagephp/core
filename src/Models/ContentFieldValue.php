@@ -64,8 +64,7 @@ class ContentFieldValue extends Pivot
             // For repeater and builder fields, use recursive decoding
             if (in_array($this->field->field_type, ['repeater', 'builder'])) {
                 return $this->decodeAllJsonStrings($decoded);
-            }
-            else {
+            } else {
                 return $decoded;
             }
 
@@ -78,7 +77,6 @@ class ContentFieldValue extends Pivot
 
     /**
      * Check if the field has a relation
-     * @return bool
      */
     private function hasRelation(): bool
     {
@@ -87,7 +85,6 @@ class ContentFieldValue extends Pivot
 
     /**
      * Get the relation value
-     * @return Content | Collection
      */
     private function getContentRelation(): Content | Collection
     {
@@ -111,14 +108,12 @@ class ContentFieldValue extends Pivot
     private function isJsonArray(): array | null
     {
         $decoded = json_decode($this->value, true);
+
         return is_array($decoded) ? $decoded : null;
     }
 
     /**
      * Get the rich editor content as HTML using RichContentRenderer
-     * 
-     * @param array | string $value
-     * @return string | null
      */
     public static function getRichEditorHtml(array | string $value): ?string
     {

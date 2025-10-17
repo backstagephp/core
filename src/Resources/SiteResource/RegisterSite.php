@@ -51,7 +51,7 @@ class RegisterSite extends RegisterTenant
             'name_plural' => 'Pages',
             'slug' => 'page',
             'icon' => 'circle-stack',
-            'public' => true
+            'public' => true,
         ]);
 
         $type->fields()->createMany([
