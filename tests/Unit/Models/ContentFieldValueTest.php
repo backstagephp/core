@@ -117,7 +117,7 @@ test('content field value returns html string for rich editor content', function
         ->toEqual(new \Illuminate\Support\HtmlString('<p>' . $paragraphValue . '</p>'));
 });
 
-test('content field value returns string 1 for checked checkbox', function () {
+test('content field value returns boolean for checked checkbox', function () {
     $site = Site::factory()->create();
     $language = Language::factory([
         'name' => 'English',
@@ -160,8 +160,8 @@ test('content field value returns string 1 for checked checkbox', function () {
         ->create();
 
     expect($content->field('featured'))
-        ->toBeInstanceOf(\Illuminate\Support\HtmlString::class)
-        ->toEqual(new \Illuminate\Support\HtmlString('1'));
+        ->toBeBool()
+        ->toEqual(true);
 });
 
 test('content field value returns related content for select with relation', function () {
@@ -310,6 +310,114 @@ test('content field value returns multiple related content for select with multi
                 "suffix" => null,
                 "disabled" => false,
                 "multiple" => true,
+                "required" => false,
+                "allowHtml" => false,
+                "relations" => [[
+                    "resource" => "content",
+                    "relationKey" => "ulid",
+                    "relationValue" => "name",
+                    "relationKey_options" => [
+                        "ulid" => "Ulid",
+                        "name" => "Name",
+                    ],
+                    "relationValue_options" => [
+                        "ulid" => "Ulid",
+                        "name" => "Name",
+                    ],
+                    "relationValue_filters" => [[
+                        "value" => null,
+                        "column" => null,
+                        "operator" => null
+                    ]]
+                ]],
+                "helperText" => null,
+                "optionType" => ["relationship"],
+                "prefixIcon" => null,
+                "searchable" => false,
+                "suffixIcon" => null,
+                "prefixIconColor" => null,
+                "suffixIconColor" => null,
+                "validationRules" => [],
+                "visibilityRules" => [],
+                "selectablePlaceholder" => true
+            ],
+        ]))
+        ->hasAttached($site)
+        ->create();
+
+    $content = Content::factory([
+        'name' => 'Main Page',
+        'slug' => 'main-page',
+        'path' => 'main-page',
+        'type_slug' => $type->slug,
+        'site_ulid' => $site->ulid,
+        'language_code' => $language->code,
+        'meta_tags' => ['title' => 'Main Page'],
+    ])
+        ->has(ContentFieldValue::factory(1, [
+            'field_ulid' => Field::where('slug', 'related_contents')->where('model_type', 'type')->where('model_key', 'page')->first()?->ulid,
+            'value' => json_encode([$relatedContent1->ulid, $relatedContent2->ulid]),
+        ]), 'values')
+        ->create();
+
+    $relatedContentsCollection = $content->field('related_contents');
+    expect($relatedContentsCollection)
+        ->toBeInstanceOf(\Illuminate\Database\Eloquent\Collection::class)
+        ->toHaveCount(2)
+        ->sequence(
+            fn ($content) => $content->ulid->toBe($relatedContent1->ulid),
+            fn ($content) => $content->ulid->toBe($relatedContent2->ulid)
+        );
+});
+
+test('content field value returns multiple related content for checkbox-list with relations', function () {
+    $site = Site::factory()->create();
+    $language = Language::factory([
+        'name' => 'English',
+        'native' => 'English',
+        'code' => 'en',
+        'default' => true,
+    ])->create();
+
+    // Create two contents that will be referenced
+    $relatedContent1 = Content::factory([
+        'name' => 'Related Page 1',
+        'slug' => 'related-page-1',
+        'path' => 'related-page-1',
+        'site_ulid' => $site->ulid,
+        'language_code' => $language->code,
+        'meta_tags' => ['title' => 'Related Page 1'],
+    ])->create();
+
+    $relatedContent2 = Content::factory([
+        'name' => 'Related Page 2',
+        'slug' => 'related-page-2',
+        'path' => 'related-page-2',
+        'site_ulid' => $site->ulid,
+        'language_code' => $language->code,
+        'meta_tags' => ['title' => 'Related Page 2'],
+    ])->create();
+
+    $type = Type::factory()->state([
+        'name' => $name = 'Page',
+        'name_plural' => Str::plural($name),
+        'slug' => Str::slug($name),
+        'icon' => 'document',
+        'name_field' => 'title',
+        'body_field' => 'body',
+        'public' => true,
+    ])
+        ->has(Field::factory(1, [
+            'name' => 'Related Contents',
+            'slug' => 'related_contents',
+            'field_type' => 'checkbox-list',
+            'position' => 1,
+            'config' => [
+                "hint" => null,
+                "hidden" => false,
+                "prefix" => null,
+                "suffix" => null,
+                "disabled" => false,
                 "required" => false,
                 "allowHtml" => false,
                 "relations" => [[
