@@ -11,7 +11,7 @@ trait DecodesJsonStrings
     /**
      * Recursively decode all JSON strings in an array or value
      */
-    protected function decodeAllJsonStrings($data, $path = ''): array|HtmlString|null
+    protected function decodeAllJsonStrings($data, $path = ''): array | HtmlString | null
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -36,8 +36,7 @@ trait DecodesJsonStrings
                         $value = RichContentRenderer::make($value)
                             ->plugins([JumpAnchorRichContentPlugin::get()])
                             ->toHtml();
-                    }
-                    else {
+                    } else {
                         $value = $this->decodeAllJsonStrings($value, $currentPath);
                     }
                     $data[$key] = $value;

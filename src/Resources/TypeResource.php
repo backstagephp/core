@@ -9,7 +9,6 @@ use Backstage\Resources\TypeResource\Pages\CreateType;
 use Backstage\Resources\TypeResource\Pages\EditType;
 use Backstage\Resources\TypeResource\Pages\ListTypes;
 use Closure;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -200,10 +199,10 @@ class TypeResource extends Resource
                                         \Filament\Actions\Action::make('create_template_file')
                                             ->button()
                                             ->label(__('Create'))
-                                            ->visible(fn ($record) => $record && !file_exists($record->template_path))
+                                            ->visible(fn ($record) => $record && ! file_exists($record->template_path))
                                             ->action(function ($record) {
-                                                if (!file_exists($record->template_path)) {
-                                                    if (!is_dir(dirname($record->template_path))) {
+                                                if (! file_exists($record->template_path)) {
+                                                    if (! is_dir(dirname($record->template_path))) {
                                                         mkdir(dirname($record->template_path), 0755, true);
                                                     }
                                                     file_put_contents($record->template_path, "<!-- Blade template for {$record->name} -->\n");
@@ -213,7 +212,7 @@ class TypeResource extends Resource
                                                     ->success()
                                                     ->send();
                                             }),
-                                    )
+                                    ),
                             ]),
                     ]),
             ]);
