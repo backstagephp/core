@@ -256,9 +256,8 @@ test('content field value returns related content for select with relation', fun
 
     $relatedContentCollection = $content->field('related_content');
     expect($relatedContentCollection)
-        ->toBeInstanceOf(\Illuminate\Database\Eloquent\Collection::class)
-        ->toHaveCount(1)
-        ->first()->ulid->toBe($relatedContent->ulid);
+        ->toBeInstanceOf(Content::class)
+        ->ulid->toBe($relatedContent->ulid);
 });
 
 test('content field value returns multiple related content for select with multiple relations', function () {
