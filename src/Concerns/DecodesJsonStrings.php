@@ -2,9 +2,7 @@
 
 namespace Backstage\Concerns;
 
-use Backstage\Fields\Plugins\JumpAnchorRichContentPlugin;
 use Backstage\Models\ContentFieldValue;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Support\HtmlString;
 
 trait DecodesJsonStrings
@@ -12,7 +10,7 @@ trait DecodesJsonStrings
     /**
      * Recursively decode all JSON strings in an array or value
      */
-    protected function decodeAllJsonStrings($data, $path = ''): array|HtmlString|null
+    protected function decodeAllJsonStrings($data, $path = ''): array | HtmlString | null
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -35,8 +33,7 @@ trait DecodesJsonStrings
                 } elseif (is_array($value)) {
                     if (isset($value['type']) && $value['type'] === 'doc') {
                         $value = ContentFieldValue::getRichEditorHtml($value);
-                    }
-                    else {
+                    } else {
                         $value = $this->decodeAllJsonStrings($value, $currentPath);
                     }
                     $data[$key] = $value;

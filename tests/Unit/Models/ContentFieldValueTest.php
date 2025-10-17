@@ -1,10 +1,10 @@
 <?php
 
-use Backstage\Models\ContentFieldValue;
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Content;
+use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Language;
 use Backstage\Models\Site;
-use Backstage\Fields\Models\Field;
 use Backstage\Models\Type;
 use Illuminate\Support\Str;
 
@@ -90,11 +90,11 @@ test('content field value returns html string for rich editor content', function
                 'content' => [
                     [
                         'type' => 'text',
-                        'text' => $paragraphValue = 'Hello World'
-                    ]
-                ]
-            ]
-        ]
+                        'text' => $paragraphValue = 'Hello World',
+                    ],
+                ],
+            ],
+        ],
     ];
 
     $content = Content::factory([
@@ -198,42 +198,42 @@ test('content field value returns related content for select with relation', fun
             'field_type' => 'select',
             'position' => 1,
             'config' => [
-                "hint" => null,
-                "hidden" => false,
-                "prefix" => null,
-                "suffix" => null,
-                "disabled" => false,
-                "multiple" => false,
-                "required" => false,
-                "allowHtml" => false,
-                "relations" => [[
-                    "resource" => "content",
-                    "relationKey" => "ulid",
-                    "relationValue" => "name",
-                    "relationKey_options" => [
-                        "ulid" => "Ulid",
-                        "name" => "Name",
+                'hint' => null,
+                'hidden' => false,
+                'prefix' => null,
+                'suffix' => null,
+                'disabled' => false,
+                'multiple' => false,
+                'required' => false,
+                'allowHtml' => false,
+                'relations' => [[
+                    'resource' => 'content',
+                    'relationKey' => 'ulid',
+                    'relationValue' => 'name',
+                    'relationKey_options' => [
+                        'ulid' => 'Ulid',
+                        'name' => 'Name',
                     ],
-                    "relationValue_options" => [
-                        "ulid" => "Ulid",
-                        "name" => "Name",
+                    'relationValue_options' => [
+                        'ulid' => 'Ulid',
+                        'name' => 'Name',
                     ],
-                    "relationValue_filters" => [[
-                        "value" => null,
-                        "column" => null,
-                        "operator" => null
-                    ]]
+                    'relationValue_filters' => [[
+                        'value' => null,
+                        'column' => null,
+                        'operator' => null,
+                    ]],
                 ]],
-                "helperText" => null,
-                "optionType" => ["relationship"],
-                "prefixIcon" => null,
-                "searchable" => false,
-                "suffixIcon" => null,
-                "prefixIconColor" => null,
-                "suffixIconColor" => null,
-                "validationRules" => [],
-                "visibilityRules" => [],
-                "selectablePlaceholder" => true
+                'helperText' => null,
+                'optionType' => ['relationship'],
+                'prefixIcon' => null,
+                'searchable' => false,
+                'suffixIcon' => null,
+                'prefixIconColor' => null,
+                'suffixIconColor' => null,
+                'validationRules' => [],
+                'visibilityRules' => [],
+                'selectablePlaceholder' => true,
             ],
         ]))
         ->hasAttached($site)
@@ -304,42 +304,42 @@ test('content field value returns multiple related content for select with multi
             'field_type' => 'select',
             'position' => 1,
             'config' => [
-                "hint" => null,
-                "hidden" => false,
-                "prefix" => null,
-                "suffix" => null,
-                "disabled" => false,
-                "multiple" => true,
-                "required" => false,
-                "allowHtml" => false,
-                "relations" => [[
-                    "resource" => "content",
-                    "relationKey" => "ulid",
-                    "relationValue" => "name",
-                    "relationKey_options" => [
-                        "ulid" => "Ulid",
-                        "name" => "Name",
+                'hint' => null,
+                'hidden' => false,
+                'prefix' => null,
+                'suffix' => null,
+                'disabled' => false,
+                'multiple' => true,
+                'required' => false,
+                'allowHtml' => false,
+                'relations' => [[
+                    'resource' => 'content',
+                    'relationKey' => 'ulid',
+                    'relationValue' => 'name',
+                    'relationKey_options' => [
+                        'ulid' => 'Ulid',
+                        'name' => 'Name',
                     ],
-                    "relationValue_options" => [
-                        "ulid" => "Ulid",
-                        "name" => "Name",
+                    'relationValue_options' => [
+                        'ulid' => 'Ulid',
+                        'name' => 'Name',
                     ],
-                    "relationValue_filters" => [[
-                        "value" => null,
-                        "column" => null,
-                        "operator" => null
-                    ]]
+                    'relationValue_filters' => [[
+                        'value' => null,
+                        'column' => null,
+                        'operator' => null,
+                    ]],
                 ]],
-                "helperText" => null,
-                "optionType" => ["relationship"],
-                "prefixIcon" => null,
-                "searchable" => false,
-                "suffixIcon" => null,
-                "prefixIconColor" => null,
-                "suffixIconColor" => null,
-                "validationRules" => [],
-                "visibilityRules" => [],
-                "selectablePlaceholder" => true
+                'helperText' => null,
+                'optionType' => ['relationship'],
+                'prefixIcon' => null,
+                'searchable' => false,
+                'suffixIcon' => null,
+                'prefixIconColor' => null,
+                'suffixIconColor' => null,
+                'validationRules' => [],
+                'visibilityRules' => [],
+                'selectablePlaceholder' => true,
             ],
         ]))
         ->hasAttached($site)

@@ -285,11 +285,9 @@ class Content extends Model
      * Textarea
      * Toggle
      * Uploadcare
-     * 
-     * @param string $slug
+     *
      * @see \Backstage\Models\ContentFieldValue::value()
      * @see https://docs.backstagephp.com/03-fields/01-introduction.html
-     * @return Content | HtmlString | Collection | array | null
      */
     public function field(string $slug): Content | HtmlString | Collection | array | null
     {
