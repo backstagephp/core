@@ -291,7 +291,7 @@ class Content extends Model
      * @see https://docs.backstagephp.com/03-fields/01-introduction.html
      * @return Content | HtmlString | Collection | array | null
      */
-    public function field(string $slug): Content | HtmlString | Collection | array | null
+    public function field(string $slug): Content | HtmlString | Collection | array | bool | null
     {
         return $this->values->where('field.slug', $slug)->first()?->value();
     }

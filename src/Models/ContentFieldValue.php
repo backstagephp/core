@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
+use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Backstage\Models\ContentFieldValue
@@ -45,7 +46,7 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function value(): Content | HtmlString | array | Collection | null
+    public function value(): Content | HtmlString | array | Collection | bool | null
     {
         if ($this->hasRelation()) {
             return $this->getContentRelation();
@@ -53,6 +54,10 @@ class ContentFieldValue extends Pivot
 
         if ($this->isRichEditor()) {
             return new HtmlString(self::getRichEditorHtml($this->value)) ?? new HtmlString('');
+        }
+
+        if ($this->isCheckbox()) {
+            return $this->value == '1';
         }
 
         if ($decoded = $this->isJsonArray()) {
@@ -77,7 +82,7 @@ class ContentFieldValue extends Pivot
      */
     private function hasRelation(): bool
     {
-        return in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations']);
+        return in_array($this->field->field_type, ['checkbox-list', 'radio', 'select']) && ! empty($this->field['config']['relations']);
     }
 
     /**
@@ -96,6 +101,11 @@ class ContentFieldValue extends Pivot
     private function isRichEditor(): bool
     {
         return $this->field->field_type === 'rich-editor';
+    }
+
+    private function isCheckbox(): bool
+    {
+        return $this->field->field_type === 'checkbox';
     }
 
     private function isJsonArray(): array | null
