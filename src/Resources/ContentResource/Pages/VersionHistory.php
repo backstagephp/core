@@ -2,6 +2,7 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
+use Backstage\Fields\Models\Field;
 use Backstage\Models\Version;
 use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -53,28 +54,6 @@ class VersionHistory extends ManageRelatedRecords
         return __('Revisions');
     }
 
-    public function form(Schema $schema): Schema
-    {
-        return ContentResource::form($schema);
-    }
-
-    public function infolist(Schema $schema): Schema
-    {
-        $record = $this->getRecord();
-        $fields = collect($record->data['fields'] ?? [])->map(function ($value, $field_ulid) {
-            return "$field_ulid: " . $field_ulid;
-        })->implode("\n");
-// 
-// TextEntry::make('data.meta_tags')
-// ->label(__('Meta Tags')),
-        return $schema
-            ->schema([
-                TextEntry::make('fields')
-                    ->label(__('Fields'))
-                    ->state($fields)
-                    ->listWithLineBreaks(),
-            ]);
-    }
 
     public function table(Table $table): Table
     {
@@ -89,11 +68,23 @@ class VersionHistory extends ManageRelatedRecords
                     ->searchable(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->label(__('View'))
                     ->modalHeading(fn (Version $record) => __('Version from :date', ['date' => $record->created_at->format('Y-m-d H:i:s')]))
-                    ->infolist($this->infolist(...)),
+                    ->schema(function (Version $record) {
+                        $fieldUlids = collect($record->data['fields'] ?? [])->keys();
+                        $fields = Field::whereIn('ulid', $fieldUlids)->get();
+                        foreach ($fields as $field) {
+                            $schema->schema([
+                                Infolists\Components\TextEntry::make($field->ulid)
+                                    ->label($field->name)
+                                    ->state($field->value)
+                                    ->listWithLineBreaks(),
+                            ]);
+                        }
+                        return $fields;
+                    }),
                 Action::make('restore')
                     ->label(__('Restore'))
                     ->icon('heroicon-o-arrow-path')
