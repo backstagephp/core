@@ -71,6 +71,7 @@ class SiteResource extends Resource
                                         ->afterStateUpdated(function (Set $set, ?string $state) {
                                             $set('slug', Str::slug($state));
                                             $set('name_plural', Str::plural($state));
+                                            $set('title', Str::title($state));
                                         })
                                         ->required(),
                                     TextInput::make('slug')
@@ -89,6 +90,7 @@ class SiteResource extends Resource
                                         ->helperText('Symbol between page title and site name.'),
                                     Select::make('theme')
                                         ->label('Theme')
+                                        ->default('system')
                                         ->options([
                                             'system' => 'System',
                                             'light' => 'Light',

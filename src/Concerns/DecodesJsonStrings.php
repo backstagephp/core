@@ -3,6 +3,7 @@
 namespace Backstage\Concerns;
 
 use Backstage\Fields\Plugins\JumpAnchorRichContentPlugin;
+use Backstage\Models\ContentFieldValue;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Support\HtmlString;
 
@@ -33,9 +34,7 @@ trait DecodesJsonStrings
                     }
                 } elseif (is_array($value)) {
                     if (isset($value['type']) && $value['type'] === 'doc') {
-                        $value = RichContentRenderer::make($value)
-                            ->plugins([JumpAnchorRichContentPlugin::get()])
-                            ->toHtml();
+                        $value = ContentFieldValue::getRichEditorHtml($value);
                     }
                     else {
                         $value = $this->decodeAllJsonStrings($value, $currentPath);

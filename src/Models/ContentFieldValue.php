@@ -47,29 +47,23 @@ class ContentFieldValue extends Pivot
 
     public function value(): Content | HtmlString | array | Collection | null
     {
-        if (in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations'])) {
-            if (! json_validate($this->value)) {
-                return Content::where('ulid', $this->value)->get();
-            }
-
-            return Content::whereIn('ulid', json_decode($this->value))->get();
+        if ($this->hasRelation()) {
+            return $this->getContentRelation();
         }
 
-        if ($this->field->field_type == 'rich-editor') {
-            return new HtmlString($this->getRichEditorHtml()) ?? new HtmlString('');
+        if ($this->isRichEditor()) {
+            return new HtmlString(self::getRichEditorHtml($this->value)) ?? new HtmlString('');
         }
 
-        $decoded = json_decode($this->value, true);
-
-        // If the decoded value is an array, handle it based on field type
-        if (is_array($decoded)) {
+        if ($decoded = $this->isJsonArray()) {
             // For repeater and builder fields, use recursive decoding
             if (in_array($this->field->field_type, ['repeater', 'builder'])) {
                 return $this->decodeAllJsonStrings($decoded);
             }
+            else {
+                return $decoded;
+            }
 
-            // For other array fields (like media, uploadcare), return as is
-            return $decoded;
         }
 
         // For all other cases, ensure the value is returned as a string
@@ -78,19 +72,55 @@ class ContentFieldValue extends Pivot
     }
 
     /**
-     * Get the rich editor content as HTML using RichContentRenderer
+     * Check if the field has a relation
+     * @return bool
      */
-    public function getRichEditorHtml(): ?string
+    private function hasRelation(): bool
     {
-        if ($this->field->field_type !== 'rich-editor') {
-            return null;
+        return in_array($this->field->field_type, ['checkbox', 'radio', 'select']) && ! empty($this->field['config']['relations']);
+    }
+
+    /**
+     * Get the relation value
+     * @return Content | Collection
+     */
+    private function getContentRelation(): Content | Collection
+    {
+        if (! json_validate($this->value)) {
+            return Content::where('ulid', $this->value)->get();
         }
 
+        return Content::whereIn('ulid', json_decode($this->value))->get();
+    }
+
+    private function isRichEditor(): bool
+    {
+        return $this->field->field_type === 'rich-editor';
+    }
+
+    private function isJsonArray(): array | null
+    {
         $decoded = json_decode($this->value, true);
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * Get the rich editor content as HTML using RichContentRenderer
+     * 
+     * @param array | string $value
+     * @return string | null
+     */
+    public static function getRichEditorHtml(array | string $value): ?string
+    {
+        if (is_array($value)) {
+            $decoded = $value;
+        } else {
+            $decoded = json_decode($value, true);
+        }
 
         // If it's already HTML, return it
-        if (is_string($this->value) && ! $decoded) {
-            return $this->value;
+        if (is_string($value) && ! $decoded) {
+            return $value;
         }
 
         // If it's JSON rich editor content, render it
@@ -98,24 +128,6 @@ class ContentFieldValue extends Pivot
             return RichContentRenderer::make($decoded)
                 ->plugins([JumpAnchorRichContentPlugin::get()])
                 ->toHtml();
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the rich editor content as raw JSON
-     */
-    public function getRichEditorJson(): ?array
-    {
-        if ($this->field->field_type !== 'rich-editor') {
-            return null;
-        }
-
-        $decoded = json_decode($this->value, true);
-
-        if (is_array($decoded) && isset($decoded['type']) && $decoded['type'] === 'doc') {
-            return $decoded;
         }
 
         return null;
