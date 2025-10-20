@@ -18,6 +18,7 @@ use Filament\Infolists\Components\TextEntry;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\Alignment;
 
 class VersionHistory extends ManageRelatedRecords
 {
@@ -83,10 +84,11 @@ class VersionHistory extends ManageRelatedRecords
                         $entries[] = Infolists\Components\TextEntry::make('meta_tags')
                             ->label(__('Meta tags'))
                             ->formatState(function () use ($record) {
-                                    return new HtmlString('
-                                        <div class="text-gray-500 font-medium mb-2">' . __('Meta tags') . '</div>
-                                        <div class="text-red-500 line-through">' . json_encode($record->content->meta_tags) . '</div>
-                                        <div class="text-green-500">' . json_encode($record->data['meta_tags']) . '</div>');
+                                return view('backstage::filament.utility.diff', [
+                                    'original' => json_encode($record->content->meta_tags),
+                                    'new' => json_encode($record->data['meta_tags']),
+                                    'name' => __('Meta tags'),
+                                ]);
                             });
                         foreach ($fields as $field) {
                             $orignalValue = $record->content->rawField($field->slug);
@@ -95,17 +97,18 @@ class VersionHistory extends ManageRelatedRecords
                             $entries[] = Infolists\Components\TextEntry::make($field->ulid)
                                 ->label($field->name)
                                 ->formatState(function () use ($orignalValue, $newValue, $field) {
-                                        return new HtmlString('
-                                            <div class="text-gray-500 font-medium mb-2">' . $field->name . '</div>
-                                            <div class="text-red-500 line-through">' . $orignalValue . '</div>
-                                            <div class="text-green-500">' . $newValue . '</div>');
+                                    return view('backstage::filament.utility.diff', [
+                                        'original' => $orignalValue,
+                                        'new' => $newValue,
+                                        'name' => $field->name,
+                                    ]);
                                 });
                         }
                         return $entries;
                     })
                     ->modalFooterActions([
                         Action::make('restore')
-                            ->label(__('Restore'))
+                            ->label(__('Restore revision'))
                             ->icon('heroicon-o-arrow-path')
                             ->action(function (Version $record, Action $action): void {
                                 $record->content->update([
@@ -130,7 +133,8 @@ class VersionHistory extends ManageRelatedRecords
                              ->label(__('Cancel'))
                              ->close()
                              ->color('gray')
-                    ]),
+                    ])
+                    ->modalFooterActionsAlignment(Alignment::End),
             ]);
     }
 }

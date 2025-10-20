@@ -23,6 +23,7 @@ class BackstageUpgrade extends Command
             '--force' => true,
         ]);
         $this->call('filament:upgrade');
+        $this->call('filament:assets');
 
         BackstageUpgraded::dispatch();
 
