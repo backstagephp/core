@@ -3,22 +3,17 @@
 namespace Backstage\Resources\ContentResource\Pages;
 
 use Backstage\Fields\Models\Field;
-use Backstage\Models\Content;
-use Backstage\Models\Type;
 use Backstage\Models\Version;
 use Backstage\Resources\ContentResource;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Schemas\Schema;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Infolists;
-use Filament\Infolists\Components\TextEntry;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Support\Enums\Alignment;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 
 class VersionHistory extends ManageRelatedRecords
 {
@@ -58,7 +53,6 @@ class VersionHistory extends ManageRelatedRecords
     {
         return __('Revisions');
     }
-
 
     public function table(Table $table): Table
     {
@@ -104,6 +98,7 @@ class VersionHistory extends ManageRelatedRecords
                                     ]);
                                 });
                         }
+
                         return $entries;
                     })
                     ->modalFooterActions([
@@ -115,24 +110,24 @@ class VersionHistory extends ManageRelatedRecords
                                     'meta_tags' => $record->data['meta_tags'] ?? [],
                                 ]);
                                 $record->content->values()->delete();
-                                 foreach ($record->data['fields'] as $ulid => $value) {
-                                     $record->content->values()->create([
-                                         'field_ulid' => $ulid,
-                                         'value' => json_encode($value),
-                                     ]);
-                                 }
-                                 
-                                 Notification::make()
-                                     ->success()
-                                     ->title(__('Version restored'))
-                                     ->send();
+                                foreach ($record->data['fields'] as $ulid => $value) {
+                                    $record->content->values()->create([
+                                        'field_ulid' => $ulid,
+                                        'value' => json_encode($value),
+                                    ]);
+                                }
+
+                                Notification::make()
+                                    ->success()
+                                    ->title(__('Version restored'))
+                                    ->send();
 
                                 $this->redirect($this->getResource()::getUrl('edit', ['record' => $record->content]));
-                             }),
-                         Action::make('cancel')
-                             ->label(__('Cancel'))
-                             ->close()
-                             ->color('gray')
+                            }),
+                        Action::make('cancel')
+                            ->label(__('Cancel'))
+                            ->close()
+                            ->color('gray'),
                     ])
                     ->modalFooterActionsAlignment(Alignment::End),
             ]);
