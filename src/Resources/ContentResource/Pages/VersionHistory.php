@@ -134,9 +134,13 @@ class VersionHistory extends ManageRelatedRecords
                                     'meta_tags' => $record->data['meta_tags'] ?? [],
                                 ]);
                                 $record->content->values()->delete();
-                                foreach ($record->data['fields'] as $ulid => $value) {
+                                foreach ($record->content->type->fields as $field) {
+                                    if (! isset($record->data['fields'][$field->ulid])) {
+                                        continue;
+                                    }
+                                    $value = $record->data['fields'][$field->ulid];
                                     $record->content->values()->create([
-                                        'field_ulid' => $ulid,
+                                        'field_ulid' => $field->ulid,
                                         'value' => json_encode($value),
                                     ]);
                                 }

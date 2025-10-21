@@ -47,7 +47,7 @@ class ContentFieldValue extends Pivot
 
     public function value(): Content | HtmlString | array | Collection | bool | null
     {
-        if ($this->field->hasRelations()) {
+        if ($this->field->hasRelation()) {
             return static::getContentRelation($this->value);
         }
 
