@@ -101,10 +101,11 @@ class VersionHistory extends ManageRelatedRecords
                             $entries[] = Infolists\Components\TextEntry::make($field->ulid)
                                 ->label($field->name)
                                 ->formatState(function () use ($originalValue, $newValue, $field) {
-                                    switch($field->field_type) {
+                                    switch ($field->field_type) {
                                         case 'rich-editor':
                                             $originalValue = ContentFieldValue::getRichEditorHtml($originalValue);
                                             $newValue = ContentFieldValue::getRichEditorHtml($newValue);
+
                                             break;
                                         default:
                                             if ($field->hasRelation()) {
@@ -113,8 +114,10 @@ class VersionHistory extends ManageRelatedRecords
                                             }
                                             $originalValue = $originalValue;
                                             $newValue = $newValue;
+
                                             break;
                                     }
+
                                     return view('backstage::filament.utility.diff', [
                                         'original' => $originalValue,
                                         'new' => $newValue,
