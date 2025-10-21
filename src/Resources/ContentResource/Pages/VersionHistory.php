@@ -3,6 +3,7 @@
 namespace Backstage\Resources\ContentResource\Pages;
 
 use Backstage\Fields\Models\Field;
+use Backstage\Models\ContentFieldValue;
 use Backstage\Models\Version;
 use Backstage\Resources\ContentResource;
 use Filament\Actions\Action;
@@ -14,6 +15,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 
 class VersionHistory extends ManageRelatedRecords
 {
@@ -78,21 +80,30 @@ class VersionHistory extends ManageRelatedRecords
                         $entries[] = Infolists\Components\TextEntry::make('meta_tags')
                             ->label(__('Meta tags'))
                             ->formatState(function () use ($record) {
+                                $original = collect($record->content->meta_tags)->map(function ($value, $key) {
+                                    return (string) new HtmlString($key . ': ' . (is_string($value) || is_null($value) ? $value : json_encode($value)));
+                                })
+                                ->flatten()->implode('<br>');
+                                $new = collect($record->data['meta_tags'])->map(function ($value, $key) {
+                                    return (string) new HtmlString($key . ': ' . (is_string($value) || is_null($value) ? $value : json_encode($value)));
+                                })->flatten()->implode('<br>');
                                 return view('backstage::filament.utility.diff', [
-                                    'original' => json_encode($record->content->meta_tags),
-                                    'new' => json_encode($record->data['meta_tags']),
+                                    'original' => $original,
+                                    'new' => $new,
                                     'name' => __('Meta tags'),
                                 ]);
                             });
                         foreach ($fields as $field) {
-                            $orignalValue = $record->content->rawField($field->slug);
+                            $originalValue = $record->content->rawField($field->slug);
                             $newValue = $record->data['fields'][$field->ulid] ?? '';
                             $newValue = is_array($newValue) ? json_encode($newValue) : $newValue;
                             $entries[] = Infolists\Components\TextEntry::make($field->ulid)
                                 ->label($field->name)
-                                ->formatState(function () use ($orignalValue, $newValue, $field) {
+                                ->formatState(function () use ($originalValue, $newValue, $field) {
+                                    $originalValue = $field->field_type == 'rich-editor' ? ContentFieldValue::getRichEditorHtml($originalValue) : $originalValue;
+                                    $newValue = $field->field_type == 'rich-editor' ? ContentFieldValue::getRichEditorHtml($newValue) : $newValue;
                                     return view('backstage::filament.utility.diff', [
-                                        'original' => $orignalValue,
+                                        'original' => $originalValue,
                                         'new' => $newValue,
                                         'name' => $field->name,
                                     ]);
