@@ -3,17 +3,12 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <title>{!! trim(
-        html_entity_decode(
-            implode(
-                ' ',
-                array_filter([$content->meta_tags['title'], $content->site->title_separator, $content->site->title]),
-            ),
-        ),
-    ) !!}</title>
+    <title>{!! trim($pageTitle ?? $content->pageTitle) !!}</title>
     {{ $headFirst ?? '' }}
     <meta charset="utf-8">
-    <link rel="canonical" href="{{ url()->current() }}">
+    @if($content)
+    <link rel="canonical" href="{{ $content->url }}">
+    @endif
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="apple-mobile-web-app-title" content="Backstage">
     <meta name="content-type" content="text/html; charset=utf-8">
