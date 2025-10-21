@@ -83,10 +83,11 @@ class VersionHistory extends ManageRelatedRecords
                                 $original = collect($record->content->meta_tags)->map(function ($value, $key) {
                                     return (string) new HtmlString($key . ': ' . (is_string($value) || is_null($value) ? $value : json_encode($value)));
                                 })
-                                ->flatten()->implode('<br>');
+                                    ->flatten()->implode('<br>');
                                 $new = collect($record->data['meta_tags'])->map(function ($value, $key) {
                                     return (string) new HtmlString($key . ': ' . (is_string($value) || is_null($value) ? $value : json_encode($value)));
                                 })->flatten()->implode('<br>');
+
                                 return view('backstage::filament.utility.diff', [
                                     'original' => $original,
                                     'new' => $new,
@@ -102,6 +103,7 @@ class VersionHistory extends ManageRelatedRecords
                                 ->formatState(function () use ($originalValue, $newValue, $field) {
                                     $originalValue = $field->field_type == 'rich-editor' ? ContentFieldValue::getRichEditorHtml($originalValue) : $originalValue;
                                     $newValue = $field->field_type == 'rich-editor' ? ContentFieldValue::getRichEditorHtml($newValue) : $newValue;
+
                                     return view('backstage::filament.utility.diff', [
                                         'original' => $originalValue,
                                         'new' => $newValue,
