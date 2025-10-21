@@ -10,7 +10,8 @@ use Backstage\Jobs\TranslateContent;
 use Backstage\Media\Concerns\HasMedia;
 use Backstage\Models\Concerns\HasContentRelations;
 use Backstage\Observers\ContentDepthObserver;
-use Backstage\Observers\ContentObserver;
+use Backstage\Observers\ContentRevisionObserver;
+use Backstage\Observers\ContentUrlObserver;
 use Backstage\Shared\HasPackageFactory;
 use Backstage\Shared\HasTags;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -65,7 +66,8 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property string $view
  */
 #[ObservedBy(ContentDepthObserver::class)]
-#[ObservedBy(ContentObserver::class)]
+#[ObservedBy(ContentUrlObserver::class)]
+#[ObservedBy(ContentRevisionObserver::class)]
 class Content extends Model
 {
     use DecodesJsonStrings;
@@ -121,6 +123,11 @@ class Content extends Model
     {
         return $this->hasMany(ContentFieldValue::class)
             ->with('field');
+    }
+
+    public function versions(): HasMany
+    {
+        return $this->hasMany(Version::class, 'content_ulid', 'ulid');
     }
 
     /**

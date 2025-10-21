@@ -5,7 +5,7 @@ namespace Backstage\Observers;
 use Backstage\Models\Content;
 use Backstage\Redirects\Laravel\Events\UrlHasChanged;
 
-class ContentObserver
+class ContentUrlObserver
 {
     public function saving(Content $content)
     {

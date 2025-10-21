@@ -16,6 +16,7 @@ use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
 use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
 use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
+use Backstage\Resources\ContentResource\Pages\VersionHistory;
 use Backstage\View\Components\Filament\Badge;
 use Backstage\View\Components\Filament\BadgeableColumn;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
@@ -867,6 +868,7 @@ class ContentResource extends Resource
             'edit' => EditContent::route('/{record}/edit'),
             'meta_tags' => ListContentMetaTags::route('/meta-tags'),
             'children' => ManageChildrenContent::route('/{record}/children'),
+            'versions' => VersionHistory::route('/{record}/versions'),
         ];
     }
 
@@ -875,6 +877,7 @@ class ContentResource extends Resource
         return $page->generateNavigationItems([
             EditContent::class,
             ManageChildrenContent::class,
+            VersionHistory::class,
         ]);
     }
 

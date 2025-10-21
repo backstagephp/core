@@ -47,8 +47,8 @@ class ContentFieldValue extends Pivot
 
     public function value(): Content | HtmlString | array | Collection | bool | null
     {
-        if ($this->hasRelation()) {
-            return $this->getContentRelation();
+        if ($this->field->hasRelation()) {
+            return static::getContentRelation($this->value);
         }
 
         if ($this->isRichEditor()) {
@@ -75,23 +75,15 @@ class ContentFieldValue extends Pivot
     }
 
     /**
-     * Check if the field has a relation
-     */
-    private function hasRelation(): bool
-    {
-        return in_array($this->field->field_type, ['checkbox-list', 'radio', 'select']) && ! empty($this->field['config']['relations']);
-    }
-
-    /**
      * Get the relation value
      */
-    private function getContentRelation(): Content | Collection
+    public static function getContentRelation(mixed $value): Content | Collection | null
     {
-        if (! json_validate($this->value)) {
-            return Content::where('ulid', $this->value)->first();
+        if (! json_validate($value)) {
+            return Content::where('ulid', $value)->first();
         }
 
-        return Content::whereIn('ulid', json_decode($this->value))->get();
+        return Content::whereIn('ulid', json_decode($value))->get();
     }
 
     private function isRichEditor(): bool
