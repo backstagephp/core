@@ -3,8 +3,15 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <title>{!! html_entity_decode($content->meta_tags['title']) !!}</title>
-    {{ $headFirst ?? ''}}
+    <title>{!! trim(
+        html_entity_decode(
+            implode(
+                ' ',
+                array_filter([$content->meta_tags['title'], $content->site->title_separator, $content->site->title]),
+            ),
+        ),
+    ) !!}</title>
+    {{ $headFirst ?? '' }}
     <meta charset="utf-8">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -21,7 +28,7 @@
     @if (count($content->meta_tags['keywords'] ?? []))
         <meta name="keywords" content="{{ implode(', ', $content->meta_tags['keywords']) }}">
     @endif
-    {{ $headLast ?? ''}}
+    {{ $headLast ?? '' }}
 </head>
 
 <body>
