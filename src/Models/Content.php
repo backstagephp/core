@@ -169,6 +169,21 @@ class Content extends Model
     /**
      * @return Attribute<Provider, string>
      */
+    protected function pageTitle(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => html_entity_decode(
+                implode(
+                    ' ',
+                    array_filter([$this->meta_tags['title'], $this->site->title_separator, $this->site->title]),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @return Attribute<Provider, string>
+     */
     protected function url(): Attribute
     {
         if (! $this->public) {
@@ -178,6 +193,7 @@ class Content extends Model
         }
 
         $url = rtrim($this->pathPrefix . $this->path, '/');
+        
         if ($this->site->trailing_slash) {
             $url .= '/';
         }
