@@ -2,3 +2,4 @@
 
 @source '../../resources/views/**/*.blade.php';
 @source '../../src/**/*.php';
+@source '../../vendor/saade/filament-adjacency-list/resources/views/**/*.blade.php';
