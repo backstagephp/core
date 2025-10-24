@@ -212,6 +212,7 @@ class ContentResource extends Resource
                                     ]),
                                 Tab::make('meta')
                                     ->label(__('Meta'))
+                                    ->visible(fn (Get $get) => $get('public') === true)
                                     ->icon('heroicon-o-magnifying-glass')
                                     ->schema([
                                         TextInput::make('path')
