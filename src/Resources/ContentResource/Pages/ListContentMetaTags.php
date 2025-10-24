@@ -2,15 +2,15 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
 use Backstage\Models\Content;
-use Filament\Actions\ActionGroup;
-use Filament\Tables\Columns\TextColumn;
+use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Table;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\Builder;
 
 class ListContentMetaTags extends ListRecords
