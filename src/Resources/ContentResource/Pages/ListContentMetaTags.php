@@ -2,15 +2,16 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Models\Content;
 use Backstage\Models\Type;
-use Backstage\Resources\ContentResource;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Backstage\Models\Content;
+use Filament\Actions\ActionGroup;
+use Filament\Tables\Columns\TextColumn;
+use Backstage\Resources\ContentResource;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextInputColumn;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Builder;
 
 class ListContentMetaTags extends ListRecords
 {
@@ -34,6 +35,9 @@ class ListContentMetaTags extends ListRecords
     public function table(Table $table): Table
     {
         return static::getResource()::table($table)
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->where('public', true);
+            })
             ->columns([
                 TextColumn::make('name')
                     ->label('Title')
