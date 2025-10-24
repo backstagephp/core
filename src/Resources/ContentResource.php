@@ -260,10 +260,34 @@ class ContentResource extends Resource
                                             ->splitKeys(['Tab', ','])
                                             ->suggestions(Content::whereJsonLength('meta_tags->keywords', '>', 0)->orderBy('edited_at')->take(25)->get()->map(fn ($content) => $content->meta_tags['keywords'])->flatten()->filter()),
                                     ]),
-                                // Tab::make('open-graph')
-                                //     ->label(__('Open Graph'))
-                                //     ->icon('heroicon-o-photo')
-                                //     ->schema([]),
+                                Tab::make('open-graph')
+                                    ->visible(fn (Get $get) => $get('public') === true)
+                                    ->label(__('Open Graph'))
+                                    ->icon('heroicon-o-photo')
+                                    ->schema([
+                                        Grid::make([
+                                            'default' => 12,
+                                        ])->schema([
+                                            self::getFileUploadField()::make('meta_tags.og_image')
+                                                ->label(__('Open Graph Image'))
+                                                ->helperText('Image for social media sharing. Recommended size: 1200x630px.')
+                                                ->columnSpanFull(),
+
+                                            Hidden::make('meta_tags.og_type')
+                                                ->default('website')
+                                                ->formatStateUsing(fn ($state) => $state ?? 'website'),
+
+                                            Hidden::make('meta_tags.og_site_name')
+                                                ->default(fn ($state) => Filament::getTenant()->name)
+                                                ->formatStateUsing(fn ($state) => $state ?? Filament::getTenant()->name),
+
+                                            Hidden::make('meta_tags.og_url')
+                                                ->formatStateUsing(fn ($state, ?Content $record) => $state ?? $record->url ?? null),
+
+                                            Hidden::make('meta_tags.og_locale')
+                                                ->formatStateUsing(fn ($state, ?Content $record) => $state ?? $record->language_code ?? null),
+                                        ]),
+                                    ]),
                                 // Tab::make('microdata')
                                 //     ->label(__('Microdata'))
                                 //     ->icon('heroicon-o-code-bracket-square')
@@ -900,5 +924,10 @@ class ContentResource extends Resource
         if (! $record || ! $record->slug || ! $currentSlug) {
             $set('slug', Str::slug($state));
         }
+    }
+
+    protected static function getFileUploadField(): string
+    {
+        return config('backstage.cms.default_file_upload_field', \Backstage\Fields\Fields\FileUpload::class);
     }
 }
