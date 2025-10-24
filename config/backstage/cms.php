@@ -46,4 +46,8 @@ return [
             Backstage\View\Components\Form::class,
         ],
     ],
+
+    // Can be used to override the default file upload field user in Backstage.
+    // Example: 'default_file_upload_field' => \Backstage\Uploadcare\Forms\Components\Uploadcare::class,
+    'default_file_upload_field' => \Backstage\Fields\Fields\FileUpload::class,
 ];
