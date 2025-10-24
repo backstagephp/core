@@ -2,47 +2,48 @@
 
 namespace Backstage;
 
-use Backstage\Commands\BackstageSeedCommand;
-use Backstage\Commands\BackstageUpgrade;
-use Backstage\CustomFields\Builder;
-use Backstage\CustomFields\CheckboxList;
-use Backstage\Events\FormSubmitted;
-use Backstage\Http\Middleware\SetLocale;
-use Backstage\Listeners\ExecuteFormActions;
-use Backstage\Media\Resources\MediaResource;
-use Backstage\Models\Block;
-use Backstage\Models\Media;
+use Carbon\Carbon;
 use Backstage\Models\Menu;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;
+use Backstage\Models\Block;
+use Backstage\Models\Media;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Str;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
+use Backstage\CustomFields\Builder;
+use Backstage\Events\FormSubmitted;
+use Backstage\View\Components\Page;
 use Backstage\Observers\MenuObserver;
-use Backstage\Providers\RequestServiceProvider;
-use Backstage\Providers\RouteServiceProvider;
-use Backstage\Resources\ContentResource;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
-use Backstage\View\Components\Page;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
-use Filament\Notifications\Livewire\Notifications;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
+use Filament\Forms\Components\Toggle;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\VerticalAlignment;
-use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
+use Backstage\Commands\BackstageUpgrade;
+use Backstage\CustomFields\CheckboxList;
+use Backstage\Http\Middleware\SetLocale;
+use Backstage\Resources\ContentResource;
+use Backstage\Listeners\ExecuteFormActions;
+use Filament\Support\Facades\FilamentAsset;
+use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Media\Resources\MediaResource;
+use Backstage\Providers\RouteServiceProvider;
+use Filament\Support\Enums\VerticalAlignment;
+use Livewire\Features\SupportTesting\Testable;
+use Backstage\Providers\RequestServiceProvider;
+use Filament\Notifications\Livewire\Notifications;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -200,8 +201,12 @@ class BackstageServiceProvider extends PackageServiceProvider
         });
 
         Select::configureUsing(function (Select $select): void {
-            $select->native(false);
+            $select->native(true);
             // $select->searchable();
+        });
+
+        Toggle::configureUsing(function (Toggle $toggle): void {
+            $toggle->inline(true);
         });
 
         Menu::observe(MenuObserver::class);
