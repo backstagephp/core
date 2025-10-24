@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Builder;
 
 class ListContentMetaTags extends ListRecords
 {
@@ -34,6 +35,9 @@ class ListContentMetaTags extends ListRecords
     public function table(Table $table): Table
     {
         return static::getResource()::table($table)
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->where('public', true);
+            })
             ->columns([
                 TextColumn::make('name')
                     ->label('Title')

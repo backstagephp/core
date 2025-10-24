@@ -193,7 +193,7 @@ class Content extends Model
         }
 
         $url = rtrim($this->pathPrefix . $this->path, '/');
-        
+
         if ($this->site->trailing_slash) {
             $url .= '/';
         }
