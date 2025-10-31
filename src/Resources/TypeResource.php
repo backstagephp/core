@@ -2,38 +2,36 @@
 
 namespace Backstage\Resources;
 
-use Closure;
-use Backstage\Backstage;
-use Backstage\Models\Type;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Backstage\Models\Content;
-use Filament\Actions\EditAction;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Filament\Actions\BulkActionGroup;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Actions\DeleteBulkAction;
-use Illuminate\Support\Facades\Schema;
-use Filament\Forms\Components\Repeater;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Backstage\Models\Content;
+use Backstage\Models\Type;
+use Backstage\Resources\TypeResource\Pages\CreateType;
 use Backstage\Resources\TypeResource\Pages\EditType;
 use Backstage\Resources\TypeResource\Pages\ListTypes;
-use Backstage\Resources\TypeResource\Pages\CreateType;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Closure;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class TypeResource extends Resource
 {
@@ -41,7 +39,7 @@ class TypeResource extends Resource
         resolveFormFields as private traitResolveFormFields;
         resolveCustomFields as private traitResolveCustomFields;
     }
-    
+
     protected static ?string $model = Type::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-circle-stack';
@@ -103,7 +101,7 @@ class TypeResource extends Resource
                                     ->label(__('Open Graph Image Field(s)'))
                                     ->multiple()
                                     ->options(function (?Type $record) {
-                                        if (!$record) {
+                                        if (! $record) {
                                             return [];
                                         }
 
@@ -309,20 +307,21 @@ class TypeResource extends Resource
                         'type' => $type,
                         'name' => Str::headline($fieldType),
                         'defaultConfig' => $fieldInstance::getDefaultConfig()['acceptedFileTypes'] ?? null,
-                    ]
+                    ],
                 ];
             }
+
             return [];
         };
 
         $fields = collect()
             ->merge(
                 self::resolveCustomFields()
-                    ->flatMap(fn($instance, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: $instance, type: 'custom'))
+                    ->flatMap(fn ($instance, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: $instance, type: 'custom'))
             )
             ->merge(
                 collect(self::FIELD_TYPE_MAP)
-                    ->flatMap(fn($class, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: new $class(), type: 'default'))
+                    ->flatMap(fn ($class, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: new $class, type: 'default'))
             );
 
         return $fields;
@@ -330,7 +329,7 @@ class TypeResource extends Resource
 
     private static function hasAcceptedFileTypesConfig(object $fieldInstance): bool
     {
-        if (!method_exists($fieldInstance, 'getDefaultConfig')) {
+        if (! method_exists($fieldInstance, 'getDefaultConfig')) {
             return false;
         }
 
