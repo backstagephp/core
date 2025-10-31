@@ -268,9 +268,7 @@ class ContentResource extends Resource
                                         Grid::make([
                                             'default' => 12,
                                         ])->schema([
-                                            self::getFileUploadField()::make('meta_tags.og_image')
-                                                ->label(__('Open Graph Image'))
-                                                ->columnSpanFull(),
+                                            self::getFileUploadField(),
 
                                             Hidden::make('meta_tags.og_type')
                                                 ->default('website')
@@ -925,8 +923,24 @@ class ContentResource extends Resource
         }
     }
 
-    protected static function getFileUploadField(): string
+    protected static function getFileUploadField()
     {
-        return config('backstage.cms.default_file_upload_field', \Backstage\Fields\Fields\FileUpload::class);
+        $fieldClass = config('backstage.cms.default_file_upload_field', \Backstage\Fields\Fields\FileUpload::class);
+
+        $field = $fieldClass::make('meta_tags.og_image')
+            ->label(__('Open Graph Image'))
+            ->image()
+            ->imageEditorAspectRatios([
+                '1.91:1',
+            ])
+            ->columnSpanFull();
+
+        if ($field instanceof \Backstage\Fields\Fields\FileUpload) {
+            $field = $field->imageEditorViewportWidth('1200')
+                ->imageEditorViewportHeight('630')
+                ->imageEditor();
+        }
+
+        return $field;
     }
 }
