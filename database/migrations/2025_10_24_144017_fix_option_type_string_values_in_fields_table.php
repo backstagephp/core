@@ -10,7 +10,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Get all fields with config containing optionType
         $fields = DB::table('fields')
             ->whereNotNull('config')
             ->where('config', 'like', '%optionType%')
@@ -20,10 +19,8 @@ return new class extends Migration
             $config = json_decode($field->config, true);
 
             if (isset($config['optionType']) && is_string($config['optionType'])) {
-                // Convert string to array format
                 $config['optionType'] = [$config['optionType']];
 
-                // Update the field with the corrected config
                 DB::table('fields')
                     ->where('ulid', $field->ulid)
                     ->update(['config' => json_encode($config)]);
@@ -36,7 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Get all fields with config containing optionType arrays
         $fields = DB::table('fields')
             ->whereNotNull('config')
             ->where('config', 'like', '%optionType%')
@@ -46,10 +42,8 @@ return new class extends Migration
             $config = json_decode($field->config, true);
 
             if (isset($config['optionType']) && is_array($config['optionType']) && count($config['optionType']) === 1) {
-                // Convert array back to string format
                 $config['optionType'] = $config['optionType'][0];
 
-                // Update the field with the reverted config
                 DB::table('fields')
                     ->where('ulid', $field->ulid)
                     ->update(['config' => json_encode($config)]);
