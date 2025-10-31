@@ -941,7 +941,11 @@ class ContentResource extends Resource
                     return $state;
                 }
 
-                $fieldValue = ContentFieldValue::whereIn('field_ulid', $type->og_image_fields)
+                if (! $type->og_image_fields || empty($type->og_image_fields)) {
+                    return [];
+                }
+
+                $fieldValue = ContentFieldValue::whereIn('field_ulid', is_array($type->og_image_fields) ? $type->og_image_fields : [])
                     ->where('content_ulid', $record->ulid)
                     ->whereNotNull('value')
                     ->where('value', '!=', '')
@@ -951,7 +955,7 @@ class ContentResource extends Resource
                     return $fieldValue->value;
                 }
 
-                return null;
+                return [];
             })
             ->columnSpanFull();
 
