@@ -23,6 +23,7 @@ class Type extends Model
     protected function casts(): array
     {
         return [
+            'og_image_fields' => 'array',
             'parent_filters' => 'array',
         ];
     }

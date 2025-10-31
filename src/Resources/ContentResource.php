@@ -3,68 +3,69 @@
 namespace Backstage\Resources;
 
 use BackedEnum;
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Fields\Fields;
-use Backstage\Fields\Fields\RichEditor;
-use Backstage\Models\Content;
-use Backstage\Models\Language;
+use Filament\Panel;
+use Filament\Pages\Page;
 use Backstage\Models\Tag;
 use Backstage\Models\Type;
 use Backstage\Models\User;
-use Backstage\Resources\ContentResource\Pages\CreateContent;
-use Backstage\Resources\ContentResource\Pages\EditContent;
-use Backstage\Resources\ContentResource\Pages\ListContent;
-use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
-use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
-use Backstage\Resources\ContentResource\Pages\VersionHistory;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Actions\Action;
-use Filament\Actions\BulkAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Navigation\NavigationItem;
-use Filament\Pages\Enums\SubNavigationPosition;
-use Filament\Pages\Page;
-use Filament\Panel;
-use Filament\Resources\Resource;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Columns\ViewColumn;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Backstage\Fields\Fields;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Backstage\Models\Content;
+use Backstage\Models\Language;
+use Filament\Facades\Filament;
+use Illuminate\Validation\Rule;
+use Filament\Actions\BulkAction;
+use Filament\Actions\EditAction;
+use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
+use Filament\Tables\Filters\Filter;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Icons\Heroicon;
+use Filament\Actions\BulkActionGroup;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Actions\DeleteBulkAction;
+use Backstage\Fields\Fields\RichEditor;
+use Backstage\Models\ContentFieldValue;
+use Filament\Navigation\NavigationItem;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\DatePicker;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Columns\TextInputColumn;
+use Backstage\View\Components\Filament\Badge;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Pages\Enums\SubNavigationPosition;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\View\Components\Filament\BadgeableColumn;
+use Backstage\Resources\ContentResource\Pages\EditContent;
+use Backstage\Resources\ContentResource\Pages\ListContent;
+use Backstage\Resources\ContentResource\Pages\CreateContent;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Backstage\Resources\ContentResource\Pages\VersionHistory;
+use Backstage\Resources\ContentResource\Pages\ListContentMetaTags;
+use Backstage\Resources\ContentResource\Pages\ManageChildrenContent;
 
 class ContentResource extends Resource
 {
@@ -933,6 +934,25 @@ class ContentResource extends Resource
             ->imageEditorAspectRatios([
                 '1.91:1',
             ])
+            ->formatStateUsing(function (Get $get, ?Content $record, mixed $state) {
+                $type = Type::find($get('type_slug'));
+
+                if ($state) {
+                    return $state;
+                }
+
+                $fieldValue = ContentFieldValue::whereIn('field_ulid', $type->og_image_fields)
+                    ->where('content_ulid', $record->ulid)
+                    ->whereNotNull('value')
+                    ->where('value', '!=', '')
+                    ->first();
+
+                if ($fieldValue) {
+                    return $fieldValue->value;
+                }
+
+                return null;
+            })
             ->columnSpanFull();
 
         if ($field instanceof \Backstage\Fields\Fields\FileUpload) {
