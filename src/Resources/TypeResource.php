@@ -2,6 +2,7 @@
 
 namespace Backstage\Resources;
 
+use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
 use Backstage\Models\Content;
 use Backstage\Models\Type;
@@ -28,11 +29,17 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class TypeResource extends Resource
 {
+    use CanMapDynamicFields {
+        resolveFormFields as private traitResolveFormFields;
+        resolveCustomFields as private traitResolveCustomFields;
+    }
+
     protected static ?string $model = Type::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-circle-stack';
@@ -90,6 +97,23 @@ class TypeResource extends Resource
                                             }
                                         },
                                     ]),
+                                Select::make('og_image_fields')
+                                    ->label(__('Open Graph Image Field(s)'))
+                                    ->multiple()
+                                    ->options(function (?Type $record) {
+                                        if (! $record) {
+                                            return [];
+                                        }
+
+                                        $validFieldTypes = self::getFieldsWithAcceptedFileTypes()->keys()->toArray();
+
+                                        return $record->fields()
+                                            ->whereIn('field_type', $validFieldTypes)
+                                            ->pluck('name', 'ulid')
+                                            ->toArray();
+                                    })
+                                    ->helperText(__('Only fields that accept file uploads. When no Open Graph image is uploaded, the first image of the selected fields will be used as default.'))
+                                    ->columnSpanFull(),
                                 ToggleButtons::make('icon')
                                     ->default('circle-stack')
                                     ->options([
@@ -257,5 +281,60 @@ class TypeResource extends Resource
             'create' => CreateType::route('/create'),
             'edit' => EditType::route('/{record}/edit'),
         ];
+    }
+
+    private static function resolveFormFields(mixed $record = null, bool $isNested = false): array
+    {
+        $instance = new self;
+
+        return $instance->traitResolveFormFields(record: $record, isNested: $isNested);
+    }
+
+    private static function resolveCustomFields(): Collection
+    {
+        $instance = new self;
+
+        return $instance->traitResolveCustomFields();
+    }
+
+    private static function getFieldsWithAcceptedFileTypes(): Collection
+    {
+        $addFieldIfConfigured = function ($fieldType, $fieldInstance, $type) {
+            if (self::hasAcceptedFileTypesConfig($fieldInstance)) {
+                return [
+                    $fieldType => [
+                        'class' => is_string($fieldInstance) ? $fieldInstance : get_class($fieldInstance),
+                        'type' => $type,
+                        'name' => Str::headline($fieldType),
+                        'defaultConfig' => $fieldInstance::getDefaultConfig()['acceptedFileTypes'] ?? null,
+                    ],
+                ];
+            }
+
+            return [];
+        };
+
+        $fields = collect()
+            ->merge(
+                self::resolveCustomFields()
+                    ->flatMap(fn ($instance, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: $instance, type: 'custom'))
+            )
+            ->merge(
+                collect(self::FIELD_TYPE_MAP)
+                    ->flatMap(fn ($class, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: new $class, type: 'default'))
+            );
+
+        return $fields;
+    }
+
+    private static function hasAcceptedFileTypesConfig(object $fieldInstance): bool
+    {
+        if (! method_exists($fieldInstance, 'getDefaultConfig')) {
+            return false;
+        }
+
+        $config = $fieldInstance::getDefaultConfig();
+
+        return is_array($config) && array_key_exists('acceptedFileTypes', $config);
     }
 }
