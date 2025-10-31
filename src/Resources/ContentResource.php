@@ -270,7 +270,6 @@ class ContentResource extends Resource
                                         ])->schema([
                                             self::getFileUploadField()::make('meta_tags.og_image')
                                                 ->label(__('Open Graph Image'))
-                                                ->helperText('Image for social media sharing. Recommended size: 1200x630px.')
                                                 ->columnSpanFull(),
 
                                             Hidden::make('meta_tags.og_type')
