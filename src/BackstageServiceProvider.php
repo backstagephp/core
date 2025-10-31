@@ -26,6 +26,7 @@ use Backstage\View\Components\Page;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -200,8 +201,12 @@ class BackstageServiceProvider extends PackageServiceProvider
         });
 
         Select::configureUsing(function (Select $select): void {
-            $select->native(false);
+            $select->native(true);
             // $select->searchable();
+        });
+
+        Toggle::configureUsing(function (Toggle $toggle): void {
+            $toggle->inline(true);
         });
 
         Menu::observe(MenuObserver::class);
