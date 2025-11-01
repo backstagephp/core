@@ -2,15 +2,13 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables\Table;
+use Backstage\Media\Resources\MediaResource as Resource;
+use Backstage\Translations\Laravel\Models\Language;
 use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ImageEntry;
-use Backstage\Translations\Laravel\Models\Language;
-use Backstage\Media\Resources\MediaResource as Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Tables\Table;
 
 class MediaResource extends Resource
 {
