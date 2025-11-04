@@ -1,0 +1,59 @@
+# Environment Files
+.env
+.env.backup
+.env.production
+
+# Composer Related
+composer.lock
+/vendor
+/auth.json
+
+# Frontend Assets
+/node_modules
+/public/build
+/public/hot
+/public/storage
+
+# Storage
+/storage/*.key
+/storage/pail
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Caches
+.phpunit.cache
+.phpunit.result.cache
+.phpactor.json
+/build
+/dist
+
+# Testing
+phpunit.xml
+testbench.yaml
+.phpunit.cache
+.phpunit.result.cache
+
+# Documentation and Coverage
+/docs
+/coverage
+
+# IDE Helpers
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# Editors and IDEs
+/.idea
+/.fleet
+/.vscode
+/.zed
+
+# Operating system files
+.DS_Store
+
+# Miscellaneous
+Homestead.json
+Homestead.yaml
+phpstan.neon
