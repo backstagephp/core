@@ -70,7 +70,7 @@
     "autoload": {
         "psr-4": {
             "Backstage\\": "src/",
-            "Backstage\\Fields\\": "packages/Fields/src/",
+            "Backstage\\Fields\\": "packages/fields/src/",
             "Backstage\\Tests\\": "tests",
             "Backstage\\Database\\Factories\\": "database/factories/",
             "Backstage\\Database\\Seeders\\": "database/seeders/"
