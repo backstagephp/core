@@ -12,6 +12,7 @@ jobs:
       matrix:
         package:
           - fields
+          - media
     steps:
       - uses: actions/checkout@v3
       - id: previous-tag
