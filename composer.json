@@ -17,17 +17,22 @@
     "authors": [
         {
             "name": "Mark van Eijk",
-            "email": "mark@backstagephp.com",
+            "email": "mark@vormkracht10.nl",
             "role": "Developer"
         },
         {
             "name": "Mathieu de Ruiter",
-            "email": "mathieu@backstagephp.com",
+            "email": "mathieu@vormkracht10.nl",
             "role": "Developer"
         },
         {
             "name": "Bas van Dinther",
-            "email": "bas@backstagephp.com",
+            "email": "bas@vormkracht10.nl",
+            "role": "Developer"
+        },
+        {
+            "name": "Manoj Hortulanus",
+            "email": "manoj@vormkracht10.nl",
             "role": "Developer"
         }
     ],
@@ -47,6 +52,9 @@
         "spatie/schema-org": "^3.23",
         "staudenmeir/laravel-adjacency-list": "^1.0"
     },
+    "replace": {
+        "backstage/fields": "self.version"
+    },
     "require-dev": {
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
@@ -62,6 +70,7 @@
     "autoload": {
         "psr-4": {
             "Backstage\\": "src/",
+            "Backstage\\Fields\\": "packages/Fields/src/",
             "Backstage\\Tests\\": "tests",
             "Backstage\\Database\\Factories\\": "database/factories/",
             "Backstage\\Database\\Seeders\\": "database/seeders/"
