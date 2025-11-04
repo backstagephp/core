@@ -1,0 +1,26 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (config('backstage.media.is_tenant_aware')) {
+            Schema::table(app(config('backstage.media.model'))->getTable(), function (Blueprint $table) {
+                $table->ulid(config('backstage.media.tenant_relationship') . '_ulid')->nullable()->after('ulid');
+            });
+        }
+    }
+
+    public function down(): void
+    {
+        if (Schema::hasColumn(app(config('backstage.media.model'))->getTable(), config('backstage.media.tenant_relationship') . '_ulid')) {
+            Schema::table(app(config('backstage.media.model'))->getTable(), function (Blueprint $table) {
+                $table->dropColumn(config('backstage.media.tenant_relationship') . '_ulid');
+            });
+        }
+    }
+};

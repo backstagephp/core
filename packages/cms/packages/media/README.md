@@ -1,0 +1,236 @@
+# Backstage Media: Media Library & Picker for Filament
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/backstagephp/media.svg?style=flat-square)](https://packagist.org/packages/backstagephp/media)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/backstagephp/media/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/backstagephp/media/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/backstagephp/media/fix-php-code-styling.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/backstagephp/media/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/backstagephp/media.svg?style=flat-square)](https://packagist.org/packages/backstagephp/media)
+
+## Nice to meet you, we're [Vormkracht10](https://vormkracht10.nl)
+
+Hi! We are a web development agency from Nijmegen in the Netherlands and we use Laravel for everything: advanced websites with a lot of bells and whitles and large web applications.
+
+## About the package
+
+This package is a media picker and library for Filament. It allows you to easily add a media picker to your Filament forms and use it to select images, videos, and other media files from your media library. It also provides a media library that you can use to manage your media files.
+
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require backstagephp/media
+```
+
+You can publish and run the migrations with:
+
+```bash
+php artisan vendor:publish --tag="media-migrations"
+```
+
+> [!NOTE]
+> When you are making use of tenancy, make sure to run the migrations **after** configuring the package using the config file. This will create the media table in your database with the correct columns.
+
+You can publish the config file with:
+
+```bash
+php artisan vendor:publish --tag="media-config"
+```
+
+This is the contents of the published config file:
+
+```php
+return [
+    'accepted_file_types' => [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/svg+xml',
+        'application/pdf',
+    ],
+
+    'directory' => 'media',
+
+    'disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
+
+    'should_preserve_filenames' => false,
+
+    'should_register_navigation' => true,
+
+    'visibility' => 'public',
+
+    // Tenancy
+    'is_tenant_aware' => true,
+    'tenant_ownership_relationship_name' => 'tenant',
+    'tenant_relationship' => 'tenant',
+    // 'tenant_model' => \App\Models\Tenant::class,
+
+    // Model and resource
+    'model' => \Backstage\Media\Models\Media::class,
+
+    // 'user_model' => \App\Models\User::class,
+
+    'resources' => [
+        'label' => 'Media',
+        'plural_label' => 'Media',
+        'navigation_group' => null,
+        'navigation_label' => 'Media',
+        'navigation_icon' => 'heroicon-o-photo',
+        'navigation_sort' => null,
+        'navigation_count_badge' => false,
+        'resource' => \Backstage\Media\Resources\MediaResource::class,
+    ],
+];
+```
+
+After publishing the config file and running the migrations you should add the following code to your `PanelServiceProvider` to include the media picker in your Filament application:
+
+```php
+
+use Filament\Support\Assets\Css;
+use Backstage\Media\Media;
+use Filament\Support\Facades\FilamentAsset;
+
+public function panel(Panel $panel): Panel
+{
+    // ...
+
+    FilamentAsset::register([
+        Css::make('media', __DIR__ . '/../vendor/backstagephp/media/resources/dist/media.css'),
+    ], package: 'backstagephp/media');
+
+    // ...
+
+    return $panel
+        ->plugins([
+            MediaPlugin::make()
+                ->configureTenant('site', Site::class), // Optional
+        ]);
+}
+```
+
+## Usage
+
+### Adding the media field to the Backstage CMS
+
+Add the `Media` field to the `fields.php` config file:
+
+```php
+return [
+    'fields' => [
+        Backstage\Media\Fields\Media::class,
+    ],
+];
+```
+
+### Tenancy
+
+If you are using tenancy, you can set the `is_tenant_aware` config option to `true` and set the `tenant_ownership_relationship_name` and `tenant_relationship` config options to the names of the relationships on the media model and the tenant model, respectively. You can also set the `tenant_model` config option to the fully qualified class name of the tenant model.
+
+### File upload (with relationship)
+
+If you want to be able to setup a relationship between a model and a media file, you can add the `Backstage\Media\Concerns\HasMedia` trait on the model to easily attach a media file to the model. You can then use the following methods to define the relationship:
+
+```php
+$model->attachMedia($mediaUlid);
+
+// or with meta data
+$model->attachMedia($mediaUlid, [
+    'position' => 1,
+    'meta' => ['description' => 'Profile picture']
+]);
+```
+
+### Media Picker component
+
+You can use the `Media` component in your forms to add a media picker to your Filament forms. The `Media` component is a `FileUpload` field that respects the `media` config file.
+
+```php
+use Backstage\Media\Components\Media;
+
+Media::make('media'),
+```
+
+### Handle record creation
+
+To handle the creation of a record with a media file, you can use the `Backstage\Media\Media` class to handle the file upload and attach the media file to the record.
+
+#### Creating resources
+
+```php
+use Backstage\Media\Media;
+
+protected function mutateFormDataBeforeCreate(array $data): array
+{
+    unset($data['media']);
+
+    // ...
+
+    return $data;
+}
+
+protected function afterCreate(): void
+{
+    // ...
+
+    $media = Media::create($this->data['media']);
+
+    foreach ($media as $value) {
+        $this->getRecord()->attachMedia($value->ulid);
+    }
+}
+```
+
+#### Editing resources
+
+```php
+use Backstage\Media\Media;
+
+protected function mutateFormDataBeforeFill(array $data): array
+{
+    $data['media'] = $this->getRecord()->media->map(function ($media) {
+        return 'media/' . $media->filename;
+    })->toArray();
+
+    return $data;
+}
+
+protected function mutateFormDataBeforeSave(array $data): array
+{
+    $media = Media::create($data['media']);
+
+    unset($data['media']);
+
+    foreach ($media as $value) {
+        $this->getRecord()->attachMedia($value->ulid);
+    }
+
+    return $data;
+}
+```
+
+## Testing
+
+```bash
+composer test
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+
+## Credits
+
+-   [Baspa](https://github.com/vormkracht10)
+-   [All Contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
