@@ -363,20 +363,6 @@ class ContentResource extends Resource
                                             })
                                             ->disabledOptions(fn ($record) => [$record?->getKey()]),
 
-                                        TextInput::make('path')
-                                            ->columnSpanFull()
-                                            ->rules(function (Get $get, $record) {
-                                                if ($get('public') === false && $record) {
-                                                    return [];
-                                                }
-
-                                                return Rule::unique('content', 'path')
-                                                    ->where('language_code', $get('language_code'))
-                                                    ->ignore($record?->getKey(), $record?->getKeyName());
-                                            })
-                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
-                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
-                                            ->live(),
 
                                         Toggle::make('public')
                                             ->label(__('Public'))
@@ -398,6 +384,21 @@ class ContentResource extends Resource
                                                     }
                                                 }
                                             }),
+
+                                        TextInput::make('path')
+                                            ->columnSpanFull()
+                                            ->rules(function (Get $get, $record) {
+                                                if ($get('public') === false && $record) {
+                                                    return [];
+                                                }
+
+                                                return Rule::unique('content', 'path')
+                                                    ->where('language_code', $get('language_code'))
+                                                    ->ignore($record?->getKey(), $record?->getKeyName());
+                                            })
+                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
+                                            ->live(),
 
                                         Select::make('language_code')
                                             ->label(__('Language'))
