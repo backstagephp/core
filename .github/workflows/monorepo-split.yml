@@ -13,6 +13,7 @@ jobs:
         package:
           - fields
           - media
+          - cms
     steps:
       - uses: actions/checkout@v3
       - id: previous-tag
