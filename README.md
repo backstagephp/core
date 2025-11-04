@@ -92,6 +92,11 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
+To add a subtree:
+```bash
+git subtree add --prefix packages/media git@github.com:backstagephp/Media.git main --squash
+```
+
 ## Security Vulnerabilities
 
 Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
