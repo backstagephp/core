@@ -111,10 +111,6 @@
         }
     },
     "repositories": {
-        "backstage/fields": {
-            "type": "git",
-            "url": "git@github.com:backstagephp/fields.git"
-        },
         "backstage/media": {
             "type": "git",
             "url": "git@github.com:backstagephp/media.git"
