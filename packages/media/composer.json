@@ -1,0 +1,91 @@
+{
+    "name": "backstage/media",
+    "description": "This is my package media",
+    "keywords": [
+        "vormkracht10",
+        "laravel",
+        "media"
+    ],
+    "homepage": "https://github.com/backstagephp/media",
+    "support": {
+        "issues": "https://github.com/backstagephp/media/issues",
+        "source": "https://github.com/backstagephp/media"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Baspa",
+            "email": "hello@baspa.dev",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "filament/filament": "^4.0",
+        "spatie/laravel-package-tools": "^1.15.0",
+        "backstage/fields": "^0.8.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^7.9|^8.0",
+        "nunomaduro/larastan": "^2.0.1|^3.0",
+        "orchestra/testbench": "^8.0|^9.0",
+        "pestphp/pest": "^2.1",
+        "pestphp/pest-plugin-arch": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Backstage\\Media\\": "src/",
+            "Backstage\\Media\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Backstage\\Media\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Backstage\\Media\\MediaServiceProvider"
+            ],
+            "aliases": {
+                "Media": "Backstage\\Media\\Facades\\Media"
+            }
+        }
+    },
+    "repositories": {
+        "backstage/fields": {
+            "type": "git",
+            "url": "git@github.com:backstagephp/fields.git"
+        },
+        "backstage/cms": {
+            "type": "git",
+            "url": "https://github.com/backstagephp/core.git"
+        },
+        "saade/filament-adjacency-list": {
+            "type": "git",
+            "url": "git@github.com:backstagephp/filament-adjacency-list.git"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
