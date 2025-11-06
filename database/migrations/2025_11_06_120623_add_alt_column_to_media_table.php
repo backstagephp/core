@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-         Schema::table(app(config('backstage.media.model'))->getTable(), function (Blueprint $table) {
+        Schema::table(app(config('backstage.media.model'))->getTable(), function (Blueprint $table) {
             $table->text('alt')->after('height');
         });
     }
