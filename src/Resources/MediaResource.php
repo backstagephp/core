@@ -2,20 +2,20 @@
 
 namespace Backstage\Resources;
 
-use Filament\Tables\Table;
+use Backstage\Media\Resources\MediaResource as Resource;
+use Backstage\Translations\Laravel\Facades\Translator;
+use Backstage\Translations\Laravel\Models\Language;
 use Filament\Actions\Action;
-use Filament\Support\Icons\Heroicon;
-use Filament\Schemas\Components\Grid;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Backstage\Translations\Laravel\Models\Language;
-use Backstage\Translations\Laravel\Facades\Translator;
-use Backstage\Media\Resources\MediaResource as Resource;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class MediaResource extends Resource
 {
@@ -72,8 +72,8 @@ class MediaResource extends Resource
                     ->icon('heroicon-o-tag')
                     ->tooltip(__('Manage alt tags'))
                     ->slideOver()
-                    ->fillForm(fn (Media|Model $record) => self::getAltTagsFormData($record))
-                    ->action(fn (array $data, Media|Model $record) => self::saveAltTags($data, $record))
+                    ->fillForm(fn (Media | Model $record) => self::getAltTagsFormData($record))
+                    ->action(fn (array $data, Media | Model $record) => self::saveAltTags($data, $record))
                     ->schema([
                         // ImageEntry::make('url')
                         //     ->label(__('Media'))
@@ -109,27 +109,27 @@ class MediaResource extends Resource
 
         // Then add other languages
         foreach ($languages['others'] as $language) {
-            $schema[] = TextInput::make('alt_tags_'.$language->code)
+            $schema[] = TextInput::make('alt_tags_' . $language->code)
                 ->label(__('Alt Tag'))
                 ->suffixActions([
                     Action::make('translate_from_default')
                         ->icon(Heroicon::OutlinedLanguage)
                         ->tooltip(__('Translate from default language'))
-                        ->action(function(Get $get, Set $set)use ($language) {
+                        ->action(function (Get $get, Set $set) use ($language) {
                             $defaultAlt = $get('alt');
 
                             $translator = Translator::translate($defaultAlt, $language->code);
 
-                            $set('alt_tags_'.$language->code, $translator);
-                        })
-                    ], true )
+                            $set('alt_tags_' . $language->code, $translator);
+                        }),
+                ], true)
                 ->prefixIcon(country_flag($language->code), true);
         }
 
         return $schema;
     }
 
-    private static function getAltTagsFormData(Media|Model $record): array
+    private static function getAltTagsFormData(Media | Model $record): array
     {
         $languages = self::getLanguages();
 
@@ -138,13 +138,13 @@ class MediaResource extends Resource
         ];
 
         foreach ($languages['others'] as $language) {
-            $data['alt_tags_'.$language->code] = $record->getTranslatedAttribute('alt', $language->code) ?? '';
+            $data['alt_tags_' . $language->code] = $record->getTranslatedAttribute('alt', $language->code) ?? '';
         }
 
         return $data;
     }
 
-    private static function saveAltTags(array $data, Media|Model $record): void
+    private static function saveAltTags(array $data, Media | Model $record): void
     {
         $languages = self::getLanguages();
 
@@ -155,7 +155,7 @@ class MediaResource extends Resource
         $record->pushTranslateAttribute('alt', $data['alt'], $languages['default']->code);
 
         foreach ($languages['others'] as $language) {
-            $key = 'alt_tags_'.$language->code;
+            $key = 'alt_tags_' . $language->code;
             if (isset($data[$key])) {
                 $record->pushTranslateAttribute('alt', $data[$key], $language->code);
             }
