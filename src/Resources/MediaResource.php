@@ -3,6 +3,7 @@
 namespace Backstage\Resources;
 
 use Backstage\Media\Resources\MediaResource as Resource;
+use Backstage\Models\Media;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Backstage\Translations\Laravel\Models\Language;
 use Filament\Actions\Action;
