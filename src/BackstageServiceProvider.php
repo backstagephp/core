@@ -9,7 +9,6 @@ use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
 use Backstage\Http\Middleware\SetLocale;
 use Backstage\Listeners\ExecuteFormActions;
-use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
