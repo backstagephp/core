@@ -175,7 +175,7 @@ class Content extends Model
             get: fn () => html_entity_decode(
                 implode(
                     ' ',
-                    array_filter([$this->meta_tags['title'], $this->site->title_separator, $this->site->title]),
+                    array_filter([$this->meta_tags['title'] ?? null, $this->site->title_separator, $this->site->title]),
                 ),
             ),
         );

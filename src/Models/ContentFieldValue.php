@@ -83,7 +83,10 @@ class ContentFieldValue extends Pivot
             return Content::where('ulid', $value)->first();
         }
 
-        return Content::whereIn('ulid', json_decode($value))->get();
+        $ulids = json_decode($value);
+        return Content::whereIn('ulid', $ulids)
+            ->orderByRaw('FIELD(ulid, ' . implode(',', array_fill(0, count($ulids), '?')) . ')', $ulids)
+            ->get();
     }
 
     private function isRichEditor(): bool
