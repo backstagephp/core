@@ -16,7 +16,7 @@ class ContentUrlObserver
 
     public function saved(Content $content)
     {
-        if (! $content->public || ! $content->isDirty('path')) {
+        if (! $content->public || ! $content->getOriginal('public') || ! $content->isDirty('path')) {
             return;
         }
 
