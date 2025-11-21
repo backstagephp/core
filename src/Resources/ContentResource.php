@@ -32,6 +32,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Navigation\NavigationItem;
@@ -239,11 +240,51 @@ class ContentResource extends Resource
 
                                         TextInput::make('meta_tags.title')
                                             ->label(__('Page Title'))
+                                            ->withAI(function ($component, Get $get, Set $set) {
+                                                $context = self::getContentContextForAI($get);
+                                                $textFieldValues = self::getTextFieldValuesForAI($get);
+
+                                                $requirements = [
+                                                    'Maximum 60 characters',
+                                                    'Generate the title in ' . $context['languageName'],
+                                                    'Include the main keyword from the content name',
+                                                    'Make it compelling and descriptive',
+                                                    'Optimized for search engines',
+                                                    'Return only the title, no additional text',
+                                                ];
+
+                                                return self::buildAIPrompt(
+                                                    'Generate an SEO-friendly page title (maximum 60 characters) based on the following content:',
+                                                    $context,
+                                                    $textFieldValues,
+                                                    $requirements
+                                                );
+                                            })
                                             ->columnSpanFull(),
 
-                                        TextInput::make('meta_tags.description')
+                                        Textarea::make('meta_tags.description')
                                             ->label(__('Description'))
                                             ->helperText('Meta description for search engines.')
+                                            ->withAI(function ($component, Get $get, Set $set) {
+                                                $context = self::getContentContextForAI($get);
+                                                $textFieldValues = self::getTextFieldValuesForAI($get);
+
+                                                $requirements = [
+                                                    'Maximum 160 characters',
+                                                    'Generate the description in ' . $context['languageName'],
+                                                    'Include the main keywords from the content',
+                                                    'Make it compelling and encourage clicks',
+                                                    'Optimized for search engines',
+                                                    'Return only the description, no additional text',
+                                                ];
+
+                                                return self::buildAIPrompt(
+                                                    'Generate an SEO-friendly meta description (maximum 160 characters) based on the following content:',
+                                                    $context,
+                                                    $textFieldValues,
+                                                    $requirements
+                                                );
+                                            })
                                             ->columnSpanFull(),
 
                                         Select::make('meta_tags.robots')
@@ -254,6 +295,56 @@ class ContentResource extends Resource
 
                                         TagsInput::make('meta_tags.keywords')
                                             ->label(__('Keywords'))
+                                            ->formatStateUsing(fn ($state) => self::normalizeKeywordsState($state))
+                                            ->dehydrateStateUsing(fn ($state) => self::normalizeKeywordsState($state))
+                                            ->hintAction(
+                                                function (Set $set, $component) {
+                                                    return \Filament\Actions\Action::make('ai')
+                                                        ->icon(config('backstage.ai.action.icon'))
+                                                        ->label(config('backstage.ai.action.label'))
+                                                        ->action(function (Get $get, Set $set) use ($component) {
+                                                            try {
+                                                                $context = self::getContentContextForAI($get);
+                                                                $textFieldValues = self::getTextFieldValuesForAI($get);
+
+                                                                $prompt = "Generate focus keywords based on the following content:\n\n";
+                                                                $prompt .= 'Language: ' . $context['languageName'] . ' (' . $context['languageCode'] . ")\n";
+                                                                $prompt .= 'Content Name/Title: ' . $context['contentName'] . "\n\n";
+
+                                                                if (! empty($textFieldValues)) {
+                                                                    $prompt .= "Text Fields:\n" . $textFieldValues . "\n\n";
+                                                                }
+
+                                                                $prompt .= "Requirements:\n";
+                                                                $prompt .= "- Generate 5-10 relevant focus keywords\n";
+                                                                $prompt .= '- Keywords should be in ' . $context['languageName'] . "\n";
+                                                                $prompt .= "- Include the main keyword from the content name\n";
+                                                                $prompt .= "- Include related terms and synonyms\n";
+                                                                $prompt .= "- Keywords should be specific and relevant to the content\n";
+                                                                $prompt .= "- Return ONLY a valid JSON array format, for example: [\"keyword1\", \"keyword2\", \"keyword3\"]\n";
+                                                                $prompt .= "- Do not include any additional text, explanations, or formatting outside the JSON array\n";
+                                                                $prompt .= '- Each keyword should be a single word or short phrase (2-3 words maximum)';
+
+                                                                $model = key(config('backstage.ai.providers'));
+
+                                                                $response = \Prism\Prism\Facades\Prism::text()
+                                                                    ->using(config('backstage.ai.providers.' . $model), $model)
+                                                                    ->withPrompt($prompt)
+                                                                    ->asText();
+
+                                                                // Process the response and convert to array before setting
+                                                                $keywords = self::normalizeKeywordsState($response->text);
+                                                                $set($component->getName(), $keywords);
+                                                            } catch (\Prism\Prism\Exceptions\PrismException $exception) {
+                                                                \Filament\Notifications\Notification::make()
+                                                                    ->title('Text generation failed')
+                                                                    ->body('Error: ' . $exception->getMessage())
+                                                                    ->danger()
+                                                                    ->send();
+                                                            }
+                                                        });
+                                                }
+                                            )
                                             ->helperText('Meta keywords are not used by search engines anymore, but use it to define focus keywords. Split keywords by comma or tab.')
                                             ->color('gray')
                                             ->columnSpanFull()
@@ -973,5 +1064,178 @@ class ContentResource extends Resource
         }
 
         return $field;
+    }
+
+    /**
+     * Extract plain text from rich editor content array.
+     */
+    private static function extractTextFromRichEditor(array $content): string
+    {
+        // Handle case where content might be wrapped in an array with 'type' => 'doc'
+        if (isset($content['type']) && $content['type'] === 'doc' && isset($content['content']) && is_array($content['content'])) {
+            $content = $content['content'];
+        }
+
+        if (! is_array($content)) {
+            return '';
+        }
+
+        $textParts = [];
+
+        foreach ($content as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            // If item has 'text' key directly, use it
+            if (isset($item['text'])) {
+                $textParts[] = $item['text'];
+
+                continue;
+            }
+
+            // If item has nested 'content', extract from it
+            if (isset($item['content']) && is_array($item['content'])) {
+                $itemText = self::extractTextFromNodes($item['content']);
+                if (! empty($itemText)) {
+                    $textParts[] = $itemText;
+                }
+            }
+        }
+
+        return implode(' ', $textParts);
+    }
+
+    private static function extractTextFromNodes(array $nodes): string
+    {
+        $textParts = [];
+
+        foreach ($nodes as $node) {
+            if (! is_array($node)) {
+                continue;
+            }
+
+            if (isset($node['type']) && $node['type'] === 'text' && isset($node['text'])) {
+                $textParts[] = $node['text'];
+            } elseif (isset($node['content']) && is_array($node['content'])) {
+                // Recursively extract from nested content
+                $nestedText = self::extractTextFromNodes($node['content']);
+                if (! empty($nestedText)) {
+                    $textParts[] = $nestedText;
+                }
+            }
+        }
+
+        return implode(' ', $textParts);
+    }
+
+    private static function getContentContextForAI(Get $get): array
+    {
+        $contentName = $get('name') ?? '';
+        $languageCode = $get('language_code') ?? Language::active()->where('default', true)->first()?->code ?? Language::active()->first()?->code;
+
+        $language = Language::find($languageCode);
+        $languageName = $language?->name ?? $languageCode;
+
+        return [
+            'contentName' => $contentName,
+            'languageCode' => $languageCode,
+            'languageName' => $languageName,
+        ];
+    }
+
+    private static function getTextFieldValuesForAI(Get $get): string
+    {
+        $textFieldTypes = ['text', 'textarea', 'rich-editor', 'markdown-editor'];
+
+        $textFields = collect(self::$type->fields ?? [])
+            ->whereIn('field_type', $textFieldTypes)
+            ->filter(fn ($field) => self::$type->name_field !== $field->slug);
+
+        return $textFields
+            ->map(function ($field) use ($get) {
+                $value = $get('values.' . $field->ulid);
+                if (empty($value)) {
+                    return null;
+                }
+
+                // Handle rich-editor and markdown-editor which may contain JSON
+                if (in_array($field->field_type, ['rich-editor', 'markdown-editor'])) {
+                    if (is_string($value) && json_validate($value)) {
+                        $decoded = json_decode($value, true);
+                        if (is_array($decoded)) {
+                            $value = self::extractTextFromRichEditor($decoded);
+                        }
+                    } elseif (is_array($value)) {
+                        // Handle case where value is already an array (rich-editor format)
+                        $value = self::extractTextFromRichEditor($value);
+                    }
+                }
+
+                if (is_array($value)) {
+                    $value = implode(' ', array_filter($value, fn ($item) => ! is_array($item)));
+                }
+
+                $value = (string) $value;
+
+                $cleanValue = strip_tags($value);
+                $cleanValue = preg_replace('/\s+/', ' ', trim($cleanValue));
+
+                // Limit length to avoid overly long prompts
+                if (strlen($cleanValue) > 2000) {
+                    $cleanValue = substr($cleanValue, 0, 2000) . '...';
+                }
+
+                return $field->name . ': ' . $cleanValue;
+            })
+            ->filter()
+            ->values()
+            ->implode("\n");
+    }
+
+    private static function buildAIPrompt(string $intro, array $context, string $textFieldValues, array $requirements): string
+    {
+        $prompt = $intro . "\n\n";
+        $prompt .= 'Language: ' . $context['languageName'] . ' (' . $context['languageCode'] . ")\n";
+        $prompt .= 'Content Name/Title: ' . $context['contentName'] . "\n\n";
+
+        if (! empty($textFieldValues)) {
+            $prompt .= "Text Fields:\n" . $textFieldValues . "\n\n";
+        }
+
+        $prompt .= "Requirements:\n";
+        foreach ($requirements as $requirement) {
+            $prompt .= '- ' . $requirement . "\n";
+        }
+
+        return $prompt;
+    }
+
+    /**
+     * Normalize keywords state to always be an array.
+     * Handles string responses from AI by parsing JSON or splitting by comma.
+     */
+    private static function normalizeKeywordsState($state): array
+    {
+        if (is_array($state)) {
+            // Filter out single character items (likely from character-by-character splitting)
+            return array_values(array_filter($state, fn ($item) => is_string($item) && strlen($item) > 1));
+        }
+
+        if (! is_string($state) || empty(trim($state))) {
+            return [];
+        }
+
+        // Try to parse as JSON first
+        $decoded = json_decode($state, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return array_values(array_filter($decoded, fn ($keyword) => ! empty($keyword) && strlen((string) $keyword) > 1));
+        }
+
+        // Otherwise split by comma
+        $keywords = array_map('trim', explode(',', $state));
+        $keywords = array_filter($keywords, fn ($keyword) => ! empty($keyword) && strlen($keyword) > 1);
+
+        return array_values($keywords);
     }
 }

@@ -84,6 +84,7 @@ class ContentFieldValue extends Pivot
         }
 
         $ulids = json_decode($value);
+
         return Content::whereIn('ulid', $ulids)
             ->orderByRaw('FIELD(ulid, ' . implode(',', array_fill(0, count($ulids), '?')) . ')', $ulids)
             ->get();
