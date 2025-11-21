@@ -36,6 +36,7 @@
         "backstage/fields": "self.version",
         "backstage/media": "self.version",
         "backstage/redirects": "self.version",
+        "backstage/ai": "self.version",
         "baspa/laravel-timezones": "^1.2",
         "codewithdennis/filament-select-tree": "^4.0",
         "filament/filament": "^4.0",
