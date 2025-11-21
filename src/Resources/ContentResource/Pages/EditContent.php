@@ -219,11 +219,17 @@ class EditContent extends EditRecord
         return $this->mutateBeforeFill($data);
     }
 
+    protected function beforeSave(): void
+    {
+        $this->getRecord()->fill([
+            'edited_at' => now(),
+        ]);
+    }
+
     protected function afterSave(): void
     {
         $this->handleTags();
         $this->handleValues();
-        $this->updateEditedAt();
         $this->syncAuthors();
     }
 
@@ -301,13 +307,6 @@ class EditContent extends EditRecord
             'field_ulid' => $field,
         ], [
             'value' => is_array($value) ? json_encode($value) : $value,
-        ]);
-    }
-
-    private function updateEditedAt(): void
-    {
-        $this->getRecord()->update([
-            'edited_at' => now(),
         ]);
     }
 
