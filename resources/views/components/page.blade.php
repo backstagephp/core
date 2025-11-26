@@ -4,16 +4,20 @@
 
 <head>
     <title>{!! trim($pageTitle ?? $content->pageTitle) !!}</title>
+
     {{ $headFirst ?? '' }}
+
     <meta charset="utf-8">
-    @if($content)
-    <link rel="canonical" href="{{ $content->url }}">
-    @endif
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="content-type" content="text/html; charset=utf-8">
     <meta name="generator" content="Backstage">
-    <meta name="robots" content="index,follow">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {{-- SEO Meta Tags --}}
+    <meta name="robots" content="index,follow">
+    @if ($content)
+        <link rel="canonical" href="{{ $content->url }}">
+    @endif
     @if (isset($content->meta_tags['description']))
         <meta name="description" content="{{ $content->meta_tags['description'] }}">
     @endif
@@ -21,24 +25,11 @@
         <meta name="keywords" content="{{ implode(', ', $content->meta_tags['keywords']) }}">
     @endif
 
-    <meta name="twitter:card" content="summary_large_image">
-    @if (isset($pageTitle) || isset($content->pageTitle))
-        <meta name="twitter:title" content="{!! trim($pageTitle ?? $content->pageTitle) !!}">
-    @endif
-    @if (isset($content->meta_tags['description']))
-        <meta name="twitter:description" content="{{ $content->meta_tags['description'] }}">
-    @endif
-    @if (isset($content->meta_tags['og_image']))
-        <meta name="twitter:image" content="{{ $content->meta_tags['og_image'] }}">
-    @endif
-    @if (isset($content->meta_tags['og_url']) || isset($content->url))
-        <meta name="twitter:url" content="{{ $content->meta_tags['og_url'] ?? $content->url }}">
-    @endif
-
+    {{-- Open Graph Meta Tags --}}
+    <meta property="og:type" content="{{ $content->meta_tags['og_type'] ?? 'website' }}">
     @if (isset($pageTitle) || isset($content->pageTitle))
         <meta property="og:title" content="{!! trim($pageTitle ?? $content->pageTitle) !!}">
     @endif
-    <meta property="og:type" content="{{ $content->meta_tags['og_type'] ?? 'website' }}">
     @if (isset($content->meta_tags['og_url']) || isset($content->url))
         <meta property="og:url" content="{{ $content->meta_tags['og_url'] ?? $content->url }}">
     @endif
@@ -57,11 +48,28 @@
         <meta property="og:locale" content="{{ $content->meta_tags['og_locale'] }}">
     @endif
 
+    {{-- Twitter Meta Tags --}}
+    <meta name="twitter:card" content="summary_large_image">
+    @if (isset($pageTitle) || isset($content->pageTitle))
+        <meta name="twitter:title" content="{!! trim($pageTitle ?? $content->pageTitle) !!}">
+    @endif
+    @if (isset($content->meta_tags['description']))
+        <meta name="twitter:description" content="{{ $content->meta_tags['description'] }}">
+    @endif
+    @if (isset($content->meta_tags['og_image']))
+        <meta name="twitter:image" content="{{ $content->meta_tags['og_image'] }}">
+    @endif
+    @if (isset($content->meta_tags['og_url']) || isset($content->url))
+        <meta name="twitter:url" content="{{ $content->meta_tags['og_url'] ?? $content->url }}">
+    @endif
+
     {{ $headLast ?? '' }}
 </head>
 
 <body>
+    {{ $bodyFirst ?? '' }}
     {{ $slot }}
+    {{ $bodyLast ?? '' }}
 </body>
 
 </html>
