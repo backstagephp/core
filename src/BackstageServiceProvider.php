@@ -95,9 +95,15 @@ class BackstageServiceProvider extends PackageServiceProvider
 
                         $command->comment('Clean the decor...');
 
-                        $command->callSilently('migrate:fresh', [
-                            '--force' => true,
-                        ]);
+                        if ($command->confirm('Should we sweep the stage clean with a fresh migration? (This will remove all existing data.)', false)) {
+                            $command->callSilently('migrate:fresh', [
+                                '--force' => true,
+                            ]);
+                        } else {
+                            $command->callSilently('migrate', [
+                                '--force' => true,
+                            ]);
+                        }
 
                         $command->comment('Hanging up lights...');
                         $command->callSilently('backstage:seed', [
