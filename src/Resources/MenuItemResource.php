@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -82,6 +83,7 @@ class MenuItemResource extends Resource
 
                                         TextInput::make('url')
                                             ->label('URL')
+                                            ->columnSpan(2)
                                             ->suffixAction(
                                                 Action::make('content')
                                                     ->icon('heroicon-o-link')
@@ -112,8 +114,14 @@ class MenuItemResource extends Resource
                                                         }
                                                     })
                                             )
-                                            ->columnSpan(2)
                                             ->required(),
+
+                                        Checkbox::make('target')
+                                            ->label('Open in new tab')
+                                            ->default(false)
+                                            ->afterStateHydrated(fn (Checkbox $component, ?MenuItem $record) => $component->state($record?->target === '_blank'))
+                                            ->dehydrateStateUsing(fn (bool $state): string => $state ? '_blank' : '_self')
+                                            ->columnSpan(1),
                                     ]),
                             ]),
                     ]),
