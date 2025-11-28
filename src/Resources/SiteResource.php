@@ -124,6 +124,8 @@ class SiteResource extends Resource
                                         ->nullable(),
                                     FileUpload::make('logo')
                                         ->label('Logo')
+                                        ->disk('public')
+                                        ->visibility('public')
                                         ->columnSpanFull()
                                         ->helperText('Upload a logo for the site.'),
                                 ]),
