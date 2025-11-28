@@ -848,6 +848,26 @@ class ContentResource extends Resource
                         'published' => __('Published'),
                         'scheduled' => __('Scheduled'),
                     ])
+                    ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
+                        return $query->where(function (EloquentBuilder $query) use ($data) {
+                            $values = $data['values'] ?? $data['value'] ?? [];
+                            if (! is_array($values)) {
+                                $values = [$values];
+                            }
+
+                            foreach ($values as $value) {
+                                $query->orWhere(function (EloquentBuilder $query) use ($value) {
+                                    match ($value) {
+                                        'draft' => $query->draft(),
+                                        'published' => $query->published(),
+                                        'scheduled' => $query->scheduled(),
+                                        'expired' => $query->expired(),
+                                        default => null,
+                                    };
+                                });
+                            }
+                        });
+                    })
                     ->multiple()
                     ->preload(),
                 TernaryFilter::make('public')

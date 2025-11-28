@@ -284,6 +284,28 @@ class Content extends Model
         });
     }
 
+    public function scopeDraft($query): void
+    {
+        $query->whereNull('published_at');
+    }
+
+    public function scopePublished($query): void
+    {
+        $query->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->where(fn ($q) => $q->whereNull('expired_at')->orWhere('expired_at', '>', now()));
+    }
+
+    public function scopeScheduled($query): void
+    {
+        $query->where('published_at', '>', now());
+    }
+
+    public function scopeExpired($query): void
+    {
+        $query->where('expired_at', '<=', now());
+    }
+
     public function blocks(string $field): array
     {
         return json_decode(
