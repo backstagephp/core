@@ -101,7 +101,7 @@ class MenuItemResource extends Resource
                                                                     ->options(function (?string $state) {
                                                                         $contentQuery = Content::query();
 
-                                                                        return $contentQuery->limit(10)->pluck('name', 'ulid')->toArray();
+                                                                        return $contentQuery->pluck('name', 'ulid')->toArray();
                                                                     })
                                                                     ->getSearchResultsUsing(fn (string $search): array => Content::where('name', 'like', "%{$search}%")->limit(10)->pluck('name', 'ulid')->toArray())
                                                                     ->required(),
