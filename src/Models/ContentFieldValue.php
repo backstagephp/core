@@ -52,7 +52,7 @@ class ContentFieldValue extends Pivot
         }
 
         if ($this->isRichEditor()) {
-            return new HtmlString(self::getRichEditorHtml($this->value)) ?? new HtmlString('');
+            return new HtmlString(self::getRichEditorHtml($this->value ?? ''));
         }
 
         if ($this->isCheckbox()) {
