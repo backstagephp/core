@@ -192,7 +192,11 @@ class Content extends Model
             );
         }
 
+        $this->load('site');
+
         $url = rtrim($this->pathPrefix . $this->path, '/');
+
+        $this->load('site');
 
         if ($this->site->trailing_slash) {
             $url .= '/';
@@ -308,10 +312,9 @@ class Content extends Model
 
     public function blocks(string $field): array
     {
-        return json_decode(
-            json: $this->values->where('field.slug', $field)->first()?->value,
-            associative: true
-        ) ?? [];
+        $value = $this->values->where('field.slug', $field)->first()?->value();
+
+        return is_array($value) ? $value : [];
     }
 
     /**
@@ -336,6 +339,8 @@ class Content extends Model
      */
     public function field(string $slug): Content | HtmlString | Collection | array | bool | null
     {
+        $this->load('values');
+
         return $this->values->where('field.slug', $slug)->first()?->value();
     }
 
