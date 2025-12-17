@@ -9,6 +9,7 @@ use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
 use Backstage\Http\Middleware\SetLocale;
 use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
@@ -86,8 +87,6 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $this->runFilamentFieldsCommand($command);
 
                         $this->writeMediaPickerConfig();
-
-                        $this->writeTranslationsConfig();
 
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-migrations',
@@ -196,7 +195,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
-            'content_field_value' => 'Backstage\Models\ContentFieldValue',
             'user' => ltrim(config('auth.providers.users.model', 'Backstage\Models\User'), '\\'),
         ]);
 
@@ -315,11 +313,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'navigation_icon' => 'heroicon-o-photo',
                 'navigation_sort' => null,
                 'navigation_count_badge' => false,
-                'resource' => \Backstage\Media\Resources\MediaResource::class,
+                'resource' => MediaResource::class,
             ],
         ];
 
-        config(['backstage.media' => $config]);
+        config(['media-picker' => $config]);
 
         return $config;
     }
@@ -380,7 +378,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['backstage.fields' => $config]);
+        config(['fields' => $config]);
 
         return $config;
     }
@@ -404,90 +402,6 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateMediaPickerConfig()) . ";\n";
-
-        file_put_contents($path, $configContent);
-    }
-
-    private function generateTranslationsConfig(): array
-    {
-        $config = [
-            'scan' => [
-                'paths' => [
-                    app_path(),
-                    resource_path('views'),
-                    base_path(''),
-                ],
-
-                'extensions' => [
-                    '*.php',
-                    '*.blade.php',
-                    '*.json',
-                ],
-
-                'functions' => [
-                    'trans',
-                    'trans_choice',
-                    'Lang::transChoice',
-                    'Lang::trans',
-                    'Lang::get',
-                    'Lang::choice',
-                    '@lang',
-                    '@choice',
-                    '__',
-                ],
-            ],
-
-            'eloquent' => [
-                'translatable-models' => [
-                    \Backstage\Models\ContentFieldValue::class,
-                    \Backstage\Models\Tag::class,
-                ],
-            ],
-
-            'translators' => [
-                'default' => env('TRANSLATION_DRIVER', 'google-translate'),
-
-                'drivers' => [
-                    'google-translate' => [
-                        // no options
-                    ],
-
-                    'ai' => [
-                        'provider' => \Prism\Prism\Enums\Provider::OpenAI,
-                        'model' => 'gpt-5',
-                        'system_prompt' => 'You are an expert mathematician who explains concepts simply. The only thing you do it output what i ask. No comments, no extra information. Just the answer.',
-                    ],
-
-                    'deep-l' => [
-                        //
-                    ],
-                ],
-            ],
-        ];
-
-        config(['translations' => $config]);
-
-        return $config;
-    }
-
-    private function writeTranslationsConfig(?string $path = null): void
-    {
-        $path ??= config_path('translations.php');
-
-        // Ensure directory exists
-        $directory = dirname($path);
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        // Generate the config file content
-        $configContent = "<?php\n\n";
-        $configContent .= "use Backstage\Models\Tag;\n";
-        $configContent .= "use Prism\Prism\Enums\Provider;\n";
-        $configContent .= "use Backstage\Models\ContentFieldValue;\n\n";
-
-        // Custom export function to create more readable output
-        $configContent .= 'return ' . $this->customVarExport($this->generateTranslationsConfig()) . ";\n";
 
         file_put_contents($path, $configContent);
     }

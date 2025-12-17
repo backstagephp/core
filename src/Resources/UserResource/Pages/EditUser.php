@@ -8,7 +8,10 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
 {
-    protected static string $resource = UserResource::class;
+    public static function getResource(): string
+    {
+        return config('backstage.users.resources.users', UserResource::class);
+    }
 
     protected function getHeaderActions(): array
     {

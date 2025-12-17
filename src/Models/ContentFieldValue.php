@@ -45,24 +45,14 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function media(): \Illuminate\Database\Eloquent\Relations\MorphToMany
-    {
-        return $this->morphToMany(config('backstage.media.model', \Backstage\Media\Models\Media::class), 'model', 'media_relationships', 'model_id', 'media_ulid');
-    }
-
     public function value(): Content | HtmlString | array | Collection | bool | null
     {
-        if ($this->isRichEditor()) {
-            return new HtmlString(self::getRichEditorHtml($this->value ?? ''));
-        }
-
-        [$hydrated, $result] = $this->tryHydrateViaClass($this->isJsonArray(), $this->field->field_type);
-        if ($hydrated) {
-            return $result;
-        }
-
         if ($this->field->hasRelation()) {
             return static::getContentRelation($this->value);
+        }
+
+        if ($this->isRichEditor()) {
+            return new HtmlString(self::getRichEditorHtml($this->value ?? ''));
         }
 
         if ($this->isCheckbox()) {
@@ -70,14 +60,23 @@ class ContentFieldValue extends Pivot
         }
 
         if ($decoded = $this->isJsonArray()) {
+            // For repeater and builder fields, use recursive decoding
             if (in_array($this->field->field_type, ['repeater', 'builder'])) {
-                return $this->hydrateValuesRecursively($decoded, $this->field);
+                $decoded = $this->decodeAllJsonStrings($decoded);
+
+                if ($this->field->field_type === 'repeater') {
+                    $decoded = $this->hydrateRepeaterRelations($decoded);
+                }
+
+                return $decoded;
+            } else {
+                return $decoded;
             }
 
-            return $decoded;
         }
 
         // For all other cases, ensure the value is returned as a string
+        // This prevents automatic type casting of numeric values
         return new HtmlString($this->value ?? '');
     }
 
@@ -86,115 +85,15 @@ class ContentFieldValue extends Pivot
      */
     public static function getContentRelation(mixed $value): Content | Collection | null
     {
-        if (is_array($value)) {
-            $ulids = $value;
-        } elseif (is_string($value) && json_validate($value)) {
-            $ulids = json_decode($value, true);
-        } else {
+        if (! json_validate($value)) {
             return Content::where('ulid', $value)->first();
         }
 
-        if (empty($ulids)) {
-            return new Collection;
-        }
+        $ulids = json_decode($value);
 
         return Content::whereIn('ulid', $ulids)
             ->orderByRaw('FIELD(ulid, ' . implode(',', array_fill(0, count($ulids), '?')) . ')', $ulids)
             ->get();
-    }
-
-    private function hydrateValuesRecursively(mixed $value, Field $field): mixed
-    {
-        [$hydrated, $result] = $this->tryHydrateViaClass($value, $field->field_type);
-        if ($hydrated) {
-            return $result;
-        }
-
-        if ($field->hasRelation()) {
-            return static::getContentRelation($value);
-        }
-
-        if (is_array($value) && in_array($field->field_type, ['repeater', 'builder'])) {
-            if ($field->field_type === 'repeater') {
-                if (! $field->relationLoaded('children')) {
-                    $field->load('children');
-                }
-
-                if ($field->children->isEmpty()) {
-                    return $value;
-                }
-
-                foreach ($value as $index => &$item) {
-                    if (! is_array($item)) {
-                        continue;
-                    }
-                    $this->hydrateItemFields($item, $field->children);
-                }
-                unset($item);
-            } elseif ($field->field_type === 'builder') {
-                static $blockCache = [];
-
-                foreach ($value as $index => &$item) {
-                    if (! isset($item['type'], $item['data']) || ! is_array($item['data'])) {
-                        continue;
-                    }
-
-                    $blockSlug = $item['type'];
-
-                    if (! isset($blockCache[$blockSlug])) {
-                        $blockCache[$blockSlug] = \Backstage\Models\Block::where('slug', $blockSlug)
-                            ->with('fields')
-                            ->first();
-                    }
-
-                    $block = $blockCache[$blockSlug];
-
-                    if (! $block || $block->fields->isEmpty()) {
-                        continue;
-                    }
-
-                    $this->hydrateItemFields($item['data'], $block->fields);
-                }
-                unset($item);
-            }
-        }
-
-        return $value;
-    }
-
-    private function tryHydrateViaClass(mixed $value, string $fieldType): array
-    {
-        if ($fieldClass = \Backstage\Fields\Facades\Fields::resolveField($fieldType)) {
-            if (in_array(\Backstage\Fields\Contracts\HydratesValues::class, class_implements($fieldClass))) {
-                try {
-                    return [true, app($fieldClass)->hydrate($value)];
-                } catch (\Throwable $e) {
-                    return [true, $value];
-                }
-            }
-        }
-
-        return [false, null];
-    }
-
-    private function hydrateItemFields(array &$data, $fields): void
-    {
-        foreach ($fields as $child) {
-            $key = null;
-            if (array_key_exists($child->ulid, $data)) {
-                $key = $child->ulid;
-            } elseif (array_key_exists($child->slug, $data)) {
-                $key = $child->slug;
-            }
-
-            if ($key) {
-                if ($child->field_type === 'rich-editor') {
-                    $data[$key] = new HtmlString(self::getRichEditorHtml($data[$key] ?? ''));
-                } else {
-                    $data[$key] = $this->hydrateValuesRecursively($data[$key], $child);
-                }
-            }
-        }
     }
 
     private function isRichEditor(): bool

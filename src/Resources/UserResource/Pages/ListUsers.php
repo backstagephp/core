@@ -8,7 +8,10 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListUsers extends ListRecords
 {
-    protected static string $resource = UserResource::class;
+    public static function getResource(): string
+    {
+        return config('backstage.users.resources.users', UserResource::class);
+    }
 
     protected function getHeaderActions(): array
     {
