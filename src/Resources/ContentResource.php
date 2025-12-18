@@ -1059,7 +1059,7 @@ class ContentResource extends Resource
                     return $state;
                 }
 
-                if (! $type->og_image_fields || empty($type->og_image_fields)) {
+                if (! $type->og_image_fields || empty($type->og_image_fields) || ! $record) {
                     return [];
                 }
 
