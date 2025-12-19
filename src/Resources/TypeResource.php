@@ -157,6 +157,14 @@ class TypeResource extends Resource
                                                 'desc' => 'Descending',
                                             ]),
                                     ])->columns(2),
+                                Fieldset::make(__('Publication'))
+                                    ->schema([
+                                        Toggle::make('published_at_empty_on_create')
+                                            ->label(__('Published At Empty On Create'))
+                                            ->helperText(__('If enabled, published_at will be empty when creating new content. Publication date must be set manually.'))
+                                            ->inline(false)
+                                            ->columnSpanFull(),
+                                    ]),
                                 Fieldset::make(__('Meta Tags'))
                                     ->schema([
                                         Select::make('default_meta_tags_robots')
@@ -173,6 +181,7 @@ class TypeResource extends Resource
                                             ->helperText(__('If enabled, all content of this type must have a parent.'))
                                             ->live()
                                             ->inline(false),
+
                                         Repeater::make('parent_filters')
                                             ->label(__('Filters'))
                                             ->live()
