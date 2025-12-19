@@ -291,6 +291,21 @@ class ContentResource extends Resource
                                             ->label(__('Robots'))
                                             ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
                                             ->multiple()
+                                            ->default(function (?Content $record, Get $get) {
+                                                if ($record && isset($record->meta_tags['robots']) && ! empty($record->meta_tags['robots'])) {
+                                                    return $record->meta_tags['robots'];
+                                                }
+
+                                                $type = self::$type;
+                                                if (! $type) {
+                                                    $typeSlug = $get('type_slug') ?? $record?->type_slug;
+                                                    if ($typeSlug) {
+                                                        $type = Type::firstWhere('slug', $typeSlug);
+                                                    }
+                                                }
+
+                                                return $type?->default_meta_tags_robots;
+                                            })
                                             ->columnSpanFull(),
 
                                         TagsInput::make('meta_tags.keywords')
@@ -550,9 +565,43 @@ class ContentResource extends Resource
                                         DateTimePicker::make('published_at')
                                             ->columnSpanFull()
                                             ->date()
-                                            ->default(now()->format('dd/mm/YYYY'))
+                                            ->default(function (Get $get, ?Content $record) {
+                                                if ($record) {
+                                                    return $record->published_at;
+                                                }
+
+                                                $type = self::$type;
+                                                if (! $type) {
+                                                    $type = Type::firstWhere('slug', ($get('type_slug') ?? $record?->type_slug));
+                                                }
+
+                                                if ($type && $type->published_at_empty_on_create) {
+                                                    return null;
+                                                }
+
+                                                return now();
+                                            })
                                             ->displayFormat('M j, Y - H:i')
-                                            ->formatStateUsing(fn (?Content $record) => $record ? $record->published_at : now())
+                                            ->formatStateUsing(function (?Content $record, Get $get) {
+                                                if ($record && $record->published_at) {
+                                                    return $record->published_at;
+                                                }
+
+                                                if ($record) {
+                                                    return null;
+                                                }
+
+                                                $type = self::$type;
+                                                if (! $type) {
+                                                    $type = Type::firstWhere('slug', $get('type_slug'));
+                                                }
+
+                                                if ($type && $type->published_at_empty_on_create) {
+                                                    return null;
+                                                }
+
+                                                return now();
+                                            })
                                             ->label(__('Publication date'))
                                             ->helperText('Set a date in past or future to schedule publication.')
                                             ->native(false)

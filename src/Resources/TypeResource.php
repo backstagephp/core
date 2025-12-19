@@ -157,6 +157,23 @@ class TypeResource extends Resource
                                                 'desc' => 'Descending',
                                             ]),
                                     ])->columns(2),
+                                Fieldset::make(__('Publication'))
+                                    ->schema([
+                                        Toggle::make('published_at_empty_on_create')
+                                            ->label(__('Published At Empty On Create'))
+                                            ->helperText(__('If enabled, published_at will be empty when creating new content. Publication date must be set manually.'))
+                                            ->inline(false)
+                                            ->columnSpanFull(),
+                                    ]),
+                                Fieldset::make(__('Meta Tags'))
+                                    ->schema([
+                                        Select::make('default_meta_tags_robots')
+                                            ->label(__('Default Robots'))
+                                            ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
+                                            ->multiple()
+                                            ->helperText(__('Default robots settings for new content of this type. Can be overridden per content item.'))
+                                            ->columnSpanFull(),
+                                    ]),
                                 Fieldset::make(__('Parent selection'))
                                     ->schema([
                                         Toggle::make('parent_required')
@@ -164,6 +181,7 @@ class TypeResource extends Resource
                                             ->helperText(__('If enabled, all content of this type must have a parent.'))
                                             ->live()
                                             ->inline(false),
+
                                         Repeater::make('parent_filters')
                                             ->label(__('Filters'))
                                             ->live()
@@ -214,6 +232,7 @@ class TypeResource extends Resource
                                             ])
                                             ->columnSpanFull(),
                                     ]),
+
                             ]),
                         Tab::make(__('Info'))
                             ->schema([
