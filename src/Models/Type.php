@@ -25,8 +25,6 @@ class Type extends Model
         return [
             'og_image_fields' => 'array',
             'parent_filters' => 'array',
-            'published_at_empty_on_create' => 'boolean',
-            'default_meta_tags_robots' => 'array',
         ];
     }
 
