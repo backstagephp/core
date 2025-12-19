@@ -157,6 +157,15 @@ class TypeResource extends Resource
                                                 'desc' => 'Descending',
                                             ]),
                                     ])->columns(2),
+                                Fieldset::make(__('Meta Tags'))
+                                    ->schema([
+                                        Select::make('default_meta_tags_robots')
+                                            ->label(__('Default Robots'))
+                                            ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
+                                            ->multiple()
+                                            ->helperText(__('Default robots settings for new content of this type. Can be overridden per content item.'))
+                                            ->columnSpanFull(),
+                                    ]),
                                 Fieldset::make(__('Parent selection'))
                                     ->schema([
                                         Toggle::make('parent_required')
@@ -214,6 +223,7 @@ class TypeResource extends Resource
                                             ])
                                             ->columnSpanFull(),
                                     ]),
+
                             ]),
                         Tab::make(__('Info'))
                             ->schema([

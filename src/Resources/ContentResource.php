@@ -291,6 +291,21 @@ class ContentResource extends Resource
                                             ->label(__('Robots'))
                                             ->options(['noindex' => __('Do not index this content (noindex)'), 'nofollow' => __('Do not follow links (nofollow)'), 'noarchive' => __('Do not archive this content (noarchive)'), 'nosnippet' => __('No description in search results (nosnippet)'), 'noodp' => __('Do not index this in Open Directory Project (noodp)')])
                                             ->multiple()
+                                            ->default(function (?Content $record, Get $get) {
+                                                if ($record && isset($record->meta_tags['robots']) && ! empty($record->meta_tags['robots'])) {
+                                                    return $record->meta_tags['robots'];
+                                                }
+
+                                                $type = self::$type;
+                                                if (! $type) {
+                                                    $typeSlug = $get('type_slug') ?? $record?->type_slug;
+                                                    if ($typeSlug) {
+                                                        $type = Type::firstWhere('slug', $typeSlug);
+                                                    }
+                                                }
+
+                                                return $type?->default_meta_tags_robots;
+                                            })
                                             ->columnSpanFull(),
 
                                         TagsInput::make('meta_tags.keywords')

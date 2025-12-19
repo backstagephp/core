@@ -8,6 +8,7 @@ use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
 use Backstage\Models\Tag;
+use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
 use Filament\Actions\Action;
@@ -215,6 +216,14 @@ class EditContent extends EditRecord
         $values = $this->getRecord()->getFormattedFieldValues();
 
         $this->getRecord()->values = $values;
+
+        // Backwards compatibility: if meta_tags.robots is not set, use type default
+        if (! isset($data['meta_tags']['robots']) || empty($data['meta_tags']['robots'])) {
+            $type = $this->getRecord()->type;
+            if ($type && $type->default_meta_tags_robots) {
+                $data['meta_tags']['robots'] = $type->default_meta_tags_robots;
+            }
+        }
 
         return $this->mutateBeforeFill($data);
     }
