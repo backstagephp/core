@@ -3,16 +3,18 @@
 namespace Backstage\Resources\ContentResource\Pages;
 
 use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Models\Tag;
+use Backstage\Fields\Concerns\PersistsContentData;
 use Backstage\Resources\ContentResource;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Str;
 
 class CreateContent extends CreateRecord
 {
+    public int $formVersion = 0;
+
     protected static string $resource = ContentResource::class;
 
     use CanMapDynamicFields;
+    use PersistsContentData;
 
     protected static ?string $slug = 'content/create/{type}';
 
@@ -34,30 +36,26 @@ class CreateContent extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $this->record = $this->getModel()::make($data);
+
+        if (! $this->record->type_slug && isset($this->data['type_slug'])) {
+            $this->record->type_slug = $this->data['type_slug'];
+        }
+
+        $data = $this->mutateBeforeSave($data);
+
+        $this->data['values'] = $data['values'] ?? [];
+
         unset($data['tags']);
         unset($data['values']);
-
-        unset($data['media']);
 
         return $data;
     }
 
     protected function afterCreate(): void
     {
-        collect($this->data['tags'] ?? [])
-            ->filter(fn ($tag) => filled($tag))
-            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
-                'name' => $tag,
-                'slug' => Str::slug($tag),
-            ]))
-            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
-
-        collect($this->data['values'] ?? [])
-            ->filter(fn (string | array | null $value) => filled($value))
-            ->each(fn (string | array $value, $field) => $this->record->values()->create([
-                'field_ulid' => $field,
-                'value' => is_array($value) ? json_encode($value) : $value,
-            ]));
+        $this->handleTags();
+        $this->handleValues();
 
         $this->getRecord()->update([
             'creator_id' => auth()->id(),
@@ -65,5 +63,22 @@ class CreateContent extends CreateRecord
         ]);
 
         $this->getRecord()->authors()->attach(auth()->id());
+
+        // Reset state for "Create Another"
+        $typeSlug = $this->data['type_slug'] ?? null;
+
+        $this->data = [
+            'type_slug' => $typeSlug,
+            'values' => [],
+        ];
+
+        $this->record = $this->getModel()::make(['type_slug' => $typeSlug]);
+
+        // Re-initialize static type property to prevent it being null during fill() hydration
+        ContentResource::setStaticType(\Backstage\Models\Type::firstWhere('slug', $typeSlug));
+
+        $this->form->fill([]);
+
+        $this->formVersion++;
     }
 }

@@ -66,17 +66,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                     ->startWith(function (InstallCommand $command) {
                         $command->info('Welcome to the Backstage setup process.');
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
-                        $command->comment('Let\'s get started!');
+                        $command->comment("Let's get started!");
 
-                        // if ($command->confirm('Would you like us to install Backstage for you?', true)) {
                         $command->comment('Lights, camera, action! Setting up for the show...');
 
                         $command->comment('Preparing stage...');
-
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'translations-config',
-                            '--force' => true,
-                        ]);
 
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-config',
@@ -86,8 +80,6 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $this->runFilamentFieldsCommand($command);
 
                         $this->writeMediaPickerConfig();
-
-                        $this->writeTranslationsConfig();
 
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-migrations',
@@ -120,12 +112,27 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $path = app()->environmentFilePath();
                         file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
+                        if ($command->confirm('Would you like to create a user?', true)) {
+                            $command->comment('Our next performer is...');
+                            $user = $command->ask('Your name?');
+                            $email = $command->ask('Your email?');
+                            $password = $command->secret('Your password?');
+                            if ($email && $password) {
+                                User::factory()->create([
+                                    'name' => $user,
+                                    'email' => $email,
+                                    'password' => $password,
+                                ]);
+                            } else {
+                                $command->error('Stage frights! User not created.');
+                            }
+                        }
+
                         $command->comment('Raise the curtain...');
-                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
                         $command->info('The stage is cleared for a fresh start');
-                        $command->comment('You can now go on stage and start creating!');
+                        $command->comment('You can now go on stage (/backstage) and start creating!');
                     })
                     ->askToStarRepoOnGitHub('backstage/cms');
             });
@@ -404,90 +411,6 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         // Custom export function to create more readable output
         $configContent .= 'return ' . $this->customVarExport($this->generateMediaPickerConfig()) . ";\n";
-
-        file_put_contents($path, $configContent);
-    }
-
-    private function generateTranslationsConfig(): array
-    {
-        $config = [
-            'scan' => [
-                'paths' => [
-                    app_path(),
-                    resource_path('views'),
-                    base_path(''),
-                ],
-
-                'extensions' => [
-                    '*.php',
-                    '*.blade.php',
-                    '*.json',
-                ],
-
-                'functions' => [
-                    'trans',
-                    'trans_choice',
-                    'Lang::transChoice',
-                    'Lang::trans',
-                    'Lang::get',
-                    'Lang::choice',
-                    '@lang',
-                    '@choice',
-                    '__',
-                ],
-            ],
-
-            'eloquent' => [
-                'translatable-models' => [
-                    \Backstage\Models\ContentFieldValue::class,
-                    \Backstage\Models\Tag::class,
-                ],
-            ],
-
-            'translators' => [
-                'default' => env('TRANSLATION_DRIVER', 'google-translate'),
-
-                'drivers' => [
-                    'google-translate' => [
-                        // no options
-                    ],
-
-                    'ai' => [
-                        'provider' => \Prism\Prism\Enums\Provider::OpenAI,
-                        'model' => 'gpt-5',
-                        'system_prompt' => 'You are an expert mathematician who explains concepts simply. The only thing you do it output what i ask. No comments, no extra information. Just the answer.',
-                    ],
-
-                    'deep-l' => [
-                        //
-                    ],
-                ],
-            ],
-        ];
-
-        config(['translations' => $config]);
-
-        return $config;
-    }
-
-    private function writeTranslationsConfig(?string $path = null): void
-    {
-        $path ??= config_path('translations.php');
-
-        // Ensure directory exists
-        $directory = dirname($path);
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        // Generate the config file content
-        $configContent = "<?php\n\n";
-        $configContent .= "use Backstage\Models\Tag;\n";
-        $configContent .= "use Prism\Prism\Enums\Provider;\n";
-        $configContent .= "use Backstage\Models\ContentFieldValue;\n\n";
-
-        // Custom export function to create more readable output
-        $configContent .= 'return ' . $this->customVarExport($this->generateTranslationsConfig()) . ";\n";
 
         file_put_contents($path, $configContent);
     }

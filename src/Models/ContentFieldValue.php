@@ -35,9 +35,9 @@ class ContentFieldValue extends Pivot
         return [];
     }
 
-    public function content(): BelongsTo
+    public function contentRelation(): BelongsTo
     {
-        return $this->belongsTo(Content::class);
+        return $this->belongsTo(Content::class, 'content_ulid');
     }
 
     public function field(): BelongsTo
@@ -50,18 +50,22 @@ class ContentFieldValue extends Pivot
         return $this->morphToMany(config('backstage.media.model', \Backstage\Media\Models\Media::class), 'model', 'media_relationships', 'model_id', 'media_ulid');
     }
 
-    public function value(): Content | HtmlString | array | Collection | bool | null
+    public function getHydratedValue(): Content | HtmlString | array | Collection | bool | string | null
     {
         if ($this->isRichEditor()) {
-            return new HtmlString(self::getRichEditorHtml($this->value ?? ''));
+            $html = self::getRichEditorHtml($this->value ?? '') ?? '';
+
+            return $this->shouldHydrate() ? new HtmlString($html) : $html;
         }
 
-        [$hydrated, $result] = $this->tryHydrateViaClass($this->isJsonArray(), $this->field->field_type);
-        if ($hydrated) {
-            return $result;
+        if ($this->shouldHydrate()) {
+            [$hydrated, $result] = $this->tryHydrateViaClass($this->isJsonArray(), $this->field->field_type);
+            if ($hydrated) {
+                return $result;
+            }
         }
 
-        if ($this->field->hasRelation()) {
+        if ($this->shouldHydrate() && $this->field->hasRelation()) {
             return static::getContentRelation($this->value);
         }
 
@@ -77,8 +81,11 @@ class ContentFieldValue extends Pivot
             return $decoded;
         }
 
-        // For all other cases, ensure the value is returned as a string
-        return new HtmlString($this->value ?? '');
+        // For all other cases, ensure the value is returned as a string (HTML string in frontend)
+        $val = $this->value ?? '';
+        $res = $this->shouldHydrate() ? new HtmlString($val) : $val;
+
+        return $res;
     }
 
     /**
@@ -105,12 +112,19 @@ class ContentFieldValue extends Pivot
 
     private function hydrateValuesRecursively(mixed $value, Field $field): mixed
     {
-        [$hydrated, $result] = $this->tryHydrateViaClass($value, $field->field_type);
-        if ($hydrated) {
-            return $result;
+        // Handle case where Content relationship was incorrectly loaded for rich-editor fields with slug 'content'
+        if ($field->field_type === 'rich-editor' && $value instanceof \Backstage\Models\Content) {
+            return ''; // Reset to empty string as rich-editor shouldn't store Content objects
         }
 
-        if ($field->hasRelation()) {
+        if ($this->shouldHydrate()) {
+            [$hydrated, $result] = $this->tryHydrateViaClass($value, $field->field_type);
+            if ($hydrated) {
+                return $result;
+            }
+        }
+
+        if ($this->shouldHydrate() && $field->hasRelation()) {
             return static::getContentRelation($value);
         }
 
@@ -167,7 +181,7 @@ class ContentFieldValue extends Pivot
         if ($fieldClass = \Backstage\Fields\Facades\Fields::resolveField($fieldType)) {
             if (in_array(\Backstage\Fields\Contracts\HydratesValues::class, class_implements($fieldClass))) {
                 try {
-                    return [true, app($fieldClass)->hydrate($value)];
+                    return [true, app($fieldClass)->hydrate($value, $this)];
                 } catch (\Throwable $e) {
                     return [true, $value];
                 }
@@ -189,12 +203,38 @@ class ContentFieldValue extends Pivot
 
             if ($key) {
                 if ($child->field_type === 'rich-editor') {
-                    $data[$key] = new HtmlString(self::getRichEditorHtml($data[$key] ?? ''));
+                    $html = self::getRichEditorHtml($data[$key] ?? '') ?? '';
+                    $data[$key] = $this->shouldHydrate() ? new HtmlString($html) : $html;
                 } else {
                     $data[$key] = $this->hydrateValuesRecursively($data[$key], $child);
                 }
             }
         }
+    }
+
+    private function shouldHydrate(): bool
+    {
+        if (app()->runningInConsole()) {
+            return false;
+        }
+
+        if (! request()) {
+            return true;
+        }
+
+        $path = request()->path();
+
+        // Broad check for admin/cms/livewire paths
+        if (str($path)->contains(['admin', 'backstage', 'filament', 'livewire']) || request()->headers->has('X-Livewire-Id')) {
+            return false;
+        }
+
+        // Check if there is a Filament panel active
+        if (class_exists(\Filament\Facades\Filament::class) && \Filament\Facades\Filament::getCurrentPanel()) {
+            return false;
+        }
+
+        return true;
     }
 
     private function isRichEditor(): bool
@@ -209,7 +249,9 @@ class ContentFieldValue extends Pivot
 
     private function isJsonArray(): ?array
     {
-        $decoded = json_decode($this->value, true);
+        // Use getRawOriginal to bypass the accessor and prevent relationship hydration
+        $rawValue = $this->getRawOriginal('value');
+        $decoded = json_decode($rawValue, true);
 
         return is_array($decoded) ? $decoded : null;
     }

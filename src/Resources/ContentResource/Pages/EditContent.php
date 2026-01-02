@@ -5,9 +5,9 @@ namespace Backstage\Resources\ContentResource\Pages;
 use BackedEnum;
 use Backstage\Actions\Content\DuplicateContentAction;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Fields\Concerns\PersistsContentData;
 use Backstage\Models\Content;
 use Backstage\Models\Language;
-use Backstage\Models\Tag;
 use Backstage\Models\Type;
 use Backstage\Resources\ContentResource;
 use Backstage\Translations\Laravel\Facades\Translator;
@@ -21,12 +21,13 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class EditContent extends EditRecord
 {
+    public int $formVersion = 0;
+
     use CanMapDynamicFields;
+    use PersistsContentData;
 
     protected static string $resource = ContentResource::class;
 
@@ -242,88 +243,6 @@ class EditContent extends EditRecord
         $this->syncAuthors();
     }
 
-    private function handleTags(): void
-    {
-        $tags = collect($this->data['tags'] ?? [])
-            ->filter(fn ($tag) => filled($tag))
-            ->map(fn (string $tag) => $this->record->tags()->updateOrCreate([
-                'name' => $tag,
-                'slug' => Str::slug($tag),
-            ]))
-            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($this->record->site));
-
-        $this->record->tags()->sync($tags->pluck('ulid')->toArray());
-    }
-
-    private function handleValues(): void
-    {
-        collect($this->data['values'] ?? [])
-            ->each(function ($value, $field) {
-                $fieldModel = \Backstage\Fields\Models\Field::where('ulid', $field)->first();
-
-                $value = $this->prepareValue($value);
-
-                if ($this->shouldDeleteValue($value)) {
-                    $this->deleteValue($field);
-
-                    return;
-                }
-
-                if ($fieldModel && $fieldModel->field_type === 'builder') {
-                    $this->handleBuilderField($value, $field);
-
-                    return;
-                }
-
-                $this->updateOrCreateValue($value, $field);
-            });
-    }
-
-    private function prepareValue($value)
-    {
-        return isset($value['value']) && is_array($value['value']) ? json_encode($value['value']) : $value;
-    }
-
-    private function shouldDeleteValue($value): bool
-    {
-        return blank($value);
-    }
-
-    private function deleteValue($field): void
-    {
-        $this->getRecord()->values()->where([
-            'content_ulid' => $this->getRecord()->getKey(),
-            'field_ulid' => $field,
-        ])->delete();
-    }
-
-    private function handleBuilderField($value, $field): void
-    {
-        $value = $this->decodeAllJsonStrings($value);
-
-        $this->getRecord()->values()->updateOrCreate([
-            'content_ulid' => $this->getRecord()->getKey(),
-            'field_ulid' => $field,
-        ], [
-            'value' => is_array($value) ? json_encode($value) : $value,
-        ]);
-    }
-
-    private function updateOrCreateValue($value, $field): void
-    {
-        $this->getRecord()->values()->updateOrCreate([
-            'content_ulid' => $this->getRecord()->getKey(),
-            'field_ulid' => $field,
-        ], [
-            'value' => is_array($value) ? json_encode($value) : $value,
-        ]);
-    }
-
-    private function syncAuthors(): void
-    {
-        $this->getRecord()->authors()->syncWithoutDetaching(Auth::id());
-    }
-
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = $this->mutateBeforeSave($data);
@@ -332,35 +251,6 @@ class EditContent extends EditRecord
 
         unset($data['tags']);
         unset($data['values']);
-
-        return $data;
-    }
-
-    private function decodeAllJsonStrings($data, $path = '')
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $currentPath = $path === '' ? $key : $path . '.' . $key;
-                if (is_string($value)) {
-                    $decoded = $value;
-                    $decodeCount = 0;
-                    while (is_string($decoded)) {
-                        $json = json_decode($decoded, true);
-                        if ($json !== null && (is_array($json) || is_object($json))) {
-                            $decoded = $json;
-                            $decodeCount++;
-                        } else {
-                            break;
-                        }
-                    }
-                    if ($decodeCount > 0) {
-                        $data[$key] = $this->decodeAllJsonStrings($decoded, $currentPath);
-                    }
-                } elseif (is_array($value)) {
-                    $data[$key] = $this->decodeAllJsonStrings($value, $currentPath);
-                }
-            }
-        }
 
         return $data;
     }

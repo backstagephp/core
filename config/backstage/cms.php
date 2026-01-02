@@ -22,7 +22,7 @@ return [
             Backstage\Resources\SettingResource::class,
             Backstage\Resources\SiteResource::class,
             Backstage\Resources\TagResource::class,
-            Backstage\Resources\MediaResource::class,
+            // Backstage\Resources\MediaResource::class,
             // Backstage\Resources\TemplateResource::class,
             Backstage\Resources\TypeResource::class,
             Backstage\Resources\UserResource::class,
