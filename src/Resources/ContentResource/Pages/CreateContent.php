@@ -63,7 +63,13 @@ class CreateContent extends CreateRecord
         ]);
 
         $this->getRecord()->authors()->attach(auth()->id());
-
+    }
+    
+    protected function getRedirectUrl(): string
+    {
+        // Store the created record before resetting for "Create Another"
+        $createdRecord = $this->getRecord();
+        
         // Reset state for "Create Another"
         $typeSlug = $this->data['type_slug'] ?? null;
 
@@ -72,13 +78,17 @@ class CreateContent extends CreateRecord
             'values' => [],
         ];
 
-        $this->record = $this->getModel()::make(['type_slug' => $typeSlug]);
-
         // Re-initialize static type property to prevent it being null during fill() hydration
         ContentResource::setStaticType(\Backstage\Models\Type::firstWhere('slug', $typeSlug));
 
         $this->form->fill([]);
 
         $this->formVersion++;
+        
+        // Temporarily restore the created record for URL generation
+        $this->record = $createdRecord;
+        
+        // Get the default redirect URL (to edit page)
+        return parent::getRedirectUrl();
     }
 }

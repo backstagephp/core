@@ -341,11 +341,14 @@ class Content extends Model
      * @see \Backstage\Models\ContentFieldValue::getHydratedValue()
      * @see https://docs.backstagephp.com/03-fields/01-introduction.html
      */
-    public function field(string $slug): Content | HtmlString | Collection | array | bool | null
+
+    public function field(string $slug): Content | HtmlString | Collection | array | bool | string | Model | null
     {
         $this->load('values');
 
-        return $this->values->where('field.slug', $slug)->first()?->getHydratedValue();
+        $val = $this->values->where('field.slug', $slug)->first()?->getHydratedValue();
+
+        return $val;
     }
 
     public function rawField(string $field): mixed
