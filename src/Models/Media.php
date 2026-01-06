@@ -47,6 +47,7 @@ class Media extends BaseMedia
             }
 
             $result = is_string($edit->pivot->meta) ? json_decode($edit->pivot->meta, true) : $edit->pivot->meta;
+
             return $result;
         }
 
@@ -56,6 +57,7 @@ class Media extends BaseMedia
         }
 
         $result = is_string($edit->pivot->meta) ? json_decode($edit->pivot->meta, true) : $edit->pivot->meta;
+
         return $result;
     }
 }
