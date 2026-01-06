@@ -9,9 +9,9 @@ use Backstage\Shared\HasPackageFactory;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -52,7 +52,6 @@ class ContentFieldValue extends Pivot
             ->withPivot(['position', 'meta']);
     }
 
-
     public function getHydratedValue(): Content | HtmlString | array | Collection | bool | string | Model | null
     {
         if ($this->isRichEditor()) {
@@ -62,12 +61,12 @@ class ContentFieldValue extends Pivot
         }
 
         $shouldHydrate = $this->shouldHydrate();
-        // TODO (IMPORTANT): This should be fixed in the Uploadcare package itself. 
+        // TODO (IMPORTANT): This should be fixed in the Uploadcare package itself.
         $isUploadcare = $this->field->field_type === 'uploadcare';
 
         if ($shouldHydrate || $isUploadcare) {
             [$hydrated, $result] = $this->tryHydrateViaClass($this->isJsonArray(), $this->field->field_type, $this->field);
-            
+
             if ($hydrated) {
                 return $result;
             }
@@ -92,10 +91,9 @@ class ContentFieldValue extends Pivot
         // For all other cases, ensure the value is returned as a string (HTML string in frontend)
         $val = $this->value ?? '';
         $res = $this->shouldHydrate() ? new HtmlString($val) : $val;
-        
+
         return $res;
     }
-
 
     /**
      * Get the relation value
@@ -188,7 +186,7 @@ class ContentFieldValue extends Pivot
     private function tryHydrateViaClass(mixed $value, string $fieldType, ?Field $fieldModel = null): array
     {
         $fieldClass = \Backstage\Fields\Facades\Fields::resolveField($fieldType);
-        
+
         if ($fieldClass) {
             if (in_array(\Backstage\Fields\Contracts\HydratesValues::class, class_implements($fieldClass))) {
                 try {
@@ -196,16 +194,18 @@ class ContentFieldValue extends Pivot
                     if ($fieldModel && property_exists($instance, 'field_model')) {
                         $instance->field_model = $fieldModel;
                     }
+
                     return [true, $instance->hydrate($value, $this)];
                 } catch (\Throwable $e) {
                     file_put_contents('/tmp/hydration_error.log', "Hydration error for $fieldType: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
+
                     return [true, $value];
                 }
             } else {
-                 file_put_contents('/tmp/cfv_override_debug.log', "Class $fieldClass does not implement HydratesValues\n", FILE_APPEND);
+                file_put_contents('/tmp/cfv_override_debug.log', "Class $fieldClass does not implement HydratesValues\n", FILE_APPEND);
             }
         } else {
-             file_put_contents('/tmp/cfv_override_debug.log', "Could not resolve field class for $fieldType\n", FILE_APPEND);
+            file_put_contents('/tmp/cfv_override_debug.log', "Could not resolve field class for $fieldType\n", FILE_APPEND);
         }
 
         return [false, null];
@@ -231,7 +231,7 @@ class ContentFieldValue extends Pivot
             }
         }
     }
-    
+
     public function shouldHydrate(): bool
     {
         if (app()->runningInConsole()) {

@@ -341,7 +341,6 @@ class Content extends Model
      * @see \Backstage\Models\ContentFieldValue::getHydratedValue()
      * @see https://docs.backstagephp.com/03-fields/01-introduction.html
      */
-
     public function field(string $slug): Content | HtmlString | Collection | array | bool | string | Model | null
     {
         $this->load('values');
