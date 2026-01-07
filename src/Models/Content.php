@@ -143,19 +143,15 @@ class Content extends Model
             if (! $value->field) {
                 return [];
             }
+            $value->value = json_decode($value->value, true) ?? $value->value;
 
-            // Use the value() accessor logic which performs hydration logic
-            // including resolving Media objects via Uploadcare's hydration logic.
-            // This ensures pivot metadata (crops) are included.
-            $hydratedValue = $value->getHydratedValue();
-
-            // If it's an HtmlString (e.g. RichEditor), we ensure string content
-            if ($hydratedValue instanceof \Illuminate\Support\HtmlString) {
-                $hydratedValue = (string) $hydratedValue;
+            // Recursively decode nested JSON strings only for repeater and builder fields
+            if (in_array($value->field->field_type, ['repeater', 'builder'])) {
+                $value->value = $this->decodeAllJsonStrings($value->value);
             }
 
-            return [$value->field->ulid => $hydratedValue];
-        })->all();
+            return [$value->field->ulid => $value->value];
+        })->toArray();
     }
 
     public function fields(): HasManyThrough
@@ -196,11 +192,7 @@ class Content extends Model
             );
         }
 
-        $this->load('site');
-
         $url = rtrim($this->pathPrefix . $this->path, '/');
-
-        $this->load('site');
 
         if ($this->site->trailing_slash) {
             $url .= '/';
@@ -316,9 +308,10 @@ class Content extends Model
 
     public function blocks(string $field): array
     {
-        $value = $this->values->where('field.slug', $field)->first()?->getHydratedValue();
-
-        return is_array($value) ? $value : [];
+        return json_decode(
+            json: $this->values->where('field.slug', $field)->first()?->value,
+            associative: true
+        ) ?? [];
     }
 
     /**
@@ -338,16 +331,12 @@ class Content extends Model
      * Toggle
      * Uploadcare
      *
-     * @see \Backstage\Models\ContentFieldValue::getHydratedValue()
+     * @see \Backstage\Models\ContentFieldValue::value()
      * @see https://docs.backstagephp.com/03-fields/01-introduction.html
      */
-    public function field(string $slug): Content | HtmlString | Collection | array | bool | string | Model | null
+    public function field(string $slug): Content | HtmlString | Collection | array | bool | null
     {
-        $this->load('values');
-
-        $val = $this->values->where('field.slug', $slug)->first()?->getHydratedValue();
-
-        return $val;
+        return $this->values->where('field.slug', $slug)->first()?->value();
     }
 
     public function rawField(string $field): mixed

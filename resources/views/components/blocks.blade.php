@@ -1,5 +1,5 @@
 <div {{ $attributes }}>
-    {{ $before ?? '' }}
+    @stack('before')
     @if ($blocks)
         @foreach ($blocks as $block)
             @php($className = \Backstage\Facades\Backstage::resolveComponent($block['type']))
@@ -10,5 +10,5 @@
             @endif
         @endforeach
     @endif
-    {{ $after ?? '' }}
+    @stack('after')
 </div>

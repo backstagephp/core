@@ -12,6 +12,7 @@ use Backstage\Models\FormAction;
 use Backstage\Models\Language;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
+use Backstage\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -172,5 +173,47 @@ class BackstageSeeder extends Seeder
                     (string) Str::uuid() => ['type' => 'form', 'data' => ['slug' => 'contact']],
                 ]),
             ]), 'values')->create();
+
+        User::factory([
+            'name' => 'Mark',
+            'email' => 'mark@vk10.nl',
+            'password' => 'mark@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Rob',
+            'email' => 'rob@vk10.nl',
+            'password' => 'rob@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Mathieu',
+            'email' => 'mathieu@vk10.nl',
+            'password' => 'mathieu@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Bas',
+            'email' => 'bas@vk10.nl',
+            'password' => 'bas@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Yoni',
+            'email' => 'yoni@vk10.nl',
+            'password' => 'yoni@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Patrick',
+            'email' => 'patrick@vk10.nl',
+            'password' => 'patrick@vk10.nl',
+        ])->create();
+
+        User::factory([
+            'name' => 'Sandro',
+            'email' => 'sandro@vk10.nl',
+            'password' => 'sandro@vk10.nl',
+        ])->create();
     }
 }
