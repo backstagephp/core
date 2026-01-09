@@ -9,7 +9,6 @@ use Backstage\Shared\HasPackageFactory;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\HtmlString;
@@ -36,9 +35,9 @@ class ContentFieldValue extends Pivot
         return [];
     }
 
-    public function contentRelation(): BelongsTo
+    public function content(): BelongsTo
     {
-        return $this->belongsTo(Content::class, 'content_ulid');
+        return $this->belongsTo(Content::class);
     }
 
     public function field(): BelongsTo
@@ -46,34 +45,14 @@ class ContentFieldValue extends Pivot
         return $this->belongsTo(Field::class);
     }
 
-    public function media(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    public function value(): Content | HtmlString | array | Collection | bool | null
     {
-        return $this->morphToMany(config('backstage.media.model', \Backstage\Media\Models\Media::class), 'model', 'media_relationships', 'model_id', 'media_ulid')
-            ->withPivot(['position', 'meta']);
-    }
-
-    public function getHydratedValue(): Content | HtmlString | array | Collection | bool | string | Model | null
-    {
-        if ($this->isRichEditor()) {
-            $html = self::getRichEditorHtml($this->value ?? '') ?? '';
-
-            return $this->shouldHydrate() ? new HtmlString($html) : $html;
-        }
-
-        $shouldHydrate = $this->shouldHydrate();
-        // TODO (IMPORTANT): This should be fixed in the Uploadcare package itself.
-        $isUploadcare = $this->field->field_type === 'uploadcare';
-
-        if ($shouldHydrate || $isUploadcare) {
-            [$hydrated, $result] = $this->tryHydrateViaClass($this->isJsonArray(), $this->field->field_type, $this->field);
-
-            if ($hydrated) {
-                return $result;
-            }
-        }
-
-        if ($this->shouldHydrate() && $this->field->hasRelation()) {
+        if ($this->field->hasRelation()) {
             return static::getContentRelation($this->value);
+        }
+
+        if ($this->isRichEditor()) {
+            return new HtmlString(self::getRichEditorHtml($this->value ?? ''));
         }
 
         if ($this->isCheckbox()) {
@@ -81,18 +60,24 @@ class ContentFieldValue extends Pivot
         }
 
         if ($decoded = $this->isJsonArray()) {
+            // For repeater and builder fields, use recursive decoding
             if (in_array($this->field->field_type, ['repeater', 'builder'])) {
-                return $this->hydrateValuesRecursively($decoded, $this->field);
+                $decoded = $this->decodeAllJsonStrings($decoded);
+
+                if ($this->field->field_type === 'repeater') {
+                    $decoded = $this->hydrateRepeaterRelations($decoded);
+                }
+
+                return $decoded;
+            } else {
+                return $decoded;
             }
 
-            return $decoded;
         }
 
-        // For all other cases, ensure the value is returned as a string (HTML string in frontend)
-        $val = $this->value ?? '';
-        $res = $this->shouldHydrate() ? new HtmlString($val) : $val;
-
-        return $res;
+        // For all other cases, ensure the value is returned as a string
+        // This prevents automatic type casting of numeric values
+        return new HtmlString($this->value ?? '');
     }
 
     /**
@@ -100,161 +85,15 @@ class ContentFieldValue extends Pivot
      */
     public static function getContentRelation(mixed $value): Content | Collection | null
     {
-        if (is_array($value)) {
-            $ulids = $value;
-        } elseif (is_string($value) && json_validate($value)) {
-            $ulids = json_decode($value, true);
-        } else {
+        if (! json_validate($value)) {
             return Content::where('ulid', $value)->first();
         }
 
-        if (empty($ulids)) {
-            return new Collection;
-        }
+        $ulids = json_decode($value);
 
         return Content::whereIn('ulid', $ulids)
             ->orderByRaw('FIELD(ulid, ' . implode(',', array_fill(0, count($ulids), '?')) . ')', $ulids)
             ->get();
-    }
-
-    private function hydrateValuesRecursively(mixed $value, Field $field): mixed
-    {
-        // Handle case where Content relationship was incorrectly loaded for rich-editor fields with slug 'content'
-        if ($field->field_type === 'rich-editor' && $value instanceof \Backstage\Models\Content) {
-            return ''; // Reset to empty string as rich-editor shouldn't store Content objects
-        }
-
-        if ($this->shouldHydrate()) {
-            [$hydrated, $result] = $this->tryHydrateViaClass($value, $field->field_type, $field);
-            if ($hydrated) {
-                return $result;
-            }
-        }
-
-        if ($this->shouldHydrate() && $field->hasRelation()) {
-            return static::getContentRelation($value);
-        }
-
-        if (is_array($value) && in_array($field->field_type, ['repeater', 'builder'])) {
-            if ($field->field_type === 'repeater') {
-                if (! $field->relationLoaded('children')) {
-                    $field->load('children');
-                }
-
-                if ($field->children->isEmpty()) {
-                    return $value;
-                }
-
-                foreach ($value as $index => &$item) {
-                    if (! is_array($item)) {
-                        continue;
-                    }
-                    $this->hydrateItemFields($item, $field->children);
-                }
-                unset($item);
-            } elseif ($field->field_type === 'builder') {
-                static $blockCache = [];
-
-                foreach ($value as $index => &$item) {
-                    if (! isset($item['type'], $item['data']) || ! is_array($item['data'])) {
-                        continue;
-                    }
-
-                    $blockSlug = $item['type'];
-
-                    if (! isset($blockCache[$blockSlug])) {
-                        $blockCache[$blockSlug] = \Backstage\Models\Block::where('slug', $blockSlug)
-                            ->with('fields')
-                            ->first();
-                    }
-
-                    $block = $blockCache[$blockSlug];
-
-                    if (! $block || $block->fields->isEmpty()) {
-                        continue;
-                    }
-
-                    $this->hydrateItemFields($item['data'], $block->fields);
-                }
-                unset($item);
-            }
-        }
-
-        return $value;
-    }
-
-    private function tryHydrateViaClass(mixed $value, string $fieldType, ?Field $fieldModel = null): array
-    {
-        $fieldClass = \Backstage\Fields\Facades\Fields::resolveField($fieldType);
-
-        if ($fieldClass) {
-            if (in_array(\Backstage\Fields\Contracts\HydratesValues::class, class_implements($fieldClass))) {
-                try {
-                    $instance = app($fieldClass);
-                    if ($fieldModel && property_exists($instance, 'field_model')) {
-                        $instance->field_model = $fieldModel;
-                    }
-
-                    return [true, $instance->hydrate($value, $this)];
-                } catch (\Throwable $e) {
-                    file_put_contents('/tmp/hydration_error.log', "Hydration error for $fieldType: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
-
-                    return [true, $value];
-                }
-            } else {
-                file_put_contents('/tmp/cfv_override_debug.log', "Class $fieldClass does not implement HydratesValues\n", FILE_APPEND);
-            }
-        } else {
-            file_put_contents('/tmp/cfv_override_debug.log', "Could not resolve field class for $fieldType\n", FILE_APPEND);
-        }
-
-        return [false, null];
-    }
-
-    private function hydrateItemFields(array &$data, $fields): void
-    {
-        foreach ($fields as $child) {
-            $key = null;
-            if (array_key_exists($child->ulid, $data)) {
-                $key = $child->ulid;
-            } elseif (array_key_exists($child->slug, $data)) {
-                $key = $child->slug;
-            }
-
-            if ($key) {
-                if ($child->field_type === 'rich-editor') {
-                    $html = self::getRichEditorHtml($data[$key] ?? '') ?? '';
-                    $data[$key] = $this->shouldHydrate() ? new HtmlString($html) : $html;
-                } else {
-                    $data[$key] = $this->hydrateValuesRecursively($data[$key], $child);
-                }
-            }
-        }
-    }
-
-    public function shouldHydrate(): bool
-    {
-        if (app()->runningInConsole()) {
-            return false;
-        }
-
-        if (! request()) {
-            return true;
-        }
-
-        $path = request()->path();
-
-        // Broad check for admin/cms/livewire paths
-        if (str($path)->contains(['admin', 'backstage', 'filament', 'livewire']) || request()->headers->has('X-Livewire-Id')) {
-            return false;
-        }
-
-        // Check if there is a Filament panel active
-        if (class_exists(\Filament\Facades\Filament::class) && \Filament\Facades\Filament::getCurrentPanel()) {
-            return false;
-        }
-
-        return true;
     }
 
     private function isRichEditor(): bool
@@ -269,9 +108,7 @@ class ContentFieldValue extends Pivot
 
     private function isJsonArray(): ?array
     {
-        // Use getRawOriginal to bypass the accessor and prevent relationship hydration
-        $rawValue = $this->getRawOriginal('value');
-        $decoded = json_decode($rawValue, true);
+        $decoded = json_decode($this->value, true);
 
         return is_array($decoded) ? $decoded : null;
     }

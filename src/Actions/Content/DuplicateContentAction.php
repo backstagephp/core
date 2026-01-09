@@ -40,27 +40,14 @@ class DuplicateContentAction extends ReplicateAction
                 }
             })
             ->after(function (Model $replica): void {
-                $this->getRecord()->load('values.media');
-
                 $replica->tags()->sync($this->getRecord()->tags->pluck('ulid')->toArray());
 
-                $this->getRecord()->values->each(function ($value) use ($replica) {
-                    $newValue = $replica->values()->updateOrCreate([
-                        'content_ulid' => $replica->getKey(),
-                        'field_ulid' => $value->field_ulid,
-                    ], [
-                        'value' => $value->value,
-                    ]);
-
-                    if ($value->media->isNotEmpty()) {
-                        $value->media->each(function ($mediaItem) use ($newValue) {
-                            $newValue->media()->attach($mediaItem->ulid, [
-                                'position' => $mediaItem->pivot->position ?? 1,
-                                'meta' => $mediaItem->pivot->meta ?? [],
-                            ]);
-                        });
-                    }
-                });
+                $this->getRecord()->values->each(fn ($value) => $replica->values()->updateOrCreate([
+                    'content_ulid' => $replica->getKey(),
+                    'field_ulid' => $value->field_ulid,
+                ], [
+                    'value' => $value->value,
+                ]));
             })
             // ->modalHeading(function () {
             //     return "Duplicate {$this->getRecord()->name} {$this->getRecord()->type->name}";
