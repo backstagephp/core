@@ -9,7 +9,6 @@ use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
 use Backstage\Http\Middleware\SetLocale;
 use Backstage\Listeners\ExecuteFormActions;
-use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
@@ -67,17 +66,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                     ->startWith(function (InstallCommand $command) {
                         $command->info('Welcome to the Backstage setup process.');
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
-                        $command->comment('Let\'s get started!');
+                        $command->comment("Let's get started!");
 
-                        // if ($command->confirm('Would you like us to install Backstage for you?', true)) {
                         $command->comment('Lights, camera, action! Setting up for the show...');
 
                         $command->comment('Preparing stage...');
-
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'translations-config',
-                            '--force' => true,
-                        ]);
 
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-config',
@@ -119,12 +112,27 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $path = app()->environmentFilePath();
                         file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
+                        if ($command->confirm('Would you like to create a user?', true)) {
+                            $command->comment('Our next performer is...');
+                            $user = $command->ask('Your name?');
+                            $email = $command->ask('Your email?');
+                            $password = $command->secret('Your password?');
+                            if ($email && $password) {
+                                User::factory()->create([
+                                    'name' => $user,
+                                    'email' => $email,
+                                    'password' => $password,
+                                ]);
+                            } else {
+                                $command->error('Stage frights! User not created.');
+                            }
+                        }
+
                         $command->comment('Raise the curtain...');
-                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
                         $command->info('The stage is cleared for a fresh start');
-                        $command->comment('You can now go on stage and start creating!');
+                        $command->comment('You can now go on stage (/backstage) and start creating!');
                     })
                     ->askToStarRepoOnGitHub('backstage/cms');
             });
@@ -195,6 +203,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
+            'content_field_value' => 'Backstage\Models\ContentFieldValue',
             'user' => ltrim(config('auth.providers.users.model', 'Backstage\Models\User'), '\\'),
         ]);
 
@@ -313,11 +322,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'navigation_icon' => 'heroicon-o-photo',
                 'navigation_sort' => null,
                 'navigation_count_badge' => false,
-                'resource' => MediaResource::class,
+                'resource' => \Backstage\Media\Resources\MediaResource::class,
             ],
         ];
 
-        config(['media-picker' => $config]);
+        config(['backstage.media' => $config]);
 
         return $config;
     }
@@ -378,7 +387,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['fields' => $config]);
+        config(['backstage.fields' => $config]);
 
         return $config;
     }
