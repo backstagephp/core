@@ -5,7 +5,7 @@
 <head>
     <title>{!! trim($pageTitle ?? $content->pageTitle) !!}</title>
 
-    @stack('head-first')
+    {{ $headFirst ?? '' }}
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -63,13 +63,13 @@
         <meta name="twitter:url" content="{{ $content->meta_tags['og_url'] ?? $content->url }}">
     @endif
 
-    @stack('head-last')
+    {{ $headLast ?? '' }}
 </head>
 
 <body>
-    @stack('body-first')
+    {{ $bodyFirst ?? '' }}
     {{ $slot }}
-    @stack('body-last')
+    {{ $bodyLast ?? '' }}
 </body>
 
 </html>

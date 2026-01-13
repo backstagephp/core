@@ -199,28 +199,17 @@ class ContentResource extends Resource
                     ->schema([
                         Tabs::make('Tabs')
                             ->columnSpan(8)
-                            ->key(fn ($livewire) => 'main-tabs-' . ($livewire->formVersion ?? 0))
                             ->tabs([
                                 Tab::make(self::$type->slug)
                                     ->icon('heroicon-o-' . self::$type->icon)
                                     ->label(__(self::$type->name))
-                                    ->key(function ($livewire) {
-                                        $v = $livewire->formVersion ?? 0;
-
-                                        return 'tab-' . self::$type->slug . '-' . $v;
-                                    })
                                     ->schema([
                                         Hidden::make('type_slug')
                                             ->default(self::$type->slug),
                                         Grid::make()
                                             ->columns(1)
-                                            ->key(function ($livewire) {
-                                                $v = $livewire->formVersion ?? 0;
-
-                                                return 'dynamic-fields-grid-' . $v;
-                                            })
-                                            ->schema(function ($livewire) {
-                                                return self::getTypeInputs($livewire);
+                                            ->schema(function () {
+                                                return self::getTypeInputs();
                                             }),
                                     ]),
                                 Tab::make('meta')
@@ -403,6 +392,10 @@ class ContentResource extends Resource
                                                 ->formatStateUsing(fn ($state, ?Content $record) => $state ?? $record->language_code ?? null),
                                         ]),
                                     ]),
+                                // Tab::make('microdata')
+                                //     ->label(__('Microdata'))
+                                //     ->icon('heroicon-o-code-bracket-square')
+                                //     ->schema([]),
                                 Tab::make('template')
                                     ->label(__('Template'))
                                     ->icon('heroicon-o-clipboard')
@@ -635,11 +628,6 @@ class ContentResource extends Resource
         return $instance->traitResolveFormFields($record);
     }
 
-    public static function setStaticType(?Type $type): void
-    {
-        self::$type = $type;
-    }
-
     private static function resolveFieldInput(mixed $field, Collection $customFields, mixed $record = null, bool $isNested = false): ?object
     {
         $instance = new self;
@@ -647,50 +635,32 @@ class ContentResource extends Resource
         return $instance->traitResolveFieldInput($field, $customFields, $record, $isNested);
     }
 
-    public static function getTypeInputs($livewire = null)
+    public static function getTypeInputs()
     {
-        $v = $livewire->formVersion ?? 0;
-        $typeSlug = self::$type->slug ?? 'NULL';
-
         $groups = [];
-        $fields = self::$type->fields;
-
-        if ($fields instanceof \Illuminate\Database\Eloquent\Collection) {
-            $fields = $fields->unique('ulid');
-        } else {
-            $fields = collect($fields)->unique('ulid');
-        }
-
-        $fields->filter(fn ($field) => self::$type->name_field !== $field->slug)
-            ->each(function ($field) use (&$groups, $v) {
+        collect(self::$type->fields)
+            ->filter(fn ($field) => self::$type->name_field !== $field->slug)
+            ->each(function ($field) use (&$groups) {
                 $resolvedField = self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
                 if ($resolvedField) {
-                    if (method_exists($resolvedField, 'key')) {
-                        $resolvedField->key($field->ulid . '-' . $v);
-                    }
-                    if (method_exists($resolvedField, 'id')) {
-                        $resolvedField->id($field->ulid . '-' . $v);
-                    }
-
                     $groups[$field->group ?? null][] = $resolvedField;
                 }
             });
 
-        return collect($groups)->map(function ($fields, $group) use ($v) {
+        return collect($groups)->map(function ($fields, $group) {
             if (empty($group)) {
-                return Grid::make(1)
-                    ->key('dynamic-group-default-' . $v)
-                    ->schema($fields);
+                return Grid::make(1)->schema($fields);
             }
 
             return Section::make($group)
-                ->key('dynamic-group-' . Str::slug($group) . '-' . $v)
                 ->collapsible()
                 ->collapsed()
                 ->compact()
                 ->label(__($group))
-                ->schema($fields);
-        })->values()->all();
+                ->schema([
+                    Grid::make(1)->schema($fields),
+                ]);
+        })->values()->toArray();
     }
 
     public static function tableDatabase(Table $table, Type $type): Table
@@ -1138,7 +1108,7 @@ class ContentResource extends Resource
                     return $state;
                 }
 
-                if (! $type || ! $type->og_image_fields || empty($type->og_image_fields) || ! $record) {
+                if (! $type->og_image_fields || empty($type->og_image_fields) || ! $record) {
                     return [];
                 }
 
