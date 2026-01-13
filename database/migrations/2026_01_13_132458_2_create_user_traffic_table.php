@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create(config('users.eloquent.user_traffic.table', 'user_traffic'), function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            
+
             $table->string('method', 10);
             $table->string('path');
             $table->text('full_url');

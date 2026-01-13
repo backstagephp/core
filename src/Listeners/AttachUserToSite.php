@@ -1,10 +1,11 @@
 <?php
+
 namespace Backstage\Listeners;
 
+use Backstage\Laravel\Users\Events\Auth\UserCreated;
 use Backstage\Models\Site;
 use Backstage\Models\User;
 use Filament\Facades\Filament;
-use Backstage\Laravel\Users\Events\Auth\UserCreated;
 
 class AttachUserToSite
 {
@@ -16,7 +17,7 @@ class AttachUserToSite
         /** @var User $user */
         $user = $event->user;
 
-        if (!$site) {
+        if (! $site) {
             return;
         }
 
