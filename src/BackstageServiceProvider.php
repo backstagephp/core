@@ -2,48 +2,51 @@
 
 namespace Backstage;
 
-use Backstage\Commands\BackstageSeedCommand;
-use Backstage\Commands\BackstageUpgrade;
-use Backstage\CustomFields\Builder;
-use Backstage\CustomFields\CheckboxList;
-use Backstage\Events\FormSubmitted;
-use Backstage\Http\Middleware\SetLocale;
-use Backstage\Listeners\ExecuteFormActions;
-use Backstage\Media\Resources\MediaResource;
-use Backstage\Models\Block;
-use Backstage\Models\Media;
+use Carbon\Carbon;
 use Backstage\Models\Menu;
 use Backstage\Models\Site;
 use Backstage\Models\Type;
 use Backstage\Models\User;
+use Backstage\Models\Block;
+use Backstage\Models\Media;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Str;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
+use Backstage\CustomFields\Builder;
+use Backstage\Events\FormSubmitted;
+use Backstage\View\Components\Page;
 use Backstage\Observers\MenuObserver;
-use Backstage\Providers\RequestServiceProvider;
-use Backstage\Providers\RouteServiceProvider;
-use Backstage\Resources\ContentResource;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
-use Backstage\View\Components\Page;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Notifications\Livewire\Notifications;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\VerticalAlignment;
-use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
+use Backstage\Commands\BackstageUpgrade;
+use Backstage\CustomFields\CheckboxList;
+use Backstage\Http\Middleware\SetLocale;
+use Backstage\Resources\ContentResource;
+use Backstage\Listeners\AttachUserToSite;
+use Backstage\Listeners\ExecuteFormActions;
+use Filament\Support\Facades\FilamentAsset;
+use Backstage\Commands\BackstageSeedCommand;
+use Backstage\Providers\RouteServiceProvider;
+use Filament\Support\Enums\VerticalAlignment;
+use Livewire\Features\SupportTesting\Testable;
+use Backstage\Providers\RequestServiceProvider;
+use Filament\Notifications\Livewire\Notifications;
+use Backstage\Laravel\Users\Events\Auth\UserCreated;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Backstage\Filament\Users\Resources\RoleResource\RoleResource;
+use Backstage\Filament\Users\Resources\UserResource\UserResource;
 
 class BackstageServiceProvider extends PackageServiceProvider
 {
@@ -67,17 +70,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                     ->startWith(function (InstallCommand $command) {
                         $command->info('Welcome to the Backstage setup process.');
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
-                        $command->comment('Let\'s get started!');
+                        $command->comment("Let's get started!");
 
-                        // if ($command->confirm('Would you like us to install Backstage for you?', true)) {
                         $command->comment('Lights, camera, action! Setting up for the show...');
 
                         $command->comment('Preparing stage...');
-
-                        $command->callSilently('vendor:publish', [
-                            '--tag' => 'translations-config',
-                            '--force' => true,
-                        ]);
 
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-config',
@@ -119,12 +116,27 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $path = app()->environmentFilePath();
                         file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
+                        if ($command->confirm('Would you like to create a user?', true)) {
+                            $command->comment('Our next performer is...');
+                            $user = $command->ask('Your name?');
+                            $email = $command->ask('Your email?');
+                            $password = $command->secret('Your password?');
+                            if ($email && $password) {
+                                User::factory()->create([
+                                    'name' => $user,
+                                    'email' => $email,
+                                    'password' => $password,
+                                ]);
+                            } else {
+                                $command->error('Stage frights! User not created.');
+                            }
+                        }
+
                         $command->comment('Raise the curtain...');
-                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
                         $command->info('The stage is cleared for a fresh start');
-                        $command->comment('You can now go on stage and start creating!');
+                        $command->comment('You can now go on stage (/backstage) and start creating!');
                     })
                     ->askToStarRepoOnGitHub('backstage/cms');
             });
@@ -195,6 +207,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
+            'content_field_value' => 'Backstage\Models\ContentFieldValue',
             'user' => ltrim(config('auth.providers.users.model', 'Backstage\Models\User'), '\\'),
         ]);
 
@@ -233,6 +246,11 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Notifications::verticalAlignment(VerticalAlignment::End);
         Notifications::alignment(Alignment::End);
+
+        config('backstage.users.resources.users', UserResource::class)::scopeToTenant(false);
+        config('backstage.users.resources.roles', RoleResource::class)::scopeToTenant(false);
+
+        Event::listen(UserCreated::class, AttachUserToSite::class);
     }
 
     protected function getAssetPackageName(): ?string
@@ -313,11 +331,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'navigation_icon' => 'heroicon-o-photo',
                 'navigation_sort' => null,
                 'navigation_count_badge' => false,
-                'resource' => MediaResource::class,
+                'resource' => \Backstage\Media\Resources\MediaResource::class,
             ],
         ];
 
-        config(['media-picker' => $config]);
+        config(['backstage.media' => $config]);
 
         return $config;
     }
@@ -378,7 +396,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['fields' => $config]);
+        config(['backstage.fields' => $config]);
 
         return $config;
     }

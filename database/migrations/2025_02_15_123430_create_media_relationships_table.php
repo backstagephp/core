@@ -21,8 +21,10 @@ return new class extends Migration
                 ->on(app(config('backstage.media.model', \Backstage\Media\Models\Media::class))->getTable())
                 ->cascadeOnDelete();
 
-            // Polymorphic model relationship
-            $table->morphs('model');
+            // Polymorphic model relationship (String ID support)
+            $table->string('model_type');
+            $table->string('model_id', 36);
+            $table->index(['model_type', 'model_id']);
 
             // Optional position for each relationship
             $table->unsignedInteger('position')->nullable();

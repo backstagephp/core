@@ -37,7 +37,33 @@ class Builder extends Base implements FieldContract
                 ->collapsible()
                 ->blocks(
                     self::getBlockOptions()
-                ),
+                )
+                ->reorderAction(function ($action) {
+                    return $action->action(function (array $arguments, Input $component): void {
+                        $currentState = $component->getRawState();
+                        $newOrder = $arguments['items'];
+
+                        $reorderedItems = [];
+
+                        foreach ($newOrder as $key) {
+                            if (isset($currentState[$key])) {
+                                $reorderedItems[$key] = $currentState[$key];
+                            }
+                        }
+
+                        foreach ($currentState as $key => $value) {
+                            if (! array_key_exists($key, $reorderedItems)) {
+                                $reorderedItems[$key] = $value;
+                            }
+                        }
+
+                        $component->rawState($reorderedItems);
+
+                        $component->callAfterStateUpdated();
+
+                        $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
+                    });
+                }),
             $field
         );
 
