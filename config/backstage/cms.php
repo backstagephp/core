@@ -1,5 +1,7 @@
 <?php
 
+use Backstage\Filament\Users\Resources\UserResource\UserResource;
+
 return [
     'panel' => [
         'default' => true,
@@ -25,7 +27,7 @@ return [
             // Backstage\Resources\MediaResource::class,
             // Backstage\Resources\TemplateResource::class,
             Backstage\Resources\TypeResource::class,
-            Backstage\Resources\UserResource::class,
+            Backstage\Filament\Users\Resources\UserResource\UserResource::class,
         ],
 
         'widgets' => [
