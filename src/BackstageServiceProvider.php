@@ -365,7 +365,6 @@ class BackstageServiceProvider extends PackageServiceProvider
         $configContent .= "use Backstage\Models\Site;\n";
         $configContent .= "use Backstage\CustomFields\Builder;\n";
         $configContent .= "use Backstage\CustomFields\CheckboxList;\n";
-        $configContent .= "use Backstage\CustomFields\Select;\n";
         $configContent .= "use Backstage\Resources\ContentResource;\n";
 
         // Custom export function to create more readable output
