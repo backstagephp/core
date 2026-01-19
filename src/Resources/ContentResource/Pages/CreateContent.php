@@ -5,6 +5,7 @@ namespace Backstage\Resources\ContentResource\Pages;
 use Backstage\Fields\Concerns\CanMapDynamicFields;
 use Backstage\Fields\Concerns\PersistsContentData;
 use Backstage\Resources\ContentResource;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateContent extends CreateRecord
@@ -48,6 +49,10 @@ class CreateContent extends CreateRecord
 
         unset($data['tags']);
         unset($data['values']);
+
+        if (! isset($data['site_ulid']) && Filament::getTenant()) {
+            $data['site_ulid'] = Filament::getTenant()->ulid;
+        }
 
         return $data;
     }

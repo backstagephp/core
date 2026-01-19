@@ -177,7 +177,7 @@ class ContentResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        self::$type = Type::firstWhere('slug', ($schema->getLivewire()->data['type_slug'] ?? $schema->getRecord()->type_slug));
+        self::$type = Type::firstWhere('slug', ($schema->getLivewire()->data['type_slug'] ?? $schema->getRecord()?->type_slug));
 
         return $schema
             ->components([
