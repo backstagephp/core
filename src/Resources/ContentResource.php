@@ -147,7 +147,7 @@ class ContentResource extends Resource
 
     private static function applyParentQueryFilters(EloquentBuilder $query, $form): EloquentBuilder
     {
-        if (self::$type->parent_filters) {
+        if (self::$type?->parent_filters) {
             $query->where(function ($query) {
                 foreach (self::$type->parent_filters as $filter) {
                     $query->where(
@@ -451,7 +451,7 @@ class ContentResource extends Resource
                                             )
                                             ->searchable()
                                             ->withCount()
-                                            ->required(fn () => self::$type->parent_required)
+                                            ->required(fn () => self::$type?->parent_required ?? false)
                                             ->rules([
                                                 Rule::exists('content', 'ulid')
                                                     ->where('language_code', $schema->getLivewire()->data['language_code'] ?? null),
@@ -478,7 +478,7 @@ class ContentResource extends Resource
 
                                         Toggle::make('public')
                                             ->label(__('Public'))
-                                            ->default(fn () => self::$type->public ?? true)
+                                            ->default(fn () => self::$type?->public ?? true)
                                             ->onIcon('heroicon-s-check')
                                             ->offIcon('heroicon-s-x-mark')
                                             ->inline(false)
@@ -650,7 +650,7 @@ class ContentResource extends Resource
     public static function getTypeInputs($livewire = null)
     {
         $v = $livewire->formVersion ?? 0;
-        $typeSlug = self::$type->slug ?? 'NULL';
+        $typeSlug = self::$type?->slug ?? 'NULL';
 
         $groups = [];
         $fields = self::$type->fields;

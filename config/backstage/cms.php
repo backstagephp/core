@@ -1,7 +1,5 @@
 <?php
 
-use Backstage\Filament\Users\Resources\UserResource\UserResource;
-
 return [
     'panel' => [
         'default' => true,
@@ -9,6 +7,7 @@ return [
         'plugins' => [
             Backstage\Redirects\Filament\RedirectsPlugin::make(),
             Backstage\Media\MediaPlugin::make(),
+            Backstage\Filament\Users\UsersPlugin::make(),
             // Backstage\Translations\Filament\TranslationsPlugin::make(),
         ],
 
