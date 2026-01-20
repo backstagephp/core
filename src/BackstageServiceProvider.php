@@ -7,12 +7,9 @@ use Backstage\Commands\BackstageUpgrade;
 use Backstage\CustomFields\Builder;
 use Backstage\CustomFields\CheckboxList;
 use Backstage\Events\FormSubmitted;
-use Backstage\Filament\Users\Resources\RoleResource\RoleResource;
-use Backstage\Filament\Users\Resources\UserResource\UserResource;
 use Backstage\Http\Middleware\SetLocale;
-use Backstage\Laravel\Users\Events\Auth\UserCreated;
-use Backstage\Listeners\AttachUserToSite;
 use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Media\Resources\MediaResource;
 use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
@@ -70,11 +67,17 @@ class BackstageServiceProvider extends PackageServiceProvider
                     ->startWith(function (InstallCommand $command) {
                         $command->info('Welcome to the Backstage setup process.');
                         $command->comment("Don't trip over the wires; this is where the magic happens.");
-                        $command->comment("Let's get started!");
+                        $command->comment('Let\'s get started!');
 
+                        // if ($command->confirm('Would you like us to install Backstage for you?', true)) {
                         $command->comment('Lights, camera, action! Setting up for the show...');
 
                         $command->comment('Preparing stage...');
+
+                        $command->callSilently('vendor:publish', [
+                            '--tag' => 'translations-config',
+                            '--force' => true,
+                        ]);
 
                         $command->callSilently('vendor:publish', [
                             '--tag' => 'backstage-config',
@@ -116,27 +119,12 @@ class BackstageServiceProvider extends PackageServiceProvider
                         $path = app()->environmentFilePath();
                         file_put_contents($path, file_get_contents($path) . PHP_EOL . $key . '=' . $value);
 
-                        if ($command->confirm('Would you like to create a user?', true)) {
-                            $command->comment('Our next performer is...');
-                            $user = $command->ask('Your name?');
-                            $email = $command->ask('Your email?');
-                            $password = $command->secret('Your password?');
-                            if ($email && $password) {
-                                User::factory()->create([
-                                    'name' => $user,
-                                    'email' => $email,
-                                    'password' => $password,
-                                ]);
-                            } else {
-                                $command->error('Stage frights! User not created.');
-                            }
-                        }
-
                         $command->comment('Raise the curtain...');
+                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
                         $command->info('The stage is cleared for a fresh start');
-                        $command->comment('You can now go on stage (/backstage) and start creating!');
+                        $command->comment('You can now go on stage and start creating!');
                     })
                     ->askToStarRepoOnGitHub('backstage/cms');
             });
@@ -207,7 +195,6 @@ class BackstageServiceProvider extends PackageServiceProvider
             'site' => 'Backstage\Models\Site',
             'tag' => 'Backstage\Models\Tag',
             'type' => 'Backstage\Models\Type',
-            'content_field_value' => 'Backstage\Models\ContentFieldValue',
             'user' => ltrim(config('auth.providers.users.model', 'Backstage\Models\User'), '\\'),
         ]);
 
@@ -246,11 +233,6 @@ class BackstageServiceProvider extends PackageServiceProvider
 
         Notifications::verticalAlignment(VerticalAlignment::End);
         Notifications::alignment(Alignment::End);
-
-        config('backstage.users.resources.users', UserResource::class)::scopeToTenant(false);
-        config('backstage.users.resources.roles', RoleResource::class)::scopeToTenant(false);
-
-        Event::listen(UserCreated::class, AttachUserToSite::class);
     }
 
     protected function getAssetPackageName(): ?string
@@ -331,11 +313,11 @@ class BackstageServiceProvider extends PackageServiceProvider
                 'navigation_icon' => 'heroicon-o-photo',
                 'navigation_sort' => null,
                 'navigation_count_badge' => false,
-                'resource' => \Backstage\Media\Resources\MediaResource::class,
+                'resource' => MediaResource::class,
             ],
         ];
 
-        config(['backstage.media' => $config]);
+        config(['media-picker' => $config]);
 
         return $config;
     }
@@ -365,6 +347,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         $configContent .= "use Backstage\Models\Site;\n";
         $configContent .= "use Backstage\CustomFields\Builder;\n";
         $configContent .= "use Backstage\CustomFields\CheckboxList;\n";
+        $configContent .= "use Backstage\CustomFields\Select;\n";
         $configContent .= "use Backstage\Resources\ContentResource;\n";
 
         // Custom export function to create more readable output
@@ -395,7 +378,7 @@ class BackstageServiceProvider extends PackageServiceProvider
             ],
         ];
 
-        config(['backstage.fields' => $config]);
+        config(['fields' => $config]);
 
         return $config;
     }
