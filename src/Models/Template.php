@@ -34,6 +34,6 @@ class Template extends Model
 
     public function sites(): BelongsToMany
     {
-        return $this->belongsToMany(Site::class);
+        return $this->belongsToMany(Site::class, 'site_template', 'template_slug', 'site_ulid');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Backstage\Models;
 
+use Backstage\Models\Concerns\BelongsToCurrentTenant;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Domain extends Model
 {
+    use BelongsToCurrentTenant;
     use HasPackageFactory;
     use HasUlids;
 

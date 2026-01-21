@@ -2,6 +2,7 @@
 
 namespace Backstage\Models;
 
+use Backstage\Models\Concerns\BelongsToCurrentTenant;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Menu extends Model
 {
+    use BelongsToCurrentTenant;
     use HasPackageFactory;
 
     protected $primaryKey = 'slug';

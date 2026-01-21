@@ -39,7 +39,7 @@ class Block extends Model
 
     public function sites(): BelongsToMany
     {
-        return $this->belongsToMany(Site::class);
+        return $this->belongsToMany(Site::class, 'block_site', 'block_ulid', 'site_ulid');
     }
 
     public function render(): HtmlString

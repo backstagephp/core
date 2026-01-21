@@ -32,7 +32,7 @@ class Type extends Model
 
     public function sites(): BelongsToMany
     {
-        return $this->belongsToMany(Site::class);
+        return $this->belongsToMany(Site::class, 'site_type', 'type_slug', 'site_ulid');
     }
 
     public function getTemplateAttribute(): string

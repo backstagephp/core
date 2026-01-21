@@ -3,6 +3,7 @@
 namespace Backstage\Models;
 
 use Backstage\Fields\Models\Field;
+use Backstage\Models\Concerns\BelongsToCurrentTenant;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Form extends Model
 {
+    use BelongsToCurrentTenant;
     use HasPackageFactory;
 
     protected $primaryKey = 'slug';

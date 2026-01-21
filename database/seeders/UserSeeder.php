@@ -15,44 +15,44 @@ class UserSeeder extends Seeder
     {
         User::factory()->state([
             'name' => 'Mark',
-            'email' => 'mark@ux.nl',
-            'password' => 'mark@ux.nl',
+            'email' => 'mark@vk10.nl',
+            'password' => 'mark@vk10.nl',
         ])->create();
 
         User::factory([
-            'name' => 'Manoj',
-            'email' => 'manoj@ux.nl',
-            'password' => 'manoj@ux.nl',
+            'name' => 'Rob',
+            'email' => 'rob@vk10.nl',
+            'password' => 'rob@vk10.nl',
         ])->create();
 
         User::factory()->state([
             'name' => 'Mathieu',
-            'email' => 'mathieu@ux.nl',
-            'password' => 'mathieu@ux.nl',
+            'email' => 'mathieu@vk10.nl',
+            'password' => 'mathieu@vk10.nl',
         ])->create();
 
         User::factory()->state([
             'name' => 'Bas',
-            'email' => 'bas@ux.nl',
-            'password' => 'bas@ux.nl',
+            'email' => 'bas@vk10.nl',
+            'password' => 'bas@vk10.nl',
         ])->create();
 
         User::factory([
             'name' => 'Yoni',
-            'email' => 'yoni@ux.nl',
-            'password' => 'yoni@ux.nl',
+            'email' => 'yoni@vk10.nl',
+            'password' => 'yoni@vk10.nl',
         ])->create();
 
         User::factory([
             'name' => 'Patrick',
-            'email' => 'patrick@ux.nl',
-            'password' => 'patrick@ux.nl',
+            'email' => 'patrick@vk10.nl',
+            'password' => 'patrick@vk10.nl',
         ])->create();
 
         User::factory([
             'name' => 'Sandro',
-            'email' => 'sandro@ux.nl',
-            'password' => 'sandro@ux.nl',
+            'email' => 'sandro@vk10.nl',
+            'password' => 'sandro@vk10.nl',
         ])->create();
 
         Site::default()->users()->attach(User::all());

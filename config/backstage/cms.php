@@ -7,6 +7,7 @@ return [
         'plugins' => [
             Backstage\Redirects\Filament\RedirectsPlugin::make(),
             Backstage\Media\MediaPlugin::make(),
+            Backstage\Filament\Users\UsersPlugin::make(),
             // Backstage\Translations\Filament\TranslationsPlugin::make(),
         ],
 
@@ -22,10 +23,10 @@ return [
             Backstage\Resources\SettingResource::class,
             Backstage\Resources\SiteResource::class,
             Backstage\Resources\TagResource::class,
-            Backstage\Media\Resources\MediaResource::class,
+            // Backstage\Resources\MediaResource::class,
             // Backstage\Resources\TemplateResource::class,
             Backstage\Resources\TypeResource::class,
-            Backstage\Resources\UserResource::class,
+            Backstage\Filament\Users\Resources\UserResource\UserResource::class,
         ],
 
         'widgets' => [

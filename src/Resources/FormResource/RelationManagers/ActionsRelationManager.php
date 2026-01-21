@@ -9,7 +9,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -174,12 +173,6 @@ class ActionsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->slideOver()
-                    ->mutateDataUsing(function (array $data) {
-                        return [
-                            ...$data,
-                            'site_ulid' => Filament::getTenant()->ulid,
-                        ];
-                    })
                     ->after(function (Component $livewire) {
                         $livewire->dispatch('refreshFields');
                     }),

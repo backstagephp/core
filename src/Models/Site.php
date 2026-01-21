@@ -61,17 +61,17 @@ class Site extends Model
 
     public function types(): BelongsToMany
     {
-        return $this->belongsToMany(Type::class);
+        return $this->belongsToMany(Type::class, 'site_type', 'site_ulid', 'type_slug');
     }
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'site_user', 'site_ulid', 'user_id');
     }
 
     public function blocks(): BelongsToMany
     {
-        return $this->belongsToMany(Block::class);
+        return $this->belongsToMany(Block::class, 'block_site', 'site_ulid', 'block_ulid');
     }
 
     public function forms(): HasMany
