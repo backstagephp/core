@@ -693,10 +693,26 @@ class ContentResource extends Resource
         })->values()->all();
     }
 
+    private static function orderedIdColumn(): TextColumn
+    {
+        $showOrderedId = config(
+            'backstage.cms.show_ordered_id_in_content_overview',
+            config('backstage.cms.show_id_in_content_overview', false)
+        );
+
+        return TextColumn::make('ordered_id')
+            ->label(__('ID'))
+            ->sortable(fn () => $showOrderedId)
+            ->searchable(fn () => $showOrderedId)
+            ->visible(fn () => $showOrderedId);
+    }
+
     public static function tableDatabase(Table $table, Type $type): Table
     {
         return $table
             ->columns([
+                self::orderedIdColumn(),
+
                 IconColumn::make('published')
                     ->label(null)
                     ->width(1)
@@ -814,6 +830,8 @@ class ContentResource extends Resource
     {
         return $table
             ->columns([
+                self::orderedIdColumn(),
+
                 IconColumn::make('published')
                     ->label(null)
                     ->width(1)
