@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        if (Schema::hasColumn('fields', 'schema_id')) {
+            return;
+        }
+
+        Schema::table('fields', function (Blueprint $table) {
+            $table->ulid('schema_id')->nullable()->after('group');
+            $table->foreign('schema_id')->references('ulid')->on('schemas')->onDelete('set null');
+        });
+    }
+
+    public function down()
+    {
+        if (! Schema::hasColumn('fields', 'schema_id')) {
+            return;
+        }
+
+        Schema::table('fields', function (Blueprint $table) {
+            $table->dropForeign(['schema_id']);
+            $table->dropColumn('schema_id');
+        });
+    }
+};
