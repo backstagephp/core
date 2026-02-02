@@ -13,6 +13,7 @@ use Backstage\Http\Middleware\SetLocale;
 use Backstage\Laravel\Users\Events\Auth\UserCreated;
 use Backstage\Listeners\AttachUserToSite;
 use Backstage\Listeners\ExecuteFormActions;
+use Backstage\Listeners\UpdateMenuItemUrls;
 use Backstage\Models\Block;
 use Backstage\Models\Media;
 use Backstage\Models\Menu;
@@ -22,6 +23,7 @@ use Backstage\Models\User;
 use Backstage\Observers\MenuObserver;
 use Backstage\Providers\RequestServiceProvider;
 use Backstage\Providers\RouteServiceProvider;
+use Backstage\Redirects\Laravel\Events\UrlHasChanged;
 use Backstage\Resources\ContentResource;
 use Backstage\Testing\TestsBackstage;
 use Backstage\View\Components\Blocks;
@@ -231,6 +233,7 @@ class BackstageServiceProvider extends PackageServiceProvider
         Menu::observe(MenuObserver::class);
 
         Event::listen(FormSubmitted::class, ExecuteFormActions::class);
+        Event::listen(UrlHasChanged::class, UpdateMenuItemUrls::class);
 
         $this->app->register(RequestServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);

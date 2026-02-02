@@ -198,11 +198,9 @@ class Content extends Model
             );
         }
 
-        $this->load('site');
+        $this->loadMissing('site');
 
         $url = rtrim($this->pathPrefix . $this->path, '/');
-
-        $this->load('site');
 
         if ($this->site->trailing_slash) {
             $url .= '/';
@@ -263,19 +261,28 @@ class Content extends Model
         }
 
         if ($site) {
-            $domain = $site->domains()->with([
-                'languages' => function ($query) use ($languageCode) {
-                    $query->where('code', $languageCode);
-                    $query->limit(1);
-                },
-            ])
-                ->where('environment', config('app.env'))
-                ->first();
+            // Use already-loaded domains if available, otherwise query
+            if ($site->relationLoaded('domains')) {
+                $domain = $site->domains
+                    ->where('environment', config('app.env'))
+                    ->first();
+            } else {
+                $domain = $site->domains()
+                    ->where('environment', config('app.env'))
+                    ->first();
+            }
+
+            // Load all languages if we have a domain and they're not already loaded
+            // This ensures that when multiple content items reference the same domain
+            // with different languages, all languages are available
+            if ($domain && ! $domain->relationLoaded('languages')) {
+                $domain->load('languages');
+            }
 
             if ($domain) {
                 $url .= 'https://' . $domain->name;
                 $url .= $site->path ? '/' . trim($site->path, '/') : '';
-                if ($language = $domain->languages->first()) {
+                if ($domain->relationLoaded('languages') && ($language = $domain->languages->where('code', $languageCode)->first())) {
                     $url .= $language->pivot->path ? '/' . trim($language->pivot->path, '/') : '';
                 }
             }

@@ -12,6 +12,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -59,15 +60,37 @@ class MenuItemResource extends Resource
                                 Grid::make(2)
                                     ->schema([
                                         Select::make('parent_ulid')
-                                            ->relationship('parent', 'name', function ($query) use ($schema) {
-                                                $query->when($schema->getRecord()->menu_slug ?? null, function ($query, $slug) {
-                                                    $query->where('menu_slug', $slug);
-                                                });
-                                                $query->where('ulid', '!=', $schema->getRecord()->ulid ?? null);
-                                            })
-                                            ->preload()
                                             ->label('Parent')
+                                            ->searchable()
+                                            ->relationship(
+                                                name: 'parent',
+                                                titleAttribute: 'name',
+                                                modifyQueryUsing: function ($query, $livewire) use ($schema) {
+                                                    // Try to get menu_slug from the current record
+                                                    $menuSlug = $schema->getRecord()?->menu_slug;
+
+                                                    // If not available (create mode in RelationManager), get from owner
+                                                    if (!$menuSlug && method_exists($livewire, 'getOwnerRecord')) {
+                                                        $owner = $livewire->getOwnerRecord();
+                                                        if ($owner) {
+                                                            $menuSlug = $owner->slug;
+                                                        }
+                                                    }
+
+                                                    if ($menuSlug) {
+                                                        $query->where('menu_slug', $menuSlug);
+                                                    }
+
+                                                    if ($schema->getRecord()?->ulid) {
+                                                        $query->where('ulid', '!=', $schema->getRecord()->ulid);
+                                                    }
+
+                                                    return $query->orderBy('name');
+                                                }
+                                            )
+                                            ->preload()
                                             ->columnSpan(2),
+
                                         TextInput::make('name')
                                             ->columnSpan(1)
                                             ->required()
@@ -81,11 +104,13 @@ class MenuItemResource extends Resource
                                             ->required()
                                             ->unique(ignoreRecord: true),
 
+                                        Hidden::make('content_ulid'),
+
                                         TextInput::make('url')
                                             ->label('URL')
                                             ->columnSpan(2)
-                                            ->suffixAction(
-                                                Action::make('content')
+                                            ->suffixActions([
+                                                Action::make('link_content')
                                                     ->icon('heroicon-o-link')
                                                     ->modal()
                                                     ->modalHeading('Select Content')
@@ -111,9 +136,10 @@ class MenuItemResource extends Resource
                                                         $content = Content::where('ulid', $data['content_ulid'])->first();
                                                         if ($content) {
                                                             $set('url', $content->url);
+                                                            $set('content_ulid', $content->ulid);
                                                         }
-                                                    })
-                                            )
+                                                    }),
+                                            ])
                                             ->required(),
 
                                         Checkbox::make('target')

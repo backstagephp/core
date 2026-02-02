@@ -19,6 +19,9 @@ class BackstageUpgrade extends Command
             '--tag' => 'backstage-migrations',
             '--force' => true,
         ]);
+        $this->call('vendor:publish', [
+            '--tag' => 'backstage-config'
+        ]);
         $this->call('migrate', [
             '--force' => true,
         ]);

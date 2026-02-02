@@ -453,8 +453,19 @@ class ContentResource extends Resource
                                             ->withCount()
                                             ->required(fn () => self::$type?->parent_required ?? false)
                                             ->rules([
-                                                Rule::exists('content', 'ulid')
-                                                    ->where('language_code', $schema->getLivewire()->data['language_code'] ?? null),
+                                                function (Get $get) use ($schema) {
+                                                    $languageCode = $get('language_code')
+                                                        ?? $schema->getLivewire()->data['language_code']
+                                                        ?? $schema->getRecord()?->language_code;
+
+                                                    $rule = Rule::exists('content', 'ulid');
+
+                                                    if ($languageCode) {
+                                                        $rule->where('language_code', $languageCode);
+                                                    }
+
+                                                    return $rule;
+                                                },
                                             ])
                                             ->enableBranchNode()
                                             ->default(function (Get $get) use ($schema) {
@@ -702,8 +713,8 @@ class ContentResource extends Resource
 
         return TextColumn::make('ordered_id')
             ->label(__('ID'))
-            ->sortable(fn () => $showOrderedId)
-            ->searchable(fn () => $showOrderedId)
+            ->sortable($showOrderedId)
+            ->searchable($showOrderedId)
             ->visible(fn () => $showOrderedId);
     }
 
@@ -1040,6 +1051,41 @@ class ContentResource extends Resource
                         $data = $instance->traitMutateBeforeFill($data);
 
                         return $data;
+                    })
+                    ->using(function (Content $record, array $data): Content {
+                        $valuesData = $data['values'] ?? [];
+                        $tagsData = $data['tags'] ?? [];
+
+                        unset($data['tags'], $data['values']);
+
+                        $data['edited_at'] = now();
+
+                        $record->update($data);
+
+                        $tags = collect($tagsData)
+                            ->filter(fn ($tag) => filled($tag))
+                            ->map(fn (string $tag) => Tag::firstOrCreate([
+                                'name' => $tag,
+                                'slug' => Str::slug($tag),
+                            ]))
+                            ->each(fn (Tag $tag) => $tag->sites()->syncWithoutDetaching($record->site));
+
+                        $record->tags()->sync($tags->pluck('ulid')->toArray());
+
+                        if (! empty($valuesData)) {
+                            foreach ($valuesData as $fieldUlid => $value) {
+                                $record->values()->updateOrCreate([
+                                    'content_ulid' => $record->getKey(),
+                                    'field_ulid' => $fieldUlid,
+                                ], [
+                                    'value' => is_array($value) ? json_encode($value) : $value,
+                                ]);
+                            }
+                        }
+
+                        $record->authors()->syncWithoutDetaching(auth()->id());
+
+                        return $record;
                     }),
             ])->filtersTriggerAction(
                 fn (Action $action) => $action

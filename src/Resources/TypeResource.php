@@ -336,7 +336,7 @@ class TypeResource extends Resource
         $fields = collect()
             ->merge(
                 self::resolveCustomFields()
-                    ->flatMap(fn ($instance, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: $instance, type: 'custom'))
+                    ->flatMap(fn ($class, $type) => $addFieldIfConfigured(fieldType: $type, fieldInstance: new $class, type: 'custom'))
             )
             ->merge(
                 collect(self::FIELD_TYPE_MAP)

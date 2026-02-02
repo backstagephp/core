@@ -247,10 +247,11 @@ class EditContent extends EditRecord
     {
         $data = $this->mutateBeforeSave($data);
 
+        // Store values for later processing in afterSave
         $this->data['values'] = $data['values'] ?? [];
 
-        unset($data['tags']);
-        unset($data['values']);
+        // Remove fields that should not be saved to the content table
+        unset($data['tags'], $data['values']);
 
         return $data;
     }
