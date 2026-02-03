@@ -70,7 +70,7 @@ class MenuItemResource extends Resource
                                                     $menuSlug = $schema->getRecord()?->menu_slug;
 
                                                     // If not available (create mode in RelationManager), get from owner
-                                                    if (!$menuSlug && method_exists($livewire, 'getOwnerRecord')) {
+                                                    if (! $menuSlug && method_exists($livewire, 'getOwnerRecord')) {
                                                         $owner = $livewire->getOwnerRecord();
                                                         if ($owner) {
                                                             $menuSlug = $owner->slug;

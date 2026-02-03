@@ -3,6 +3,8 @@
 namespace Backstage\Resources\MenuResource\RelationManagers;
 
 use Backstage\Resources\MenuItemResource;
+use Backstage\View\Components\Filament\Badge;
+use Backstage\View\Components\Filament\BadgeableColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -11,9 +13,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Backstage\View\Components\Filament\Badge;
-use Backstage\View\Components\Filament\BadgeableColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -50,6 +49,7 @@ class MenuItemsRelationManager extends RelationManager
                         return 'Showing children of: ' . $parent->name;
                     }
                 }
+
                 return null;
             })
             ->defaultSort('position')
@@ -66,6 +66,7 @@ class MenuItemsRelationManager extends RelationManager
                                     ->color('primary'),
                             ];
                         }
+
                         return [];
                     })
                     ->action(function ($record) {

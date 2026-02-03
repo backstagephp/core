@@ -20,7 +20,7 @@ class BackstageUpgrade extends Command
             '--force' => true,
         ]);
         $this->call('vendor:publish', [
-            '--tag' => 'backstage-config'
+            '--tag' => 'backstage-config',
         ]);
         $this->call('migrate', [
             '--force' => true,
