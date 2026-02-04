@@ -2,20 +2,21 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Backstage\Fields\Models\Field;
-use Backstage\Models\ContentFieldValue;
-use Backstage\Models\Version;
-use Backstage\Resources\ContentResource;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Infolists;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Support\Enums\Alignment;
 use Filament\Tables;
+use Filament\Infolists;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Actions\Action;
+use Backstage\Models\Version;
+use Filament\Actions\ViewAction;
+use Backstage\Fields\Models\Field;
 use Illuminate\Support\HtmlString;
+use Filament\Support\Enums\Alignment;
+use Backstage\Models\ContentFieldValue;
+use Backstage\Resources\ContentResource;
+use Filament\Notifications\Notification;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ManageRelatedRecords;
 
 class VersionHistory extends ManageRelatedRecords
 {
@@ -77,9 +78,9 @@ class VersionHistory extends ManageRelatedRecords
                         $entries = [];
                         $fields = Field::where('model_type', 'type')
                             ->where('model_key', $record->content->type->slug)->get();
-                        $entries[] = Infolists\Components\TextEntry::make('meta_tags')
+                        $entries[] = TextEntry::make('meta_tags')
                             ->label(__('Meta tags'))
-                            ->formatState(function () use ($record) {
+                            ->getStateUsing(function () use ($record) {
                                 $original = collect($record->content->meta_tags)->map(function ($value, $key) {
                                     return (string) new HtmlString($key . ': ' . (is_string($value) || is_null($value) ? $value : json_encode($value)));
                                 })
@@ -98,14 +99,14 @@ class VersionHistory extends ManageRelatedRecords
                             $originalValue = $record->content->rawField($field->slug);
                             $newValue = $record->data['fields'][$field->ulid] ?? '';
                             $newValue = is_array($newValue) ? json_encode($newValue) : $newValue;
-                            $entries[] = Infolists\Components\TextEntry::make($field->ulid)
+                            $entries[] = TextEntry::make($field->ulid)
                                 ->label($field->name)
-                                ->formatState(function () use ($originalValue, $newValue, $field) {
+                                ->getStateUsing(function () use ($originalValue, $newValue, $field) {
                                     switch ($field->field_type) {
                                         case 'rich-editor':
                                             $originalValue = ContentFieldValue::getRichEditorHtml($originalValue);
                                             $newValue = ContentFieldValue::getRichEditorHtml($newValue);
-
+                                                    
                                             break;
                                         default:
                                             if ($field->hasRelation()) {
