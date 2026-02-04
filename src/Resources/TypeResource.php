@@ -2,36 +2,39 @@
 
 namespace Backstage\Resources;
 
-use Backstage\Fields\Concerns\CanMapDynamicFields;
-use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
-use Backstage\Models\Content;
-use Backstage\Models\Type;
-use Backstage\Resources\TypeResource\Pages\CreateType;
-use Backstage\Resources\TypeResource\Pages\EditType;
-use Backstage\Resources\TypeResource\Pages\ListTypes;
 use Closure;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Backstage\Models\Type;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Backstage\Models\Content;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Fieldset;
+use Illuminate\Support\Collection;
+use Filament\Actions\BulkActionGroup;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
+use Filament\Actions\DeleteBulkAction;
+use Illuminate\Support\Facades\Schema;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Backstage\Fields\Concerns\CanMapDynamicFields;
+use Backstage\Resources\TypeResource\Pages\EditType;
+use Backstage\Resources\TypeResource\Pages\ListTypes;
+use Backstage\Resources\TypeResource\Pages\CreateType;
+use Backstage\Fields\Filament\RelationManagers\FieldsRelationManager;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
 
 class TypeResource extends Resource
 {
@@ -235,14 +238,14 @@ class TypeResource extends Resource
 
                             ]),
                         Tab::make(__('Info'))
+                            ->hidden(fn($livewire) => $livewire instanceof CreateRecord)
                             ->schema([
-                                TextEntry::make('template_path')
+                                TextInput::make('template_path')
                                     ->label(__('Blade file'))
-                                    ->suffixAction(
-                                        \Filament\Actions\Action::make('create_template_file')
-                                            ->button()
+                                    ->suffixActions([
+                                        Action::make('create_template_file')
                                             ->label(__('Create'))
-                                            ->visible(fn ($record) => $record && ! file_exists($record->template_path))
+                                            ->visible(fn ($livewire, ?Type $record = null) => $livewire instanceof EditRecord && ! file_exists($record->getTemplatePathAttribute()))
                                             ->action(function ($record) {
                                                 if (! file_exists($record->template_path)) {
                                                     if (! is_dir(dirname($record->template_path))) {
@@ -255,7 +258,7 @@ class TypeResource extends Resource
                                                     ->success()
                                                     ->send();
                                             }),
-                                    ),
+                            ]),
                             ]),
                     ]),
             ]);
