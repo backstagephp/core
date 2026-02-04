@@ -1,6 +1,7 @@
 <?php
 
 use Backstage\Models\Setting;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 
 if (! function_exists('setting')) {
     function setting($key, $default = null)
@@ -16,7 +17,25 @@ if (! function_exists('setting')) {
             return $setting->setting();
         }
 
-        return $setting->setting($keys[1]) ?? $default;
+        if (! ($value = $setting->setting($keys[1]))) {
+            return $default;
+        }
+
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        if (! isset($value['type']) || $value['type'] !== 'doc') {
+            return $value;
+        }
+
+        $value = RichContentRenderer::make($value)->toHtml();
+
+        return $value;
     }
 }
 
