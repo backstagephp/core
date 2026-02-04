@@ -104,7 +104,6 @@ class MenuItemResource extends Resource
                                         TextInput::make('slug')
                                             ->columnSpan(1)
                                             ->required()
-                                            ->disabledOn('edit')
                                             ->unique(ignoreRecord: true),
 
                                         Hidden::make('content_ulid'),

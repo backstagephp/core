@@ -2,21 +2,20 @@
 
 namespace Backstage\Resources\ContentResource\Pages;
 
-use Filament\Tables;
-use Filament\Infolists;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Backstage\Models\Version;
-use Filament\Actions\ViewAction;
 use Backstage\Fields\Models\Field;
-use Illuminate\Support\HtmlString;
-use Filament\Support\Enums\Alignment;
 use Backstage\Models\ContentFieldValue;
+use Backstage\Models\Version;
 use Backstage\Resources\ContentResource;
-use Filament\Notifications\Notification;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Support\Enums\Alignment;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 
 class VersionHistory extends ManageRelatedRecords
 {
@@ -106,7 +105,7 @@ class VersionHistory extends ManageRelatedRecords
                                         case 'rich-editor':
                                             $originalValue = ContentFieldValue::getRichEditorHtml($originalValue);
                                             $newValue = ContentFieldValue::getRichEditorHtml($newValue);
-                                                    
+
                                             break;
                                         default:
                                             if ($field->hasRelation()) {
