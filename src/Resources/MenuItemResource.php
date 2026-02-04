@@ -95,13 +95,16 @@ class MenuItemResource extends Resource
                                             ->columnSpan(1)
                                             ->required()
                                             ->live(onBlur: true)
-                                            ->afterStateUpdated(function (Set $set, ?string $state) {
-                                                $set('slug', Str::slug($state));
+                                            ->afterStateUpdated(function ($operation, Set $set, ?string $state) {
+                                                if ($operation == 'create') {
+                                                    $set('slug', Str::slug($state));
+                                                }
                                             }),
 
                                         TextInput::make('slug')
                                             ->columnSpan(1)
                                             ->required()
+                                            ->disabledOn('edit')
                                             ->unique(ignoreRecord: true),
 
                                         Hidden::make('content_ulid'),

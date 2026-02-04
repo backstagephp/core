@@ -12,6 +12,7 @@ use Backstage\Models\Language;
 use Backstage\Models\Tag;
 use Backstage\Models\Type;
 use Backstage\Models\User;
+use Backstage\Resources\ContentResource\Pages\ContentTranslations;
 use Backstage\Resources\ContentResource\Pages\CreateContent;
 use Backstage\Resources\ContentResource\Pages\EditContent;
 use Backstage\Resources\ContentResource\Pages\ListContent;
@@ -532,13 +533,37 @@ class ContentResource extends Resource
                                                     ->get()
                                                     ->sort()
                                                     ->groupBy(function ($language) {
-                                                        return Str::contains($language->code, '-') ? localized_country_name($language->code) : __('Worldwide');
+                                                        return Str::contains($language->code, ['-', '_']) ? localized_country_name($language->code) : __('Worldwide');
                                                     })
-                                                    ->mapWithKeys(fn ($languages, $countryName) => [
-                                                        $countryName => $languages->mapWithKeys(fn ($language) => [
-                                                            $language->code => '<img src="data:image/svg+xml;base64,' . base64_encode(file_get_contents(flag_path(explode('-', $language->code)[0]))) . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ' . localized_language_name($language->code) . ' (' . $countryName . ')',
-                                                        ])->toArray(),
-                                                    ])
+                                                    ->mapWithKeys(function ($languages, $countryName) {
+                                                        $options = collect($languages)->mapWithKeys(function ($language) {
+                                                            $flagPath = flag_path(explode('-', $language->code)[0]);
+
+                                                            $languageIsPrimary = ! str($language->code)->contains(['-', '_']);
+
+                                                            $flagIcon = str('')
+                                                                ->when(file_exists($flagPath), function ($str) use ($flagPath) {
+                                                                    $base64 = base64_encode(file_get_contents($flagPath));
+
+                                                                    return $str->append('<img src="data:image/svg+xml;base64,' . $base64 . '" class="inline-block relative w-5" style="top: -1px; margin-right: 3px;"> ');
+                                                                })
+                                                                ->append(localized_language_name($language->code))
+                                                                ->when(! $languageIsPrimary, function ($str) use ($language) {
+                                                                    $parts = preg_split('/[-_]/', $language->code, 2);
+
+                                                                    if (isset($parts[1])) {
+                                                                        return $str->append(' (' . $parts[1] . ')');
+                                                                    }
+
+                                                                    return $str;
+
+                                                                });
+
+                                                            return [$language->code => $flagIcon];
+                                                        });
+
+                                                        return [$countryName => $options];
+                                                    })
                                             )
                                             ->allowHtml()
                                             ->visible(fn () => Language::active()->count() > 1)
@@ -1154,6 +1179,7 @@ class ContentResource extends Resource
             'meta_tags' => ListContentMetaTags::route('/meta-tags'),
             'children' => ManageChildrenContent::route('/{record}/children'),
             'versions' => VersionHistory::route('/{record}/versions'),
+            'translations' => ContentTranslations::route('/{record}/translations'),
         ];
     }
 
@@ -1163,6 +1189,7 @@ class ContentResource extends Resource
             EditContent::class,
             ManageChildrenContent::class,
             VersionHistory::class,
+            ContentTranslations::class,
         ]);
     }
 

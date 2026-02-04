@@ -42,6 +42,8 @@ if (! function_exists('setting')) {
 if (! function_exists('flag_path')) {
     function flag_path(string $code): string
     {
+        $code = preg_split('/[-_]/', $code, 2)[0] ?? $code;
+
         $vendorPath = base_path('vendor/backstage/cms/resources/img/flags/' . $code . '.svg');
 
         if (file_exists($vendorPath)) {

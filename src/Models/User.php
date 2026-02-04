@@ -148,4 +148,9 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         $this->app_authentication_recovery_codes = $codes;
         $this->save();
     }
+
+    public function getAvatarAttribute(): ?string
+    {
+        return Filament::getUserAvatarUrl($this);
+    }
 }

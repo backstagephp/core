@@ -6,6 +6,7 @@ use Backstage\Fields\Concerns\HasFields;
 use Backstage\Shared\HasPackageFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Type extends Model
 {
@@ -33,6 +34,11 @@ class Type extends Model
     public function sites(): BelongsToMany
     {
         return $this->belongsToMany(Site::class, 'site_type', 'type_slug', 'site_ulid');
+    }
+
+    public function content(): HasMany
+    {
+        return $this->hasMany(Content::class);
     }
 
     public function getTemplateAttribute(): string

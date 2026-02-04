@@ -46,7 +46,7 @@ class TranslateContent implements ShouldQueue
             return;
         }
 
-        $duplicatedContent = $this->content->replicate(['ulid']);
+        $duplicatedContent = $this->content->replicate(['ulid', 'ordered_id']);
         $duplicatedContent->language_code = $this->language->code;
         $duplicatedContent->meta_tags = [];
         $duplicatedContent->edited_at = now();
