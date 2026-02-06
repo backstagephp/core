@@ -17,22 +17,22 @@ if (! function_exists('setting')) {
             return $setting->setting();
         }
 
-        if (! ($value = $setting->setting($keys[1]))) {
+        if(!($value = $setting->setting($keys[1]))) {
             return $default;
         }
 
-        if (is_string($value)) {
+        if(is_string($value)) {
             return $value;
         }
 
-        if (! is_array($value)) {
+        if(!is_array($value)) {
             return $value;
         }
 
-        if (! isset($value['type']) || $value['type'] !== 'doc') {
+        if(!isset($value['type']) || $value['type'] !== 'doc') {
             return $value;
         }
-
+        
         $value = RichContentRenderer::make($value)->toHtml();
 
         return $value;
