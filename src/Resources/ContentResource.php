@@ -239,7 +239,7 @@ class ContentResource extends Resource
                                                     ->where('language_code', $get('language_code'))
                                                     ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
-                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->prefix(fn (Get $get) => parse_url(Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'), PHP_URL_PATH))
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
                                             ->live()
                                             ->visible(fn (Get $get) => $get('public') === true)
@@ -492,7 +492,7 @@ class ContentResource extends Resource
                                             ->default(fn () => self::$type?->public ?? true)
                                             ->onIcon('heroicon-s-check')
                                             ->offIcon('heroicon-s-x-mark')
-                                            ->inline(false)
+                                            ->inline(true)
                                             ->helperText(__('Make content publicly accessible on path.'))
                                             ->columnSpanFull()
                                             ->live()
@@ -519,7 +519,7 @@ class ContentResource extends Resource
                                                     ->where('language_code', $get('language_code'))
                                                     ->ignore($record?->getKey(), $record?->getKeyName());
                                             })
-                                            ->prefix(fn (Get $get) => Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'))
+                                            ->prefix(fn (Get $get) => parse_url(Content::getPathPrefixForLanguage($get('language_code') ?? Language::active()->first()?->code ?? 'en'), PHP_URL_PATH))
                                             ->formatStateUsing(fn (?Content $record) => ltrim($record->path ?? '', '/'))
                                             ->live(),
 
@@ -585,7 +585,7 @@ class ContentResource extends Resource
 
                                         Toggle::make('pin')
                                             ->label(__('Pin'))
-                                            ->inline(false)
+                                            ->inline(true)
                                             ->onIcon('heroicon-s-check')
                                             ->offIcon('heroicon-s-x-mark')
                                             ->helperText('Pin content to the top of lists.')
@@ -795,7 +795,7 @@ class ContentResource extends Resource
                                     if ($state === null) {
                                         return;
                                     }
-
+                                    dd($record);
                                     $record->values->where('field_ulid', $field->ulid)->first()->update([
                                         'value' => $state,
                                     ]);
@@ -866,26 +866,6 @@ class ContentResource extends Resource
             ->columns([
                 self::orderedIdColumn(),
 
-                IconColumn::make('published')
-                    ->label(null)
-                    ->width(1)
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil-square',
-                        'expired' => 'heroicon-o-x-mark-circle',
-                        'published' => 'heroicon-o-check-circle',
-                        'scheduled' => 'heroicon-o-calendar-days',
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'warning',
-                        'expired' => 'danger',
-                        'published' => 'success',
-                        'scheduled' => 'info',
-                        default => 'gray',
-                    })
-                    ->tooltip(fn (string $state): string => __($state))
-                    ->size(IconSize::Medium)
-                    ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
-
                 BadgeableColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -906,6 +886,7 @@ class ContentResource extends Resource
                     ]),
 
                 ImageColumn::make('authors')
+                    ->width(1)
                     ->circular()
                     ->stacked()
                     ->ring(2)
@@ -926,8 +907,31 @@ class ContentResource extends Resource
                     ->view('backstage::filament.tables.columns.country-flag-column')
                     ->visible(fn () => Language::active()->where('code', 'LIKE', '%-%')->distinct(DB::raw('SUBSTRING_INDEX(code, "-", -1)'))->count() > 1),
 
+                IconColumn::make('published')
+                    ->label(null)
+                    ->width(1)
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil-square',
+                        'expired' => 'heroicon-o-x-mark-circle',
+                        'published' => 'heroicon-o-check-circle',
+                        'scheduled' => 'heroicon-o-calendar-days',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'warning',
+                        'expired' => 'danger',
+                        'published' => 'success',
+                        'scheduled' => 'info',
+                        default => 'gray',
+                    })
+                    ->alignEnd()
+                    ->tooltip(fn (string $state): string => __($state))
+                    ->size(IconSize::Medium)
+                    ->getStateUsing(fn (Content $record) => $record->published_at ? 'published' : 'draft'),
+
                 TextColumn::make('edited_at')
+                    ->label(__('Last updated'))
                     ->since()
+                    ->width(1)
                     ->alignEnd()
                     ->sortable(),
             ])

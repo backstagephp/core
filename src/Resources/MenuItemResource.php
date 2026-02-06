@@ -137,7 +137,7 @@ class MenuItemResource extends Resource
                                                     ->action(function (array $data, Set $set) {
                                                         $content = Content::where('ulid', $data['content_ulid'])->first();
                                                         if ($content) {
-                                                            $set('url', $content->url);
+                                                            $set('url', $content->relativePath);
                                                             $set('content_ulid', $content->ulid);
                                                         }
                                                     }),

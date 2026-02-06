@@ -211,6 +211,57 @@ class Content extends Model
         );
     }
 
+    /**
+     * Returns the relative path (without domain) for this content.
+     *
+     * @return Attribute<Provider, string>
+     */
+    protected function relativePath(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (! $this->public) {
+                    return null;
+                }
+
+                $this->loadMissing('site');
+
+                // Build the path without domain
+                $path = '';
+
+                // Add site path if present
+                if ($this->site->path) {
+                    $path .= '/' . trim($this->site->path, '/');
+                }
+
+                // Add language path if present
+                $domain = $this->site->domains()
+                    ->where('environment', config('app.env'))
+                    ->first();
+
+                if ($domain) {
+                    $domain->load('languages');
+                    $language = $domain->languages->where('code', $this->language_code)->first();
+                    if ($language && $language->pivot->path) {
+                        $path .= '/' . trim($language->pivot->path, '/');
+                    }
+                }
+
+                // Add content path
+                $path .= '/' . trim($this->path, '/');
+
+                // Remove trailing slash and then add if needed
+                $path = rtrim($path, '/');
+
+                if ($this->site->trailing_slash) {
+                    $path .= '/';
+                }
+
+                return $path;
+            },
+        );
+    }
+
     public function getParentKeyName()
     {
         return 'parent_ulid';
