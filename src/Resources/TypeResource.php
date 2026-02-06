@@ -236,29 +236,6 @@ class TypeResource extends Resource
                                     ]),
 
                             ]),
-                        Tab::make(__('Info'))
-                            ->hidden(fn ($livewire) => $livewire instanceof CreateRecord)
-                            ->schema([
-                                TextInput::make('template_path')
-                                    ->label(__('Blade file'))
-                                    ->suffixActions([
-                                        Action::make('create_template_file')
-                                            ->label(__('Create'))
-                                            ->visible(fn ($livewire, ?Type $record = null) => $livewire instanceof EditRecord && ! file_exists($record->getTemplatePathAttribute()))
-                                            ->action(function ($record) {
-                                                if (! file_exists($record->template_path)) {
-                                                    if (! is_dir(dirname($record->template_path))) {
-                                                        mkdir(dirname($record->template_path), 0755, true);
-                                                    }
-                                                    file_put_contents($record->template_path, "<!-- Blade template for {$record->name} -->\n");
-                                                }
-                                                \Filament\Notifications\Notification::make()
-                                                    ->title(__('Blade file created'))
-                                                    ->success()
-                                                    ->send();
-                                            }),
-                                    ]),
-                            ]),
                     ]),
             ]);
     }
