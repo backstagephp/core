@@ -8,6 +8,8 @@ use Backstage\Resources\ContentResource;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
@@ -39,6 +41,11 @@ class ListContentMetaTags extends ListRecords
                 return $query->where('public', true);
             })
             ->columns([
+                IconColumn::make('language.code')
+                    ->label(' ')
+                    ->icon(fn ($state) => country_flag($state))
+                    ->alignCenter()
+                    ->size(IconSize::TwoExtraLarge),
                 TextColumn::make('name')
                     ->label('Title')
                     ->searchable()

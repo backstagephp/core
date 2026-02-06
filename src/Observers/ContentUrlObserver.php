@@ -31,7 +31,7 @@ class ContentUrlObserver
         event(new UrlHasChanged(
             oldUrl: $oldUrl,
             newUrl: $content->url,
-            code: 302
+            code: 301
         ));
     }
 

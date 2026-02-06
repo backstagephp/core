@@ -944,6 +944,7 @@ class ContentResource extends Resource
                     ->label(__('Language'))
                     ->columnSpanFull()
                     ->placeholder(__('Select Language'))
+                    ->searchable()
                     ->options(
                         Language::active()
                             ->get()
