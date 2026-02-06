@@ -17,6 +17,11 @@ class EditSetting extends EditRecord
 
     use CanMapDynamicFields;
 
+    protected function resolveRecord(string | int $key): \Illuminate\Database\Eloquent\Model
+    {
+        return parent::resolveRecord($key)->load('fields');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -33,11 +38,7 @@ class EditSetting extends EditRecord
                     ->tabs([
                         Tab::make('Setting')
                             ->label(__('Setting'))
-                            ->schema([
-                                Grid::make()
-                                    ->columns(1)
-                                    ->schema($this->resolveFormFields()),
-                            ]),
+                            ->schema(fn () => $this->resolveFormFields()),
                         Tab::make('Configure')
                             ->label(__('Configure'))
                             ->schema([

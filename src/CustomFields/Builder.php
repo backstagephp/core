@@ -108,9 +108,9 @@ class Builder extends Base implements FieldContract
     {
         $instance = new self;
 
-        $isNested = true; // Builder fields are always nested
-
-        return $instance->traitResolveFormFields(record: $record, isNested: $isNested);
+        // Apply grouping to builder block fields (isNested = false)
+        // This creates Sections for grouped fields within builder blocks
+        return $instance->traitResolveFormFields(record: $record, isNested: false);
     }
 
     private static function resolveCustomFields(): Collection
@@ -124,8 +124,7 @@ class Builder extends Base implements FieldContract
     {
         $instance = new self;
 
-        $isNested = true; // Builder fields are always nested
-
-        return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record, isNested: $isNested);
+        // Builder block fields should have proper input names (nested format)
+        return $instance->traitResolveFieldInput(field: $field, customFields: $customFields, record: $record, isNested: true);
     }
 }

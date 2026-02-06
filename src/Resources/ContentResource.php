@@ -43,7 +43,6 @@ use Filament\Panel;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -688,7 +687,6 @@ class ContentResource extends Resource
         $v = $livewire->formVersion ?? 0;
         $typeSlug = self::$type?->slug ?? 'NULL';
 
-        $groups = [];
         $fields = self::$type->fields;
 
         if ($fields instanceof \Illuminate\Database\Eloquent\Collection) {
@@ -697,36 +695,35 @@ class ContentResource extends Resource
             $fields = collect($fields)->unique('ulid');
         }
 
+        // Group field models by their group property, filtering out the name field
+        $groups = [];
         $fields->filter(fn ($field) => self::$type->name_field !== $field->slug)
-            ->each(function ($field) use (&$groups, $v) {
-                $resolvedField = self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
-                if ($resolvedField) {
-                    if (method_exists($resolvedField, 'key')) {
-                        $resolvedField->key($field->ulid . '-' . $v);
-                    }
-                    if (method_exists($resolvedField, 'id')) {
-                        $resolvedField->id($field->ulid . '-' . $v);
-                    }
-
-                    $groups[$field->group ?? null][] = $resolvedField;
-                }
+            ->each(function ($field) use (&$groups) {
+                $groups[$field->group ?? null][] = $field;
             });
 
-        return collect($groups)->map(function ($fields, $group) use ($v) {
-            if (empty($group)) {
-                return Grid::make(1)
-                    ->key('dynamic-group-default-' . $v)
-                    ->schema($fields);
-            }
+        // Use trait method to wrap groups in components with custom field resolution
+        $instance = new self;
 
-            return Section::make($group)
-                ->key('dynamic-group-' . Str::slug($group) . '-' . $v)
-                ->collapsible()
-                ->collapsed()
-                ->compact()
-                ->label(__($group))
-                ->schema($fields);
-        })->values()->all();
+        return $instance->wrapFieldGroupsInComponents($groups, function ($fieldModels) use ($v) {
+            return collect($fieldModels)
+                ->map(function ($field) use ($v) {
+                    $resolvedField = self::resolveFieldInput($field, collect(Fields::getFields()), self::$type);
+                    if ($resolvedField) {
+                        if (method_exists($resolvedField, 'key')) {
+                            $resolvedField->key($field->ulid . '-' . $v);
+                        }
+                        if (method_exists($resolvedField, 'id')) {
+                            $resolvedField->id($field->ulid . '-' . $v);
+                        }
+                    }
+
+                    return $resolvedField;
+                })
+                ->filter()
+                ->values()
+                ->all();
+        }, $v);
     }
 
     private static function orderedIdColumn(): TextColumn
